@@ -56,6 +56,10 @@ impl<'a> Tokenizer<'a> {
                     let token = self.read_number()?;
                     tokens.push(token);
                 }
+                'a'..='z' | 'A'..='Z' => {
+                    let token = self.read_identifier()?;
+                    tokens.push(token);
+                }
                 '\n' | '\t' | ' ' => {
                     // skip
                     self.iter.next();
@@ -99,6 +103,22 @@ impl<'a> Tokenizer<'a> {
 
         let value = &self.source[start..end];
         Ok(Token::new(value, TokenType::Number, start))
+    }
+
+    fn read_identifier(&mut self) -> Result<Token<'a>, TokenizerError> {
+        let start = self.iter.offset();
+        let mut end = start;
+
+        while let Some(&ch) = self.iter.peek() {
+            if !ch.is_alphabetic() && ch != '.' {
+                break;
+            }
+            end += 1;
+            self.iter.next();
+        }
+
+        let value = &self.source[start..end];
+        Ok(Token::new(value, TokenType::Identifier, start))
     }
 
     fn read_string(&mut self) -> Result<Token<'a>, TokenizerError> {
@@ -297,7 +317,18 @@ mod test {
     fn test_whitespace_generates_no_tokens() {
         let mut tokenizer = Tokenizer::new("  ");
         let actual = tokenizer.tokenize().unwrap();
-        let expected : Vec<Token> = vec![];
+        let expected: Vec<Token> = vec![];
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_tokenize_identifiers() {
+        let mut tokenizer = Tokenizer::new("let var");
+        let actual = tokenizer.tokenize().unwrap();
+        let expected: Vec<Token> = vec![
+            Token::new("let", TokenType::Identifier, 0),
+            Token::new("var", TokenType::Identifier, 4),
+        ];
         assert_eq!(expected, actual);
     }
 }
