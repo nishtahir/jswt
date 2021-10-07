@@ -118,7 +118,18 @@ impl<'a> Tokenizer<'a> {
         }
 
         let value = &self.source[start..end];
-        Ok(Token::new(value, TokenType::Identifier, start))
+        let token_type = match value {
+            "function" => TokenType::Function,
+            "if" => TokenType::If,
+            "else" => TokenType::Else,
+            "return" => TokenType::Return,
+            "true" => TokenType::True,
+            "false" => TokenType::False,
+            "let" => TokenType::Let,
+            _ => TokenType::Identifier,
+        };
+
+        Ok(Token::new(value, token_type, start))
     }
 
     fn read_string(&mut self) -> Result<Token<'a>, TokenizerError> {
@@ -323,11 +334,25 @@ mod test {
 
     #[test]
     fn test_tokenize_identifiers() {
-        let mut tokenizer = Tokenizer::new("let var");
+        let mut tokenizer = Tokenizer::new("user identifier");
         let actual = tokenizer.tokenize().unwrap();
         let expected: Vec<Token> = vec![
-            Token::new("let", TokenType::Identifier, 0),
-            Token::new("var", TokenType::Identifier, 4),
+            Token::new("user", TokenType::Identifier, 0),
+            Token::new("identifier", TokenType::Identifier, 5),
+        ];
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_tokenize_keywords() {
+        let mut tokenizer = Tokenizer::new("let false true return function");
+        let actual = tokenizer.tokenize().unwrap();
+        let expected: Vec<Token> = vec![
+            Token::new("let", TokenType::Let, 0),
+            Token::new("false", TokenType::False, 4),
+            Token::new("true", TokenType::True, 10),
+            Token::new("return", TokenType::Return, 15),
+            Token::new("function", TokenType::Function, 22),
         ];
         assert_eq!(expected, actual);
     }

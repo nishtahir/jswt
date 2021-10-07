@@ -27,6 +27,13 @@ impl<'a> Token<'a> {
 
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
+    Function,
+    If,
+    Else,
+    Return,
+    True,
+    False,
+    Let,
     Identifier,
     String,
     Number,
