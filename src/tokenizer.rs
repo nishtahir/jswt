@@ -2,7 +2,7 @@ use crate::token::{Token, TokenType};
 use crate::{errors::TokenizerError, iter::LineColumnIterator};
 use std::str::Chars;
 
-struct Tokenizer<'a> {
+pub struct Tokenizer<'a> {
     source: &'a str,
     iter: LineColumnIterator<Chars<'a>>,
 }
