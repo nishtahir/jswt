@@ -68,6 +68,8 @@ impl<'a> Tokenizer<'a> {
             }
         }
 
+        // Add EOF marker
+        tokens.push(Token::eof(self.iter.offset()));
         Ok(tokens)
     }
 
@@ -126,6 +128,7 @@ impl<'a> Tokenizer<'a> {
             "true" => TokenType::True,
             "false" => TokenType::False,
             "let" => TokenType::Let,
+            "print" => TokenType::Print,
             _ => TokenType::Identifier,
         };
 
@@ -157,10 +160,7 @@ impl<'a> Tokenizer<'a> {
         let start = self.iter.offset();
 
         // Consume known first char
-        let first = self
-            .iter
-            .next()
-            .ok_or_else(|| TokenizerError::UnexpectedEof)?;
+        let first = self.iter.next().ok_or(TokenizerError::UnexpectedEof)?;
 
         let second = self.iter.peek();
 
@@ -233,7 +233,7 @@ mod test {
     fn test_tokenize_number() {
         let mut tokenizer = Tokenizer::new("42");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new("42", TokenType::Number, 0)];
+        let expected = vec![Token::new("42", TokenType::Number, 0), Token::eof(2)];
         assert_eq!(expected, actual)
     }
 
@@ -252,6 +252,7 @@ mod test {
         let expected = vec![
             Token::new("{", TokenType::LeftBrace, 0),
             Token::new("}", TokenType::RightBrace, 1),
+            Token::eof(2),
         ];
         assert_eq!(expected, actual);
     }
@@ -263,6 +264,7 @@ mod test {
         let expected = vec![
             Token::new("(", TokenType::LeftParen, 0),
             Token::new(")", TokenType::RightParen, 1),
+            Token::eof(2),
         ];
         assert_eq!(expected, actual);
     }
@@ -271,7 +273,7 @@ mod test {
     fn test_tokenize_comma() {
         let mut tokenizer = Tokenizer::new(",");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new(",", TokenType::Comma, 0)];
+        let expected = vec![Token::new(",", TokenType::Comma, 0), Token::eof(1)];
         assert_eq!(expected, actual);
     }
 
@@ -279,7 +281,7 @@ mod test {
     fn test_tokenize_less_than() {
         let mut tokenizer = Tokenizer::new("<");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new("<", TokenType::Less, 0)];
+        let expected = vec![Token::new("<", TokenType::Less, 0), Token::eof(1)];
         assert_eq!(expected, actual);
     }
 
@@ -287,28 +289,28 @@ mod test {
     fn test_tokenize_less_than_equal() {
         let mut tokenizer = Tokenizer::new("<=");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new("<=", TokenType::LessEqual, 0)];
+        let expected = vec![Token::new("<=", TokenType::LessEqual, 0), Token::eof(2)];
         assert_eq!(expected, actual);
     }
     #[test]
     fn test_tokenize_greater_than() {
         let mut tokenizer = Tokenizer::new(">");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new(">", TokenType::Greater, 0)];
+        let expected = vec![Token::new(">", TokenType::Greater, 0), Token::eof(2)];
         assert_eq!(expected, actual);
     }
     #[test]
     fn test_tokenize_greater_than_equal() {
         let mut tokenizer = Tokenizer::new(">=");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new(">=", TokenType::GreaterEqual, 0)];
+        let expected = vec![Token::new(">=", TokenType::GreaterEqual, 0), Token::eof(2)];
         assert_eq!(expected, actual);
     }
     #[test]
     fn test_tokenize_semi_colon() {
         let mut tokenizer = Tokenizer::new(";");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new(";", TokenType::Semi, 0)];
+        let expected = vec![Token::new(";", TokenType::Semi, 0), Token::eof(1)];
         assert_eq!(expected, actual);
     }
 
@@ -316,11 +318,10 @@ mod test {
     fn test_tokenize_comment() {
         let mut tokenizer = Tokenizer::new("// This is a test comment");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new(
-            "// This is a test comment",
-            TokenType::Comment,
-            0,
-        )];
+        let expected = vec![
+            Token::new("// This is a test comment", TokenType::Comment, 0),
+            Token::eof(30),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -328,7 +329,7 @@ mod test {
     fn test_whitespace_generates_no_tokens() {
         let mut tokenizer = Tokenizer::new("  ");
         let actual = tokenizer.tokenize().unwrap();
-        let expected: Vec<Token> = vec![];
+        let expected: Vec<Token> = vec![Token::eof(2)];
         assert_eq!(expected, actual);
     }
 
@@ -339,6 +340,7 @@ mod test {
         let expected: Vec<Token> = vec![
             Token::new("user", TokenType::Identifier, 0),
             Token::new("identifier", TokenType::Identifier, 5),
+            Token::eof(30),
         ];
         assert_eq!(expected, actual);
     }
@@ -353,6 +355,7 @@ mod test {
             Token::new("true", TokenType::True, 10),
             Token::new("return", TokenType::Return, 15),
             Token::new("function", TokenType::Function, 22),
+            Token::eof(30),
         ];
         assert_eq!(expected, actual);
     }

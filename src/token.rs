@@ -1,6 +1,6 @@
 use std::usize;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Token<'a> {
     pub lexme: &'a str,
     pub offset: usize,
@@ -9,24 +9,25 @@ pub struct Token<'a> {
 
 impl<'a> Token<'a> {
     pub fn new(lexme: &'a str, kind: TokenType, offset: usize) -> Self {
-        return Token {
+        Token {
             lexme,
             kind,
             offset,
-        };
+        }
     }
 
     pub fn eof(offset: usize) -> Self {
-        return Token {
+        Token {
             lexme: "",
             kind: TokenType::Eof,
             offset,
-        };
+        }
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TokenType {
+    Print,
     Function,
     If,
     Else,

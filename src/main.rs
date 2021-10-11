@@ -2,6 +2,7 @@
 extern crate clap;
 
 use clap::Arg;
+use jswt::Parser;
 use jswt::Tokenizer;
 use std::env;
 use std::fs;
@@ -22,6 +23,9 @@ fn main() {
             .tokenize()
             .expect("Failed to tokenize");
 
+        // TODO - probably have better logging here
         println!("{:#?}", tokens);
+
+        let _ast = Parser::new(tokens).parse();
     }
 }

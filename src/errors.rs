@@ -1,5 +1,10 @@
 #[derive(Debug)]
 pub enum TokenizerError {
     InvalidCharacter,
-    UnexpectedEof
+    UnexpectedEof,
+}
+
+#[derive(Debug)]
+pub enum ParseError<'a> {
+    SyntaxError(&'a str),
 }
