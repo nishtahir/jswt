@@ -26,6 +26,8 @@ fn main() {
         // TODO - probably have better logging here
         println!("{:#?}", tokens);
 
-        let _ast = Parser::new(tokens).parse();
+        let ast = Parser::new(tokens).parse().unwrap();
+
+        println!("{:#?}", ast);
     }
 }

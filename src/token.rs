@@ -25,7 +25,7 @@ impl<'a> Token<'a> {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum TokenType {
     Print,
     Function,

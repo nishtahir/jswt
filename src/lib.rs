@@ -1,6 +1,7 @@
 mod errors;
 mod expression;
 mod iter;
+mod node;
 mod parser;
 mod statement;
 mod token;

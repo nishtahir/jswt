@@ -1,6 +1,7 @@
 use crate::errors::ParseError;
 use crate::expression::{Expr, LiteralExpr};
-use crate::statement::{PrintStmt, Statement, VariableDeclarationStmt};
+use crate::node::Node;
+use crate::statement::Statement;
 use crate::token::{Token, TokenType};
 
 pub struct Parser<'a> {
@@ -35,31 +36,33 @@ impl<'a> Parser<'a> {
         todo!()
     }
 
+    /// print(expression)
     pub fn print_statement(&mut self) -> Result<Statement<'a>, ParseError> {
         self.consume(TokenType::Print, "Expected print").unwrap();
         self.consume(TokenType::LeftParen, "Expected (").unwrap();
         let expr = self.expression()?;
-        self.consume(TokenType::LeftParen, "Expected )").unwrap();
+        self.consume(TokenType::RightParen, "Expected )").unwrap();
 
-        Ok(PrintStmt::new(expr).into())
+        Ok(Statement::print(expr))
     }
 
+    /// let ident = expression
     pub fn variable_statement(&mut self) -> Result<Statement<'a>, ParseError> {
         self.consume(TokenType::Let, "Expected let").unwrap();
         // trying to return a ref to the token here creates a
         // cannot borrow `*self` as mutable more than once at a time
         // since we need to borrow self to parse the expression
         let ident_idx = self.consume(TokenType::Identifier, "message").unwrap();
-        self.consume(TokenType::Let, "Expected '='").unwrap();
+        self.consume(TokenType::Equal, "Expected '='").unwrap();
         let expr = self.expression()?;
         // Expected let
 
         let ident = &self.tokens[ident_idx];
-        Ok(VariableDeclarationStmt::new(ident.lexme, expr).into())
+        Ok(Statement::variable(ident.lexme, expr))
     }
 
     pub fn expression(&mut self) -> Result<Expr<'a>, ParseError<'a>> {
-        todo!()
+        self.primary()
     }
 
     pub fn primary(&mut self) -> Result<Expr<'a>, ParseError<'a>> {
@@ -69,10 +72,8 @@ impl<'a> Parser<'a> {
             TokenType::Number,
             TokenType::String,
         ]) {
-            let idx = self.previous_idx();
-            // let token = &self.tokens[idx];
-            // return Ok(LiteralExpr::new(token).into());
-            // return LiteralExpr::new(self.previous()).into();
+            let node = self.previous_as_node();
+            return Ok(LiteralExpr::new(node).into());
         }
 
         todo!()
@@ -96,11 +97,22 @@ impl<'a> Parser<'a> {
     }
 
     pub fn is_at_end(&self) -> bool {
-        self.current >= self.tokens.len()
+        println!("current index: {:?}", self.current);
+        self.current >= self.tokens.len() - 1
     }
 
     pub fn peek(&mut self) -> &Token {
         &self.tokens[self.current]
+    }
+
+    pub fn previous_as_node(&self) -> Node<'a> {
+        let idx = self.previous_idx();
+        let token = &self.tokens[idx];
+        Node {
+            value: token.lexme,
+            offset: token.offset,
+            kind: token.kind,
+        }
     }
 
     pub fn previous(&mut self) -> &Token {
@@ -125,5 +137,38 @@ impl<'a> Parser<'a> {
         }
 
         Err(ParseError::SyntaxError(message))
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use crate::{token::TokenType, Tokenizer};
+
+    use super::*;
+
+    #[test]
+    fn test_print_statement() {
+        let tokens = Tokenizer::new("print(\"test\")").tokenize().unwrap();
+        let actual = Parser::new(tokens).parse().unwrap();
+        let expected = vec![Statement::print(Expr::literal(Node::new(
+            "test",
+            7,
+            TokenType::String,
+        )))];
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_variable_declaration_statement() {
+        let tokens = Tokenizer::new("let user = \"test\"").tokenize().unwrap();
+        let actual = Parser::new(tokens).parse().unwrap();
+        let expected = vec![Statement::variable(
+            "user",
+            Expr::literal(Node::new("test", 12, TokenType::String)),
+        )];
+
+        assert_eq!(expected, actual);
     }
 }

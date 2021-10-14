@@ -2,6 +2,7 @@
 pub enum TokenizerError {
     InvalidCharacter,
     UnexpectedEof,
+    UnexpectedToken,
 }
 
 #[derive(Debug)]

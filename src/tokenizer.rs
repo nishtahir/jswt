@@ -44,7 +44,7 @@ impl<'a> Tokenizer<'a> {
                     let token = self.read_token(TokenType::Semi)?;
                     tokens.push(token);
                 }
-                '<' | '>' | '/' => {
+                '<' | '>' | '/' | '=' => {
                     let token = self.read_operator()?;
                     tokens.push(token);
                 }
@@ -64,7 +64,7 @@ impl<'a> Tokenizer<'a> {
                     // skip
                     self.iter.next();
                 }
-                _ => return Err(TokenizerError::UnexpectedEof),
+                _ => return Err(TokenizerError::UnexpectedToken),
             }
         }
 
@@ -202,8 +202,24 @@ impl<'a> Tokenizer<'a> {
                     let lexme = &self.source[start..end];
                     Ok(Token::new(lexme, TokenType::GreaterEqual, start))
                 } else {
-                    let lexme = &self.source[start..];
+                    let end = self.iter.offset();
+                    let lexme = &self.source[start..end];
                     Ok(Token::new(lexme, TokenType::Greater, start))
+                }
+            }
+            '=' => {
+                if second == Some(&'=') {
+                    // Advance iterator
+                    self.iter.next();
+
+                    let end = self.iter.offset();
+
+                    let lexme = &self.source[start..end];
+                    Ok(Token::new(lexme, TokenType::EqualEqual, start))
+                } else {
+                    let end = self.iter.offset();
+                    let lexme = &self.source[start..end];
+                    Ok(Token::new(lexme, TokenType::Equal, start))
                 }
             }
             _ => todo!(),
@@ -241,7 +257,10 @@ mod test {
     fn test_tokenize_string() {
         let mut tokenizer = Tokenizer::new("\"Hello World\"");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new("Hello World", TokenType::String, 1)];
+        let expected = vec![
+            Token::new("Hello World", TokenType::String, 1),
+            Token::eof(13),
+        ];
         assert_eq!(expected, actual)
     }
 
@@ -296,7 +315,7 @@ mod test {
     fn test_tokenize_greater_than() {
         let mut tokenizer = Tokenizer::new(">");
         let actual = tokenizer.tokenize().unwrap();
-        let expected = vec![Token::new(">", TokenType::Greater, 0), Token::eof(2)];
+        let expected = vec![Token::new(">", TokenType::Greater, 0), Token::eof(1)];
         assert_eq!(expected, actual);
     }
     #[test]
@@ -306,6 +325,15 @@ mod test {
         let expected = vec![Token::new(">=", TokenType::GreaterEqual, 0), Token::eof(2)];
         assert_eq!(expected, actual);
     }
+
+    #[test]
+    fn test_tokenize_equal() {
+        let mut tokenizer = Tokenizer::new("=");
+        let actual = tokenizer.tokenize().unwrap();
+        let expected = vec![Token::new("=", TokenType::Equal, 0), Token::eof(1)];
+        assert_eq!(expected, actual);
+    }
+
     #[test]
     fn test_tokenize_semi_colon() {
         let mut tokenizer = Tokenizer::new(";");
@@ -320,7 +348,7 @@ mod test {
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![
             Token::new("// This is a test comment", TokenType::Comment, 0),
-            Token::eof(30),
+            Token::eof(25),
         ];
         assert_eq!(expected, actual);
     }
@@ -340,7 +368,7 @@ mod test {
         let expected: Vec<Token> = vec![
             Token::new("user", TokenType::Identifier, 0),
             Token::new("identifier", TokenType::Identifier, 5),
-            Token::eof(30),
+            Token::eof(15),
         ];
         assert_eq!(expected, actual);
     }
@@ -356,6 +384,20 @@ mod test {
             Token::new("return", TokenType::Return, 15),
             Token::new("function", TokenType::Function, 22),
             Token::eof(30),
+        ];
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_tokenize_let_assignment() {
+        let mut tokenizer = Tokenizer::new("let a = 99");
+        let actual = tokenizer.tokenize().unwrap();
+        let expected: Vec<Token> = vec![
+            Token::new("let", TokenType::Let, 0),
+            Token::new("a", TokenType::Identifier, 4),
+            Token::new("=", TokenType::Equal, 6),
+            Token::new("99", TokenType::Number, 8),
+            Token::eof(10),
         ];
         assert_eq!(expected, actual);
     }
