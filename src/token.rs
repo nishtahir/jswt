@@ -27,36 +27,45 @@ impl<'a> Token<'a> {
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum TokenType {
+    // Single Character Tokens
+    LeftParen,
+    RightParen,
+    LeftBrace,
+    RightBrace,
+    Star,
+    Div,
+    Plus,
+    Minus,
+    Comma,
+    Dot,
+    Semi,
+
+    // One or two character tokens
+    Less,
+    LessEqual,
+    Greater,
+    GreaterEqual,
+    Equal,
+    EqualEqual,
+    Bang,
+    BangEqual,
+
+    // Literal
+    Identifier,
+    String,
+    Number,
+
+    // Keywords
+    True,
+    False,
     Print,
     Function,
     If,
     Else,
     Return,
-    True,
-    False,
     Let,
-    Identifier,
-    String,
-    Number,
-    Eof,
-    LeftParen,
-    RightParen,
-    LeftBrace,
-    RightBrace,
-    Comma,
-    Dot,
-    Plus,
-    Minus,
-    Div,
-    Star,
-    Less,
-    Greater,
-    Equal,
-    Bang,
-    LessEqual,
-    GreaterEqual,
-    EqualEqual,
-    BangEqual,
-    Semi,
+
+    // Other
     Comment,
+    Eof,
 }

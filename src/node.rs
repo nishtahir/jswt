@@ -1,4 +1,4 @@
-use crate::token::TokenType;
+use crate::token::{Token, TokenType};
 
 #[derive(Debug, PartialEq)]
 pub struct Node<'a> {
@@ -14,5 +14,11 @@ impl<'a> Node<'a> {
             offset,
             kind,
         }
+    }
+}
+
+impl<'a> From<&Token<'a>> for Node<'a> {
+    fn from(value: &Token<'a>) -> Self {
+        Node::new(value.lexme, value.offset, value.kind)
     }
 }

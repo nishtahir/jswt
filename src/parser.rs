@@ -33,6 +33,10 @@ impl<'a> Parser<'a> {
             return self.print_statement();
         }
 
+        if self.check(&TokenType::LeftBrace) {
+            return self.block();
+        }
+
         todo!()
     }
 
@@ -49,16 +53,28 @@ impl<'a> Parser<'a> {
     /// let ident = expression
     pub fn variable_statement(&mut self) -> Result<Statement<'a>, ParseError> {
         self.consume(TokenType::Let, "Expected let").unwrap();
+
         // trying to return a ref to the token here creates a
         // cannot borrow `*self` as mutable more than once at a time
         // since we need to borrow self to parse the expression
-        let ident_idx = self.consume(TokenType::Identifier, "message").unwrap();
+        let ident_idx = &self.consume(TokenType::Identifier, "message").unwrap();
         self.consume(TokenType::Equal, "Expected '='").unwrap();
         let expr = self.expression()?;
-        // Expected let
 
-        let ident = &self.tokens[ident_idx];
+        // Expected let
+        let ident = &self.tokens[*ident_idx];
         Ok(Statement::variable(ident.lexme, expr))
+    }
+
+    pub fn block(&mut self) -> Result<Statement<'a>, ParseError> {
+        self.consume(TokenType::LeftBrace, "Expected '{'").unwrap();
+        let mut statements = Vec::new();
+        while !self.check(&TokenType::RightBrace) {
+            let statement = self.statement().unwrap();
+            statements.push(statement)
+        }
+        self.consume(TokenType::RightBrace, "Expected '}'").unwrap();
+        Ok(Statement::block(statements))
     }
 
     pub fn expression(&mut self) -> Result<Expr<'a>, ParseError<'a>> {
@@ -72,7 +88,7 @@ impl<'a> Parser<'a> {
             TokenType::Number,
             TokenType::String,
         ]) {
-            let node = self.previous_as_node();
+            let node = self.previous();
             return Ok(LiteralExpr::new(node).into());
         }
 
@@ -89,7 +105,7 @@ impl<'a> Parser<'a> {
         false
     }
 
-    pub fn check(&mut self, token: &TokenType) -> bool {
+    pub fn check(&self, token: &TokenType) -> bool {
         if self.is_at_end() {
             return false;
         }
@@ -97,37 +113,25 @@ impl<'a> Parser<'a> {
     }
 
     pub fn is_at_end(&self) -> bool {
-        println!("current index: {:?}", self.current);
         self.current >= self.tokens.len() - 1
     }
 
-    pub fn peek(&mut self) -> &Token {
+    pub fn peek(&self) -> &Token {
         &self.tokens[self.current]
     }
 
-    pub fn previous_as_node(&self) -> Node<'a> {
-        let idx = self.previous_idx();
-        let token = &self.tokens[idx];
-        Node {
-            value: token.lexme,
-            offset: token.offset,
-            kind: token.kind,
-        }
-    }
-
-    pub fn previous(&mut self) -> &Token {
-        &self.tokens[self.current - 1]
+    pub fn previous(&self) -> Node<'a> {
+        (&self.tokens[self.current - 1]).into()
     }
 
     pub fn previous_idx(&self) -> usize {
         self.current - 1
     }
 
-    pub fn advance(&mut self) -> &Token {
+    pub fn advance(&mut self) {
         if self.tokens.len() >= self.current {
             self.current += 1;
         }
-        self.previous()
     }
 
     pub fn consume(&mut self, token: TokenType, message: &'a str) -> Result<usize, ParseError> {
