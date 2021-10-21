@@ -6,6 +6,7 @@ mod parser;
 mod statement;
 mod token;
 mod tokenizer;
+mod symbol;
 
 pub mod wasm;
 

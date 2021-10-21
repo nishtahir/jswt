@@ -2,6 +2,7 @@ use crate::errors::ParseError;
 use crate::expression::{Expr, LiteralExpr};
 use crate::node::Node;
 use crate::statement::Statement;
+use crate::symbol::Symbol;
 use crate::token::{Token, TokenType};
 
 pub struct Parser<'a> {
@@ -79,6 +80,9 @@ impl<'a> Parser<'a> {
             .unwrap();
         let ident = self.previous();
         self.consume(TokenType::LeftParen, "Expected '('").unwrap();
+
+        let parameters = self.parameters().unwrap();
+
         self.consume(TokenType::RightParen, "Expected ')'").unwrap();
 
         let mut return_type = Option::None;
@@ -91,7 +95,28 @@ impl<'a> Parser<'a> {
         }
 
         let body = self.block().unwrap();
-        Ok(Statement::function(ident, body, return_type))
+        Ok(Statement::function(ident, parameters, return_type, body))
+    }
+
+    pub fn parameters(&mut self) -> Result<Vec<Symbol<'a>>, ParseError> {
+        let mut params = vec![];
+
+        if !self.check(&TokenType::RightParen) {
+            loop {
+                self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
+                    .unwrap();
+                let name = self.previous();
+                self.consume(TokenType::Colon, "Expected 'COLON'").unwrap();
+                self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
+                    .unwrap();
+
+                params.push(Symbol { name });
+                if !self.check(&TokenType::Comma) {
+                    break;
+                }
+            }
+        }
+        Ok(params)
     }
 
     pub fn block(&mut self) -> Result<Statement<'a>, ParseError> {
@@ -224,23 +249,43 @@ mod test {
         let actual = Parser::new(tokens).parse().unwrap();
         let expected = vec![Statement::function(
             Node::new("test", 9, TokenType::Identifier),
-            Statement::block(vec![]),
+            vec![],
             None,
+            Statement::block(vec![]),
         )];
 
         assert_eq!(expected, actual);
     }
 
     #[test]
-    fn test_function_declaration_statement_with_return_value() {
+    fn test_function_declaration_statement_with_no_params_with_return_value() {
         let tokens = Tokenizer::new("function test(): i32 { }")
             .tokenize()
             .unwrap();
         let actual = Parser::new(tokens).parse().unwrap();
         let expected = vec![Statement::function(
             Node::new("test", 9, TokenType::Identifier),
+            vec![],
+            Some(Node::new("i32", 17, TokenType::Identifier)),
             Statement::block(vec![]),
-            None,
+        )];
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_function_declaration_statement_with_params_with_return_value() {
+        let tokens = Tokenizer::new("function test(a: i32): i32 { }")
+            .tokenize()
+            .unwrap();
+        let actual = Parser::new(tokens).parse().unwrap();
+        let expected = vec![Statement::function(
+            Node::new("test", 9, TokenType::Identifier),
+            vec![Symbol {
+                name: Node::new("a", 14, TokenType::Identifier),
+            }],
+            Some(Node::new("i32", 23, TokenType::Identifier)),
+            Statement::block(vec![]),
         )];
 
         assert_eq!(expected, actual);

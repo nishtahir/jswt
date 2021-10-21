@@ -1,4 +1,4 @@
-use crate::{expression::Expr, node::Node};
+use crate::{expression::Expr, node::Node, symbol::Symbol};
 
 #[derive(Debug, PartialEq)]
 
@@ -22,9 +22,15 @@ impl<'a> Statement<'a> {
         Statement::Block(BlockStmt { statements })
     }
 
-    pub fn function(ident: Node<'a>, body: Statement<'a>, returns: Option<Node<'a>>) -> Self {
+    pub fn function(
+        ident: Node<'a>,
+        parameters: Vec<Symbol<'a>>,
+        returns: Option<Node<'a>>,
+        body: Statement<'a>,
+    ) -> Self {
         Statement::Function(FunctionStmt {
             ident,
+            parameters,
             body: Box::new(body),
             returns,
         })
@@ -34,6 +40,7 @@ impl<'a> Statement<'a> {
 #[derive(Debug, PartialEq)]
 pub struct FunctionStmt<'a> {
     ident: Node<'a>,
+    parameters: Vec<Symbol<'a>>,
     body: Box<Statement<'a>>,
     returns: Option<Node<'a>>,
 }
