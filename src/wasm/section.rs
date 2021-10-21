@@ -4,11 +4,16 @@ use super::Serialize;
 
 pub enum Section {
     Type(TypeSection),
+    Function(FunctionSection),
 }
 
 impl Section {
     pub fn type_section() -> Self {
         Section::Type(TypeSection::new())
+    }
+
+    pub fn function_section() -> Self {
+        Section::Function(FunctionSection::new())
     }
 }
 
@@ -16,6 +21,7 @@ impl Serialize for Section {
     fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
         match self {
             Section::Type(inner) => inner.serialize(),
+            Section::Function(inner) => inner.serialize(),
         }
     }
 }
@@ -56,8 +62,43 @@ impl Serialize for TypeSection {
         // Write section data
         buf.write(&types)?;
 
-        // Encode type data
-        // encode(&mut buf, &types)?;
+        Ok(buf)
+    }
+}
+
+pub struct FunctionSection {
+    functions: Vec<FunctionType>,
+}
+
+impl FunctionSection {
+    pub fn new() -> Self {
+        FunctionSection {
+            functions: vec![FunctionType {
+                params: vec![ValType::I32, ValType::I32],
+                ret: ValType::I32,
+            }],
+        }
+    }
+}
+
+impl Serialize for FunctionSection {
+    fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
+        let indexes: Vec<u8> = self
+            .functions
+            .iter()
+            .enumerate()
+            .map(|(i, _)| i as u8)
+            .collect();
+
+        let mut buf = vec![
+            0x03,                       // Section Id
+            (indexes.len() + 1) as u8,  // Size of the section
+            self.functions.len() as u8, // Add number of declared functions
+        ];
+
+        // Encode indexes
+        buf.write(&indexes)?;
+
         Ok(buf)
     }
 }
@@ -195,5 +236,42 @@ mod test {
         };
         let actual = function.serialize().unwrap();
         assert_eq!(actual, [0x60, 0x00, 0x00]);
+    }
+
+    #[test]
+    fn test_serialize_function_section_with_no_functions() {
+        let function = FunctionSection { functions: vec![] };
+        let actual = function.serialize().unwrap();
+        assert_eq!(actual, [0x03, 0x01, 0x00]);
+    }
+
+    #[test]
+    fn test_serialize_function_section_with_1_void_function() {
+        let function = FunctionSection {
+            functions: vec![FunctionType {
+                params: vec![],
+                ret: ValType::Void,
+            }],
+        };
+        let actual = function.serialize().unwrap();
+        assert_eq!(actual, [0x03, 0x02, 0x01, 0x00]);
+    }
+
+    #[test]
+    fn test_serialize_function_section_with_2_functions() {
+        let function = FunctionSection {
+            functions: vec![
+                FunctionType {
+                    params: vec![ValType::I32, ValType::I32],
+                    ret: ValType::I32,
+                },
+                FunctionType {
+                    params: vec![],
+                    ret: ValType::Void,
+                },
+            ],
+        };
+        let actual = function.serialize().unwrap();
+        assert_eq!(actual, [0x03, 0x03, 0x2, 0x00, 0x01]);
     }
 }

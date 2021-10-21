@@ -19,7 +19,7 @@ pub struct Module {
 impl Module {
     pub fn new() -> Self {
         Self {
-            segments: vec![Section::type_section()],
+            segments: vec![Section::type_section(), Section::function_section()],
         }
     }
 }
