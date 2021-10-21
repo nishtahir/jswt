@@ -1,4 +1,4 @@
-use crate::expression::Expr;
+use crate::{expression::Expr, node::Node};
 
 #[derive(Debug, PartialEq)]
 
@@ -6,6 +6,7 @@ pub enum Statement<'a> {
     Print(PrintStmt<'a>),
     Variable(VariableDeclarationStmt<'a>),
     Block(BlockStmt<'a>),
+    Function(FunctionStmt<'a>),
 }
 
 impl<'a> Statement<'a> {
@@ -20,6 +21,19 @@ impl<'a> Statement<'a> {
     pub fn block(statements: Vec<Statement<'a>>) -> Self {
         Statement::Block(BlockStmt { statements })
     }
+
+    pub fn function(ident: Node<'a>, body: Statement<'a>) -> Self {
+        Statement::Function(FunctionStmt {
+            ident,
+            body: Box::new(body),
+        })
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct FunctionStmt<'a> {
+    ident: Node<'a>,
+    body: Box<Statement<'a>>,
 }
 
 #[derive(Debug, PartialEq)]

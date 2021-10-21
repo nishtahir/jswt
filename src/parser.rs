@@ -20,7 +20,6 @@ impl<'a> Parser<'a> {
             let statement = self.statement().unwrap();
             statements.push(statement)
         }
-
         Ok(statements)
     }
 
@@ -31,6 +30,10 @@ impl<'a> Parser<'a> {
 
         if self.check(&TokenType::Print) {
             return self.print_statement();
+        }
+
+        if self.check(&TokenType::Function) {
+            return self.function();
         }
 
         if self.check(&TokenType::LeftBrace) {
@@ -57,13 +60,29 @@ impl<'a> Parser<'a> {
         // trying to return a ref to the token here creates a
         // cannot borrow `*self` as mutable more than once at a time
         // since we need to borrow self to parse the expression
-        let ident_idx = &self.consume(TokenType::Identifier, "message").unwrap();
+        let ident_idx = &self
+            .consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
+            .unwrap();
+
         self.consume(TokenType::Equal, "Expected '='").unwrap();
         let expr = self.expression()?;
 
         // Expected let
         let ident = &self.tokens[*ident_idx];
         Ok(Statement::variable(ident.lexme, expr))
+    }
+
+    pub fn function(&mut self) -> Result<Statement<'a>, ParseError> {
+        self.consume(TokenType::Function, "Expected 'function'")
+            .unwrap();
+        self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
+            .unwrap();
+        let ident = self.previous();
+        self.consume(TokenType::LeftParen, "Expected '('").unwrap();
+        self.consume(TokenType::RightParen, "Expected ')'").unwrap();
+
+        let body = self.block().unwrap();
+        Ok(Statement::function(ident, body))
     }
 
     pub fn block(&mut self) -> Result<Statement<'a>, ParseError> {
@@ -172,6 +191,20 @@ mod test {
             "user",
             Expr::literal(Node::new("test", 12, TokenType::String)),
         )];
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_block_declaration_statement() {
+        let tokens = Tokenizer::new("{ let user = \"test\" }")
+            .tokenize()
+            .unwrap();
+        let actual = Parser::new(tokens).parse().unwrap();
+        let expected = vec![Statement::block(vec![Statement::variable(
+            "user",
+            Expr::literal(Node::new("test", 14, TokenType::String)),
+        )])];
 
         assert_eq!(expected, actual);
     }

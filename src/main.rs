@@ -2,6 +2,8 @@
 extern crate clap;
 
 use clap::Arg;
+use jswt::wasm::Module;
+use jswt::wasm::Serialize;
 use jswt::Parser;
 use jswt::Tokenizer;
 use std::env;
@@ -29,5 +31,12 @@ fn main() {
         let ast = Parser::new(tokens).parse().unwrap();
 
         println!("{:#?}", ast);
+
+        let module = Module::new();
+        let bin = module.serialize().unwrap();
+
+        // to test decompilation
+        // use https://webassembly.github.io/wabt/demo/wasm2wat/
+        fs::write("test.wasm", bin).unwrap();
     }
 }

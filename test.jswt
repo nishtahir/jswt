@@ -1,3 +1,7 @@
 print("hello world")
 print(1)
 let test = "expression"
+
+function functionname() {
+    print("test")
+}
