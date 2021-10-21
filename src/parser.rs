@@ -81,8 +81,17 @@ impl<'a> Parser<'a> {
         self.consume(TokenType::LeftParen, "Expected '('").unwrap();
         self.consume(TokenType::RightParen, "Expected ')'").unwrap();
 
+        let mut return_type = Option::None;
+        if self.check(&TokenType::Colon) {
+            self.consume(TokenType::Colon, "Expected 'function'")
+                .unwrap();
+            self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
+                .unwrap();
+            return_type = Some(self.previous());
+        }
+
         let body = self.block().unwrap();
-        Ok(Statement::function(ident, body))
+        Ok(Statement::function(ident, body, return_type))
     }
 
     pub fn block(&mut self) -> Result<Statement<'a>, ParseError> {
@@ -205,6 +214,34 @@ mod test {
             "user",
             Expr::literal(Node::new("test", 14, TokenType::String)),
         )])];
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_void_function_declaration_statement() {
+        let tokens = Tokenizer::new("function test() { }").tokenize().unwrap();
+        let actual = Parser::new(tokens).parse().unwrap();
+        let expected = vec![Statement::function(
+            Node::new("test", 9, TokenType::Identifier),
+            Statement::block(vec![]),
+            None,
+        )];
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_function_declaration_statement_with_return_value() {
+        let tokens = Tokenizer::new("function test(): i32 { }")
+            .tokenize()
+            .unwrap();
+        let actual = Parser::new(tokens).parse().unwrap();
+        let expected = vec![Statement::function(
+            Node::new("test", 9, TokenType::Identifier),
+            Statement::block(vec![]),
+            None,
+        )];
 
         assert_eq!(expected, actual);
     }

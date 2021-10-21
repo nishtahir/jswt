@@ -22,10 +22,11 @@ impl<'a> Statement<'a> {
         Statement::Block(BlockStmt { statements })
     }
 
-    pub fn function(ident: Node<'a>, body: Statement<'a>) -> Self {
+    pub fn function(ident: Node<'a>, body: Statement<'a>, returns: Option<Node<'a>>) -> Self {
         Statement::Function(FunctionStmt {
             ident,
             body: Box::new(body),
+            returns,
         })
     }
 }
@@ -34,6 +35,7 @@ impl<'a> Statement<'a> {
 pub struct FunctionStmt<'a> {
     ident: Node<'a>,
     body: Box<Statement<'a>>,
+    returns: Option<Node<'a>>,
 }
 
 #[derive(Debug, PartialEq)]

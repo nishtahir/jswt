@@ -44,6 +44,10 @@ impl<'a> Tokenizer<'a> {
                     let token = self.read_token(TokenType::Semi)?;
                     tokens.push(token);
                 }
+                ':' => {
+                    let token = self.read_token(TokenType::Colon)?;
+                    tokens.push(token);
+                }
                 '<' | '>' | '/' | '=' => {
                     let token = self.read_operator()?;
                     tokens.push(token);
@@ -112,7 +116,7 @@ impl<'a> Tokenizer<'a> {
         let mut end = start;
 
         while let Some(&ch) = self.iter.peek() {
-            if !ch.is_alphabetic() && ch != '.' {
+            if !ch.is_alphanumeric() && ch != '.' {
                 break;
             }
             end += 1;
@@ -369,6 +373,17 @@ mod test {
             Token::new("user", TokenType::Identifier, 0),
             Token::new("identifier", TokenType::Identifier, 5),
             Token::eof(15),
+        ];
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_tokenize_alphanumeric_identifiers() {
+        let mut tokenizer = Tokenizer::new("i32");
+        let actual = tokenizer.tokenize().unwrap();
+        let expected: Vec<Token> = vec![
+            Token::new("i32", TokenType::Identifier, 0),
+            Token::eof(3),
         ];
         assert_eq!(expected, actual);
     }

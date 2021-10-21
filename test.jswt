@@ -2,6 +2,6 @@ print("hello world")
 print(1)
 let test = "expression"
 
-function functionname() {
+function functionname() : i32 {
     print("test")
 }

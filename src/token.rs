@@ -39,6 +39,7 @@ pub enum TokenType {
     Comma,
     Dot,
     Semi,
+    Colon,
 
     // One or two character tokens
     Less,
