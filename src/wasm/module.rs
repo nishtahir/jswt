@@ -1,4 +1,6 @@
-use crate::wasm::section::TypeSection;
+use crate::ast::statement::Statement;
+use crate::ast::Ast;
+use crate::wasm::section::FunctionType;
 
 use super::section::Section;
 use super::Serialize;
@@ -9,7 +11,6 @@ use std::vec;
 /// https://webassembly.github.io/spec/core/binary/modules.html#binary-module
 
 pub const MODULE_HEADER: &[u8] = &[0x00, 0x61, 0x73, 0x6d];
-
 pub const MODULE_VERSION: &[u8] = &[0x01, 0x00, 0x00, 0x00];
 
 pub struct Module {
@@ -17,9 +18,18 @@ pub struct Module {
 }
 
 impl Module {
-    pub fn new() -> Self {
+    pub fn new(ast: Ast) -> Self {
+        let types: Vec<FunctionType> = ast
+            .statements
+            .iter()
+            .filter_map(|statement| statement.as_function())
+            .map(|function| function.into())
+            .collect();
         Self {
-            segments: vec![Section::type_section(), Section::function_section()],
+            segments: vec![
+                Section::type_section(types),
+                // Section::function_section()
+            ],
         }
     }
 }

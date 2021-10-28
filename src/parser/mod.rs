@@ -1,8 +1,12 @@
+use crate::ast::expression::Expr;
+use crate::ast::function::Param;
+use crate::ast::ident::Ident;
+use crate::ast::node::Node;
+use crate::ast::span::Span;
+use crate::ast::statement::Statement;
+use crate::ast::types::Type;
+use crate::ast::Ast;
 use crate::errors::ParseError;
-use crate::expression::{Expr, LiteralExpr};
-use crate::node::Node;
-use crate::statement::Statement;
-use crate::symbol::Symbol;
 use crate::token::{Token, TokenType};
 
 pub struct Parser<'a> {
@@ -15,13 +19,13 @@ impl<'a> Parser<'a> {
         Self { tokens, current: 0 }
     }
 
-    pub fn parse(&mut self) -> Result<Vec<Statement<'a>>, ParseError> {
+    pub fn parse(&mut self) -> Result<Ast<'a>, ParseError> {
         let mut statements = Vec::new();
         while !self.is_at_end() {
             let statement = self.statement().unwrap();
             statements.push(statement)
         }
-        Ok(statements)
+        Ok(Ast { statements })
     }
 
     pub fn statement(&mut self) -> Result<Statement<'a>, ParseError> {
@@ -46,17 +50,21 @@ impl<'a> Parser<'a> {
 
     /// print(expression)
     pub fn print_statement(&mut self) -> Result<Statement<'a>, ParseError> {
-        self.consume(TokenType::Print, "Expected print").unwrap();
+        let start = self.consume(TokenType::Print, "Expected print").unwrap();
         self.consume(TokenType::LeftParen, "Expected (").unwrap();
         let expr = self.expression()?;
-        self.consume(TokenType::RightParen, "Expected )").unwrap();
+        let end = self.consume(TokenType::RightParen, "Expected )").unwrap();
 
-        Ok(Statement::print(expr))
+        Ok(Statement::print(
+            expr,
+            self.span_from_index(start).start,
+            self.span_from_index(end).end,
+        ))
     }
 
     /// let ident = expression
     pub fn variable_statement(&mut self) -> Result<Statement<'a>, ParseError> {
-        self.consume(TokenType::Let, "Expected let").unwrap();
+        let let_keyword_idx = self.consume(TokenType::Let, "Expected let").unwrap();
 
         // trying to return a ref to the token here creates a
         // cannot borrow `*self` as mutable more than once at a time
@@ -68,9 +76,10 @@ impl<'a> Parser<'a> {
         self.consume(TokenType::Equal, "Expected '='").unwrap();
         let expr = self.expression()?;
 
-        // Expected let
         let ident = &self.tokens[*ident_idx];
-        Ok(Statement::variable(ident.lexme, expr))
+        let start = self.span_from_index(let_keyword_idx);
+        let end = self.span_from_index(self.previous_idx());
+        Ok(Statement::variable(ident.lexme, expr, start.start, end.end))
     }
 
     pub fn function(&mut self) -> Result<Statement<'a>, ParseError> {
@@ -78,42 +87,49 @@ impl<'a> Parser<'a> {
             .unwrap();
         self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
             .unwrap();
-        let ident = self.previous();
+        let ident = self.previous_ident();
         self.consume(TokenType::LeftParen, "Expected '('").unwrap();
 
         let parameters = self.parameters().unwrap();
 
         self.consume(TokenType::RightParen, "Expected ')'").unwrap();
 
-        let mut return_type = Option::None;
+        let mut return_type = Type::void(self.span_from_index(self.current));
         if self.check(&TokenType::Colon) {
             self.consume(TokenType::Colon, "Expected 'function'")
                 .unwrap();
             self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
                 .unwrap();
-            return_type = Some(self.previous());
+            return_type = self.previous_type();
         }
 
         let body = self.block().unwrap();
+
         Ok(Statement::function(ident, parameters, return_type, body))
     }
 
-    pub fn parameters(&mut self) -> Result<Vec<Symbol<'a>>, ParseError> {
+    pub fn parameters(&mut self) -> Result<Vec<Param<'a>>, ParseError> {
         let mut params = vec![];
 
         if !self.check(&TokenType::RightParen) {
             loop {
                 self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
                     .unwrap();
-                let name = self.previous();
+                let ident = self.previous_ident();
                 self.consume(TokenType::Colon, "Expected 'COLON'").unwrap();
                 self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
                     .unwrap();
+                let ty = self.previous_type();
 
-                params.push(Symbol { name });
+                // let binding to the values because
+                // move semantics can be silly sometimes
+                let start = ident.span.start;
+                let end = ty.span.end;
+                params.push(Param::new(ident, ty, start, end));
                 if !self.check(&TokenType::Comma) {
                     break;
                 }
+                self.consume(TokenType::Comma, "Expected 'COMMA'").unwrap();
             }
         }
         Ok(params)
@@ -135,14 +151,19 @@ impl<'a> Parser<'a> {
     }
 
     pub fn primary(&mut self) -> Result<Expr<'a>, ParseError<'a>> {
-        if self.match_alt(&[
-            TokenType::False,
-            TokenType::True,
-            TokenType::Number,
-            TokenType::String,
-        ]) {
+        if self.match_alt(&[TokenType::False, TokenType::True]) {
             let node = self.previous();
-            return Ok(LiteralExpr::new(node).into());
+            return Ok(Expr::boolean(node));
+        }
+
+        if self.match_alt(&[TokenType::Number]) {
+            let node = self.previous();
+            return Ok(Expr::number(node));
+        }
+
+        if self.match_alt(&[TokenType::String]) {
+            let node = self.previous();
+            return Ok(Expr::string(node));
         }
 
         todo!()
@@ -173,8 +194,24 @@ impl<'a> Parser<'a> {
         &self.tokens[self.current]
     }
 
+    pub fn span_from_index(&self, idx: usize) -> Span {
+        let token = &self.tokens[idx];
+        return Span::new(token.offset, token.offset + token.lexme.len());
+    }
+
+    pub fn previous_ident(&self) -> Ident<'a> {
+        let token = &self.tokens[self.current - 1];
+        Ident::new(token.lexme, token.offset, token.offset + token.lexme.len())
+    }
+
+    pub fn previous_type(&self) -> Type<'a> {
+        let token = &self.tokens[self.current - 1];
+        Type::new(token.lexme, token.offset, token.offset + token.lexme.len())
+    }
+
     pub fn previous(&self) -> Node<'a> {
-        (&self.tokens[self.current - 1]).into()
+        let token = &self.tokens[self.current - 1];
+        Node::new(token.lexme, token.offset, token.offset + token.lexme.len())
     }
 
     pub fn previous_idx(&self) -> usize {
@@ -200,19 +237,20 @@ impl<'a> Parser<'a> {
 #[cfg(test)]
 mod test {
 
-    use crate::{token::TokenType, Tokenizer};
+    use crate::Tokenizer;
 
     use super::*;
 
     #[test]
     fn test_print_statement() {
         let tokens = Tokenizer::new("print(\"test\")").tokenize().unwrap();
-        let actual = Parser::new(tokens).parse().unwrap();
-        let expected = vec![Statement::print(Expr::literal(Node::new(
-            "test",
-            7,
-            TokenType::String,
-        )))];
+
+        let actual = Parser::new(tokens).parse().unwrap().statements;
+        let expected = vec![Statement::print(
+            Expr::string(Node::new("test", 7, 11)),
+            0,
+            13,
+        )];
 
         assert_eq!(expected, actual);
     }
@@ -220,10 +258,12 @@ mod test {
     #[test]
     fn test_variable_declaration_statement() {
         let tokens = Tokenizer::new("let user = \"test\"").tokenize().unwrap();
-        let actual = Parser::new(tokens).parse().unwrap();
+        let actual = Parser::new(tokens).parse().unwrap().statements;
         let expected = vec![Statement::variable(
             "user",
-            Expr::literal(Node::new("test", 12, TokenType::String)),
+            Expr::string(Node::new("test", 12, 16)),
+            0,
+            16,
         )];
 
         assert_eq!(expected, actual);
@@ -234,10 +274,12 @@ mod test {
         let tokens = Tokenizer::new("{ let user = \"test\" }")
             .tokenize()
             .unwrap();
-        let actual = Parser::new(tokens).parse().unwrap();
+        let actual = Parser::new(tokens).parse().unwrap().statements;
         let expected = vec![Statement::block(vec![Statement::variable(
             "user",
-            Expr::literal(Node::new("test", 14, TokenType::String)),
+            Expr::string(Node::new("test", 14, 18)),
+            2,
+            18,
         )])];
 
         assert_eq!(expected, actual);
@@ -246,11 +288,11 @@ mod test {
     #[test]
     fn test_void_function_declaration_statement() {
         let tokens = Tokenizer::new("function test() { }").tokenize().unwrap();
-        let actual = Parser::new(tokens).parse().unwrap();
+        let actual = Parser::new(tokens).parse().unwrap().statements;
         let expected = vec![Statement::function(
-            Node::new("test", 9, TokenType::Identifier),
+            Ident::new("test", 9, 13),
             vec![],
-            None,
+            Type::void(Span::new(16, 17)),
             Statement::block(vec![]),
         )];
 
@@ -262,11 +304,11 @@ mod test {
         let tokens = Tokenizer::new("function test(): i32 { }")
             .tokenize()
             .unwrap();
-        let actual = Parser::new(tokens).parse().unwrap();
+        let actual = Parser::new(tokens).parse().unwrap().statements;
         let expected = vec![Statement::function(
-            Node::new("test", 9, TokenType::Identifier),
+            Ident::new("test", 9, 13),
             vec![],
-            Some(Node::new("i32", 17, TokenType::Identifier)),
+            Type::new("i32", 17, 20),
             Statement::block(vec![]),
         )];
 
@@ -274,17 +316,20 @@ mod test {
     }
 
     #[test]
-    fn test_function_declaration_statement_with_params_with_return_value() {
+    fn test_function_declaration_statement_with_params_and_return_value() {
         let tokens = Tokenizer::new("function test(a: i32): i32 { }")
             .tokenize()
             .unwrap();
-        let actual = Parser::new(tokens).parse().unwrap();
+        let actual = Parser::new(tokens).parse().unwrap().statements;
         let expected = vec![Statement::function(
-            Node::new("test", 9, TokenType::Identifier),
-            vec![Symbol {
-                name: Node::new("a", 14, TokenType::Identifier),
-            }],
-            Some(Node::new("i32", 23, TokenType::Identifier)),
+            Ident::new("test", 9, 13),
+            vec![Param::new(
+                Ident::new("a", 14, 15),
+                Type::new("i32", 17, 20),
+                14,
+                20,
+            )],
+            Type::new("i32", 23, 26),
             Statement::block(vec![]),
         )];
 

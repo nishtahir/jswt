@@ -32,7 +32,7 @@ fn main() {
 
         println!("{:#?}", ast);
 
-        let module = Module::new();
+        let module = Module::new(ast);
         let bin = module.serialize().unwrap();
 
         // to test decompilation

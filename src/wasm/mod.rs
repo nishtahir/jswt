@@ -1,3 +1,4 @@
+mod convert;
 mod encoding;
 mod leb128;
 mod module;

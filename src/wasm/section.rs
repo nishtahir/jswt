@@ -5,15 +5,20 @@ use super::Serialize;
 pub enum Section {
     Type(TypeSection),
     Function(FunctionSection),
+    Export(ExportSection),
 }
 
 impl Section {
-    pub fn type_section() -> Self {
-        Section::Type(TypeSection::new())
+    pub fn type_section(functions: Vec<FunctionType>) -> Self {
+        Section::Type(TypeSection::new(functions))
     }
 
     pub fn function_section() -> Self {
         Section::Function(FunctionSection::new())
+    }
+
+    pub fn export_section() -> Self {
+        Section::Export(ExportSection::new())
     }
 }
 
@@ -22,6 +27,7 @@ impl Serialize for Section {
         match self {
             Section::Type(inner) => inner.serialize(),
             Section::Function(inner) => inner.serialize(),
+            Section::Export(inner) => inner.serialize(),
         }
     }
 }
@@ -32,13 +38,8 @@ pub struct TypeSection {
 }
 
 impl TypeSection {
-    pub fn new() -> Self {
-        TypeSection {
-            functions: vec![FunctionType {
-                params: vec![ValType::I32, ValType::I32],
-                ret: ValType::I32,
-            }],
-        }
+    pub fn new(functions: Vec<FunctionType>) -> Self {
+        TypeSection { functions }
     }
 }
 
@@ -74,6 +75,7 @@ impl FunctionSection {
     pub fn new() -> Self {
         FunctionSection {
             functions: vec![FunctionType {
+                export: false,
                 params: vec![ValType::I32, ValType::I32],
                 ret: ValType::I32,
             }],
@@ -103,7 +105,21 @@ impl Serialize for FunctionSection {
     }
 }
 
-enum ValType {
+pub struct ExportSection {}
+
+impl ExportSection {
+    pub fn new() -> Self {
+        ExportSection {}
+    }
+}
+
+impl Serialize for ExportSection {
+    fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
+        todo!()
+    }
+}
+
+pub enum ValType {
     I32,
     F32,
     Void,
@@ -129,9 +145,10 @@ impl From<ValType> for u8 {
     }
 }
 
-struct FunctionType {
-    params: Vec<ValType>,
-    ret: ValType,
+pub struct FunctionType {
+    pub export: bool,
+    pub params: Vec<ValType>,
+    pub ret: ValType,
 }
 
 impl Serialize for FunctionType {
@@ -174,6 +191,7 @@ mod test {
     fn test_serialize_type_section() {
         let section = TypeSection {
             functions: vec![FunctionType {
+                export: false,
                 params: vec![ValType::I32, ValType::I32],
                 ret: ValType::I32,
             }],
@@ -191,10 +209,12 @@ mod test {
         let section = TypeSection {
             functions: vec![
                 FunctionType {
+                    export: false,
                     params: vec![ValType::I32, ValType::I32],
                     ret: ValType::I32,
                 },
                 FunctionType {
+                    export: false,
                     params: vec![],
                     ret: ValType::Void,
                 },
@@ -211,6 +231,7 @@ mod test {
     #[test]
     fn test_serialize_function_type_with_2_i32_params() {
         let function = FunctionType {
+            export: false,
             params: vec![ValType::I32, ValType::I32],
             ret: ValType::I32,
         };
@@ -221,6 +242,7 @@ mod test {
     #[test]
     fn test_serialize_void_function_type_with_2_i32_params() {
         let function = FunctionType {
+            export: false,
             params: vec![ValType::I32, ValType::I32],
             ret: ValType::Void,
         };
@@ -231,6 +253,7 @@ mod test {
     #[test]
     fn test_serialize_void_function_type_with_0_params() {
         let function = FunctionType {
+            export: false,
             params: vec![],
             ret: ValType::Void,
         };
@@ -249,6 +272,7 @@ mod test {
     fn test_serialize_function_section_with_1_void_function() {
         let function = FunctionSection {
             functions: vec![FunctionType {
+                export: false,
                 params: vec![],
                 ret: ValType::Void,
             }],
@@ -262,10 +286,12 @@ mod test {
         let function = FunctionSection {
             functions: vec![
                 FunctionType {
+                    export: false,
                     params: vec![ValType::I32, ValType::I32],
                     ret: ValType::I32,
                 },
                 FunctionType {
+                    export: false,
                     params: vec![],
                     ret: ValType::Void,
                 },
