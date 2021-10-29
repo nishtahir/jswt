@@ -2,48 +2,54 @@ use std::{error::Error, io::Write};
 
 use super::Serialize;
 
-pub enum Section {
-    Type(TypeSection),
-    Function(FunctionSection),
-    Export(ExportSection),
+pub enum Section<'a> {
+    Type(TypeSection<'a>),
+    Function(FunctionSection<'a>),
+    Export(ExportSection<'a>),
+    Code(CodeSection),
 }
 
-impl Section {
-    pub fn type_section(functions: Vec<FunctionType>) -> Self {
+impl<'a> Section<'a> {
+    pub fn type_section(functions: Vec<FunctionType<'a>>) -> Self {
         Section::Type(TypeSection::new(functions))
     }
 
-    pub fn function_section() -> Self {
-        Section::Function(FunctionSection::new())
+    pub fn function_section(functions: Vec<FunctionType<'a>>) -> Self {
+        Section::Function(FunctionSection::new(functions))
     }
 
-    pub fn export_section() -> Self {
-        Section::Export(ExportSection::new())
+    pub fn export_section(functions: Vec<FunctionType<'a>>) -> Self {
+        Section::Export(ExportSection::new(functions))
+    }
+
+    pub fn code_section() -> Self {
+        Section::Code(CodeSection::new())
     }
 }
 
-impl Serialize for Section {
+impl<'a> Serialize for Section<'a> {
     fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
         match self {
             Section::Type(inner) => inner.serialize(),
             Section::Function(inner) => inner.serialize(),
             Section::Export(inner) => inner.serialize(),
+            Section::Code(inner) => inner.serialize(),
         }
     }
 }
 
 /// https://webassembly.github.io/spec/core/binary/modules.html#type-section
-pub struct TypeSection {
-    functions: Vec<FunctionType>,
+pub struct TypeSection<'a> {
+    functions: Vec<FunctionType<'a>>,
 }
 
-impl TypeSection {
-    pub fn new(functions: Vec<FunctionType>) -> Self {
+impl<'a> TypeSection<'a> {
+    pub fn new(functions: Vec<FunctionType<'a>>) -> Self {
         TypeSection { functions }
     }
 }
 
-impl Serialize for TypeSection {
+impl<'a> Serialize for TypeSection<'a> {
     fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
         // Build type data
         let types: Vec<u8> = self
@@ -67,23 +73,17 @@ impl Serialize for TypeSection {
     }
 }
 
-pub struct FunctionSection {
-    functions: Vec<FunctionType>,
+pub struct FunctionSection<'a> {
+    functions: Vec<FunctionType<'a>>,
 }
 
-impl FunctionSection {
-    pub fn new() -> Self {
-        FunctionSection {
-            functions: vec![FunctionType {
-                export: false,
-                params: vec![ValType::I32, ValType::I32],
-                ret: ValType::I32,
-            }],
-        }
+impl<'a> FunctionSection<'a> {
+    pub fn new(functions: Vec<FunctionType<'a>>) -> Self {
+        FunctionSection { functions }
     }
 }
 
-impl Serialize for FunctionSection {
+impl<'a> Serialize for FunctionSection<'a> {
     fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
         let indexes: Vec<u8> = self
             .functions
@@ -105,17 +105,67 @@ impl Serialize for FunctionSection {
     }
 }
 
-pub struct ExportSection {}
+pub struct ExportSection<'a> {
+    functions: Vec<FunctionType<'a>>,
+}
 
-impl ExportSection {
-    pub fn new() -> Self {
-        ExportSection {}
+impl<'a> ExportSection<'a> {
+    pub fn new(functions: Vec<FunctionType<'a>>) -> Self {
+        ExportSection { functions }
+    }
+
+    fn export_description((index, function): (usize, &FunctionType)) -> Vec<u8> {
+        let mut desc: Vec<u8> = vec![];
+
+        desc.push(function.name.len() as u8);
+        desc.write(function.name.as_bytes()).unwrap();
+
+        // Function export identifier
+        desc.push(0x00);
+        // index function index
+        desc.push(index as u8);
+        desc
     }
 }
 
-impl Serialize for ExportSection {
+impl<'a> Serialize for ExportSection<'a> {
     fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
-        todo!()
+        // for now export everything
+        let exports = self.functions.len();
+
+        let indexes: Vec<u8> = self
+            .functions
+            .iter()
+            .enumerate()
+            .map(Self::export_description)
+            .flatten()
+            .collect();
+
+        let mut buf = vec![
+            0x07,                      // Section Id
+            (indexes.len() + 1) as u8, // Size of the section
+            exports as u8,             // Add number of exports functions
+        ];
+
+        // Encode indexes
+        buf.write(&indexes)?;
+
+        Ok(buf)
+    }
+}
+
+pub struct CodeSection {}
+
+impl CodeSection {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl<'a> Serialize for CodeSection {
+    fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
+        let test = vec![0x0a, 0x07, 0x01, 0x05, 0x00, 0x41, 0x2a, 0x0f, 0x0b];
+        Ok(test)
     }
 }
 
@@ -145,13 +195,14 @@ impl From<ValType> for u8 {
     }
 }
 
-pub struct FunctionType {
+pub struct FunctionType<'a> {
+    pub name: &'a str,
     pub export: bool,
     pub params: Vec<ValType>,
     pub ret: ValType,
 }
 
-impl Serialize for FunctionType {
+impl<'a> Serialize for FunctionType<'a> {
     fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
         let mut res = vec![
             0x60u8, // Function type ID
@@ -191,6 +242,7 @@ mod test {
     fn test_serialize_type_section() {
         let section = TypeSection {
             functions: vec![FunctionType {
+                name: "",
                 export: false,
                 params: vec![ValType::I32, ValType::I32],
                 ret: ValType::I32,
@@ -209,11 +261,13 @@ mod test {
         let section = TypeSection {
             functions: vec![
                 FunctionType {
+                    name: "",
                     export: false,
                     params: vec![ValType::I32, ValType::I32],
                     ret: ValType::I32,
                 },
                 FunctionType {
+                    name: "",
                     export: false,
                     params: vec![],
                     ret: ValType::Void,
@@ -231,6 +285,7 @@ mod test {
     #[test]
     fn test_serialize_function_type_with_2_i32_params() {
         let function = FunctionType {
+            name: "",
             export: false,
             params: vec![ValType::I32, ValType::I32],
             ret: ValType::I32,
@@ -242,6 +297,7 @@ mod test {
     #[test]
     fn test_serialize_void_function_type_with_2_i32_params() {
         let function = FunctionType {
+            name: "",
             export: false,
             params: vec![ValType::I32, ValType::I32],
             ret: ValType::Void,
@@ -253,6 +309,7 @@ mod test {
     #[test]
     fn test_serialize_void_function_type_with_0_params() {
         let function = FunctionType {
+            name: "",
             export: false,
             params: vec![],
             ret: ValType::Void,
@@ -272,6 +329,7 @@ mod test {
     fn test_serialize_function_section_with_1_void_function() {
         let function = FunctionSection {
             functions: vec![FunctionType {
+                name: "",
                 export: false,
                 params: vec![],
                 ret: ValType::Void,
@@ -286,11 +344,13 @@ mod test {
         let function = FunctionSection {
             functions: vec![
                 FunctionType {
+                    name: "",
                     export: false,
                     params: vec![ValType::I32, ValType::I32],
                     ret: ValType::I32,
                 },
                 FunctionType {
+                    name: "",
                     export: false,
                     params: vec![],
                     ret: ValType::Void,
@@ -299,5 +359,51 @@ mod test {
         };
         let actual = function.serialize().unwrap();
         assert_eq!(actual, [0x03, 0x03, 0x2, 0x00, 0x01]);
+    }
+
+    #[test]
+    fn test_serialize_export_section_with_1_function() {
+        let export = ExportSection {
+            functions: vec![FunctionType {
+                name: "main",
+                export: true,
+                params: vec![ValType::I32, ValType::I32],
+                ret: ValType::I32,
+            }],
+        };
+        let actual = export.serialize().unwrap();
+        assert_eq!(
+            actual,
+            [0x07, 0x08, 0x01, 0x04, 0x6d, 0x61, 0x69, 0x6e, 0x00, 0x00]
+        );
+    }
+
+    #[test]
+    fn test_serialize_export_section_with_2_functions() {
+        let export = ExportSection {
+            functions: vec![
+                FunctionType {
+                    name: "main",
+                    export: true,
+                    params: vec![ValType::I32, ValType::I32],
+                    ret: ValType::I32,
+                },
+                FunctionType {
+                    name: "test",
+                    export: true,
+                    params: vec![ValType::I32, ValType::I32],
+                    ret: ValType::I32,
+                },
+            ],
+        };
+        let actual = export.serialize().unwrap();
+        assert_eq!(
+            actual,
+            [
+                0x07, 0x0F, 0x02, // Section meta
+                0x04, 0x6d, 0x61, 0x69, 0x6e, 0x00, 0x00, // First function
+                0x04, 0x74, 0x65, 0x73, 0x74, 0x00, 0x01 // Second function
+            ]
+        );
     }
 }

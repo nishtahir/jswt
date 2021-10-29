@@ -1,10 +1,11 @@
 use super::section::{FunctionType, ValType};
 use crate::ast::{function::FunctionStmt, types::Type};
 
-impl<'a> From<&FunctionStmt<'a>> for FunctionType {
-    fn from(value: &FunctionStmt) -> Self {
+impl<'a> From<&FunctionStmt<'a>> for FunctionType<'a> {
+    fn from(value: &FunctionStmt<'a>) -> Self {
         FunctionType {
             export: false,
+            name: value.ident.value,
             params: value
                 .params
                 .iter()

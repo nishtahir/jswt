@@ -1,5 +1,3 @@
-use self::statement::Statement;
-
 pub mod expression;
 pub mod function;
 pub mod ident;
@@ -10,8 +8,9 @@ pub mod span;
 pub mod statement;
 pub mod types;
 
-#[derive(Debug)]
+use self::statement::Statement;
 
+#[derive(Debug)]
 pub struct Ast<'a> {
     pub statements: Vec<Statement<'a>>,
 }

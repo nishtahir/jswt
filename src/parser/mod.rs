@@ -9,6 +9,30 @@ use crate::ast::Ast;
 use crate::errors::ParseError;
 use crate::token::{Token, TokenType};
 
+macro_rules! consume {
+    // This macro takes an argument of designator `ident` and
+    // creates a function named `$func_name`.
+    // The `ident` designator is used for variable/function names.
+    ($self:ident, $token:expr) => {
+        if $self.check(&($token)) {
+            $self.advance();
+            &$self.tokens[$self.current - 1]
+        } else {
+            let current = $self.peek().lexme;
+            return Err(ParseError::SyntaxError(format!(
+                "Expected '{:?}', found '{:?}'",
+                $token, current
+            )));
+        }
+    };
+}
+
+macro_rules! alt {
+    () => {
+        
+    };
+}
+
 pub struct Parser<'a> {
     tokens: Vec<Token<'a>>,
     current: usize,
@@ -83,25 +107,21 @@ impl<'a> Parser<'a> {
     }
 
     pub fn function(&mut self) -> Result<Statement<'a>, ParseError> {
-        self.consume(TokenType::Function, "Expected 'function'")
-            .unwrap();
-        self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
-            .unwrap();
-        let ident = self.previous_ident();
-        self.consume(TokenType::LeftParen, "Expected '('").unwrap();
+        consume!(self, TokenType::Function);
+        // function name
+        let ident = consume!(self, TokenType::Identifier).into();
 
+        // Params
+        consume!(self, TokenType::LeftParen);
         let parameters = self.parameters().unwrap();
+        consume!(self, TokenType::RightParen);
 
-        self.consume(TokenType::RightParen, "Expected ')'").unwrap();
-
-        let mut return_type = Type::void(self.span_from_index(self.current));
-        if self.check(&TokenType::Colon) {
-            self.consume(TokenType::Colon, "Expected 'function'")
-                .unwrap();
-            self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
-                .unwrap();
-            return_type = self.previous_type();
-        }
+        let return_type = if self.check(&TokenType::Colon) {
+            consume!(self, TokenType::Colon);
+            consume!(self, TokenType::Identifier).into()
+        } else {
+            Type::void(self.span_from_index(self.current))
+        };
 
         let body = self.block().unwrap();
 
@@ -146,11 +166,11 @@ impl<'a> Parser<'a> {
         Ok(Statement::block(statements))
     }
 
-    pub fn expression(&mut self) -> Result<Expr<'a>, ParseError<'a>> {
+    pub fn expression(&mut self) -> Result<Expr<'a>, ParseError> {
         self.primary()
     }
 
-    pub fn primary(&mut self) -> Result<Expr<'a>, ParseError<'a>> {
+    pub fn primary(&mut self) -> Result<Expr<'a>, ParseError> {
         if self.match_alt(&[TokenType::False, TokenType::True]) {
             let node = self.previous();
             return Ok(Expr::boolean(node));
@@ -230,7 +250,19 @@ impl<'a> Parser<'a> {
             return Ok(self.previous_idx());
         }
 
-        Err(ParseError::SyntaxError(message))
+        Err(ParseError::SyntaxError(format!("{}", message)))
+    }
+}
+
+impl<'a> From<&Token<'a>> for Ident<'a> {
+    fn from(token: &Token<'a>) -> Self {
+        Ident::new(token.lexme, token.offset, token.offset + token.lexme.len())
+    }
+}
+
+impl<'a> From<&Token<'a>> for Type<'a> {
+    fn from(token: &Token<'a>) -> Self {
+        Type::new(token.lexme, token.offset, token.offset + token.lexme.len())
     }
 }
 

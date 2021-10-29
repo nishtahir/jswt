@@ -6,6 +6,6 @@ pub enum TokenizerError {
 }
 
 #[derive(Debug)]
-pub enum ParseError<'a> {
-    SyntaxError(&'a str),
+pub enum ParseError {
+    SyntaxError(String),
 }

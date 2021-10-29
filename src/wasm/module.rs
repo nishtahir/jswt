@@ -13,28 +13,45 @@ use std::vec;
 pub const MODULE_HEADER: &[u8] = &[0x00, 0x61, 0x73, 0x6d];
 pub const MODULE_VERSION: &[u8] = &[0x01, 0x00, 0x00, 0x00];
 
-pub struct Module {
-    pub segments: Vec<Section>,
+pub struct Module<'a> {
+    pub segments: Vec<Section<'a>>,
 }
 
-impl Module {
-    pub fn new(ast: Ast) -> Self {
+impl<'a> Module<'a> {
+    pub fn new(ast: Ast<'a>) -> Self {
         let types: Vec<FunctionType> = ast
             .statements
             .iter()
             .filter_map(|statement| statement.as_function())
             .map(|function| function.into())
             .collect();
+
+        let functions: Vec<FunctionType> = ast
+            .statements
+            .iter()
+            .filter_map(|statement| statement.as_function())
+            .map(|function| function.into())
+            .collect();
+
+        let exports: Vec<FunctionType> = ast
+            .statements
+            .iter()
+            .filter_map(|statement| statement.as_function())
+            .map(|function| function.into())
+            .collect();
+
         Self {
             segments: vec![
                 Section::type_section(types),
-                // Section::function_section()
+                Section::function_section(functions),
+                Section::export_section(exports),
+                Section::code_section(),
             ],
         }
     }
 }
 
-impl Serialize for Module {
+impl<'a> Serialize for Module<'a> {
     fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
         let mut data = vec![];
 
