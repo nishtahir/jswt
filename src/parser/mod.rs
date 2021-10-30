@@ -27,12 +27,6 @@ macro_rules! consume {
     };
 }
 
-macro_rules! alt {
-    () => {
-        
-    };
-}
-
 pub struct Parser<'a> {
     tokens: Vec<Token<'a>>,
     current: usize,
@@ -74,36 +68,29 @@ impl<'a> Parser<'a> {
 
     /// print(expression)
     pub fn print_statement(&mut self) -> Result<Statement<'a>, ParseError> {
-        let start = self.consume(TokenType::Print, "Expected print").unwrap();
-        self.consume(TokenType::LeftParen, "Expected (").unwrap();
+        let start = consume!(self, TokenType::Print).offset;
+        consume!(self, TokenType::LeftParen);
         let expr = self.expression()?;
-        let end = self.consume(TokenType::RightParen, "Expected )").unwrap();
+        // add token length to offset
+        let end = consume!(self, TokenType::RightParen).offset + 1;
 
-        Ok(Statement::print(
-            expr,
-            self.span_from_index(start).start,
-            self.span_from_index(end).end,
-        ))
+        Ok(Statement::print(expr, start, end))
     }
 
     /// let ident = expression
     pub fn variable_statement(&mut self) -> Result<Statement<'a>, ParseError> {
-        let let_keyword_idx = self.consume(TokenType::Let, "Expected let").unwrap();
+        let start = consume!(self, TokenType::Let).offset;
 
         // trying to return a ref to the token here creates a
         // cannot borrow `*self` as mutable more than once at a time
         // since we need to borrow self to parse the expression
-        let ident_idx = &self
-            .consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
-            .unwrap();
+        let ident: Ident = consume!(self, TokenType::Identifier).into();
 
-        self.consume(TokenType::Equal, "Expected '='").unwrap();
+        consume!(self, TokenType::Equal);
         let expr = self.expression()?;
 
-        let ident = &self.tokens[*ident_idx];
-        let start = self.span_from_index(let_keyword_idx);
         let end = self.span_from_index(self.previous_idx());
-        Ok(Statement::variable(ident.lexme, expr, start.start, end.end))
+        Ok(Statement::variable(ident, expr, start, end.end))
     }
 
     pub fn function(&mut self) -> Result<Statement<'a>, ParseError> {
@@ -133,13 +120,9 @@ impl<'a> Parser<'a> {
 
         if !self.check(&TokenType::RightParen) {
             loop {
-                self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
-                    .unwrap();
-                let ident = self.previous_ident();
-                self.consume(TokenType::Colon, "Expected 'COLON'").unwrap();
-                self.consume(TokenType::Identifier, "Expected 'IDENTIFIER'")
-                    .unwrap();
-                let ty = self.previous_type();
+                let ident: Ident = consume!(self, TokenType::Identifier).into();
+                consume!(self, TokenType::Colon);
+                let ty: Type = consume!(self, TokenType::Identifier).into();
 
                 // let binding to the values because
                 // move semantics can be silly sometimes
@@ -149,20 +132,20 @@ impl<'a> Parser<'a> {
                 if !self.check(&TokenType::Comma) {
                     break;
                 }
-                self.consume(TokenType::Comma, "Expected 'COMMA'").unwrap();
+                consume!(self, TokenType::Comma);
             }
         }
         Ok(params)
     }
 
     pub fn block(&mut self) -> Result<Statement<'a>, ParseError> {
-        self.consume(TokenType::LeftBrace, "Expected '{'").unwrap();
+        consume!(self, TokenType::LeftBrace);
         let mut statements = Vec::new();
         while !self.check(&TokenType::RightBrace) {
             let statement = self.statement().unwrap();
             statements.push(statement)
         }
-        self.consume(TokenType::RightBrace, "Expected '}'").unwrap();
+        consume!(self, TokenType::RightBrace);
         Ok(Statement::block(statements))
     }
 
@@ -216,7 +199,7 @@ impl<'a> Parser<'a> {
 
     pub fn span_from_index(&self, idx: usize) -> Span {
         let token = &self.tokens[idx];
-        return Span::new(token.offset, token.offset + token.lexme.len());
+        Span::new(token.offset, token.offset + token.lexme.len())
     }
 
     pub fn previous_ident(&self) -> Ident<'a> {
@@ -242,15 +225,6 @@ impl<'a> Parser<'a> {
         if self.tokens.len() >= self.current {
             self.current += 1;
         }
-    }
-
-    pub fn consume(&mut self, token: TokenType, message: &'a str) -> Result<usize, ParseError> {
-        if self.check(&token) {
-            self.advance();
-            return Ok(self.previous_idx());
-        }
-
-        Err(ParseError::SyntaxError(format!("{}", message)))
     }
 }
 
@@ -292,7 +266,7 @@ mod test {
         let tokens = Tokenizer::new("let user = \"test\"").tokenize().unwrap();
         let actual = Parser::new(tokens).parse().unwrap().statements;
         let expected = vec![Statement::variable(
-            "user",
+            Ident::new("user", 4, 8),
             Expr::string(Node::new("test", 12, 16)),
             0,
             16,
@@ -308,7 +282,7 @@ mod test {
             .unwrap();
         let actual = Parser::new(tokens).parse().unwrap().statements;
         let expected = vec![Statement::block(vec![Statement::variable(
-            "user",
+            Ident::new("user", 6, 10),
             Expr::string(Node::new("test", 14, 18)),
             2,
             18,

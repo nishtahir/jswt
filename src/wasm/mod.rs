@@ -1,8 +1,8 @@
 mod convert;
 mod encoding;
-mod leb128;
 mod module;
 mod section;
+
 pub use module::Module;
 pub use section::Section;
 

@@ -16,13 +16,15 @@ pub enum Statement<'a> {
 
 impl<'a> Statement<'a> {
     pub fn print(expr: Expr<'a>, start: usize, end: usize) -> Self {
-        Statement::Print { field1: PrintStmt {
-            expr,
-            span: Span::new(start, end),
-        } }
+        Statement::Print {
+            field1: PrintStmt {
+                expr,
+                span: Span::new(start, end),
+            },
+        }
     }
 
-    pub fn variable(ident: &'a str, expr: Expr<'a>, start: usize, end: usize) -> Self {
+    pub fn variable(ident: Ident<'a>, expr: Expr<'a>, start: usize, end: usize) -> Self {
         Statement::Variable(VariableDeclarationStmt {
             span: Span::new(start, end),
             ident,
@@ -76,6 +78,6 @@ pub struct PrintStmt<'a> {
 #[derive(Debug, PartialEq)]
 pub struct VariableDeclarationStmt<'a> {
     pub span: Span,
-    pub ident: &'a str,
+    pub ident: Ident<'a>,
     pub expr: Expr<'a>,
 }

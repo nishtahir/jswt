@@ -11,8 +11,8 @@ impl<'a> Token<'a> {
     pub fn new(lexme: &'a str, kind: TokenType, offset: usize) -> Self {
         Token {
             lexme,
-            kind,
             offset,
+            kind,
         }
     }
 

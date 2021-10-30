@@ -1,4 +1,13 @@
+mod code;
+mod export;
+mod function;
+mod import;
+mod type_;
+
 use std::{error::Error, io::Write};
+use self::{
+    code::CodeSection, export::ExportSection, function::FunctionSection, type_::TypeSection,
+};
 
 use super::Serialize;
 
@@ -35,137 +44,6 @@ impl<'a> Serialize for Section<'a> {
             Section::Export(inner) => inner.serialize(),
             Section::Code(inner) => inner.serialize(),
         }
-    }
-}
-
-/// https://webassembly.github.io/spec/core/binary/modules.html#type-section
-pub struct TypeSection<'a> {
-    functions: Vec<FunctionType<'a>>,
-}
-
-impl<'a> TypeSection<'a> {
-    pub fn new(functions: Vec<FunctionType<'a>>) -> Self {
-        TypeSection { functions }
-    }
-}
-
-impl<'a> Serialize for TypeSection<'a> {
-    fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
-        // Build type data
-        let types: Vec<u8> = self
-            .functions
-            .iter()
-            .flat_map(|f| f.serialize())
-            .flatten()
-            .collect();
-
-        // The type section has the id 1.
-        let mut buf = vec![
-            0x01,
-            (types.len() + 1) as u8,    // Size of the section
-            self.functions.len() as u8, // Add number of declared types
-        ];
-
-        // Write section data
-        buf.write(&types)?;
-
-        Ok(buf)
-    }
-}
-
-pub struct FunctionSection<'a> {
-    functions: Vec<FunctionType<'a>>,
-}
-
-impl<'a> FunctionSection<'a> {
-    pub fn new(functions: Vec<FunctionType<'a>>) -> Self {
-        FunctionSection { functions }
-    }
-}
-
-impl<'a> Serialize for FunctionSection<'a> {
-    fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
-        let indexes: Vec<u8> = self
-            .functions
-            .iter()
-            .enumerate()
-            .map(|(i, _)| i as u8)
-            .collect();
-
-        let mut buf = vec![
-            0x03,                       // Section Id
-            (indexes.len() + 1) as u8,  // Size of the section
-            self.functions.len() as u8, // Add number of declared functions
-        ];
-
-        // Encode indexes
-        buf.write(&indexes)?;
-
-        Ok(buf)
-    }
-}
-
-pub struct ExportSection<'a> {
-    functions: Vec<FunctionType<'a>>,
-}
-
-impl<'a> ExportSection<'a> {
-    pub fn new(functions: Vec<FunctionType<'a>>) -> Self {
-        ExportSection { functions }
-    }
-
-    fn export_description((index, function): (usize, &FunctionType)) -> Vec<u8> {
-        let mut desc: Vec<u8> = vec![];
-
-        desc.push(function.name.len() as u8);
-        desc.write(function.name.as_bytes()).unwrap();
-
-        // Function export identifier
-        desc.push(0x00);
-        // index function index
-        desc.push(index as u8);
-        desc
-    }
-}
-
-impl<'a> Serialize for ExportSection<'a> {
-    fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
-        // for now export everything
-        let exports = self.functions.len();
-
-        let indexes: Vec<u8> = self
-            .functions
-            .iter()
-            .enumerate()
-            .map(Self::export_description)
-            .flatten()
-            .collect();
-
-        let mut buf = vec![
-            0x07,                      // Section Id
-            (indexes.len() + 1) as u8, // Size of the section
-            exports as u8,             // Add number of exports functions
-        ];
-
-        // Encode indexes
-        buf.write(&indexes)?;
-
-        Ok(buf)
-    }
-}
-
-pub struct CodeSection {}
-
-impl CodeSection {
-    pub fn new() -> Self {
-        Self {}
-    }
-}
-
-impl<'a> Serialize for CodeSection {
-    fn serialize(&self) -> Result<Vec<u8>, Box<dyn Error>> {
-        let test = vec![0x0a, 0x07, 0x01, 0x05, 0x00, 0x41, 0x2a, 0x0f, 0x0b];
-        Ok(test)
     }
 }
 
@@ -217,7 +95,7 @@ impl<'a> Serialize for FunctionType<'a> {
         // Param count
         res.push(self.params.len() as u8);
         // number of return values
-        res.write(&params)?;
+        res.write_all(&params)?;
 
         // Return value count
         if let ValType::Void = self.ret {

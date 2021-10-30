@@ -1,9 +1,7 @@
-use crate::ast::statement::Statement;
 use crate::ast::Ast;
 use crate::wasm::section::FunctionType;
 
-use super::section::Section;
-use super::Serialize;
+use super::{Section, Serialize};
 use std::error::Error;
 use std::io::Write;
 use std::vec;
@@ -67,7 +65,7 @@ impl<'a> Serialize for Module<'a> {
             .flatten()
             .collect::<Vec<u8>>();
 
-        data.write(&sections)?;
+        data.write_all(&sections)?;
 
         Ok(data)
     }
