@@ -1,230 +1,240 @@
-use crate::ast::expression::Expr;
-use crate::ast::function::Param;
 use crate::ast::ident::Ident;
-use crate::ast::node::Node;
-use crate::ast::span::Span;
-use crate::ast::statement::Statement;
-use crate::ast::types::Type;
-use crate::ast::Ast;
+use crate::ast::program::{
+    BlockStatement, EmptyStatement, FormalParameterArg, FormalParameterList, FunctionBody,
+    FunctionDeclarationElement, FunctionDecorators, Program, SourceElement, SourceElements,
+    StatementElement, StatementList,
+};
 use crate::errors::ParseError;
 use crate::token::{Token, TokenType};
+use crate::Tokenizer;
+
+macro_rules! maybe_consume {
+    // This macro takes an argument of designator `ident` and
+    // creates a function named `$func_name`.
+    // The `ident` designator is used for variable/function names.
+    ($self:ident, $token:expr) => {{
+        if $self.lookahead_type() == Some($token) {
+            consume!($self, $token);
+            true
+        } else {
+            false
+        }
+    }};
+}
 
 macro_rules! consume {
     // This macro takes an argument of designator `ident` and
     // creates a function named `$func_name`.
     // The `ident` designator is used for variable/function names.
-    ($self:ident, $token:expr) => {
-        if $self.check(&($token)) {
-            $self.advance();
-            &$self.tokens[$self.current - 1]
-        } else {
-            let current = $self.peek().lexme;
-            return Err(ParseError::SyntaxError(format!(
-                "Expected '{:?}', found '{:?}'",
-                $token, current
-            )));
+    ($self:ident, $token:expr) => {{
+        let token = $self.lookahead.as_ref().expect("Expected end of input");
+        if token.kind != $token {
+            panic!("Mismatched token type")
         }
-    };
+        // Advance lookahead
+        $self.lookahead = $self.tokenizer.next_token();
+    }};
 }
 
+macro_rules! ident {
+    // This macro takes an argument of designator `ident` and
+    // creates a function named `$func_name`.
+    // The `ident` designator is used for variable/function names.
+    ($self:ident) => {{
+        let token = $self.lookahead.as_ref().expect("Expected end of input");
+        if token.kind != TokenType::Identifier {
+            panic!("Mismatched token type")
+        }
+        let ident = Ident::from(token);
+        // Advance lookahead
+        $self.lookahead = $self.tokenizer.next_token();
+        ident
+    }};
+}
+
+/// Predictive LL(1) parser
 pub struct Parser<'a> {
-    tokens: Vec<Token<'a>>,
-    current: usize,
+    tokenizer: Tokenizer<'a>,
+    lookahead: Option<Token<'a>>,
 }
 
 impl<'a> Parser<'a> {
-    pub fn new(tokens: Vec<Token<'a>>) -> Parser {
-        Self { tokens, current: 0 }
+    pub fn new(tokenizer: Tokenizer<'a>) -> Parser {
+        Self {
+            tokenizer,
+            lookahead: None,
+        }
     }
 
-    pub fn parse(&mut self) -> Result<Ast<'a>, ParseError> {
-        let mut statements = Vec::new();
-        while !self.is_at_end() {
-            let statement = self.statement().unwrap();
-            statements.push(statement)
-        }
-        Ok(Ast { statements })
+    pub fn parse(&mut self) -> Result<Program<'a>, ParseError> {
+        // Seed the look ahead for the entry point
+        self.lookahead = self.tokenizer.next_token();
+        return self.program();
     }
 
-    pub fn statement(&mut self) -> Result<Statement<'a>, ParseError> {
-        if self.check(&TokenType::Let) {
-            return self.variable_statement();
-        }
-
-        if self.check(&TokenType::Print) {
-            return self.print_statement();
-        }
-
-        if self.check(&TokenType::Function) {
-            return self.function();
-        }
-
-        if self.check(&TokenType::LeftBrace) {
-            return self.block();
-        }
-
-        todo!()
+    /// Entry point of the program
+    ///
+    /// Program
+    ///   :  SourceElements?
+    ///   ;
+    fn program(&mut self) -> Result<Program<'a>, ParseError> {
+        Ok(Program {
+            // Read until the end of the file
+            source_elements: self.source_elements(None)?,
+        })
     }
 
-    /// print(expression)
-    pub fn print_statement(&mut self) -> Result<Statement<'a>, ParseError> {
-        let start = consume!(self, TokenType::Print).offset;
-        consume!(self, TokenType::LeftParen);
-        let expr = self.expression()?;
-        // add token length to offset
-        let end = consume!(self, TokenType::RightParen).offset + 1;
-
-        Ok(Statement::print(expr, start, end))
+    /// SourceElements
+    ///   :  SourceElement
+    ///   |  SourceElements SourceElement
+    ///   ;
+    fn source_elements(
+        &mut self,
+        terminal: Option<TokenType>,
+    ) -> Result<SourceElements<'a>, ParseError> {
+        let mut source_elements = vec![];
+        while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
+            source_elements.push(self.source_element()?);
+        }
+        Ok(SourceElements { source_elements })
     }
 
-    /// let ident = expression
-    pub fn variable_statement(&mut self) -> Result<Statement<'a>, ParseError> {
-        let start = consume!(self, TokenType::Let).offset;
-
-        // trying to return a ref to the token here creates a
-        // cannot borrow `*self` as mutable more than once at a time
-        // since we need to borrow self to parse the expression
-        let ident: Ident = consume!(self, TokenType::Identifier).into();
-
-        consume!(self, TokenType::Equal);
-        let expr = self.expression()?;
-
-        let end = self.span_from_index(self.previous_idx());
-        Ok(Statement::variable(ident, expr, start, end.end))
+    /// SourceElement
+    ///   :  FunctionDeclaration
+    ///   |  Statement
+    ///   ;
+    fn source_element(&mut self) -> Result<SourceElement<'a>, ParseError> {
+        let elem = match self.lookahead_type() {
+            // Need to check for optional function decorators
+            Some(TokenType::Function) | Some(TokenType::Export) => {
+                self.function_declaration()?.into()
+            }
+            _ => self.statement()?.into(),
+        };
+        Ok(elem)
     }
 
-    pub fn function(&mut self) -> Result<Statement<'a>, ParseError> {
+    /// Statement
+    ///   :  Block
+    ///   |  EmptyStatement
+    ///   ;
+    fn statement(&mut self) -> Result<StatementElement, ParseError> {
+        let elem = match self.lookahead_type() {
+            Some(TokenType::LeftBrace) => self.block()?.into(),
+            Some(TokenType::Semi) => self.empty_statement()?.into(),
+            _ => todo!(),
+        };
+        Ok(elem)
+    }
+
+    /// Block
+    ///   :  '{' statementList? '}'
+    ///   ;
+    fn block(&mut self) -> Result<BlockStatement, ParseError> {
+        consume!(self, TokenType::LeftBrace);
+        let statements = self.statement_list(Some(TokenType::RightBrace))?;
+        consume!(self, TokenType::RightBrace);
+        Ok(BlockStatement::new(statements))
+    }
+
+    /// StatementList
+    ///   :  Statement
+    ///   |  StatementList Statement
+    ///   ;
+    fn statement_list(&mut self, terminal: Option<TokenType>) -> Result<StatementList, ParseError> {
+        let mut statements = vec![];
+        while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
+            statements.push(self.statement()?);
+        }
+        Ok(StatementList::new(statements))
+    }
+
+    fn empty_statement(&mut self) -> Result<EmptyStatement, ParseError> {
+        consume!(self, TokenType::Semi);
+        Ok(EmptyStatement::new())
+    }
+
+    /// FunctionDeclaration
+    ///   :  'export'? 'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
+    ///   ;
+    fn function_declaration(&mut self) -> Result<FunctionDeclarationElement<'a>, ParseError> {
+        let has_export = maybe_consume!(self, TokenType::Export);
         consume!(self, TokenType::Function);
-        // function name
-        let ident = consume!(self, TokenType::Identifier).into();
 
-        // Params
+        let ident = ident!(self);
+
         consume!(self, TokenType::LeftParen);
-        let parameters = self.parameters().unwrap();
+
+        let params = self.formal_parameter_list()?;
+
         consume!(self, TokenType::RightParen);
 
-        let return_type = if self.check(&TokenType::Colon) {
-            consume!(self, TokenType::Colon);
-            consume!(self, TokenType::Identifier).into()
-        } else {
-            Type::void(self.span_from_index(self.current))
-        };
+        //Parse return value
+        let mut returns = None;
+        if self.lookahead_type() == Some(TokenType::Colon) {
+            returns = Some(self.type_annotation()?);
+        }
 
-        let body = self.block().unwrap();
+        let body = self.function_body()?;
 
-        Ok(Statement::function(ident, parameters, return_type, body))
+        let decorators = FunctionDecorators { export: has_export };
+        Ok(FunctionDeclarationElement::new(
+            decorators, ident, params, returns, body,
+        ))
     }
 
-    pub fn parameters(&mut self) -> Result<Vec<Param<'a>>, ParseError> {
+    /// FormalParameterList
+    ///   :  FormalParameterArg
+    ///   |  FormalParameterArg , FormalParameterArg
+    ///   ;
+    fn formal_parameter_list(&mut self) -> Result<FormalParameterList<'a>, ParseError> {
         let mut params = vec![];
-
-        if !self.check(&TokenType::RightParen) {
+        if self.lookahead_type() != Some(TokenType::RightParen) {
             loop {
-                let ident: Ident = consume!(self, TokenType::Identifier).into();
-                consume!(self, TokenType::Colon);
-                let ty: Type = consume!(self, TokenType::Identifier).into();
-
-                // let binding to the values because
-                // move semantics can be silly sometimes
-                let start = ident.span.start;
-                let end = ty.span.end;
-                params.push(Param::new(ident, ty, start, end));
-                if !self.check(&TokenType::Comma) {
+                params.push(self.formal_parameter_arg()?);
+                if self.lookahead_type() != Some(TokenType::Comma) {
                     break;
                 }
-                consume!(self, TokenType::Comma);
+                consume!(self, TokenType::Comma)
             }
         }
-        Ok(params)
+        Ok(FormalParameterList::new(params))
     }
 
-    pub fn block(&mut self) -> Result<Statement<'a>, ParseError> {
+    /// FormalParameterArg
+    ///   :  Ident TypeAnnotation
+    ///   ;
+    fn formal_parameter_arg(&mut self) -> Result<FormalParameterArg<'a>, ParseError> {
+        let ident = ident!(self);
+        let type_param = self.type_annotation()?;
+        Ok(FormalParameterArg::new(ident, type_param))
+    }
+
+    /// TypeAnnotation
+    ///   : ':' Ident
+    ///   ;
+    fn type_annotation(&mut self) -> Result<Ident<'a>, ParseError> {
+        consume!(self, TokenType::Colon);
+        let type_param = ident!(self);
+        Ok(type_param)
+    }
+
+    ///  FunctionBody
+    ///    :  '{' SourceElements? '}'
+    ///    ;
+    fn function_body(&mut self) -> Result<FunctionBody<'a>, ParseError> {
         consume!(self, TokenType::LeftBrace);
-        let mut statements = Vec::new();
-        while !self.check(&TokenType::RightBrace) {
-            let statement = self.statement().unwrap();
-            statements.push(statement)
-        }
+        // Read until we find a closing brace
+        let source_elements = self.source_elements(Some(TokenType::RightBrace))?;
         consume!(self, TokenType::RightBrace);
-        Ok(Statement::block(statements))
+        Ok(FunctionBody::new(source_elements))
     }
 
-    pub fn expression(&mut self) -> Result<Expr<'a>, ParseError> {
-        self.primary()
-    }
-
-    pub fn primary(&mut self) -> Result<Expr<'a>, ParseError> {
-        if self.match_alt(&[TokenType::False, TokenType::True]) {
-            let node = self.previous();
-            return Ok(Expr::boolean(node));
-        }
-
-        if self.match_alt(&[TokenType::Number]) {
-            let node = self.previous();
-            return Ok(Expr::number(node));
-        }
-
-        if self.match_alt(&[TokenType::String]) {
-            let node = self.previous();
-            return Ok(Expr::string(node));
-        }
-
-        todo!()
-    }
-
-    pub fn match_alt(&mut self, tokens: &[TokenType]) -> bool {
-        for token in tokens {
-            if self.check(token) {
-                let _ = self.advance();
-                return true;
-            }
-        }
-        false
-    }
-
-    pub fn check(&self, token: &TokenType) -> bool {
-        if self.is_at_end() {
-            return false;
-        }
-        return self.peek().kind == *token;
-    }
-
-    pub fn is_at_end(&self) -> bool {
-        self.current >= self.tokens.len() - 1
-    }
-
-    pub fn peek(&self) -> &Token {
-        &self.tokens[self.current]
-    }
-
-    pub fn span_from_index(&self, idx: usize) -> Span {
-        let token = &self.tokens[idx];
-        Span::new(token.offset, token.offset + token.lexme.len())
-    }
-
-    pub fn previous_ident(&self) -> Ident<'a> {
-        let token = &self.tokens[self.current - 1];
-        Ident::new(token.lexme, token.offset, token.offset + token.lexme.len())
-    }
-
-    pub fn previous_type(&self) -> Type<'a> {
-        let token = &self.tokens[self.current - 1];
-        Type::new(token.lexme, token.offset, token.offset + token.lexme.len())
-    }
-
-    pub fn previous(&self) -> Node<'a> {
-        let token = &self.tokens[self.current - 1];
-        Node::new(token.lexme, token.offset, token.offset + token.lexme.len())
-    }
-
-    pub fn previous_idx(&self) -> usize {
-        self.current - 1
-    }
-
-    pub fn advance(&mut self) {
-        if self.tokens.len() >= self.current {
-            self.current += 1;
-        }
+    /// Return an owned token type value of the
+    /// current lookahead token
+    fn lookahead_type(&self) -> Option<TokenType> {
+        let lookahed = &self.lookahead;
+        lookahed.as_ref().map(|token| token.kind)
     }
 }
 
@@ -234,111 +244,318 @@ impl<'a> From<&Token<'a>> for Ident<'a> {
     }
 }
 
-impl<'a> From<&Token<'a>> for Type<'a> {
-    fn from(token: &Token<'a>) -> Self {
-        Type::new(token.lexme, token.offset, token.offset + token.lexme.len())
-    }
-}
-
 #[cfg(test)]
 mod test {
-
-    use crate::Tokenizer;
+    use std::vec;
 
     use super::*;
+    use crate::{
+        ast::{program::FunctionDeclarationElement, span::Span},
+        Tokenizer,
+    };
+    use pretty_assertions::assert_eq;
 
     #[test]
-    fn test_print_statement() {
-        let tokens = Tokenizer::new("print(\"test\")").tokenize().unwrap();
-
-        let actual = Parser::new(tokens).parse().unwrap().statements;
-        let expected = vec![Statement::print(
-            Expr::string(Node::new("test", 7, 11)),
-            0,
-            13,
-        )];
-
+    fn test_function_declaration_statement() {
+        let tokenizer = Tokenizer::new("function test() { }");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        decorators: FunctionDecorators { export: false },
+                        ident: Ident {
+                            span: Span { start: 9, end: 13 },
+                            value: "test",
+                        },
+                        params: FormalParameterList { parameters: vec![] },
+                        returns: None,
+                        body: FunctionBody::new(SourceElements {
+                            source_elements: vec![],
+                        }),
+                    },
+                )],
+            },
+        };
         assert_eq!(expected, actual);
     }
 
     #[test]
-    fn test_variable_declaration_statement() {
-        let tokens = Tokenizer::new("let user = \"test\"").tokenize().unwrap();
-        let actual = Parser::new(tokens).parse().unwrap().statements;
-        let expected = vec![Statement::variable(
-            Ident::new("user", 4, 8),
-            Expr::string(Node::new("test", 12, 16)),
-            0,
-            16,
-        )];
-
+    fn test_parse_empty_program() {
+        let tokenizer = Tokenizer::new("");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![],
+            },
+        };
         assert_eq!(expected, actual);
     }
 
     #[test]
-    fn test_block_declaration_statement() {
-        let tokens = Tokenizer::new("{ let user = \"test\" }")
-            .tokenize()
-            .unwrap();
-        let actual = Parser::new(tokens).parse().unwrap().statements;
-        let expected = vec![Statement::block(vec![Statement::variable(
-            Ident::new("user", 6, 10),
-            Expr::string(Node::new("test", 14, 18)),
-            2,
-            18,
-        )])];
-
+    fn test_function_declaration_statement_with_one_param() {
+        let tokenizer = Tokenizer::new("function name(a: i32) { }");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        decorators: FunctionDecorators { export: false },
+                        ident: Ident {
+                            span: Span { start: 9, end: 13 },
+                            value: "name",
+                        },
+                        params: FormalParameterList {
+                            parameters: vec![FormalParameterArg {
+                                ident: Ident {
+                                    span: Span { start: 14, end: 15 },
+                                    value: "a",
+                                },
+                                type_annotation: Ident {
+                                    span: Span { start: 17, end: 20 },
+                                    value: "i32",
+                                },
+                            }],
+                        },
+                        returns: None,
+                        body: FunctionBody::new(SourceElements {
+                            source_elements: vec![],
+                        }),
+                    },
+                )],
+            },
+        };
         assert_eq!(expected, actual);
     }
 
     #[test]
-    fn test_void_function_declaration_statement() {
-        let tokens = Tokenizer::new("function test() { }").tokenize().unwrap();
-        let actual = Parser::new(tokens).parse().unwrap().statements;
-        let expected = vec![Statement::function(
-            Ident::new("test", 9, 13),
-            vec![],
-            Type::void(Span::new(16, 17)),
-            Statement::block(vec![]),
-        )];
-
+    fn test_function_declaration_statement_with_two_params() {
+        let tokenizer = Tokenizer::new("function name(a: i32, b: f32) { }");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        decorators: FunctionDecorators { export: false },
+                        ident: Ident {
+                            span: Span { start: 9, end: 13 },
+                            value: "name",
+                        },
+                        params: FormalParameterList {
+                            parameters: vec![
+                                FormalParameterArg {
+                                    ident: Ident {
+                                        span: Span { start: 14, end: 15 },
+                                        value: "a",
+                                    },
+                                    type_annotation: Ident {
+                                        span: Span { start: 17, end: 20 },
+                                        value: "i32",
+                                    },
+                                },
+                                FormalParameterArg {
+                                    ident: Ident {
+                                        span: Span { start: 22, end: 23 },
+                                        value: "b",
+                                    },
+                                    type_annotation: Ident {
+                                        span: Span { start: 25, end: 28 },
+                                        value: "f32",
+                                    },
+                                },
+                            ],
+                        },
+                        returns: None,
+                        body: FunctionBody::new(SourceElements {
+                            source_elements: vec![],
+                        }),
+                    },
+                )],
+            },
+        };
         assert_eq!(expected, actual);
     }
 
     #[test]
-    fn test_function_declaration_statement_with_no_params_with_return_value() {
-        let tokens = Tokenizer::new("function test(): i32 { }")
-            .tokenize()
-            .unwrap();
-        let actual = Parser::new(tokens).parse().unwrap().statements;
-        let expected = vec![Statement::function(
-            Ident::new("test", 9, 13),
-            vec![],
-            Type::new("i32", 17, 20),
-            Statement::block(vec![]),
-        )];
-
+    fn test_function_declaration_statement_with_export_decorator() {
+        let tokenizer = Tokenizer::new("export function test() { }");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        decorators: FunctionDecorators { export: true },
+                        ident: Ident {
+                            span: Span { start: 16, end: 20 },
+                            value: "test",
+                        },
+                        params: FormalParameterList { parameters: vec![] },
+                        returns: None,
+                        body: FunctionBody::new(SourceElements {
+                            source_elements: vec![],
+                        }),
+                    },
+                )],
+            },
+        };
         assert_eq!(expected, actual);
     }
 
     #[test]
-    fn test_function_declaration_statement_with_params_and_return_value() {
-        let tokens = Tokenizer::new("function test(a: i32): i32 { }")
-            .tokenize()
-            .unwrap();
-        let actual = Parser::new(tokens).parse().unwrap().statements;
-        let expected = vec![Statement::function(
-            Ident::new("test", 9, 13),
-            vec![Param::new(
-                Ident::new("a", 14, 15),
-                Type::new("i32", 17, 20),
-                14,
-                20,
-            )],
-            Type::new("i32", 23, 26),
-            Statement::block(vec![]),
-        )];
+    fn test_function_declaration_statement_with_return_value() {
+        let tokenizer = Tokenizer::new("function test(): i32 { }");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        decorators: FunctionDecorators { export: false },
+                        ident: Ident {
+                            span: Span { start: 9, end: 13 },
+                            value: "test",
+                        },
+                        params: FormalParameterList { parameters: vec![] },
+                        returns: Some(Ident {
+                            span: Span { start: 17, end: 20 },
+                            value: "i32",
+                        }),
+                        body: FunctionBody::new(SourceElements {
+                            source_elements: vec![],
+                        }),
+                    },
+                )],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
 
+    #[test]
+    fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
+        let tokenizer = Tokenizer::new("function test(a: i32, b: i32): i32 { }");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        decorators: FunctionDecorators { export: false },
+                        ident: Ident {
+                            span: Span { start: 9, end: 13 },
+                            value: "test",
+                        },
+                        params: FormalParameterList {
+                            parameters: vec![
+                                FormalParameterArg {
+                                    ident: Ident {
+                                        span: Span { start: 14, end: 15 },
+                                        value: "a",
+                                    },
+                                    type_annotation: Ident {
+                                        span: Span { start: 17, end: 20 },
+                                        value: "i32",
+                                    },
+                                },
+                                FormalParameterArg {
+                                    ident: Ident {
+                                        span: Span { start: 22, end: 23 },
+                                        value: "b",
+                                    },
+                                    type_annotation: Ident {
+                                        span: Span { start: 25, end: 28 },
+                                        value: "i32",
+                                    },
+                                },
+                            ],
+                        },
+                        returns: Some(Ident {
+                            span: Span { start: 31, end: 34 },
+                            value: "i32",
+                        }),
+                        body: FunctionBody::new(SourceElements {
+                            source_elements: vec![],
+                        }),
+                    },
+                )],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_parse_empty_block() {
+        let tokenizer = Tokenizer::new("{}");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::Statement(StatementElement::Block(
+                    BlockStatement {
+                        statements: StatementList { statements: vec![] },
+                    },
+                ))],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_parse_nested_empty_blocks() {
+        let tokenizer = Tokenizer::new("{ {} }");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::Statement(StatementElement::Block(
+                    BlockStatement {
+                        statements: StatementList {
+                            statements: vec![StatementElement::Block(BlockStatement {
+                                statements: StatementList { statements: vec![] },
+                            })],
+                        },
+                    },
+                ))],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_function_declaration_statement_with_block_body() {
+        let tokenizer = Tokenizer::new("function test() { {} }");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        decorators: FunctionDecorators { export: false },
+                        ident: Ident {
+                            span: Span { start: 9, end: 13 },
+                            value: "test",
+                        },
+                        params: FormalParameterList { parameters: vec![] },
+                        returns: None,
+                        body: FunctionBody::new(SourceElements {
+                            source_elements: vec![SourceElement::Statement(
+                                StatementElement::Block(BlockStatement {
+                                    statements: StatementList { statements: vec![] },
+                                }),
+                            )],
+                        }),
+                    },
+                )],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_parse_empty_statement() {
+        let tokenizer = Tokenizer::new(";");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::Statement(StatementElement::Empty(
+                    EmptyStatement {},
+                ))],
+            },
+        };
         assert_eq!(expected, actual);
     }
 }
