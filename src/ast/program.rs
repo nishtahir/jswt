@@ -140,11 +140,20 @@ pub struct EmptyStatement {}
 pub struct VariableStatement<'a> {
     pub modifier: VariableModifier,
     pub target: AssignableElement<'a>,
+    pub expression: SingleExpression<'a>,
 }
 
 impl<'a> VariableStatement<'a> {
-    pub fn new(modifier: VariableModifier, target: AssignableElement<'a>) -> Self {
-        Self { modifier, target }
+    pub fn new(
+        modifier: VariableModifier,
+        target: AssignableElement<'a>,
+        expression: SingleExpression<'a>,
+    ) -> Self {
+        Self {
+            modifier,
+            target,
+            expression,
+        }
     }
 }
 
@@ -174,4 +183,50 @@ impl<'a> From<Ident<'a>> for AssignableElement<'a> {
     fn from(v: Ident<'a>) -> Self {
         Self::Identifier(v)
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum SingleExpression<'a> {
+    Literal(Literal<'a>),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Literal<'a> {
+    String(StringLiteral<'a>),
+    Number(NumberLiteral),
+    Boolean(BooleanLiteral),
+}
+
+impl<'a> From<StringLiteral<'a>> for Literal<'a> {
+    fn from(v: StringLiteral<'a>) -> Self {
+        Self::String(v)
+    }
+}
+
+impl<'a> From<NumberLiteral> for Literal<'a> {
+    fn from(v: NumberLiteral) -> Self {
+        Self::Number(v)
+    }
+}
+
+impl<'a> From<BooleanLiteral> for Literal<'a> {
+    fn from(v: BooleanLiteral) -> Self {
+        Self::Boolean(v)
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct BooleanLiteral {
+    pub value: bool,
+}
+
+#[derive(Debug, PartialEq)]
+
+pub struct NumberLiteral {
+    pub value: i32,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct StringLiteral<'a> {
+    pub value: &'a str,
 }

@@ -1,8 +1,9 @@
 use crate::ast::ident::Ident;
 use crate::ast::program::{
-    AssignableElement, BlockStatement, EmptyStatement, FormalParameterArg, FormalParameterList,
-    FunctionBody, FunctionDeclarationElement, FunctionDecorators, Program, SourceElement,
-    SourceElements, StatementElement, StatementList, VariableModifier, VariableStatement,
+    AssignableElement, BlockStatement, BooleanLiteral, EmptyStatement, FormalParameterArg,
+    FormalParameterList, FunctionBody, FunctionDeclarationElement, FunctionDecorators, Literal,
+    NumberLiteral, Program, SingleExpression, SourceElement, SourceElements, StatementElement,
+    StatementList, StringLiteral, VariableModifier, VariableStatement,
 };
 use crate::errors::ParseError;
 use crate::token::{Token, TokenType};
@@ -12,7 +13,7 @@ use crate::Tokenizer;
 /// was consumed.
 macro_rules! maybe_consume {
     ($self:ident, $token:expr) => {{
-        if $self.lookahead_type() == Some($token) {
+        if $self.lookahead_is($token) {
             consume_unchecked!($self);
             true
         } else {
@@ -175,8 +176,10 @@ impl<'a> Parser<'a> {
         let modifier = self.variable_modifier()?;
         let assignable = self.assignable()?;
         consume!(self, TokenType::Equal);
+        let expression = self.single_expression()?;
+        consume!(self, TokenType::Semi);
 
-        Ok(VariableStatement::new(modifier, assignable))
+        Ok(VariableStatement::new(modifier, assignable, expression))
     }
 
     /// VariableModifier
@@ -202,6 +205,45 @@ impl<'a> Parser<'a> {
         Ok(AssignableElement::Identifier(ident!(self)))
     }
 
+    /// SingleExpression
+    ///   : Literal
+    ///   ;
+    fn single_expression(&mut self) -> Result<SingleExpression<'a>, ParseError> {
+        Ok(SingleExpression::Literal(self.literal()?))
+    }
+
+    /// Literal
+    ///   : boolean
+    ///   | number
+    ///   | string
+    ///   ;
+    fn literal(&mut self) -> Result<Literal<'a>, ParseError> {
+        let literal: Literal<'a> = match self.lookahead_type() {
+            Some(TokenType::True) => BooleanLiteral { value: true }.into(),
+            Some(TokenType::False) => BooleanLiteral { value: false }.into(),
+            Some(TokenType::String) => {
+                let value = self.lookahead.as_ref().unwrap().lexme;
+                StringLiteral {
+                    // Drop quoute characters from value
+                    value: &value[1..value.len() - 1],
+                }
+                .into()
+            }
+            Some(TokenType::Number) => {
+                let inner = self.lookahead.as_ref().unwrap().lexme;
+                NumberLiteral {
+                    // Should be safe to unwrap since
+                    // the tokenizer matched this
+                    value: inner.parse().unwrap(),
+                }
+                .into()
+            }
+            _ => unreachable!(),
+        };
+        consume_unchecked!(self);
+        Ok(literal)
+    }
+
     /// FunctionDeclaration
     ///   :  'export'? 'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
     ///   ;
@@ -217,7 +259,7 @@ impl<'a> Parser<'a> {
 
         //Parse return value
         let mut returns = None;
-        if self.lookahead_type() == Some(TokenType::Colon) {
+        if self.lookahead_is(TokenType::Colon) {
             returns = Some(self.type_annotation()?);
         }
 
@@ -235,13 +277,13 @@ impl<'a> Parser<'a> {
     ///   ;
     fn formal_parameter_list(&mut self) -> Result<FormalParameterList<'a>, ParseError> {
         let mut params = vec![];
-        if self.lookahead_type() != Some(TokenType::RightParen) {
+        if !self.lookahead_is(TokenType::RightParen) {
             loop {
                 params.push(self.formal_parameter_arg()?);
-                if self.lookahead_type() != Some(TokenType::Comma) {
+                if !self.lookahead_is(TokenType::Comma) {
                     break;
                 }
-                consume!(self, TokenType::Comma)
+                consume_unchecked!(self)
             }
         }
         Ok(FormalParameterList::new(params))
@@ -282,6 +324,16 @@ impl<'a> Parser<'a> {
         let lookahed = &self.lookahead;
         lookahed.as_ref().map(|token| token.kind)
     }
+
+    /// Checks that the lookahead token is the same
+    /// as the given TokenType.
+    fn lookahead_is(&self, ty: TokenType) -> bool {
+        if let Some(token) = &self.lookahead {
+            token.kind == ty
+        } else {
+            false
+        }
+    }
 }
 
 impl<'a> From<&Token<'a>> for Ident<'a> {
@@ -296,7 +348,10 @@ mod test {
 
     use super::*;
     use crate::{
-        ast::{program::FunctionDeclarationElement, span::Span},
+        ast::{
+            program::{FunctionDeclarationElement, NumberLiteral},
+            span::Span,
+        },
         Tokenizer,
     };
     use pretty_assertions::assert_eq;
@@ -606,8 +661,8 @@ mod test {
     }
 
     #[test]
-    fn test_parse_variable_statement() {
-        let tokenizer = Tokenizer::new("let x = ");
+    fn test_parse_variable_statement_with_number() {
+        let tokenizer = Tokenizer::new("let x = 42;");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -618,6 +673,32 @@ mod test {
                             span: Span { start: 4, end: 5 },
                             value: "x",
                         }),
+                        expression: SingleExpression::Literal(Literal::Number(NumberLiteral {
+                            value: 42,
+                        })),
+                    },
+                ))],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_parse_variable_statement_with_string() {
+        let tokenizer = Tokenizer::new("let x = \"Hello World\";");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::Statement(StatementElement::Variable(
+                    VariableStatement {
+                        modifier: VariableModifier::Let,
+                        target: AssignableElement::Identifier(Ident {
+                            span: Span { start: 4, end: 5 },
+                            value: "x",
+                        }),
+                        expression: SingleExpression::Literal(Literal::String(StringLiteral {
+                            value: "Hello World",
+                        })),
                     },
                 ))],
             },
