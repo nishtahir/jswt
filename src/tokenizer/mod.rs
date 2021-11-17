@@ -38,16 +38,16 @@ impl<'a> Tokenizer<'a> {
             // you must use an anchor like ^ or $ (or \A and \z)
             rules: rules! {
                 // Keywords
-                r"^true" => TokenType::True,
-                r"^false" => TokenType::False,
-                r"^print" => TokenType::Print,
-                r"^function" => TokenType::Function,
-                r"^export" => TokenType::Export,
-                r"^if" => TokenType::If,
-                r"^else" => TokenType::Else,
-                r"^return" => TokenType::Return,
-                r"^let" => TokenType::Let,
-                r"^const" => TokenType::Const,
+                r"^\btrue\b" => TokenType::True,
+                r"^\bfalse\b" => TokenType::False,
+                r"^\bprint\b" => TokenType::Print,
+                r"^\bfunction\b" => TokenType::Function,
+                r"^\bexport\b" => TokenType::Export,
+                r"^\bif\b" => TokenType::If,
+                r"^\belse\b" => TokenType::Else,
+                r"^\breturn\b" => TokenType::Return,
+                r"^\blet\b" => TokenType::Let,
+                r"^\bconst\b" => TokenType::Const,
 
                 // Multi character alternatives
                 r"^<=" => TokenType::LessEqual,
