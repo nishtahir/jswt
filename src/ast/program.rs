@@ -101,7 +101,14 @@ impl<'a> FunctionBody<'a> {
 pub enum StatementElement<'a> {
     Block(BlockStatement<'a>),
     Empty(EmptyStatement),
+    Return(ReturnStatement<'a>),
     Variable(VariableStatement<'a>),
+}
+
+impl<'a> From<ReturnStatement<'a>> for StatementElement<'a> {
+    fn from(v: ReturnStatement<'a>) -> Self {
+        Self::Return(v)
+    }
 }
 
 impl<'a> From<VariableStatement<'a>> for StatementElement<'a> {
@@ -135,6 +142,17 @@ impl<'a> BlockStatement<'a> {
 
 #[derive(Debug, PartialEq, Default)]
 pub struct EmptyStatement {}
+
+#[derive(Debug, PartialEq)]
+pub struct ReturnStatement<'a> {
+    pub expression: SingleExpression<'a>,
+}
+
+impl<'a> ReturnStatement<'a> {
+    pub fn new(expression: SingleExpression<'a>) -> Self {
+        Self { expression }
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct VariableStatement<'a> {

@@ -2,8 +2,8 @@ use crate::ast::ident::Ident;
 use crate::ast::program::{
     AssignableElement, BlockStatement, BooleanLiteral, EmptyStatement, FormalParameterArg,
     FormalParameterList, FunctionBody, FunctionDeclarationElement, FunctionDecorators, Literal,
-    NumberLiteral, Program, SingleExpression, SourceElement, SourceElements, StatementElement,
-    StatementList, StringLiteral, VariableModifier, VariableStatement,
+    NumberLiteral, Program, ReturnStatement, SingleExpression, SourceElement, SourceElements,
+    StatementElement, StatementList, StringLiteral, VariableModifier, VariableStatement,
 };
 use crate::errors::ParseError;
 use crate::token::{Token, TokenType};
@@ -125,12 +125,14 @@ impl<'a> Parser<'a> {
     /// Statement
     ///   :  Block
     ///   |  EmptyStatement
+    ///   |  ReturnStatement
     ///   |  VariableStatement
     ///   ;
     fn statement(&mut self) -> Result<StatementElement<'a>, ParseError> {
         let elem = match self.lookahead_type() {
             Some(TokenType::LeftBrace) => self.block()?.into(),
             Some(TokenType::Semi) => self.empty_statement()?.into(),
+            Some(TokenType::Return) => self.return_statement()?.into(),
             Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?.into(),
             _ => todo!(),
         };
@@ -147,6 +149,24 @@ impl<'a> Parser<'a> {
         Ok(BlockStatement::new(statements))
     }
 
+    /// EmptyStatement
+    ///   : ';'
+    ///   ;
+    fn empty_statement(&mut self) -> Result<EmptyStatement, ParseError> {
+        consume!(self, TokenType::Semi);
+        Ok(EmptyStatement::default())
+    }
+
+    /// ReturnStatement
+    ///   : 'return' SingleExpression
+    ///   ;
+    fn return_statement(&mut self) -> Result<ReturnStatement<'a>, ParseError> {
+        consume!(self, TokenType::Return);
+        let expression = self.single_expression()?;
+        consume!(self, TokenType::Semi);
+        Ok(ReturnStatement::new(expression))
+    }
+
     /// StatementList
     ///   :  Statement
     ///   |  StatementList Statement
@@ -160,14 +180,6 @@ impl<'a> Parser<'a> {
             statements.push(self.statement()?);
         }
         Ok(StatementList::new(statements))
-    }
-
-    /// EmptyStatement
-    ///   : ';'
-    ///   ;
-    fn empty_statement(&mut self) -> Result<EmptyStatement, ParseError> {
-        consume!(self, TokenType::Semi);
-        Ok(EmptyStatement::default())
     }
 
     /// VariableStatement
@@ -698,6 +710,24 @@ mod test {
                         }),
                         expression: SingleExpression::Literal(Literal::String(StringLiteral {
                             value: "Hello World",
+                        })),
+                    },
+                ))],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_parse_return_statement() {
+        let tokenizer = Tokenizer::new("return 99;");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::Statement(StatementElement::Return(
+                    ReturnStatement {
+                        expression: SingleExpression::Literal(Literal::Number(NumberLiteral {
+                            value: 99,
                         })),
                     },
                 ))],
