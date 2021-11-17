@@ -66,6 +66,7 @@ pub enum TokenType {
     Else,
     Return,
     Let,
+    Const,
 
     // Other
     Comment,

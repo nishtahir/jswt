@@ -13,11 +13,11 @@ pub struct SourceElements<'a> {
 #[derive(Debug, PartialEq)]
 pub enum SourceElement<'a> {
     FunctionDeclaration(FunctionDeclarationElement<'a>),
-    Statement(StatementElement),
+    Statement(StatementElement<'a>),
 }
 
-impl<'a> From<StatementElement> for SourceElement<'a> {
-    fn from(v: StatementElement) -> Self {
+impl<'a> From<StatementElement<'a>> for SourceElement<'a> {
+    fn from(v: StatementElement<'a>) -> Self {
         Self::Statement(v)
     }
 }
@@ -98,50 +98,80 @@ impl<'a> FunctionBody<'a> {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum StatementElement {
-    Block(BlockStatement),
+pub enum StatementElement<'a> {
+    Block(BlockStatement<'a>),
     Empty(EmptyStatement),
+    Variable(VariableStatement<'a>),
 }
 
-impl From<EmptyStatement> for StatementElement {
+impl<'a> From<VariableStatement<'a>> for StatementElement<'a> {
+    fn from(v: VariableStatement<'a>) -> Self {
+        Self::Variable(v)
+    }
+}
+
+impl<'a> From<EmptyStatement> for StatementElement<'a> {
     fn from(v: EmptyStatement) -> Self {
         Self::Empty(v)
     }
 }
 
-impl From<BlockStatement> for StatementElement {
-    fn from(v: BlockStatement) -> Self {
+impl<'a> From<BlockStatement<'a>> for StatementElement<'a> {
+    fn from(v: BlockStatement<'a>) -> Self {
         Self::Block(v)
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct BlockStatement {
-    pub statements: StatementList,
+pub struct BlockStatement<'a> {
+    pub statements: StatementList<'a>,
 }
 
-impl BlockStatement {
-    pub fn new(statements: StatementList) -> Self {
+impl<'a> BlockStatement<'a> {
+    pub fn new(statements: StatementList<'a>) -> Self {
         Self { statements }
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Default)]
 pub struct EmptyStatement {}
 
-impl EmptyStatement {
-    pub fn new() -> Self {
-        Self {}
+#[derive(Debug, PartialEq)]
+pub struct VariableStatement<'a> {
+    pub modifier: VariableModifier,
+    pub target: AssignableElement<'a>,
+}
+
+impl<'a> VariableStatement<'a> {
+    pub fn new(modifier: VariableModifier, target: AssignableElement<'a>) -> Self {
+        Self { modifier, target }
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct StatementList {
-    pub statements: Vec<StatementElement>,
+pub struct StatementList<'a> {
+    pub statements: Vec<StatementElement<'a>>,
 }
 
-impl StatementList {
-    pub fn new(statements: Vec<StatementElement>) -> Self {
+impl<'a> StatementList<'a> {
+    pub fn new(statements: Vec<StatementElement<'a>>) -> Self {
         Self { statements }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum VariableModifier {
+    Let,
+    Const,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum AssignableElement<'a> {
+    Identifier(Ident<'a>),
+}
+
+impl<'a> From<Ident<'a>> for AssignableElement<'a> {
+    fn from(v: Ident<'a>) -> Self {
+        Self::Identifier(v)
     }
 }

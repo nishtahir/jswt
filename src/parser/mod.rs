@@ -1,20 +1,19 @@
 use crate::ast::ident::Ident;
 use crate::ast::program::{
-    BlockStatement, EmptyStatement, FormalParameterArg, FormalParameterList, FunctionBody,
-    FunctionDeclarationElement, FunctionDecorators, Program, SourceElement, SourceElements,
-    StatementElement, StatementList,
+    AssignableElement, BlockStatement, EmptyStatement, FormalParameterArg, FormalParameterList,
+    FunctionBody, FunctionDeclarationElement, FunctionDecorators, Program, SourceElement,
+    SourceElements, StatementElement, StatementList, VariableModifier, VariableStatement,
 };
 use crate::errors::ParseError;
 use crate::token::{Token, TokenType};
 use crate::Tokenizer;
 
+/// Returns true if a token matching the given token type
+/// was consumed.
 macro_rules! maybe_consume {
-    // This macro takes an argument of designator `ident` and
-    // creates a function named `$func_name`.
-    // The `ident` designator is used for variable/function names.
     ($self:ident, $token:expr) => {{
         if $self.lookahead_type() == Some($token) {
-            consume!($self, $token);
+            consume_unchecked!($self);
             true
         } else {
             false
@@ -22,10 +21,18 @@ macro_rules! maybe_consume {
     }};
 }
 
+/// Advances the tokenizer to the next token. This assumes
+/// that the caller has done their due dilligence of checking that
+/// the current lookahead token is what was expected
+macro_rules! consume_unchecked {
+    ($self:ident) => {
+        $self.lookahead = $self.tokenizer.next_token();
+    };
+}
+
+/// Checks that the current lookahead tokentype is the same type
+/// as the given token then advances the tokenizer to the next token
 macro_rules! consume {
-    // This macro takes an argument of designator `ident` and
-    // creates a function named `$func_name`.
-    // The `ident` designator is used for variable/function names.
     ($self:ident, $token:expr) => {{
         let token = $self.lookahead.as_ref().expect("Expected end of input");
         if token.kind != $token {
@@ -43,7 +50,7 @@ macro_rules! ident {
     ($self:ident) => {{
         let token = $self.lookahead.as_ref().expect("Expected end of input");
         if token.kind != TokenType::Identifier {
-            panic!("Mismatched token type")
+            panic!("Mismatched token type {:?}", token);
         }
         let ident = Ident::from(token);
         // Advance lookahead
@@ -69,7 +76,7 @@ impl<'a> Parser<'a> {
     pub fn parse(&mut self) -> Result<Program<'a>, ParseError> {
         // Seed the look ahead for the entry point
         self.lookahead = self.tokenizer.next_token();
-        return self.program();
+        self.program()
     }
 
     /// Entry point of the program
@@ -117,11 +124,13 @@ impl<'a> Parser<'a> {
     /// Statement
     ///   :  Block
     ///   |  EmptyStatement
+    ///   |  VariableStatement
     ///   ;
-    fn statement(&mut self) -> Result<StatementElement, ParseError> {
+    fn statement(&mut self) -> Result<StatementElement<'a>, ParseError> {
         let elem = match self.lookahead_type() {
             Some(TokenType::LeftBrace) => self.block()?.into(),
             Some(TokenType::Semi) => self.empty_statement()?.into(),
+            Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?.into(),
             _ => todo!(),
         };
         Ok(elem)
@@ -130,7 +139,7 @@ impl<'a> Parser<'a> {
     /// Block
     ///   :  '{' statementList? '}'
     ///   ;
-    fn block(&mut self) -> Result<BlockStatement, ParseError> {
+    fn block(&mut self) -> Result<BlockStatement<'a>, ParseError> {
         consume!(self, TokenType::LeftBrace);
         let statements = self.statement_list(Some(TokenType::RightBrace))?;
         consume!(self, TokenType::RightBrace);
@@ -141,7 +150,10 @@ impl<'a> Parser<'a> {
     ///   :  Statement
     ///   |  StatementList Statement
     ///   ;
-    fn statement_list(&mut self, terminal: Option<TokenType>) -> Result<StatementList, ParseError> {
+    fn statement_list(
+        &mut self,
+        terminal: Option<TokenType>,
+    ) -> Result<StatementList<'a>, ParseError> {
         let mut statements = vec![];
         while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
             statements.push(self.statement()?);
@@ -149,9 +161,45 @@ impl<'a> Parser<'a> {
         Ok(StatementList::new(statements))
     }
 
+    /// EmptyStatement
+    ///   : ';'
+    ///   ;
     fn empty_statement(&mut self) -> Result<EmptyStatement, ParseError> {
         consume!(self, TokenType::Semi);
-        Ok(EmptyStatement::new())
+        Ok(EmptyStatement::default())
+    }
+
+    /// VariableStatement
+    ///   :  VariableModifier Assignable ('=' singleExpression)?
+    fn variable_statement(&mut self) -> Result<VariableStatement<'a>, ParseError> {
+        let modifier = self.variable_modifier()?;
+        let assignable = self.assignable()?;
+        consume!(self, TokenType::Equal);
+
+        Ok(VariableStatement::new(modifier, assignable))
+    }
+
+    /// VariableModifier
+    ///   : 'let'
+    ///   | 'const'
+    ///   ;
+    fn variable_modifier(&mut self) -> Result<VariableModifier, ParseError> {
+        let modifier = match self.lookahead_type() {
+            Some(TokenType::Let) => VariableModifier::Let,
+            Some(TokenType::Const) => VariableModifier::Const,
+            // it should never be anything but these
+            _ => unreachable!(),
+        };
+        // Eat the modifier token
+        consume_unchecked!(self);
+        Ok(modifier)
+    }
+
+    /// Assignable
+    ///   : Ident
+    ///   ;
+    fn assignable(&mut self) -> Result<AssignableElement<'a>, ParseError> {
+        Ok(AssignableElement::Identifier(ident!(self)))
     }
 
     /// FunctionDeclaration
@@ -164,9 +212,7 @@ impl<'a> Parser<'a> {
         let ident = ident!(self);
 
         consume!(self, TokenType::LeftParen);
-
         let params = self.formal_parameter_list()?;
-
         consume!(self, TokenType::RightParen);
 
         //Parse return value
@@ -553,6 +599,26 @@ mod test {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Empty(
                     EmptyStatement {},
+                ))],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_parse_variable_statement() {
+        let tokenizer = Tokenizer::new("let x = ");
+        let actual = Parser::new(tokenizer).parse().unwrap();
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::Statement(StatementElement::Variable(
+                    VariableStatement {
+                        modifier: VariableModifier::Let,
+                        target: AssignableElement::Identifier(Ident {
+                            span: Span { start: 4, end: 5 },
+                            value: "x",
+                        }),
+                    },
                 ))],
             },
         };

@@ -56,6 +56,6 @@ fn main() {
     }
 }
 
-fn native_println() {
-    println!("Hello world");
-}
+// fn native_println() {
+//     println!("Hello world");
+// }

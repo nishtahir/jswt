@@ -11,16 +11,12 @@ struct LexerRule {
 macro_rules! rules {
     ($($e:expr => $i:expr),*) => {
         {
-            let mut rules = Vec::<LexerRule>::new();
-            $(
-                rules.push(
-                    LexerRule {
-                        matcher: Regex::new($e).unwrap(),
-                        token_type: $i,
-                    }
-                );
-            )*
-            rules
+            vec![$(
+                LexerRule {
+                    matcher: Regex::new($e).unwrap(),
+                    token_type: $i,
+                },
+            )*]
         }
     };
 }
@@ -51,6 +47,8 @@ impl<'a> Tokenizer<'a> {
                 r"^else" => TokenType::Else,
                 r"^return" => TokenType::Return,
                 r"^let" => TokenType::Let,
+                r"^const" => TokenType::Const,
+
                 // Multi character alternatives
                 r"^<=" => TokenType::LessEqual,
                 r"^<" => TokenType::Less,
@@ -58,6 +56,7 @@ impl<'a> Tokenizer<'a> {
                 r"^>" => TokenType::Greater,
                 r"^==" => TokenType::EqualEqual,
                 r"^=" => TokenType::Equal,
+
                 // Single character alternatives
                 r"^," => TokenType::Comma,
                 r"^:" => TokenType::Colon,
@@ -66,10 +65,12 @@ impl<'a> Tokenizer<'a> {
                 r"^\)"=> TokenType::RightParen,
                 r"^\{"=> TokenType::LeftBrace,
                 r"^\}"=> TokenType::RightBrace,
+
                 // Multi character sequences
                 r"^\d+" => TokenType::Number,
                 r"^[_$a-zA-Z][_$a-zA-Z0-9]*" => TokenType::Identifier,
                 r#"^"[^"]*""# => TokenType::String,
+
                 // Other
                 r"^//[^\n]*" => TokenType::Comment,
                 r"^\s+" => TokenType::Skip
@@ -88,7 +89,7 @@ impl<'a> Tokenizer<'a> {
             if let Some(res) = rule.matcher.find(rest) {
                 let match_text = res.as_str();
                 // Advance cursor based on match
-                self.cursor = self.cursor + match_text.len();
+                self.cursor += match_text.len();
                 if rule.token_type == TokenType::Skip {
                     return self.next_token();
                 }
