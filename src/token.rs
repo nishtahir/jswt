@@ -1,6 +1,6 @@
 use std::usize;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 pub struct Token<'a> {
     pub lexme: &'a str,
     pub offset: usize,

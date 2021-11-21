@@ -1,18 +1,44 @@
+mod source;
+
+use crate::error::TokenizerError;
+use crate::token::{Token, TokenType};
+use crate::tokenizer::source::SourceReader;
 use regex::Regex;
 
-use crate::errors::TokenizerError;
-use crate::token::{Token, TokenType};
+#[derive(Debug, PartialEq)]
+enum TokenizerDirective {
+    Import,
+    Skip,
+}
 
-struct LexerRule {
+struct Directive {
+    matcher: Regex,
+    kind: TokenizerDirective,
+}
+
+pub struct TokenizerRule {
     matcher: Regex,
     token_type: TokenType,
+}
+
+macro_rules! directives {
+    ($($e:expr => $i:expr),*) => {
+        {
+            vec![$(
+                Directive {
+                    matcher: Regex::new($e).unwrap(),
+                    kind: $i,
+                },
+            )*]
+        }
+    };
 }
 
 macro_rules! rules {
     ($($e:expr => $i:expr),*) => {
         {
             vec![$(
-                LexerRule {
+                TokenizerRule {
                     matcher: Regex::new($e).unwrap(),
                     token_type: $i,
                 },
@@ -22,22 +48,28 @@ macro_rules! rules {
 }
 
 pub struct Tokenizer<'a> {
-    source: &'a str,
     cursor: usize,
-    rules: Vec<LexerRule>,
+    // reader: SourceReader<'a>,
+    rules: Vec<TokenizerRule>,
+    directives: Vec<Directive>,
+    errors: Vec<TokenizerError>,
+    s: &'a str,
 }
 
 impl<'a> Tokenizer<'a> {
-    pub fn new(input: &'a str) -> Tokenizer<'a> {
-        Tokenizer {
-            source: input,
+    pub fn new(input: &'a str) -> Self {
+        let reader = SourceReader::new();
+        reader.push_source(input);
+        Self {
+            s: "",
+            // reader,
             cursor: 0,
             // https://docs.rs/regex/1.5.4/regex/struct.Regex.html#method.find
             // All searching is done with an implicit .*? at the beginning and end of an expression.
             // To force an expression to match the whole string (or a prefix or a suffix),
             // you must use an anchor like ^ or $ (or \A and \z)
-            rules: rules! {
-                // Keywords
+            rules: rules! [
+            // Keywords
                 r"^\btrue\b" => TokenType::True,
                 r"^\bfalse\b" => TokenType::False,
                 r"^\bprint\b" => TokenType::Print,
@@ -72,9 +104,14 @@ impl<'a> Tokenizer<'a> {
                 r#"^"[^"]*""# => TokenType::String,
 
                 // Other
-                r"^//[^\n]*" => TokenType::Comment,
-                r"^\s+" => TokenType::Skip
-            },
+                r"^//[^\n]*" => TokenType::Comment
+            ],
+            directives: directives![
+                // import "./test.jswt". Group 1 is the unquoted path
+                r#"^\bimport\b "((?:/)?(?:[^"]+(?:/)?)+)"$"# => TokenizerDirective::Import,
+                r"^\s+" => TokenizerDirective::Skip
+            ],
+            errors: vec![],
         }
     }
 
@@ -82,22 +119,42 @@ impl<'a> Tokenizer<'a> {
         if !self.has_more_tokens() {
             return None;
         }
+
+        // let offset = self.cursor;
+        // let rest = &self.source[offset..];
+
+        // // Attempt to match the next token against tokenizer directives
+        // for directive in &self.directives {
+        //     if let Some(res) = directive.matcher.find(rest) {
+        //         let match_text = res.as_str();
+        //         // Advance cursor based on match
+        //         self.cursor += match_text.len();
+        //         match directive.kind {
+        //             // Push a
+        //             TokenizerDirective::Import => todo!(),
+        //             // Skip to the next token
+        //             TokenizerDirective::Skip => return self.next_token(),
+        //         }
+        //     }
+        // }
+
+        return todo!();
         // Attempt to match the next token with a defined lexer rule
-        for rule in &self.rules {
-            let offset = self.cursor;
-            let rest = &self.source[offset..];
-            if let Some(res) = rule.matcher.find(rest) {
-                let match_text = res.as_str();
-                // Advance cursor based on match
-                self.cursor += match_text.len();
-                if rule.token_type == TokenType::Skip {
-                    return self.next_token();
-                }
-                let token = Token::new(match_text, rule.token_type, offset);
-                return Some(token);
-            }
-        }
-        None
+        // for rule in &self.rules {
+        //     let token = self.reader.match_next_rule(rule);
+        //     if token.is_some() {
+        //         return token;
+        //     }
+        // }
+
+        // // We couldn't match this token to a lexer rule.
+        // // Skip this token and advance the cursor attempting to find the
+        // // Next valid token
+        // self.errors
+        //     .push(TokenizerError::UnexpectedToken(self.cursor));
+        // self.cursor += 1;
+
+        // self.next_token()
     }
 
     pub fn tokenize(&mut self) -> Result<Vec<Token<'a>>, TokenizerError> {
@@ -107,7 +164,7 @@ impl<'a> Tokenizer<'a> {
         }
         // If there are tokens we couldn't match
         if self.has_more_tokens() {
-            return Err(TokenizerError::UnexpectedToken);
+            return Err(TokenizerError::UnexpectedToken(self.cursor));
         }
 
         tokens.push(Token::eof(self.cursor));
@@ -115,7 +172,13 @@ impl<'a> Tokenizer<'a> {
     }
 
     pub fn has_more_tokens(&self) -> bool {
-        self.cursor < self.source.len()
+        // self.reader.has_more_tokens()
+        false
+    }
+
+    /// Get a reference to the tokenizer's errors.
+    pub fn errors(&self) -> &[TokenizerError] {
+        self.errors.as_ref()
     }
 }
 
@@ -298,6 +361,14 @@ mod test {
             Token::new("99", TokenType::Number, 8),
             Token::eof(10),
         ];
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_tokenize_import_directive() {
+        let mut tokenizer = Tokenizer::new("import \"./string.jswt\"");
+        let actual = tokenizer.tokenize().unwrap();
+        let expected: Vec<Token> = vec![];
         assert_eq!(expected, actual);
     }
 }

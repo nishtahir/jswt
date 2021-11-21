@@ -1,5 +1,5 @@
 mod ast;
-mod errors;
+mod error;
 mod parser;
 mod token;
 mod tokenizer;

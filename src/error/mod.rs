@@ -1,8 +1,6 @@
 #[derive(Debug)]
 pub enum TokenizerError {
-    InvalidCharacter,
-    UnexpectedEof,
-    UnexpectedToken,
+    UnexpectedToken(usize),
 }
 
 #[derive(Debug)]

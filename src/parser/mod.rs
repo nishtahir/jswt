@@ -5,7 +5,7 @@ use crate::ast::program::{
     NumberLiteral, Program, ReturnStatement, SingleExpression, SourceElement, SourceElements,
     StatementElement, StatementList, StringLiteral, VariableModifier, VariableStatement,
 };
-use crate::errors::ParseError;
+use crate::error::{ParseError, TokenizerError};
 use crate::token::{Token, TokenType};
 use crate::Tokenizer;
 
@@ -74,10 +74,14 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn parse(&mut self) -> Result<Program<'a>, ParseError> {
+    pub fn parse(&'a mut self) -> Result<Program<'a>, ParseError> {
         // Seed the look ahead for the entry point
         self.lookahead = self.tokenizer.next_token();
         self.program()
+    }
+
+    pub fn tokenizer_errors(&self) -> &[TokenizerError] {
+        self.tokenizer.errors()
     }
 
     /// Entry point of the program
