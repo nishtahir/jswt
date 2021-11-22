@@ -6,7 +6,7 @@ use crate::ast::program::{
     StatementElement, StatementList, StringLiteral, VariableModifier, VariableStatement,
 };
 use crate::errors::ParseError;
-use crate::token::{Token, TokenType};
+use crate::tokenizer::{Token, TokenType};
 use crate::Tokenizer;
 
 /// Returns true if a token matching the given token type
@@ -61,13 +61,13 @@ macro_rules! ident {
 }
 
 /// Predictive LL(1) parser
-pub struct Parser<'a> {
-    tokenizer: Tokenizer<'a>,
-    lookahead: Option<Token<'a>>,
+pub struct Parser {
+    tokenizer: Tokenizer,
+    lookahead: Option<Token>,
 }
 
-impl<'a> Parser<'a> {
-    pub fn new(tokenizer: Tokenizer<'a>) -> Parser {
+impl<'a> Parser {
+    pub fn new(tokenizer: Tokenizer) -> Parser {
         Self {
             tokenizer,
             lookahead: None,
@@ -83,12 +83,12 @@ impl<'a> Parser<'a> {
     /// Entry point of the program
     ///
     /// Program
-    ///   :  SourceElements?
+    ///   :  SourceElements? Eof
     ///   ;
     fn program(&mut self) -> Result<Program<'a>, ParseError> {
         Ok(Program {
             // Read until the end of the file
-            source_elements: self.source_elements(None)?,
+            source_elements: self.source_elements(Some(TokenType::Eof))?,
         })
     }
 
@@ -348,8 +348,8 @@ impl<'a> Parser<'a> {
     }
 }
 
-impl<'a> From<&Token<'a>> for Ident<'a> {
-    fn from(token: &Token<'a>) -> Self {
+impl<'a> From<&Token> for Ident<'a> {
+    fn from(token: &Token) -> Self {
         Ident::new(token.lexme, token.offset, token.offset + token.lexme.len())
     }
 }
@@ -370,7 +370,8 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement() {
-        let tokenizer = Tokenizer::new("function test() { }");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "function test() { }");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -395,7 +396,8 @@ mod test {
 
     #[test]
     fn test_parse_empty_program() {
-        let tokenizer = Tokenizer::new("");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -407,7 +409,8 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_one_param() {
-        let tokenizer = Tokenizer::new("function name(a: i32) { }");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "function name(a: i32) { }");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -443,7 +446,8 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_two_params() {
-        let tokenizer = Tokenizer::new("function name(a: i32, b: f32) { }");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "function name(a: i32, b: f32) { }");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -491,7 +495,8 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_export_decorator() {
-        let tokenizer = Tokenizer::new("export function test() { }");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "export function test() { }");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -516,7 +521,8 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_return_value() {
-        let tokenizer = Tokenizer::new("function test(): i32 { }");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "function test(): i32 { }");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -544,7 +550,8 @@ mod test {
 
     #[test]
     fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
-        let tokenizer = Tokenizer::new("function test(a: i32, b: i32): i32 { }");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "function test(a: i32, b: i32): i32 { }");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -595,7 +602,8 @@ mod test {
 
     #[test]
     fn test_parse_empty_block() {
-        let tokenizer = Tokenizer::new("{}");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "{}");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -611,7 +619,8 @@ mod test {
 
     #[test]
     fn test_parse_nested_empty_blocks() {
-        let tokenizer = Tokenizer::new("{ {} }");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "{ {} }");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -631,7 +640,8 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_block_body() {
-        let tokenizer = Tokenizer::new("function test() { {} }");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "function test() { {} }");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -660,7 +670,8 @@ mod test {
 
     #[test]
     fn test_parse_empty_statement() {
-        let tokenizer = Tokenizer::new(";");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", ";");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -674,7 +685,9 @@ mod test {
 
     #[test]
     fn test_parse_variable_statement_with_number() {
-        let tokenizer = Tokenizer::new("let x = 42;");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "let x = 42;");
+
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -697,7 +710,8 @@ mod test {
 
     #[test]
     fn test_parse_variable_statement_with_string() {
-        let tokenizer = Tokenizer::new("let x = \"Hello World\";");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "let x = \"Hello World\";");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
@@ -720,7 +734,8 @@ mod test {
 
     #[test]
     fn test_parse_return_statement() {
-        let tokenizer = Tokenizer::new("return 99;");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "return 99;");
         let actual = Parser::new(tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {

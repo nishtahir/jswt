@@ -1,7 +1,17 @@
-use regex::Regex;
+mod source;
+mod token;
 
 use crate::errors::TokenizerError;
-use crate::token::{Token, TokenType};
+pub use crate::tokenizer::token::{Token, TokenType};
+use regex::Regex;
+use std::{cell::RefCell, collections::HashMap, fs, rc::Rc, sync::RwLock};
+
+use self::source::Source;
+
+// Utility to read a file from a given path
+fn read_to_string(path: &str) -> String {
+    fs::read_to_string(&path).unwrap()
+}
 
 macro_rules! rules {
     ($($e:expr => $i:expr),*) => {
@@ -49,9 +59,11 @@ struct TokenizerRule {
 // Doesn't look like this will land anytime soon.
 // https://github.com/rust-lang/regex/issues/607
 lazy_static! {
+    static ref SOURCE_MAP: RwLock<HashMap<String, &'static str>> = RwLock::new(HashMap::new());
+
     static ref DIRECTIVES: Vec<TokenizerDirective> = directives![
         // import "./test.jswt". Group 1 is the unquoted path
-        r#"^\bimport\b\s+"((?:/)?(?:[^"]+(?:/)?)+)"\s"# => DirectiveType::Import,
+        r#"^\bimport\b\s+"((?:/)?(?:[^"]+(?:/)?)+)""# => DirectiveType::Import,
         r"^\s+" => DirectiveType::Skip
     ];
 
@@ -100,42 +112,50 @@ lazy_static! {
     ];
 }
 
-pub struct Tokenizer<'a> {
-    source: &'a str,
-    cursor: usize,
+pub struct Tokenizer {
+    source_stack: Vec<Rc<RefCell<Source>>>,
 }
 
-impl<'a> Tokenizer<'a> {
-    pub fn new(input: &'a str) -> Tokenizer<'a> {
+impl Tokenizer {
+    pub fn new() -> Tokenizer {
         Tokenizer {
-            source: input,
-            cursor: 0,
+            source_stack: vec![],
         }
     }
 
-    pub fn next_token(&mut self) -> Option<Token<'a>> {
-        if !self.has_more_tokens() {
+    pub fn next_token(&mut self) -> Option<Token> {
+        if !self.has_more_sources() {
             return None;
         }
 
-        let offset = self.cursor;
-        let rest = &self.source[offset..];
+        let source = self.source_stack.last().unwrap().clone();
+        let source = source.borrow();
+        let offset = source.cursor();
+
+        // If we've reached the end of a source file. Drop it from
+        // our tokenization stack
+        if !source.has_more_content() {
+            self.pop_source();
+            return Some(Token::eof(offset));
+        }
+
+        let rest = source.content_from_cursor();
         // Attempt to match the next token against tokenizer directives
         for directive in DIRECTIVES.iter() {
             if let Some(res) = directive.matcher.captures(rest) {
                 // Group 0 is always the match text
                 let match_text = res.get(0).unwrap().as_str();
                 match directive.kind {
-                    // Push a
                     DirectiveType::Import => {
-                        todo!()
+                        // Push the source where we found the import to the stack
+                        self.push_source(res.get(1).unwrap().as_str());
                     }
-                    DirectiveType::Skip => {
-                        // Skip the token by advancing the cursor
-                        self.cursor += match_text.len();
-                        return self.next_token();
-                    }
+                    DirectiveType::Skip => {}
                 }
+
+                // Skip the tokenizer directive by advancing the cursor.
+                source.advance_cursor(match_text.len());
+                return self.next_token();
             }
         }
 
@@ -144,30 +164,43 @@ impl<'a> Tokenizer<'a> {
             if let Some(res) = rule.matcher.find(rest) {
                 let match_text = res.as_str();
                 // Advance cursor based on match
-                self.cursor += match_text.len();
+                source.advance_cursor(match_text.len());
                 let token = Token::new(match_text, rule.token_type, offset);
                 return Some(token);
             }
         }
-        None
+
+        todo!(); // Handle unmatched token error
     }
 
-    pub fn tokenize(&mut self) -> Result<Vec<Token<'a>>, TokenizerError> {
+    pub fn tokenize(&mut self) -> Result<Vec<Token>, TokenizerError> {
         let mut tokens = vec![];
         while let Some(next) = self.next_token() {
             tokens.push(next);
         }
-        // If there are tokens we couldn't match
-        if self.has_more_tokens() {
-            return Err(TokenizerError::UnexpectedToken);
-        }
 
-        tokens.push(Token::eof(self.cursor));
         Ok(tokens)
     }
 
-    pub fn has_more_tokens(&self) -> bool {
-        self.cursor < self.source.len()
+    pub fn push_source(&mut self, path: &str) {
+        // We're intentionally leaking this to make lifetime management easier
+        // since we plan to pass references to the original sources in place of copying it
+        let content = Box::leak(read_to_string(path).into_boxed_str());
+        self.push_source_str(path, content)
+    }
+
+    pub fn push_source_str(&mut self, path: &str, content: &'static str) {
+        SOURCE_MAP.write().unwrap().insert(path.to_owned(), content);
+        let source = Source::new(path.to_string(), content);
+        self.source_stack.push(Rc::new(RefCell::new(source)));
+    }
+
+    pub fn pop_source(&mut self) {
+        self.source_stack.pop();
+    }
+
+    pub fn has_more_sources(&self) -> bool {
+        !self.source_stack.is_empty()
     }
 }
 
@@ -178,7 +211,9 @@ mod test {
 
     #[test]
     fn test_tokenize_number() {
-        let mut tokenizer = Tokenizer::new("42");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "42");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![Token::new("42", TokenType::Number, 0), Token::eof(2)];
         assert_eq!(expected, actual)
@@ -186,7 +221,9 @@ mod test {
 
     #[test]
     fn test_tokenize_numbers_with_whitespace() {
-        let mut tokenizer = Tokenizer::new("   4  2   ");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "   4  2   ");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![
             Token::new("4", TokenType::Number, 3),
@@ -198,7 +235,9 @@ mod test {
 
     #[test]
     fn test_tokenize_string() {
-        let mut tokenizer = Tokenizer::new("\"Hello World\"");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "\"Hello World\"");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![
             Token::new("\"Hello World\"", TokenType::String, 0),
@@ -209,7 +248,9 @@ mod test {
 
     #[test]
     fn test_tokenize_braces() {
-        let mut tokenizer = Tokenizer::new("{}");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "{}");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![
             Token::new("{", TokenType::LeftBrace, 0),
@@ -221,7 +262,9 @@ mod test {
 
     #[test]
     fn test_tokenize_parens() {
-        let mut tokenizer = Tokenizer::new("()");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "()");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![
             Token::new("(", TokenType::LeftParen, 0),
@@ -233,7 +276,9 @@ mod test {
 
     #[test]
     fn test_tokenize_comma() {
-        let mut tokenizer = Tokenizer::new(",");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", ",");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![Token::new(",", TokenType::Comma, 0), Token::eof(1)];
         assert_eq!(expected, actual);
@@ -241,7 +286,9 @@ mod test {
 
     #[test]
     fn test_tokenize_less_than() {
-        let mut tokenizer = Tokenizer::new("<");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "<");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![Token::new("<", TokenType::Less, 0), Token::eof(1)];
         assert_eq!(expected, actual);
@@ -249,21 +296,29 @@ mod test {
 
     #[test]
     fn test_tokenize_less_than_equal() {
-        let mut tokenizer = Tokenizer::new("<=");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "<=");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![Token::new("<=", TokenType::LessEqual, 0), Token::eof(2)];
         assert_eq!(expected, actual);
     }
+
     #[test]
     fn test_tokenize_greater_than() {
-        let mut tokenizer = Tokenizer::new(">");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", ">");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![Token::new(">", TokenType::Greater, 0), Token::eof(1)];
         assert_eq!(expected, actual);
     }
+
     #[test]
     fn test_tokenize_greater_than_equal() {
-        let mut tokenizer = Tokenizer::new(">=");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", ">=");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![Token::new(">=", TokenType::GreaterEqual, 0), Token::eof(2)];
         assert_eq!(expected, actual);
@@ -271,7 +326,9 @@ mod test {
 
     #[test]
     fn test_tokenize_equal() {
-        let mut tokenizer = Tokenizer::new("=");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "=");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![Token::new("=", TokenType::Equal, 0), Token::eof(1)];
         assert_eq!(expected, actual);
@@ -279,7 +336,9 @@ mod test {
 
     #[test]
     fn test_tokenize_semi_colon() {
-        let mut tokenizer = Tokenizer::new(";");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", ";");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![Token::new(";", TokenType::Semi, 0), Token::eof(1)];
         assert_eq!(expected, actual);
@@ -287,7 +346,9 @@ mod test {
 
     #[test]
     fn test_tokenize_comment() {
-        let mut tokenizer = Tokenizer::new("// This is a test comment");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "// This is a test comment");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected = vec![
             Token::new("// This is a test comment", TokenType::Comment, 0),
@@ -298,7 +359,9 @@ mod test {
 
     #[test]
     fn test_whitespace_generates_no_tokens() {
-        let mut tokenizer = Tokenizer::new("  ");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "  ");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected: Vec<Token> = vec![Token::eof(2)];
         assert_eq!(expected, actual);
@@ -306,7 +369,9 @@ mod test {
 
     #[test]
     fn test_tokenize_identifiers() {
-        let mut tokenizer = Tokenizer::new("user identifier");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "user identifier");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected: Vec<Token> = vec![
             Token::new("user", TokenType::Identifier, 0),
@@ -318,7 +383,9 @@ mod test {
 
     #[test]
     fn test_tokenize_alphanumeric_identifiers() {
-        let mut tokenizer = Tokenizer::new("i32");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "i32");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected: Vec<Token> = vec![Token::new("i32", TokenType::Identifier, 0), Token::eof(3)];
         assert_eq!(expected, actual);
@@ -326,7 +393,9 @@ mod test {
 
     #[test]
     fn test_tokenize_keywords() {
-        let mut tokenizer = Tokenizer::new("let false true return function");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "let false true return function");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected: Vec<Token> = vec![
             Token::new("let", TokenType::Let, 0),
@@ -341,7 +410,9 @@ mod test {
 
     #[test]
     fn test_tokenize_let_assignment() {
-        let mut tokenizer = Tokenizer::new("let a = 99");
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source_str("test.1", "let a = 99");
+
         let actual = tokenizer.tokenize().unwrap();
         let expected: Vec<Token> = vec![
             Token::new("let", TokenType::Let, 0),

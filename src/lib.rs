@@ -4,7 +4,6 @@ extern crate lazy_static;
 mod ast;
 mod errors;
 mod parser;
-mod token;
 mod tokenizer;
 
 // pub mod wasm;

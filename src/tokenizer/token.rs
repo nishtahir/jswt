@@ -1,14 +1,14 @@
 use std::usize;
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Token<'a> {
-    pub lexme: &'a str,
+pub struct Token {
+    pub lexme: &'static str,
     pub offset: usize,
     pub kind: TokenType,
 }
 
-impl<'a> Token<'a> {
-    pub fn new(lexme: &'a str, kind: TokenType, offset: usize) -> Self {
+impl Token {
+    pub fn new(lexme: &'static str, kind: TokenType, offset: usize) -> Self {
         Token {
             lexme,
             offset,

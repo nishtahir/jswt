@@ -22,11 +22,15 @@ fn main() {
         .get_matches();
 
     if let Some(i) = matches.value_of("INPUT") {
-        let content = fs::read_to_string(i).expect("Something went wrong reading the file");
-        let tokenizer = Tokenizer::new(&content);
-
+        let mut tokenizer = Tokenizer::new();
+        tokenizer.push_source(i);
+        
         // TODO - probably have better logging here
-        // fs::write("test.tokens", format!("{:#?}", tokens)).unwrap();
+        // fs::write(
+            //     "test.tokens",
+        //     format!("{:#?}", tokenizer.tokenize().unwrap()),
+        // )
+        // .unwrap();
 
         // parse tokens and generate AST
         let ast = Parser::new(tokenizer).parse().unwrap();
