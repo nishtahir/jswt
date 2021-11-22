@@ -61,6 +61,7 @@ pub enum TokenType {
     False,
     Print,
     Function,
+    Import,
     Export,
     If,
     Else,
@@ -71,5 +72,4 @@ pub enum TokenType {
     // Other
     Comment,
     Eof,
-    Skip,
 }

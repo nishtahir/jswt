@@ -3,16 +3,11 @@ use regex::Regex;
 use crate::errors::TokenizerError;
 use crate::token::{Token, TokenType};
 
-struct LexerRule {
-    matcher: Regex,
-    token_type: TokenType,
-}
-
 macro_rules! rules {
     ($($e:expr => $i:expr),*) => {
         {
             vec![$(
-                LexerRule {
+                TokenizerRule {
                     matcher: Regex::new($e).unwrap(),
                     token_type: $i,
                 },
@@ -21,10 +16,93 @@ macro_rules! rules {
     };
 }
 
+macro_rules! directives {
+    ($($e:expr => $i:expr),*) => {
+        vec![
+            $(
+                TokenizerDirective {
+                    matcher: Regex::new($e).unwrap(),
+                    kind: $i,
+                },
+            )*
+        ]
+    };
+}
+
+#[derive(Debug, PartialEq)]
+enum DirectiveType {
+    Import,
+    Skip,
+}
+
+struct TokenizerDirective {
+    matcher: Regex,
+    kind: DirectiveType,
+}
+
+struct TokenizerRule {
+    matcher: Regex,
+    token_type: TokenType,
+}
+
+// Regex::new can't be evaluated at compile time.
+// Doesn't look like this will land anytime soon.
+// https://github.com/rust-lang/regex/issues/607
+lazy_static! {
+    static ref DIRECTIVES: Vec<TokenizerDirective> = directives![
+        // import "./test.jswt". Group 1 is the unquoted path
+        r#"^\bimport\b\s+"((?:/)?(?:[^"]+(?:/)?)+)"\s"# => DirectiveType::Import,
+        r"^\s+" => DirectiveType::Skip
+    ];
+
+    // https://docs.rs/regex/1.5.4/regex/struct.Regex.html#method.find
+    // All searching is done with an implicit .*? at the beginning and end of an expression.
+    // To force an expression to match the whole string (or a prefix or a suffix),
+    // you must use an anchor like ^ or $ (or \A and \z)
+    static ref RULES: Vec<TokenizerRule> = rules! [
+        // Keywords
+        r"^\btrue\b" => TokenType::True,
+        r"^\bfalse\b" => TokenType::False,
+        r"^\bprint\b" => TokenType::Print,
+        r"^\bfunction\b" => TokenType::Function,
+        r"^\bexport\b" => TokenType::Export,
+        r"^\bimport\b" => TokenType::Import,
+        r"^\bif\b" => TokenType::If,
+        r"^\belse\b" => TokenType::Else,
+        r"^\breturn\b" => TokenType::Return,
+        r"^\blet\b" => TokenType::Let,
+        r"^\bconst\b" => TokenType::Const,
+
+        // Multi character alternatives
+        r"^<=" => TokenType::LessEqual,
+        r"^<" => TokenType::Less,
+        r"^>=" => TokenType::GreaterEqual,
+        r"^>" => TokenType::Greater,
+        r"^==" => TokenType::EqualEqual,
+        r"^=" => TokenType::Equal,
+
+        // Single character alternatives
+        r"^," => TokenType::Comma,
+        r"^:" => TokenType::Colon,
+        r"^;" => TokenType::Semi,
+        r"^\("=> TokenType::LeftParen,
+        r"^\)"=> TokenType::RightParen,
+        r"^\{"=> TokenType::LeftBrace,
+        r"^\}"=> TokenType::RightBrace,
+
+        // Multi character sequences
+        r"^\d+" => TokenType::Number,
+        r"^[_$a-zA-Z][_$a-zA-Z0-9]*" => TokenType::Identifier,
+        r#"^"[^"]*""# => TokenType::String,
+
+        // Other
+        r"^//[^\n]*" => TokenType::Comment
+    ];
+}
+
 pub struct Tokenizer<'a> {
     source: &'a str,
     cursor: usize,
-    rules: Vec<LexerRule>,
 }
 
 impl<'a> Tokenizer<'a> {
@@ -32,49 +110,6 @@ impl<'a> Tokenizer<'a> {
         Tokenizer {
             source: input,
             cursor: 0,
-            // https://docs.rs/regex/1.5.4/regex/struct.Regex.html#method.find
-            // All searching is done with an implicit .*? at the beginning and end of an expression.
-            // To force an expression to match the whole string (or a prefix or a suffix),
-            // you must use an anchor like ^ or $ (or \A and \z)
-            rules: rules! {
-                // Keywords
-                r"^\btrue\b" => TokenType::True,
-                r"^\bfalse\b" => TokenType::False,
-                r"^\bprint\b" => TokenType::Print,
-                r"^\bfunction\b" => TokenType::Function,
-                r"^\bexport\b" => TokenType::Export,
-                r"^\bif\b" => TokenType::If,
-                r"^\belse\b" => TokenType::Else,
-                r"^\breturn\b" => TokenType::Return,
-                r"^\blet\b" => TokenType::Let,
-                r"^\bconst\b" => TokenType::Const,
-
-                // Multi character alternatives
-                r"^<=" => TokenType::LessEqual,
-                r"^<" => TokenType::Less,
-                r"^>=" => TokenType::GreaterEqual,
-                r"^>" => TokenType::Greater,
-                r"^==" => TokenType::EqualEqual,
-                r"^=" => TokenType::Equal,
-
-                // Single character alternatives
-                r"^," => TokenType::Comma,
-                r"^:" => TokenType::Colon,
-                r"^;" => TokenType::Semi,
-                r"^\("=> TokenType::LeftParen,
-                r"^\)"=> TokenType::RightParen,
-                r"^\{"=> TokenType::LeftBrace,
-                r"^\}"=> TokenType::RightBrace,
-
-                // Multi character sequences
-                r"^\d+" => TokenType::Number,
-                r"^[_$a-zA-Z][_$a-zA-Z0-9]*" => TokenType::Identifier,
-                r#"^"[^"]*""# => TokenType::String,
-
-                // Other
-                r"^//[^\n]*" => TokenType::Comment,
-                r"^\s+" => TokenType::Skip
-            },
         }
     }
 
@@ -82,17 +117,34 @@ impl<'a> Tokenizer<'a> {
         if !self.has_more_tokens() {
             return None;
         }
+
+        let offset = self.cursor;
+        let rest = &self.source[offset..];
+        // Attempt to match the next token against tokenizer directives
+        for directive in DIRECTIVES.iter() {
+            if let Some(res) = directive.matcher.captures(rest) {
+                // Group 0 is always the match text
+                let match_text = res.get(0).unwrap().as_str();
+                match directive.kind {
+                    // Push a
+                    DirectiveType::Import => {
+                        todo!()
+                    }
+                    DirectiveType::Skip => {
+                        // Skip the token by advancing the cursor
+                        self.cursor += match_text.len();
+                        return self.next_token();
+                    }
+                }
+            }
+        }
+
         // Attempt to match the next token with a defined lexer rule
-        for rule in &self.rules {
-            let offset = self.cursor;
-            let rest = &self.source[offset..];
+        for rule in RULES.iter() {
             if let Some(res) = rule.matcher.find(rest) {
                 let match_text = res.as_str();
                 // Advance cursor based on match
                 self.cursor += match_text.len();
-                if rule.token_type == TokenType::Skip {
-                    return self.next_token();
-                }
                 let token = Token::new(match_text, rule.token_type, offset);
                 return Some(token);
             }

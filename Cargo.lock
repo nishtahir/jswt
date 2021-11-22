@@ -377,6 +377,7 @@ name = "jswt"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "lazy_static",
  "pretty_assertions",
  "regex",
  "wasmer",
