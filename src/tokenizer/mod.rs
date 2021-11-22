@@ -4,7 +4,7 @@ mod token;
 use crate::errors::TokenizerError;
 pub use crate::tokenizer::token::{Token, TokenType};
 use regex::Regex;
-use std::{cell::RefCell, collections::HashMap, fs, rc::Rc, sync::RwLock};
+use std::{cell::RefCell, collections::HashMap, fs, rc::Rc};
 
 use self::source::Source;
 
@@ -59,8 +59,6 @@ struct TokenizerRule {
 // Doesn't look like this will land anytime soon.
 // https://github.com/rust-lang/regex/issues/607
 lazy_static! {
-    static ref SOURCE_MAP: RwLock<HashMap<String, &'static str>> = RwLock::new(HashMap::new());
-
     static ref DIRECTIVES: Vec<TokenizerDirective> = directives![
         // import "./test.jswt". Group 1 is the unquoted path
         r#"^\bimport\b\s+"((?:/)?(?:[^"]+(?:/)?)+)""# => DirectiveType::Import,
@@ -113,12 +111,14 @@ lazy_static! {
 }
 
 pub struct Tokenizer {
+    source_map: HashMap<String, &'static str>,
     source_stack: Vec<Rc<RefCell<Source>>>,
 }
 
 impl Tokenizer {
     pub fn new() -> Tokenizer {
         Tokenizer {
+            source_map: HashMap::new(),
             source_stack: vec![],
         }
     }
@@ -190,7 +190,7 @@ impl Tokenizer {
     }
 
     pub fn push_source_str(&mut self, path: &str, content: &'static str) {
-        SOURCE_MAP.write().unwrap().insert(path.to_owned(), content);
+        self.source_map.insert(path.to_owned(), content);
         let source = Source::new(path.to_string(), content);
         self.source_stack.push(Rc::new(RefCell::new(source)));
     }
