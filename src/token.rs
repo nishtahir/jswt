@@ -1,26 +1,20 @@
-use std::usize;
+use std::{rc::Rc, usize};
 
 #[derive(Debug, PartialEq)]
-pub struct Token<'a> {
-    pub lexme: &'a str,
+pub struct Token {
+    pub src: Rc<String>,
     pub offset: usize,
+    pub len: usize,
     pub kind: TokenType,
 }
 
-impl<'a> Token<'a> {
-    pub fn new(lexme: &'a str, kind: TokenType, offset: usize) -> Self {
+impl<'a> Token {
+    pub fn new(src: Rc<String>, kind: TokenType, offset: usize, len: usize) -> Self {
         Token {
-            lexme,
+            src,
             offset,
+            len,
             kind,
-        }
-    }
-
-    pub fn eof(offset: usize) -> Self {
-        Token {
-            lexme: "",
-            kind: TokenType::Eof,
-            offset,
         }
     }
 }
@@ -61,6 +55,7 @@ pub enum TokenType {
     False,
     Print,
     Function,
+    Import,
     Export,
     If,
     Else,
