@@ -1,8 +1,11 @@
 #[derive(Debug)]
 pub enum TokenizerError {
-    InvalidCharacter,
+    UnreconizedToken {
+        file: String,
+        token: &'static str,
+        offset: usize,
+    },
     UnexpectedEof,
-    UnexpectedToken,
 }
 
 #[derive(Debug)]

@@ -10,3 +10,4 @@ mod tokenizer;
 
 pub use parser::Parser;
 pub use tokenizer::Tokenizer;
+pub use errors::*;

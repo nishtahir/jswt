@@ -61,13 +61,13 @@ macro_rules! ident {
 }
 
 /// Predictive LL(1) parser
-pub struct Parser {
-    tokenizer: Tokenizer,
+pub struct Parser<'a> {
+    tokenizer: &'a mut Tokenizer,
     lookahead: Option<Token>,
 }
 
-impl<'a> Parser {
-    pub fn new(tokenizer: Tokenizer) -> Parser {
+impl<'a> Parser<'a> {
+    pub fn new(tokenizer: &'a mut Tokenizer) -> Parser {
         Self {
             tokenizer,
             lookahead: None,
@@ -370,9 +370,9 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { }");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -396,9 +396,9 @@ mod test {
 
     #[test]
     fn test_parse_empty_program() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![],
@@ -409,9 +409,9 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_one_param() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32) { }");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -446,9 +446,9 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_two_params() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32, b: f32) { }");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -495,9 +495,9 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_export_decorator() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function test() { }");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -521,9 +521,9 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_return_value() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(): i32 { }");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -550,9 +550,9 @@ mod test {
 
     #[test]
     fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(a: i32, b: i32): i32 { }");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -602,9 +602,9 @@ mod test {
 
     #[test]
     fn test_parse_empty_block() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{}");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Block(
@@ -619,9 +619,9 @@ mod test {
 
     #[test]
     fn test_parse_nested_empty_blocks() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{ {} }");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Block(
@@ -640,9 +640,9 @@ mod test {
 
     #[test]
     fn test_function_declaration_statement_with_block_body() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { {} }");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -670,9 +670,9 @@ mod test {
 
     #[test]
     fn test_parse_empty_statement() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ";");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Empty(
@@ -685,10 +685,10 @@ mod test {
 
     #[test]
     fn test_parse_variable_statement_with_number() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 42;");
 
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Variable(
@@ -710,9 +710,9 @@ mod test {
 
     #[test]
     fn test_parse_variable_statement_with_string() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = \"Hello World\";");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Variable(
@@ -734,9 +734,9 @@ mod test {
 
     #[test]
     fn test_parse_return_statement() {
-        let mut tokenizer = Tokenizer::new();
+        let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "return 99;");
-        let actual = Parser::new(tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap();
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Return(
