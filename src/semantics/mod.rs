@@ -59,7 +59,7 @@ impl Visitor for Resolver {
     }
 
     fn visit_return_statement(&mut self, node: &ReturnStatement) {
-        todo!()
+        todo!();
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {

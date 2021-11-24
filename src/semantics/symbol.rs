@@ -38,8 +38,8 @@ impl SymbolTable {
     }
 
     pub fn lookup_current(&self, name: &'static str) -> Option<&Symbol> {
-        let current_scope = self.table.last()?;
-        current_scope.get(name)
+        let scope = self.table.last()?;
+        scope.get(name)
     }
 }
 

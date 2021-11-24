@@ -171,6 +171,7 @@ impl Tokenizer {
             offset,
             token: &rest[0..1],
         };
+
         self.errors.push(err);
 
         // Drop the offending token and move on to recognizing the next token

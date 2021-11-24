@@ -4,10 +4,10 @@ extern crate clap;
 use clap::Arg;
 // use jswt::wasm::Module;
 // use jswt::wasm::Serialize;
+use jswt::errors::{code_frame, location_from_offset, Location, NodeLocation, TokenizerError};
 use jswt::Parser;
 use jswt::Resolver;
 use jswt::Tokenizer;
-use jswt::TokenizerError;
 use std::env;
 use std::fs;
 use std::process::exit;
@@ -58,25 +58,23 @@ fn main() {
                 offset,
             } => {
                 let source = tokenizer.get_source(file);
-                let lines: Vec<(usize, &str)> = source.split("\n").enumerate().collect();
-                let (line, col) = find_error_location_in_source(&lines, *offset);
-                println!(
-                    "{}:{}:{} - error: Unrecognized token '{}'",
-                    file, line, col, token
+                let location = location_from_offset(source, *offset);
+                println!("{}:{}:{} - error", file, location.line, location.col,);
+
+                let error_span = NodeLocation {
+                    end: Location {
+                        line: location.line,
+                        col: location.col + 1,
+                    },
+                    start: location,
+                };
+                let frame = code_frame(
+                    source,
+                    error_span,
+                    &format!("Unrecognized token '{}'", token),
                 );
 
-                // Render context
-                if line > 1 {
-                    println!("{}", lines[line - 2].1);
-                }
-                println!("{}", lines[line - 1].1);
-
-                let padding = (0..col - 1).map(|_| " ").collect::<String>();
-                println!("{}{}", padding, "^");
-
-                if line <= lines.len() - 1 {
-                    println!("{}\n", lines[line].1);
-                }
+                println!("{}", frame);
             }
             TokenizerError::UnexpectedEof => todo!(),
         }
@@ -110,32 +108,6 @@ fn main() {
     // let main = instance.exports.get_function("main").unwrap();
     // let result = main.call(&[Value::I32(42)]).unwrap();
     // assert_eq!(result[0], Value::I32(42));
-}
-
-fn find_error_location_in_source(lines: &Vec<(usize, &str)>, offset: usize) -> (usize, usize) {
-    if lines.is_empty() || offset == 0 {
-        return (1, 1);
-    }
-
-    let mut remaining = offset + 1;
-    for (i, content) in lines {
-        for (col, _) in content.chars().enumerate() {
-            if remaining > 0 {
-                // These are not indexes
-                remaining -= 1;
-            }
-            if remaining <= 0 {
-                // These are not indexes
-                return (*i + 1, col + 1);
-            }
-        }
-        // Deduct for newline character
-        if remaining > 0 {
-            // These are not indexes
-            remaining -= 1;
-        }
-    }
-    unreachable!();
 }
 
 // fn native_println() {
