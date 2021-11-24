@@ -221,6 +221,11 @@ impl Tokenizer {
     pub fn get_source(&self, path: &str) -> &'static str {
         self.source_map.get(path).unwrap()
     }
+
+    /// Get a reference to the tokenizer's source map.
+    pub fn source_map(&self) -> &HashMap<String, &'static str> {
+        &self.source_map
+    }
 }
 
 #[cfg(test)]

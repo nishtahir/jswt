@@ -19,7 +19,7 @@ struct MarkerLines {
     markers: HashMap<usize, (i32, i32)>,
 }
 
-fn marker_lines(source: &Vec<&'static str>, location: NodeLocation) -> MarkerLines {
+fn marker_lines(source: &Vec<&str>, location: NodeLocation) -> MarkerLines {
     let lines_above = 2;
     let lines_below = 3;
 
@@ -92,7 +92,7 @@ fn marker_lines(source: &Vec<&'static str>, location: NodeLocation) -> MarkerLin
 ///
 /// TODO: Port over floating message support
 ///
-pub fn code_frame(source: &'static str, location: NodeLocation, message: &str) -> String {
+pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String {
     let lines = source.split("\n").collect();
     let MarkerLines {
         start,
@@ -124,7 +124,7 @@ pub fn code_frame(source: &'static str, location: NodeLocation, message: &str) -
                 );
 
                 if is_last_line {
-                    marker_line += "---------- ";
+                    marker_line += " ";
                     marker_line += message;
                 }
                 format!(">{} {}{}", gutter, *line, marker_line)

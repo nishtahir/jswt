@@ -4,9 +4,7 @@ extern crate clap;
 use clap::Arg;
 // use jswt::wasm::Module;
 // use jswt::wasm::Serialize;
-use jswt::errors::{
-    code_frame, location_from_offset, Location, NodeLocation, ParseError, TokenizerError,
-};
+use jswt::errors::{print_parser_error, print_tokenizer_error};
 use jswt::Parser;
 use jswt::Resolver;
 use jswt::Tokenizer;
@@ -57,54 +55,12 @@ fn main() {
     // Report tokenizer errors
     for error in parser_errors.1 {
         has_errors = true;
-        match error {
-            TokenizerError::UnreconizedToken {
-                file,
-                token,
-                offset,
-            } => {
-                let source = tokenizer.get_source(&file);
-                let location = location_from_offset(source, offset);
-                println!("{}:{}:{} - error", file, location.line, location.col,);
-
-                let error_span = NodeLocation {
-                    end: Location {
-                        line: location.line,
-                        col: location.col + 1,
-                    },
-                    start: location,
-                };
-                let frame = code_frame(
-                    source,
-                    error_span,
-                    &format!("Unrecognized token '{}'", token),
-                );
-
-                println!("{}", frame);
-            }
-            TokenizerError::UnexpectedEof => todo!(),
-        }
+        print_tokenizer_error(&error, tokenizer.source_map())
     }
 
     for error in parser_errors.0 {
         has_errors = true;
-
-        match error {
-            ParseError::MismatchedToken {
-                expected,
-                actual,
-                span,
-            } => {
-                println!("MismatchedToken: Expected {:?}, but found {:?}", expected, actual);
-            }
-            ParseError::NoViableAlternative {
-                expected,
-                actual,
-                span,
-            } => {
-                println!("NoViableAlternative: Expected {:?}, but found {:?}", expected, actual);
-            }
-        }
+        print_parser_error(&error, tokenizer.source_map());
     }
 
     if has_errors {
