@@ -5,10 +5,12 @@ use clap::Arg;
 // use jswt::wasm::Module;
 // use jswt::wasm::Serialize;
 use jswt::Parser;
+use jswt::Resolver;
 use jswt::Tokenizer;
 use jswt::TokenizerError;
 use std::env;
 use std::fs;
+use std::process::exit;
 // use wasmer::Function;
 // use wasmer::{imports, Instance, Module as WasmerModule, Store, Value};
 
@@ -40,14 +42,15 @@ fn main() {
         fs::write("test.tokens", format!("{:#?}", tokens)).unwrap();
         return;
     }
-    // TODO - probably have better logging here
 
     // parse tokens and generate AST
     let ast = Parser::new(&mut tokenizer).parse().unwrap();
     fs::write("test.ast", format!("{:#?}", ast)).unwrap();
 
+    let mut has_errors = false;
     // Report tokenizer errors
     for error in tokenizer.errors() {
+        has_errors = true;
         match error {
             TokenizerError::UnreconizedToken {
                 file,
@@ -71,13 +74,20 @@ fn main() {
                 let padding = (0..col - 1).map(|_| " ").collect::<String>();
                 println!("{}{}", padding, "^");
 
-                if line <= lines.len() - 1{
+                if line <= lines.len() - 1 {
                     println!("{}\n", lines[line].1);
                 }
             }
             TokenizerError::UnexpectedEof => todo!(),
         }
     }
+
+    if has_errors {
+        exit(1);
+    }
+
+    let mut resolver = Resolver::default();
+    resolver.resolve(ast);
 
     // let module = Module::new(ast);
     // let serialized_wasm = module.serialize().unwrap();

@@ -1,49 +1,49 @@
 use super::ident::Ident;
 
 #[derive(Debug, PartialEq)]
-pub struct Program<'a> {
-    pub source_elements: SourceElements<'a>,
+pub struct Program {
+    pub source_elements: SourceElements,
 }
 
 #[derive(Debug, PartialEq)]
-pub struct SourceElements<'a> {
-    pub source_elements: Vec<SourceElement<'a>>,
+pub struct SourceElements {
+    pub source_elements: Vec<SourceElement>,
 }
 
 #[derive(Debug, PartialEq)]
-pub enum SourceElement<'a> {
-    FunctionDeclaration(FunctionDeclarationElement<'a>),
-    Statement(StatementElement<'a>),
+pub enum SourceElement {
+    FunctionDeclaration(FunctionDeclarationElement),
+    Statement(StatementElement),
 }
 
-impl<'a> From<StatementElement<'a>> for SourceElement<'a> {
-    fn from(v: StatementElement<'a>) -> Self {
+impl From<StatementElement> for SourceElement {
+    fn from(v: StatementElement) -> Self {
         Self::Statement(v)
     }
 }
 
-impl<'a> From<FunctionDeclarationElement<'a>> for SourceElement<'a> {
-    fn from(v: FunctionDeclarationElement<'a>) -> Self {
+impl From<FunctionDeclarationElement> for SourceElement {
+    fn from(v: FunctionDeclarationElement) -> Self {
         Self::FunctionDeclaration(v)
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct FunctionDeclarationElement<'a> {
+pub struct FunctionDeclarationElement {
     pub decorators: FunctionDecorators,
-    pub ident: Ident<'a>,
-    pub params: FormalParameterList<'a>,
-    pub returns: Option<Ident<'a>>,
-    pub body: FunctionBody<'a>,
+    pub ident: Ident,
+    pub params: FormalParameterList,
+    pub returns: Option<Ident>,
+    pub body: FunctionBody,
 }
 
-impl<'a> FunctionDeclarationElement<'a> {
+impl FunctionDeclarationElement {
     pub fn new(
         decorators: FunctionDecorators,
-        ident: Ident<'a>,
-        params: FormalParameterList<'a>,
-        returns: Option<Ident<'a>>,
-        body: FunctionBody<'a>,
+        ident: Ident,
+        params: FormalParameterList,
+        returns: Option<Ident>,
+        body: FunctionBody,
     ) -> Self {
         Self {
             decorators,
@@ -61,24 +61,24 @@ pub struct FunctionDecorators {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct FormalParameterList<'a> {
-    pub parameters: Vec<FormalParameterArg<'a>>,
+pub struct FormalParameterList {
+    pub parameters: Vec<FormalParameterArg>,
 }
 
-impl<'a> FormalParameterList<'a> {
-    pub fn new(parameters: Vec<FormalParameterArg<'a>>) -> Self {
+impl FormalParameterList {
+    pub fn new(parameters: Vec<FormalParameterArg>) -> Self {
         Self { parameters }
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct FormalParameterArg<'a> {
-    pub ident: Ident<'a>,
-    pub type_annotation: Ident<'a>,
+pub struct FormalParameterArg {
+    pub ident: Ident,
+    pub type_annotation: Ident,
 }
 
-impl<'a> FormalParameterArg<'a> {
-    pub fn new(ident: Ident<'a>, type_annotation: Ident<'a>) -> Self {
+impl FormalParameterArg {
+    pub fn new(ident: Ident, type_annotation: Ident) -> Self {
         Self {
             ident,
             type_annotation,
@@ -87,55 +87,55 @@ impl<'a> FormalParameterArg<'a> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct FunctionBody<'a> {
-    source_elements: SourceElements<'a>,
+pub struct FunctionBody {
+    pub source_elements: SourceElements,
 }
 
-impl<'a> FunctionBody<'a> {
-    pub fn new(source_elements: SourceElements<'a>) -> Self {
+impl FunctionBody {
+    pub fn new(source_elements: SourceElements) -> Self {
         Self { source_elements }
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub enum StatementElement<'a> {
-    Block(BlockStatement<'a>),
+pub enum StatementElement {
+    Block(BlockStatement),
     Empty(EmptyStatement),
-    Return(ReturnStatement<'a>),
-    Variable(VariableStatement<'a>),
+    Return(ReturnStatement),
+    Variable(VariableStatement),
 }
 
-impl<'a> From<ReturnStatement<'a>> for StatementElement<'a> {
-    fn from(v: ReturnStatement<'a>) -> Self {
+impl From<ReturnStatement> for StatementElement {
+    fn from(v: ReturnStatement) -> Self {
         Self::Return(v)
     }
 }
 
-impl<'a> From<VariableStatement<'a>> for StatementElement<'a> {
-    fn from(v: VariableStatement<'a>) -> Self {
+impl From<VariableStatement> for StatementElement {
+    fn from(v: VariableStatement) -> Self {
         Self::Variable(v)
     }
 }
 
-impl<'a> From<EmptyStatement> for StatementElement<'a> {
+impl From<EmptyStatement> for StatementElement {
     fn from(v: EmptyStatement) -> Self {
         Self::Empty(v)
     }
 }
 
-impl<'a> From<BlockStatement<'a>> for StatementElement<'a> {
-    fn from(v: BlockStatement<'a>) -> Self {
+impl From<BlockStatement> for StatementElement {
+    fn from(v: BlockStatement) -> Self {
         Self::Block(v)
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct BlockStatement<'a> {
-    pub statements: StatementList<'a>,
+pub struct BlockStatement {
+    pub statements: StatementList,
 }
 
-impl<'a> BlockStatement<'a> {
-    pub fn new(statements: StatementList<'a>) -> Self {
+impl BlockStatement {
+    pub fn new(statements: StatementList) -> Self {
         Self { statements }
     }
 }
@@ -144,28 +144,28 @@ impl<'a> BlockStatement<'a> {
 pub struct EmptyStatement {}
 
 #[derive(Debug, PartialEq)]
-pub struct ReturnStatement<'a> {
-    pub expression: SingleExpression<'a>,
+pub struct ReturnStatement {
+    pub expression: SingleExpression,
 }
 
-impl<'a> ReturnStatement<'a> {
-    pub fn new(expression: SingleExpression<'a>) -> Self {
+impl ReturnStatement {
+    pub fn new(expression: SingleExpression) -> Self {
         Self { expression }
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub struct VariableStatement<'a> {
+pub struct VariableStatement {
     pub modifier: VariableModifier,
-    pub target: AssignableElement<'a>,
-    pub expression: SingleExpression<'a>,
+    pub target: AssignableElement,
+    pub expression: SingleExpression,
 }
 
-impl<'a> VariableStatement<'a> {
+impl VariableStatement {
     pub fn new(
         modifier: VariableModifier,
-        target: AssignableElement<'a>,
-        expression: SingleExpression<'a>,
+        target: AssignableElement,
+        expression: SingleExpression,
     ) -> Self {
         Self {
             modifier,
@@ -176,12 +176,12 @@ impl<'a> VariableStatement<'a> {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct StatementList<'a> {
-    pub statements: Vec<StatementElement<'a>>,
+pub struct StatementList {
+    pub statements: Vec<StatementElement>,
 }
 
-impl<'a> StatementList<'a> {
-    pub fn new(statements: Vec<StatementElement<'a>>) -> Self {
+impl StatementList {
+    pub fn new(statements: Vec<StatementElement>) -> Self {
         Self { statements }
     }
 }
@@ -193,41 +193,41 @@ pub enum VariableModifier {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum AssignableElement<'a> {
-    Identifier(Ident<'a>),
+pub enum AssignableElement {
+    Identifier(Ident),
 }
 
-impl<'a> From<Ident<'a>> for AssignableElement<'a> {
-    fn from(v: Ident<'a>) -> Self {
+impl From<Ident> for AssignableElement {
+    fn from(v: Ident) -> Self {
         Self::Identifier(v)
     }
 }
 
 #[derive(Debug, PartialEq)]
-pub enum SingleExpression<'a> {
-    Literal(Literal<'a>),
+pub enum SingleExpression {
+    Literal(Literal),
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Literal<'a> {
-    String(StringLiteral<'a>),
+pub enum Literal {
+    String(StringLiteral),
     Number(NumberLiteral),
     Boolean(BooleanLiteral),
 }
 
-impl<'a> From<StringLiteral<'a>> for Literal<'a> {
-    fn from(v: StringLiteral<'a>) -> Self {
+impl From<StringLiteral> for Literal {
+    fn from(v: StringLiteral) -> Self {
         Self::String(v)
     }
 }
 
-impl<'a> From<NumberLiteral> for Literal<'a> {
+impl From<NumberLiteral> for Literal {
     fn from(v: NumberLiteral) -> Self {
         Self::Number(v)
     }
 }
 
-impl<'a> From<BooleanLiteral> for Literal<'a> {
+impl From<BooleanLiteral> for Literal {
     fn from(v: BooleanLiteral) -> Self {
         Self::Boolean(v)
     }
@@ -245,6 +245,6 @@ pub struct NumberLiteral {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct StringLiteral<'a> {
-    pub value: &'a str,
+pub struct StringLiteral {
+    pub value: &'static str,
 }

@@ -5,6 +5,7 @@ use crate::ast::program::{
     NumberLiteral, Program, ReturnStatement, SingleExpression, SourceElement, SourceElements,
     StatementElement, StatementList, StringLiteral, VariableModifier, VariableStatement,
 };
+use crate::ast::Ast;
 use crate::errors::ParseError;
 use crate::tokenizer::{Token, TokenType};
 use crate::Tokenizer;
@@ -74,10 +75,10 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn parse(&mut self) -> Result<Program<'a>, ParseError> {
+    pub fn parse(&mut self) -> Result<Ast, ParseError> {
         // Seed the look ahead for the entry point
         self.lookahead = self.tokenizer.next_token();
-        self.program()
+        Ok(Ast::new(self.program()?))
     }
 
     /// Entry point of the program
@@ -85,7 +86,7 @@ impl<'a> Parser<'a> {
     /// Program
     ///   :  SourceElements? Eof
     ///   ;
-    fn program(&mut self) -> Result<Program<'a>, ParseError> {
+    fn program(&mut self) -> Result<Program, ParseError> {
         Ok(Program {
             // Read until the end of the file
             source_elements: self.source_elements(Some(TokenType::Eof))?,
@@ -99,7 +100,7 @@ impl<'a> Parser<'a> {
     fn source_elements(
         &mut self,
         terminal: Option<TokenType>,
-    ) -> Result<SourceElements<'a>, ParseError> {
+    ) -> Result<SourceElements, ParseError> {
         let mut source_elements = vec![];
         while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
             source_elements.push(self.source_element()?);
@@ -111,7 +112,7 @@ impl<'a> Parser<'a> {
     ///   :  FunctionDeclaration
     ///   |  Statement
     ///   ;
-    fn source_element(&mut self) -> Result<SourceElement<'a>, ParseError> {
+    fn source_element(&mut self) -> Result<SourceElement, ParseError> {
         let elem = match self.lookahead_type() {
             // Need to check for optional function decorators
             Some(TokenType::Function) | Some(TokenType::Export) => {
@@ -128,7 +129,7 @@ impl<'a> Parser<'a> {
     ///   |  ReturnStatement
     ///   |  VariableStatement
     ///   ;
-    fn statement(&mut self) -> Result<StatementElement<'a>, ParseError> {
+    fn statement(&mut self) -> Result<StatementElement, ParseError> {
         let elem = match self.lookahead_type() {
             Some(TokenType::LeftBrace) => self.block()?.into(),
             Some(TokenType::Semi) => self.empty_statement()?.into(),
@@ -142,7 +143,7 @@ impl<'a> Parser<'a> {
     /// Block
     ///   :  '{' statementList? '}'
     ///   ;
-    fn block(&mut self) -> Result<BlockStatement<'a>, ParseError> {
+    fn block(&mut self) -> Result<BlockStatement, ParseError> {
         consume!(self, TokenType::LeftBrace);
         let statements = self.statement_list(Some(TokenType::RightBrace))?;
         consume!(self, TokenType::RightBrace);
@@ -160,7 +161,7 @@ impl<'a> Parser<'a> {
     /// ReturnStatement
     ///   : 'return' SingleExpression
     ///   ;
-    fn return_statement(&mut self) -> Result<ReturnStatement<'a>, ParseError> {
+    fn return_statement(&mut self) -> Result<ReturnStatement, ParseError> {
         consume!(self, TokenType::Return);
         let expression = self.single_expression()?;
         consume!(self, TokenType::Semi);
@@ -171,10 +172,7 @@ impl<'a> Parser<'a> {
     ///   :  Statement
     ///   |  StatementList Statement
     ///   ;
-    fn statement_list(
-        &mut self,
-        terminal: Option<TokenType>,
-    ) -> Result<StatementList<'a>, ParseError> {
+    fn statement_list(&mut self, terminal: Option<TokenType>) -> Result<StatementList, ParseError> {
         let mut statements = vec![];
         while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
             statements.push(self.statement()?);
@@ -184,7 +182,7 @@ impl<'a> Parser<'a> {
 
     /// VariableStatement
     ///   :  VariableModifier Assignable ('=' singleExpression)?
-    fn variable_statement(&mut self) -> Result<VariableStatement<'a>, ParseError> {
+    fn variable_statement(&mut self) -> Result<VariableStatement, ParseError> {
         let modifier = self.variable_modifier()?;
         let assignable = self.assignable()?;
         consume!(self, TokenType::Equal);
@@ -213,14 +211,14 @@ impl<'a> Parser<'a> {
     /// Assignable
     ///   : Ident
     ///   ;
-    fn assignable(&mut self) -> Result<AssignableElement<'a>, ParseError> {
+    fn assignable(&mut self) -> Result<AssignableElement, ParseError> {
         Ok(AssignableElement::Identifier(ident!(self)))
     }
 
     /// SingleExpression
     ///   : Literal
     ///   ;
-    fn single_expression(&mut self) -> Result<SingleExpression<'a>, ParseError> {
+    fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
         Ok(SingleExpression::Literal(self.literal()?))
     }
 
@@ -229,8 +227,8 @@ impl<'a> Parser<'a> {
     ///   | number
     ///   | string
     ///   ;
-    fn literal(&mut self) -> Result<Literal<'a>, ParseError> {
-        let literal: Literal<'a> = match self.lookahead_type() {
+    fn literal(&mut self) -> Result<Literal, ParseError> {
+        let literal: Literal = match self.lookahead_type() {
             Some(TokenType::True) => BooleanLiteral { value: true }.into(),
             Some(TokenType::False) => BooleanLiteral { value: false }.into(),
             Some(TokenType::String) => {
@@ -259,7 +257,7 @@ impl<'a> Parser<'a> {
     /// FunctionDeclaration
     ///   :  'export'? 'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
     ///   ;
-    fn function_declaration(&mut self) -> Result<FunctionDeclarationElement<'a>, ParseError> {
+    fn function_declaration(&mut self) -> Result<FunctionDeclarationElement, ParseError> {
         let has_export = maybe_consume!(self, TokenType::Export);
         consume!(self, TokenType::Function);
 
@@ -287,7 +285,7 @@ impl<'a> Parser<'a> {
     ///   :  FormalParameterArg
     ///   |  FormalParameterArg , FormalParameterArg
     ///   ;
-    fn formal_parameter_list(&mut self) -> Result<FormalParameterList<'a>, ParseError> {
+    fn formal_parameter_list(&mut self) -> Result<FormalParameterList, ParseError> {
         let mut params = vec![];
         if !self.lookahead_is(TokenType::RightParen) {
             loop {
@@ -304,7 +302,7 @@ impl<'a> Parser<'a> {
     /// FormalParameterArg
     ///   :  Ident TypeAnnotation
     ///   ;
-    fn formal_parameter_arg(&mut self) -> Result<FormalParameterArg<'a>, ParseError> {
+    fn formal_parameter_arg(&mut self) -> Result<FormalParameterArg, ParseError> {
         let ident = ident!(self);
         let type_param = self.type_annotation()?;
         Ok(FormalParameterArg::new(ident, type_param))
@@ -313,7 +311,7 @@ impl<'a> Parser<'a> {
     /// TypeAnnotation
     ///   : ':' Ident
     ///   ;
-    fn type_annotation(&mut self) -> Result<Ident<'a>, ParseError> {
+    fn type_annotation(&mut self) -> Result<Ident, ParseError> {
         consume!(self, TokenType::Colon);
         let type_param = ident!(self);
         Ok(type_param)
@@ -322,7 +320,7 @@ impl<'a> Parser<'a> {
     ///  FunctionBody
     ///    :  '{' SourceElements? '}'
     ///    ;
-    fn function_body(&mut self) -> Result<FunctionBody<'a>, ParseError> {
+    fn function_body(&mut self) -> Result<FunctionBody, ParseError> {
         consume!(self, TokenType::LeftBrace);
         // Read until we find a closing brace
         let source_elements = self.source_elements(Some(TokenType::RightBrace))?;
@@ -348,7 +346,7 @@ impl<'a> Parser<'a> {
     }
 }
 
-impl<'a> From<&Token> for Ident<'a> {
+impl From<&Token> for Ident {
     fn from(token: &Token) -> Self {
         Ident::new(token.lexme, token.offset, token.offset + token.lexme.len())
     }
@@ -372,7 +370,7 @@ mod test {
     fn test_function_declaration_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -398,7 +396,7 @@ mod test {
     fn test_parse_empty_program() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![],
@@ -411,7 +409,7 @@ mod test {
     fn test_function_declaration_statement_with_one_param() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32) { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -448,7 +446,7 @@ mod test {
     fn test_function_declaration_statement_with_two_params() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32, b: f32) { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -497,7 +495,7 @@ mod test {
     fn test_function_declaration_statement_with_export_decorator() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function test() { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -523,7 +521,7 @@ mod test {
     fn test_function_declaration_statement_with_return_value() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(): i32 { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -552,7 +550,7 @@ mod test {
     fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(a: i32, b: i32): i32 { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -604,7 +602,7 @@ mod test {
     fn test_parse_empty_block() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{}");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Block(
@@ -621,7 +619,7 @@ mod test {
     fn test_parse_nested_empty_blocks() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{ {} }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Block(
@@ -642,7 +640,7 @@ mod test {
     fn test_function_declaration_statement_with_block_body() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { {} }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
@@ -672,7 +670,7 @@ mod test {
     fn test_parse_empty_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ";");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Empty(
@@ -688,7 +686,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 42;");
 
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Variable(
@@ -712,7 +710,7 @@ mod test {
     fn test_parse_variable_statement_with_string() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = \"Hello World\";");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Variable(
@@ -736,7 +734,7 @@ mod test {
     fn test_parse_return_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "return 99;");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap();
+        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Return(
