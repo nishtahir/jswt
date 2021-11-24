@@ -4,7 +4,9 @@ extern crate clap;
 use clap::Arg;
 // use jswt::wasm::Module;
 // use jswt::wasm::Serialize;
-use jswt::errors::{code_frame, location_from_offset, Location, NodeLocation, TokenizerError};
+use jswt::errors::{
+    code_frame, location_from_offset, Location, NodeLocation, ParseError, TokenizerError,
+};
 use jswt::Parser;
 use jswt::Resolver;
 use jswt::Tokenizer;
@@ -44,12 +46,16 @@ fn main() {
     }
 
     // parse tokens and generate AST
-    let ast = Parser::new(&mut tokenizer).parse().unwrap();
+    let mut parser = Parser::new(&mut tokenizer);
+
+    let ast = parser.parse();
     fs::write("test.ast", format!("{:#?}", ast)).unwrap();
 
     let mut has_errors = false;
+    let parser_errors = parser.errors();
+
     // Report tokenizer errors
-    for error in tokenizer.errors() {
+    for error in parser_errors.1 {
         has_errors = true;
         match error {
             TokenizerError::UnreconizedToken {
@@ -57,8 +63,8 @@ fn main() {
                 token,
                 offset,
             } => {
-                let source = tokenizer.get_source(file);
-                let location = location_from_offset(source, *offset);
+                let source = tokenizer.get_source(&file);
+                let location = location_from_offset(source, offset);
                 println!("{}:{}:{} - error", file, location.line, location.col,);
 
                 let error_span = NodeLocation {
@@ -80,12 +86,33 @@ fn main() {
         }
     }
 
+    for error in parser_errors.0 {
+        has_errors = true;
+
+        match error {
+            ParseError::MismatchedToken {
+                expected,
+                actual,
+                span,
+            } => {
+                println!("MismatchedToken: Expected {:?}, but found {:?}", expected, actual);
+            }
+            ParseError::NoViableAlternative {
+                expected,
+                actual,
+                span,
+            } => {
+                println!("NoViableAlternative: Expected {:?}, but found {:?}", expected, actual);
+            }
+        }
+    }
+
     if has_errors {
         exit(1);
     }
 
     let mut resolver = Resolver::default();
-    resolver.resolve(ast);
+    resolver.resolve(&ast);
 
     // let module = Module::new(ast);
     // let serialized_wasm = module.serialize().unwrap();

@@ -2,7 +2,9 @@ mod code;
 
 pub use code::{code_frame, location_from_offset, Location, NodeLocation};
 
-#[derive(Debug)]
+use crate::{ast::span::Span, tokenizer::TokenType};
+
+#[derive(Debug, Clone)]
 pub enum TokenizerError {
     UnreconizedToken {
         file: String,
@@ -12,7 +14,16 @@ pub enum TokenizerError {
     UnexpectedEof,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ParseError {
-    SyntaxError(String),
+    MismatchedToken {
+        expected: TokenType,
+        actual: TokenType,
+        span: Span,
+    },
+    NoViableAlternative {
+        expected: Vec<TokenType>,
+        actual: TokenType,
+        span: Span,
+    },
 }

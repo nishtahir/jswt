@@ -5,8 +5,9 @@ use crate::ast::program::{
     NumberLiteral, Program, ReturnStatement, SingleExpression, SourceElement, SourceElements,
     StatementElement, StatementList, StringLiteral, VariableModifier, VariableStatement,
 };
+use crate::ast::span::Span;
 use crate::ast::Ast;
-use crate::errors::ParseError;
+use crate::errors::{ParseError, TokenizerError};
 use crate::tokenizer::{Token, TokenType};
 use crate::Tokenizer;
 
@@ -38,10 +39,15 @@ macro_rules! consume {
     ($self:ident, $token:expr) => {{
         let token = $self.lookahead.as_ref().expect("Expected end of input");
         if token.kind != $token {
-            panic!("Mismatched token type")
+            return Err(ParseError::MismatchedToken {
+                expected: $token,
+                actual: token.kind,
+                span: Span::new(&token.file, token.offset, token.offset + token.lexme.len()),
+            });
         }
         // Advance lookahead
         $self.lookahead = $self.tokenizer.next_token();
+        Ok::<(), ParseError>(())
     }};
 }
 
@@ -50,7 +56,7 @@ macro_rules! ident {
     // creates a function named `$func_name`.
     // The `ident` designator is used for variable/function names.
     ($self:ident) => {{
-        let token = $self.lookahead.as_ref().expect("Expected end of input");
+        let token = $self.lookahead.as_ref().expect("unexpected end of input");
         if token.kind != TokenType::Identifier {
             panic!("Mismatched token type {:?}", token);
         }
@@ -65,6 +71,7 @@ macro_rules! ident {
 pub struct Parser<'a> {
     tokenizer: &'a mut Tokenizer,
     lookahead: Option<Token>,
+    errors: Vec<ParseError>,
 }
 
 impl<'a> Parser<'a> {
@@ -72,13 +79,14 @@ impl<'a> Parser<'a> {
         Self {
             tokenizer,
             lookahead: None,
+            errors: vec![],
         }
     }
 
-    pub fn parse(&mut self) -> Result<Ast, ParseError> {
+    pub fn parse(&mut self) -> Ast {
         // Seed the look ahead for the entry point
         self.lookahead = self.tokenizer.next_token();
-        Ok(Ast::new(self.program()?))
+        Ast::new(self.program())
     }
 
     /// Entry point of the program
@@ -86,26 +94,39 @@ impl<'a> Parser<'a> {
     /// Program
     ///   :  SourceElements? Eof
     ///   ;
-    fn program(&mut self) -> Result<Program, ParseError> {
-        Ok(Program {
+    fn program(&mut self) -> Program {
+        Program {
             // Read until the end of the file
-            source_elements: self.source_elements(Some(TokenType::Eof))?,
-        })
+            source_elements: self.source_elements(Some(TokenType::Eof)),
+        }
     }
 
     /// SourceElements
     ///   :  SourceElement
     ///   |  SourceElements SourceElement
     ///   ;
-    fn source_elements(
-        &mut self,
-        terminal: Option<TokenType>,
-    ) -> Result<SourceElements, ParseError> {
+    fn source_elements(&mut self, terminal: Option<TokenType>) -> SourceElements {
         let mut source_elements = vec![];
         while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
-            source_elements.push(self.source_element()?);
+            match self.source_element() {
+                Ok(element) => source_elements.push(element),
+                Err(err) => self.handle_error_and_recover(
+                    err,
+                    &[
+                        // FunctionDeclaration start tokens
+                        TokenType::Export,
+                        TokenType::Function,
+                        // Statement start tokens
+                        TokenType::LeftBrace,
+                        TokenType::Semi,
+                        TokenType::Return,
+                        TokenType::Let,
+                        TokenType::Const,
+                    ],
+                ),
+            };
         }
-        Ok(SourceElements { source_elements })
+        SourceElements { source_elements }
     }
 
     /// SourceElement
@@ -135,6 +156,20 @@ impl<'a> Parser<'a> {
             Some(TokenType::Semi) => self.empty_statement()?.into(),
             Some(TokenType::Return) => self.return_statement()?.into(),
             Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?.into(),
+            Some(token_type) => {
+                let lookahed = self.lookahead.as_ref().unwrap();
+                return Err(ParseError::NoViableAlternative {
+                    expected: vec![
+                        TokenType::LeftBrace,
+                        TokenType::Semi,
+                        TokenType::Return,
+                        TokenType::Let,
+                        TokenType::Const,
+                    ],
+                    actual: token_type,
+                    span: lookahed.into(),
+                });
+            }
             _ => todo!(),
         };
         Ok(elem)
@@ -144,9 +179,9 @@ impl<'a> Parser<'a> {
     ///   :  '{' statementList? '}'
     ///   ;
     fn block(&mut self) -> Result<BlockStatement, ParseError> {
-        consume!(self, TokenType::LeftBrace);
+        consume!(self, TokenType::LeftBrace)?;
         let statements = self.statement_list(Some(TokenType::RightBrace))?;
-        consume!(self, TokenType::RightBrace);
+        consume!(self, TokenType::RightBrace)?;
         Ok(BlockStatement::new(statements))
     }
 
@@ -154,7 +189,7 @@ impl<'a> Parser<'a> {
     ///   : ';'
     ///   ;
     fn empty_statement(&mut self) -> Result<EmptyStatement, ParseError> {
-        consume!(self, TokenType::Semi);
+        consume!(self, TokenType::Semi)?;
         Ok(EmptyStatement::default())
     }
 
@@ -162,9 +197,9 @@ impl<'a> Parser<'a> {
     ///   : 'return' SingleExpression
     ///   ;
     fn return_statement(&mut self) -> Result<ReturnStatement, ParseError> {
-        consume!(self, TokenType::Return);
+        consume!(self, TokenType::Return)?;
         let expression = self.single_expression()?;
-        consume!(self, TokenType::Semi);
+        consume!(self, TokenType::Semi)?;
         Ok(ReturnStatement::new(expression))
     }
 
@@ -175,7 +210,19 @@ impl<'a> Parser<'a> {
     fn statement_list(&mut self, terminal: Option<TokenType>) -> Result<StatementList, ParseError> {
         let mut statements = vec![];
         while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
-            statements.push(self.statement()?);
+            match self.statement() {
+                Ok(element) => statements.push(element),
+                Err(err) => self.handle_error_and_recover(
+                    err,
+                    &[
+                        TokenType::LeftBrace,
+                        TokenType::Semi,
+                        TokenType::Return,
+                        TokenType::Let,
+                        TokenType::Const,
+                    ],
+                ),
+            }
         }
         Ok(StatementList::new(statements))
     }
@@ -185,9 +232,9 @@ impl<'a> Parser<'a> {
     fn variable_statement(&mut self) -> Result<VariableStatement, ParseError> {
         let modifier = self.variable_modifier()?;
         let assignable = self.assignable()?;
-        consume!(self, TokenType::Equal);
+        consume!(self, TokenType::Equal)?;
         let expression = self.single_expression()?;
-        consume!(self, TokenType::Semi);
+        consume!(self, TokenType::Semi)?;
 
         Ok(VariableStatement::new(modifier, assignable, expression))
     }
@@ -259,13 +306,13 @@ impl<'a> Parser<'a> {
     ///   ;
     fn function_declaration(&mut self) -> Result<FunctionDeclarationElement, ParseError> {
         let has_export = maybe_consume!(self, TokenType::Export);
-        consume!(self, TokenType::Function);
+        consume!(self, TokenType::Function)?;
 
         let ident = ident!(self);
 
-        consume!(self, TokenType::LeftParen);
+        consume!(self, TokenType::LeftParen)?;
         let params = self.formal_parameter_list()?;
-        consume!(self, TokenType::RightParen);
+        consume!(self, TokenType::RightParen)?;
 
         //Parse return value
         let mut returns = None;
@@ -312,7 +359,7 @@ impl<'a> Parser<'a> {
     ///   : ':' Ident
     ///   ;
     fn type_annotation(&mut self) -> Result<Ident, ParseError> {
-        consume!(self, TokenType::Colon);
+        consume!(self, TokenType::Colon)?;
         let type_param = ident!(self);
         Ok(type_param)
     }
@@ -321,10 +368,10 @@ impl<'a> Parser<'a> {
     ///    :  '{' SourceElements? '}'
     ///    ;
     fn function_body(&mut self) -> Result<FunctionBody, ParseError> {
-        consume!(self, TokenType::LeftBrace);
+        consume!(self, TokenType::LeftBrace)?;
         // Read until we find a closing brace
-        let source_elements = self.source_elements(Some(TokenType::RightBrace))?;
-        consume!(self, TokenType::RightBrace);
+        let source_elements = self.source_elements(Some(TokenType::RightBrace));
+        consume!(self, TokenType::RightBrace)?;
         Ok(FunctionBody::new(source_elements))
     }
 
@@ -344,11 +391,35 @@ impl<'a> Parser<'a> {
             false
         }
     }
+
+    /// Bail out of the current parse context
+    /// by throwing out tokens until we find a new
+    /// token that allows us to recover
+    fn handle_error_and_recover(&mut self, e: ParseError, recovery_set: &[TokenType]) {
+        self.errors.push(e);
+        while self.lookahead.is_some() {
+            if recovery_set.contains(&self.lookahead.as_ref().unwrap().kind) {
+                break;
+            }
+            self.lookahead = self.tokenizer.next_token();
+        }
+    }
+
+    /// Get a reference to the parser's errors.
+    pub fn errors(&self) -> (Vec<ParseError>, Vec<TokenizerError>) {
+        (self.errors.clone(), self.tokenizer.errors())
+    }
 }
 
 impl From<&Token> for Ident {
     fn from(token: &Token) -> Self {
-        Ident::new(token.lexme, token.offset, token.offset + token.lexme.len())
+        Ident::new(token.lexme, token.into())
+    }
+}
+
+impl From<&Token> for Span {
+    fn from(token: &Token) -> Self {
+        Span::new(&token.file, token.offset, token.offset + token.lexme.len())
     }
 }
 
@@ -370,14 +441,18 @@ mod test {
     fn test_function_declaration_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         decorators: FunctionDecorators { export: false },
                         ident: Ident {
-                            span: Span { start: 9, end: 13 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 9,
+                                end: 13,
+                            },
                             value: "test",
                         },
                         params: FormalParameterList { parameters: vec![] },
@@ -396,7 +471,7 @@ mod test {
     fn test_parse_empty_program() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![],
@@ -409,24 +484,36 @@ mod test {
     fn test_function_declaration_statement_with_one_param() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32) { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         decorators: FunctionDecorators { export: false },
                         ident: Ident {
-                            span: Span { start: 9, end: 13 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 9,
+                                end: 13,
+                            },
                             value: "name",
                         },
                         params: FormalParameterList {
                             parameters: vec![FormalParameterArg {
                                 ident: Ident {
-                                    span: Span { start: 14, end: 15 },
+                                    span: Span {
+                                        file: "test.1".to_owned(),
+                                        start: 14,
+                                        end: 15,
+                                    },
                                     value: "a",
                                 },
                                 type_annotation: Ident {
-                                    span: Span { start: 17, end: 20 },
+                                    span: Span {
+                                        file: "test.1".to_owned(),
+                                        start: 17,
+                                        end: 20,
+                                    },
                                     value: "i32",
                                 },
                             }],
@@ -446,35 +533,55 @@ mod test {
     fn test_function_declaration_statement_with_two_params() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32, b: f32) { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         decorators: FunctionDecorators { export: false },
                         ident: Ident {
-                            span: Span { start: 9, end: 13 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 9,
+                                end: 13,
+                            },
                             value: "name",
                         },
                         params: FormalParameterList {
                             parameters: vec![
                                 FormalParameterArg {
                                     ident: Ident {
-                                        span: Span { start: 14, end: 15 },
+                                        span: Span {
+                                            file: "test.1".to_owned(),
+                                            start: 14,
+                                            end: 15,
+                                        },
                                         value: "a",
                                     },
                                     type_annotation: Ident {
-                                        span: Span { start: 17, end: 20 },
+                                        span: Span {
+                                            file: "test.1".to_owned(),
+                                            start: 17,
+                                            end: 20,
+                                        },
                                         value: "i32",
                                     },
                                 },
                                 FormalParameterArg {
                                     ident: Ident {
-                                        span: Span { start: 22, end: 23 },
+                                        span: Span {
+                                            file: "test.1".to_owned(),
+                                            start: 22,
+                                            end: 23,
+                                        },
                                         value: "b",
                                     },
                                     type_annotation: Ident {
-                                        span: Span { start: 25, end: 28 },
+                                        span: Span {
+                                            file: "test.1".to_owned(),
+                                            start: 25,
+                                            end: 28,
+                                        },
                                         value: "f32",
                                     },
                                 },
@@ -495,14 +602,18 @@ mod test {
     fn test_function_declaration_statement_with_export_decorator() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function test() { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         decorators: FunctionDecorators { export: true },
                         ident: Ident {
-                            span: Span { start: 16, end: 20 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 16,
+                                end: 20,
+                            },
                             value: "test",
                         },
                         params: FormalParameterList { parameters: vec![] },
@@ -521,19 +632,27 @@ mod test {
     fn test_function_declaration_statement_with_return_value() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(): i32 { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         decorators: FunctionDecorators { export: false },
                         ident: Ident {
-                            span: Span { start: 9, end: 13 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 9,
+                                end: 13,
+                            },
                             value: "test",
                         },
                         params: FormalParameterList { parameters: vec![] },
                         returns: Some(Ident {
-                            span: Span { start: 17, end: 20 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 17,
+                                end: 20,
+                            },
                             value: "i32",
                         }),
                         body: FunctionBody::new(SourceElements {
@@ -550,42 +669,66 @@ mod test {
     fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(a: i32, b: i32): i32 { }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         decorators: FunctionDecorators { export: false },
                         ident: Ident {
-                            span: Span { start: 9, end: 13 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 9,
+                                end: 13,
+                            },
                             value: "test",
                         },
                         params: FormalParameterList {
                             parameters: vec![
                                 FormalParameterArg {
                                     ident: Ident {
-                                        span: Span { start: 14, end: 15 },
+                                        span: Span {
+                                            file: "test.1".to_owned(),
+                                            start: 14,
+                                            end: 15,
+                                        },
                                         value: "a",
                                     },
                                     type_annotation: Ident {
-                                        span: Span { start: 17, end: 20 },
+                                        span: Span {
+                                            file: "test.1".to_owned(),
+                                            start: 17,
+                                            end: 20,
+                                        },
                                         value: "i32",
                                     },
                                 },
                                 FormalParameterArg {
                                     ident: Ident {
-                                        span: Span { start: 22, end: 23 },
+                                        span: Span {
+                                            file: "test.1".to_owned(),
+                                            start: 22,
+                                            end: 23,
+                                        },
                                         value: "b",
                                     },
                                     type_annotation: Ident {
-                                        span: Span { start: 25, end: 28 },
+                                        span: Span {
+                                            file: "test.1".to_owned(),
+                                            start: 25,
+                                            end: 28,
+                                        },
                                         value: "i32",
                                     },
                                 },
                             ],
                         },
                         returns: Some(Ident {
-                            span: Span { start: 31, end: 34 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 31,
+                                end: 34,
+                            },
                             value: "i32",
                         }),
                         body: FunctionBody::new(SourceElements {
@@ -602,7 +745,7 @@ mod test {
     fn test_parse_empty_block() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{}");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Block(
@@ -619,7 +762,7 @@ mod test {
     fn test_parse_nested_empty_blocks() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{ {} }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Block(
@@ -640,14 +783,18 @@ mod test {
     fn test_function_declaration_statement_with_block_body() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { {} }");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         decorators: FunctionDecorators { export: false },
                         ident: Ident {
-                            span: Span { start: 9, end: 13 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 9,
+                                end: 13,
+                            },
                             value: "test",
                         },
                         params: FormalParameterList { parameters: vec![] },
@@ -670,7 +817,7 @@ mod test {
     fn test_parse_empty_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ";");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Empty(
@@ -686,14 +833,18 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 42;");
 
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Variable(
                     VariableStatement {
                         modifier: VariableModifier::Let,
                         target: AssignableElement::Identifier(Ident {
-                            span: Span { start: 4, end: 5 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 4,
+                                end: 5,
+                            },
                             value: "x",
                         }),
                         expression: SingleExpression::Literal(Literal::Number(NumberLiteral {
@@ -710,14 +861,18 @@ mod test {
     fn test_parse_variable_statement_with_string() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = \"Hello World\";");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Variable(
                     VariableStatement {
                         modifier: VariableModifier::Let,
                         target: AssignableElement::Identifier(Ident {
-                            span: Span { start: 4, end: 5 },
+                            span: Span {
+                                file: "test.1".to_owned(),
+                                start: 4,
+                                end: 5,
+                            },
                             value: "x",
                         }),
                         expression: SingleExpression::Literal(Literal::String(StringLiteral {
@@ -734,7 +889,7 @@ mod test {
     fn test_parse_return_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "return 99;");
-        let actual = Parser::new(&mut tokenizer).parse().unwrap().program;
+        let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
                 source_elements: vec![SourceElement::Statement(StatementElement::Return(

@@ -8,10 +8,7 @@ pub struct Ident {
 }
 
 impl Ident {
-    pub fn new(value: &'static str, start: usize, end: usize) -> Self {
-        Self {
-            span: Span::new(start, end),
-            value,
-        }
+    pub fn new(value: &'static str, span: Span) -> Self {
+        Self { span, value }
     }
 }

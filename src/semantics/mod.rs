@@ -11,7 +11,7 @@ pub struct Resolver {
 }
 
 impl Resolver {
-    pub fn resolve(&mut self, ast: Ast) {
+    pub fn resolve(&mut self, ast: &Ast) {
         self.visit_program(&ast.program);
     }
 }

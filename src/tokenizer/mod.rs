@@ -131,7 +131,7 @@ impl Tokenizer {
         // our tokenization stack
         if !source.has_more_content() {
             self.pop_source();
-            return Some(Token::eof(offset));
+            return self.next_token();
         }
 
         let rest = source.content_from_cursor();
@@ -160,7 +160,7 @@ impl Tokenizer {
                 let match_text = res.as_str();
                 // Advance cursor based on match
                 source.advance_cursor(match_text.len());
-                let token = Token::new(match_text, rule.token_type, offset);
+                let token = Token::new(&source.name, match_text, rule.token_type, offset);
                 return Some(token);
             }
         }
@@ -214,14 +214,14 @@ impl Tokenizer {
     }
 
     /// Get a reference to the tokenizer's errors.
-    pub fn errors(&self) -> &[TokenizerError] {
-        self.errors.as_ref()
+    pub fn errors(&self) -> Vec<TokenizerError> {
+        self.errors.clone()
     }
 
     pub fn get_source(&self, path: &str) -> &'static str {
         self.source_map.get(path).unwrap()
     }
- }
+}
 
 #[cfg(test)]
 mod test {
@@ -234,7 +234,10 @@ mod test {
         tokenizer.push_source_str("test.1", "42");
 
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("42", TokenType::Number, 0), Token::eof(2)];
+        let expected = vec![
+            Token::new("test.jswt", "42", TokenType::Number, 0),
+            Token::eof("test.jswt", 2),
+        ];
         assert_eq!(expected, actual)
     }
 
@@ -245,9 +248,9 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected = vec![
-            Token::new("4", TokenType::Number, 3),
-            Token::new("2", TokenType::Number, 6),
-            Token::eof(10),
+            Token::new("test.jswt", "4", TokenType::Number, 3),
+            Token::new("test.jswt", "2", TokenType::Number, 6),
+            Token::eof("test.jswt", 10),
         ];
         assert_eq!(expected, actual)
     }
@@ -259,8 +262,8 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected = vec![
-            Token::new("\"Hello World\"", TokenType::String, 0),
-            Token::eof(13),
+            Token::new("test.jswt", "\"Hello World\"", TokenType::String, 0),
+            Token::eof("test.jswt", 13),
         ];
         assert_eq!(expected, actual)
     }
@@ -272,9 +275,9 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected = vec![
-            Token::new("{", TokenType::LeftBrace, 0),
-            Token::new("}", TokenType::RightBrace, 1),
-            Token::eof(2),
+            Token::new("test.jswt", "{", TokenType::LeftBrace, 0),
+            Token::new("test.jswt", "}", TokenType::RightBrace, 1),
+            Token::eof("test.jswt", 2),
         ];
         assert_eq!(expected, actual);
     }
@@ -286,9 +289,9 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected = vec![
-            Token::new("(", TokenType::LeftParen, 0),
-            Token::new(")", TokenType::RightParen, 1),
-            Token::eof(2),
+            Token::new("test.jswt", "(", TokenType::LeftParen, 0),
+            Token::new("test.jswt", ")", TokenType::RightParen, 1),
+            Token::eof("test.jswt", 2),
         ];
         assert_eq!(expected, actual);
     }
@@ -299,7 +302,10 @@ mod test {
         tokenizer.push_source_str("test.1", ",");
 
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new(",", TokenType::Comma, 0), Token::eof(1)];
+        let expected = vec![
+            Token::new("test.jswt", ",", TokenType::Comma, 0),
+            Token::eof("test.jswt", 1),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -309,7 +315,10 @@ mod test {
         tokenizer.push_source_str("test.1", "<");
 
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("<", TokenType::Less, 0), Token::eof(1)];
+        let expected = vec![
+            Token::new("test.jswt", "<", TokenType::Less, 0),
+            Token::eof("test.jswt", 1),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -319,7 +328,10 @@ mod test {
         tokenizer.push_source_str("test.1", "<=");
 
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("<=", TokenType::LessEqual, 0), Token::eof(2)];
+        let expected = vec![
+            Token::new("test.jswt", "<=", TokenType::LessEqual, 0),
+            Token::eof("test.jswt", 2),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -329,7 +341,10 @@ mod test {
         tokenizer.push_source_str("test.1", ">");
 
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new(">", TokenType::Greater, 0), Token::eof(1)];
+        let expected = vec![
+            Token::new("test.jswt", ">", TokenType::Greater, 0),
+            Token::eof("test.jswt", 1),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -339,7 +354,10 @@ mod test {
         tokenizer.push_source_str("test.1", ">=");
 
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new(">=", TokenType::GreaterEqual, 0), Token::eof(2)];
+        let expected = vec![
+            Token::new("test.jswt", ">=", TokenType::GreaterEqual, 0),
+            Token::eof("test.jswt", 2),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -349,7 +367,10 @@ mod test {
         tokenizer.push_source_str("test.1", "=");
 
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("=", TokenType::Equal, 0), Token::eof(1)];
+        let expected = vec![
+            Token::new("test.jswt", "=", TokenType::Equal, 0),
+            Token::eof("test.jswt", 1),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -359,7 +380,10 @@ mod test {
         tokenizer.push_source_str("test.1", ";");
 
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new(";", TokenType::Semi, 0), Token::eof(1)];
+        let expected = vec![
+            Token::new("test.jswt", ";", TokenType::Semi, 0),
+            Token::eof("test.jswt", 1),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -370,8 +394,13 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected = vec![
-            Token::new("// This is a test comment", TokenType::Comment, 0),
-            Token::eof(25),
+            Token::new(
+                "test.jswt",
+                "// This is a test comment",
+                TokenType::Comment,
+                0,
+            ),
+            Token::eof("test.jswt", 25),
         ];
         assert_eq!(expected, actual);
     }
@@ -382,7 +411,7 @@ mod test {
         tokenizer.push_source_str("test.1", "  ");
 
         let actual = tokenizer.tokenize();
-        let expected: Vec<Token> = vec![Token::eof(2)];
+        let expected: Vec<Token> = vec![Token::eof("test.jswt", 2)];
         assert_eq!(expected, actual);
     }
 
@@ -393,9 +422,9 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected: Vec<Token> = vec![
-            Token::new("user", TokenType::Identifier, 0),
-            Token::new("identifier", TokenType::Identifier, 5),
-            Token::eof(15),
+            Token::new("test.jswt", "user", TokenType::Identifier, 0),
+            Token::new("test.jswt", "identifier", TokenType::Identifier, 5),
+            Token::eof("test.jswt", 15),
         ];
         assert_eq!(expected, actual);
     }
@@ -406,7 +435,10 @@ mod test {
         tokenizer.push_source_str("test.1", "i32");
 
         let actual = tokenizer.tokenize();
-        let expected: Vec<Token> = vec![Token::new("i32", TokenType::Identifier, 0), Token::eof(3)];
+        let expected: Vec<Token> = vec![
+            Token::new("test.jswt", "i32", TokenType::Identifier, 0),
+            Token::eof("test.jswt", 3),
+        ];
         assert_eq!(expected, actual);
     }
 
@@ -417,12 +449,12 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected: Vec<Token> = vec![
-            Token::new("let", TokenType::Let, 0),
-            Token::new("false", TokenType::False, 4),
-            Token::new("true", TokenType::True, 10),
-            Token::new("return", TokenType::Return, 15),
-            Token::new("function", TokenType::Function, 22),
-            Token::eof(30),
+            Token::new("test.jswt", "let", TokenType::Let, 0),
+            Token::new("test.jswt", "false", TokenType::False, 4),
+            Token::new("test.jswt", "true", TokenType::True, 10),
+            Token::new("test.jswt", "return", TokenType::Return, 15),
+            Token::new("test.jswt", "function", TokenType::Function, 22),
+            Token::eof("test.jswt", 30),
         ];
         assert_eq!(expected, actual);
     }
@@ -434,11 +466,11 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected: Vec<Token> = vec![
-            Token::new("let", TokenType::Let, 0),
-            Token::new("a", TokenType::Identifier, 4),
-            Token::new("=", TokenType::Equal, 6),
-            Token::new("99", TokenType::Number, 8),
-            Token::eof(10),
+            Token::new("test.jswt", "let", TokenType::Let, 0),
+            Token::new("test.jswt", "a", TokenType::Identifier, 4),
+            Token::new("test.jswt", "=", TokenType::Equal, 6),
+            Token::new("test.jswt", "99", TokenType::Number, 8),
+            Token::eof("test.jswt", 10),
         ];
         assert_eq!(expected, actual);
     }
