@@ -1,4 +1,7 @@
-use super::ident::Ident;
+use super::{
+    ident::Ident,
+    span::{Span, Spannable},
+};
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
@@ -30,29 +33,12 @@ impl From<FunctionDeclarationElement> for SourceElement {
 
 #[derive(Debug, PartialEq)]
 pub struct FunctionDeclarationElement {
+    pub span: Span,
     pub decorators: FunctionDecorators,
     pub ident: Ident,
     pub params: FormalParameterList,
     pub returns: Option<Ident>,
     pub body: FunctionBody,
-}
-
-impl FunctionDeclarationElement {
-    pub fn new(
-        decorators: FunctionDecorators,
-        ident: Ident,
-        params: FormalParameterList,
-        returns: Option<Ident>,
-        body: FunctionBody,
-    ) -> Self {
-        Self {
-            decorators,
-            ident,
-            params,
-            returns,
-            body,
-        }
-    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -65,35 +51,21 @@ pub struct FormalParameterList {
     pub parameters: Vec<FormalParameterArg>,
 }
 
-impl FormalParameterList {
-    pub fn new(parameters: Vec<FormalParameterArg>) -> Self {
-        Self { parameters }
-    }
-}
-
 #[derive(Debug, PartialEq)]
 pub struct FormalParameterArg {
     pub ident: Ident,
     pub type_annotation: Ident,
 }
 
-impl FormalParameterArg {
-    pub fn new(ident: Ident, type_annotation: Ident) -> Self {
-        Self {
-            ident,
-            type_annotation,
-        }
-    }
-}
-
 #[derive(Debug, PartialEq)]
 pub struct FunctionBody {
+    pub span: Span,
     pub source_elements: SourceElements,
 }
 
-impl FunctionBody {
-    pub fn new(source_elements: SourceElements) -> Self {
-        Self { source_elements }
+impl Spannable for FunctionBody {
+    fn span(&self) -> Span {
+        self.span.to_owned()
     }
 }
 
@@ -131,48 +103,28 @@ impl From<BlockStatement> for StatementElement {
 
 #[derive(Debug, PartialEq)]
 pub struct BlockStatement {
+    pub span: Span,
     pub statements: StatementList,
 }
 
-impl BlockStatement {
-    pub fn new(statements: StatementList) -> Self {
-        Self { statements }
-    }
-}
 
-#[derive(Debug, PartialEq, Default)]
-pub struct EmptyStatement {}
+#[derive(Debug, PartialEq)]
+pub struct EmptyStatement {
+    pub span: Span,
+}
 
 #[derive(Debug, PartialEq)]
 pub struct ReturnStatement {
+    pub span: Span,
     pub expression: SingleExpression,
-}
-
-impl ReturnStatement {
-    pub fn new(expression: SingleExpression) -> Self {
-        Self { expression }
-    }
 }
 
 #[derive(Debug, PartialEq)]
 pub struct VariableStatement {
+    pub span: Span,
     pub modifier: VariableModifier,
     pub target: AssignableElement,
     pub expression: SingleExpression,
-}
-
-impl VariableStatement {
-    pub fn new(
-        modifier: VariableModifier,
-        target: AssignableElement,
-        expression: SingleExpression,
-    ) -> Self {
-        Self {
-            modifier,
-            target,
-            expression,
-        }
-    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -180,16 +132,19 @@ pub struct StatementList {
     pub statements: Vec<StatementElement>,
 }
 
-impl StatementList {
-    pub fn new(statements: Vec<StatementElement>) -> Self {
-        Self { statements }
-    }
-}
-
 #[derive(Debug, PartialEq)]
 pub enum VariableModifier {
-    Let,
-    Const,
+    Let(Span),
+    Const(Span),
+}
+
+impl Spannable for VariableModifier {
+    fn span(&self) -> Span {
+        match self {
+            VariableModifier::Let(span) => span.to_owned(),
+            VariableModifier::Const(span) => span.to_owned(),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -205,7 +160,66 @@ impl From<Ident> for AssignableElement {
 
 #[derive(Debug, PartialEq)]
 pub enum SingleExpression {
+    Multiplicative(BinaryExpression),
+    Additive(BinaryExpression),
     Literal(Literal),
+}
+
+impl From<Literal> for SingleExpression {
+    fn from(v: Literal) -> Self {
+        Self::Literal(v)
+    }
+}
+
+impl From<BinaryExpression> for SingleExpression {
+    fn from(v: BinaryExpression) -> Self {
+        Self::Additive(v)
+    }
+}
+
+impl Spannable for SingleExpression {
+    fn span(&self) -> Span {
+        match self {
+            SingleExpression::Multiplicative(exp) => exp.span(),
+            SingleExpression::Additive(exp) => exp.span(),
+            SingleExpression::Literal(exp) => exp.span(),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct UnaryExpression {
+    pub span: Span,
+    op: UnaryOperator,
+    expr: Box<SingleExpression>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct BinaryExpression {
+    pub span: Span,
+    pub left: Box<SingleExpression>,
+    pub op: BinaryOperator,
+    pub right: Box<SingleExpression>,
+}
+
+impl Spannable for BinaryExpression {
+    fn span(&self) -> Span {
+        self.span.to_owned()
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum UnaryOperator {
+    Plus(Span),
+    Minus(Span),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum BinaryOperator {
+    Plus(Span),
+    Minus(Span),
+    Star(Span),
+    Slash(Span),
 }
 
 #[derive(Debug, PartialEq)]
@@ -213,6 +227,16 @@ pub enum Literal {
     String(StringLiteral),
     Number(NumberLiteral),
     Boolean(BooleanLiteral),
+}
+
+impl Spannable for Literal {
+    fn span(&self) -> Span {
+        match self {
+            Literal::String(s) => s.span.to_owned(),
+            Literal::Number(n) => n.span.to_owned(),
+            Literal::Boolean(b) => b.span.to_owned(),
+        }
+    }
 }
 
 impl From<StringLiteral> for Literal {
@@ -235,16 +259,19 @@ impl From<BooleanLiteral> for Literal {
 
 #[derive(Debug, PartialEq)]
 pub struct BooleanLiteral {
+    pub span: Span,
     pub value: bool,
 }
 
 #[derive(Debug, PartialEq)]
 
 pub struct NumberLiteral {
+    pub span: Span,
     pub value: i32,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct StringLiteral {
+    pub span: Span,
     pub value: &'static str,
 }

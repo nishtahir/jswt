@@ -15,4 +15,21 @@ impl Span {
     }
 }
 
-pub trait Spanable {}
+pub trait Spannable {
+    fn span(&self) -> Span;
+}
+
+///
+/// Produces a new Span that encompases both spans
+///
+impl std::ops::Add<Span> for Span {
+    type Output = Span;
+
+    fn add(self, rhs: Span) -> Span {
+        Span {
+            file: self.file,
+            start: self.start,
+            end: rhs.end,
+        }
+    }
+}

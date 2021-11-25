@@ -90,10 +90,23 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
             actual,
             span,
         } => {
-            println!(
-                "NoViableAlternative: Expected {:?}, but found {:?}",
-                expected, actual
+            let file = &span.file;
+            let source = source_map[file];
+            let start = location_from_offset(source, span.start);
+            let end = location_from_offset(source, span.end);
+            println!("{}:{}:{} - error", file, start.line, start.col,);
+
+            let error_span = NodeLocation { end, start };
+            let frame = code_frame(
+                source,
+                error_span,
+                &format!(
+                    "NoViableAlternative: Expected {:?}, but found {:?}",
+                    expected, actual
+                ),
             );
+
+            println!("{}", frame);
         }
     }
 }

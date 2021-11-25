@@ -36,7 +36,7 @@ pub enum TokenType {
     LeftBrace,
     RightBrace,
     Star,
-    Div,
+    Slash,
     Plus,
     Minus,
     Comma,

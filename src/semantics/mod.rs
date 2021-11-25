@@ -51,14 +51,16 @@ impl Visitor for Resolver {
     fn visit_block_statement(&mut self, node: &BlockStatement) {
         self.symbols.push_scope();
         self.visit_statement_list(&node.statements);
+        // TODO - before we pop the scope, determine if
+        // there are any types we could not resolve
         self.symbols.pop_scope();
     }
 
-    fn visit_empty_statement(&mut self, node: &EmptyStatement) {
+    fn visit_empty_statement(&mut self, _: &EmptyStatement) {
         // No-op
     }
 
-    fn visit_return_statement(&mut self, node: &ReturnStatement) {
+    fn visit_return_statement(&mut self, _: &ReturnStatement) {
         todo!();
     }
 
@@ -97,17 +99,19 @@ impl Visitor for Resolver {
         self.symbols.pop_scope();
     }
 
-    fn visit_assignable_element(&mut self, node: &AssignableElement) {
+    fn visit_assignable_element(&mut self, _: &AssignableElement) {
         // No-op
     }
 
     fn visit_single_expression(&mut self, node: &SingleExpression) {
         match node {
             SingleExpression::Literal(lit) => self.visit_literal(lit),
+            SingleExpression::Multiplicative(_) => todo!(),
+            SingleExpression::Additive(_) => todo!(),
         }
     }
 
-    fn visit_literal(&mut self, node: &Literal) {
+    fn visit_literal(&mut self, _: &Literal) {
         // No-op
     }
 }
