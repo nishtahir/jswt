@@ -4,12 +4,18 @@ mod token;
 use crate::errors::TokenizerError;
 pub use crate::tokenizer::token::{Token, TokenType};
 use regex::Regex;
-use std::{cell::RefCell, collections::HashMap, fs, path::PathBuf, rc::Rc};
+use std::{
+    cell::RefCell,
+    collections::HashMap,
+    fs,
+    path::{Path, PathBuf},
+    rc::Rc,
+};
 
 use self::source::Source;
 
 // Utility to read a file from a given path
-fn read_to_string(path: &PathBuf) -> String {
+fn read_to_string(path: &Path) -> String {
     fs::read_to_string(&path).unwrap()
 }
 

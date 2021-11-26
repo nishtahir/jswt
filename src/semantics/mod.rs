@@ -1,14 +1,23 @@
 mod symbol;
 
-use self::symbol::{Symbol, SymbolTable, Type};
+use self::symbol::{Symbol, Type};
 use crate::ast::span::Spannable;
 use crate::ast::visitor::Visitor;
 use crate::ast::{program::*, Ast};
+use crate::common::SymbolTable;
 use crate::errors::SemanticError;
 
-#[derive(Default)]
+impl Default for Resolver {
+    fn default() -> Self {
+        Self {
+            symbols: SymbolTable::new(vec![]),
+            errors: Default::default(),
+        }
+    }
+}
+
 pub struct Resolver {
-    symbols: SymbolTable,
+    symbols: SymbolTable<Symbol>,
     errors: Vec<SemanticError>,
 }
 
@@ -83,7 +92,7 @@ impl Visitor for Resolver {
             };
             self.errors.push(error);
         }
-        self.symbols.define(Symbol::new(Type::Unknown, name));
+        self.symbols.define(name, Symbol::new(Type::Unknown, name));
     }
 
     fn visit_statement_list(&mut self, node: &StatementList) {
@@ -102,7 +111,7 @@ impl Visitor for Resolver {
             };
             self.errors.push(error);
         }
-        self.symbols.define(Symbol::new(Type::Function, name));
+        self.symbols.define(name, Symbol::new(Type::Function, name));
         self.visit_function_body(&node.body);
     }
 

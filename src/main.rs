@@ -2,8 +2,7 @@
 extern crate clap;
 
 use clap::Arg;
-// use jswt::wasm::Module;
-// use jswt::wasm::Serialize;
+use jswt::codegen::CodeGenerator;
 use jswt::errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
 use jswt::Parser;
 use jswt::Resolver;
@@ -11,8 +10,7 @@ use jswt::Tokenizer;
 use std::env;
 use std::fs;
 use std::process::exit;
-// use wasmer::Function;
-// use wasmer::{imports, Instance, Module as WasmerModule, Store, Value};
+use wasmer::{imports, Instance, Module as WasmerModule, Store};
 
 fn main() {
     let matches = app_from_crate!()
@@ -52,7 +50,7 @@ fn main() {
     let mut has_errors = false;
     let parser_errors = parser.errors();
 
-    // Report tokenizer errors
+    // Report errors
     for error in parser_errors.1 {
         has_errors = true;
         print_tokenizer_error(&error, tokenizer.source_map())
@@ -63,10 +61,7 @@ fn main() {
         print_parser_error(&error, tokenizer.source_map());
     }
 
-    if has_errors {
-        exit(1);
-    }
-
+    // Semantic analytis pass
     let mut resolver = Resolver::default();
     resolver.resolve(&ast);
 
@@ -79,27 +74,22 @@ fn main() {
         exit(1);
     }
 
-    // let module = Module::new(ast);
-    // let serialized_wasm = module.serialize().unwrap();
+    let mut code_gen = CodeGenerator::default();
+    let module = code_gen.generate_module(&ast);
+    let wast = module.as_wat();
+    fs::write("test.wast", &wast).unwrap();
 
-    // // to test decompilation
-    // // use https://webassembly.github.io/wabt/demo/wasm2wat/
-    // fs::write("test.wasm", &serialized_wasm).unwrap();
+    // Embed wasmer runtime and execute generated wasm
+    let store = Store::default();
+    let module = WasmerModule::new(&store, wast).unwrap();
+    let import_object = imports! {
+            // The module doesn't import anything, so we create an empty import object.
+    };
+    let instance = Instance::new(&module, &import_object).unwrap();
 
-    // // Embed wasmer runtime and execute generated wasm
-    // let store = Store::default();
-    // let module = WasmerModule::new(&store, &serialized_wasm).unwrap();
-    // // The module doesn't import anything, so we create an empty import object.
-    // let import_object = imports! {
-    //     "env" => {
-    //         "println" => Function::new_native(&store, native_println),
-    //     }
-    // };
-    // let instance = Instance::new(&module, &import_object).unwrap();
-
-    // let main = instance.exports.get_function("main").unwrap();
-    // let result = main.call(&[Value::I32(42)]).unwrap();
-    // assert_eq!(result[0], Value::I32(42));
+    let main = instance.exports.get_function("main").unwrap();
+    let result = main.call(&[]).unwrap();
+    println!("{:#?}", result[0]);
 }
 
 // fn native_println() {

@@ -3,10 +3,13 @@ extern crate lazy_static;
 
 pub mod assert;
 mod ast;
+pub mod codegen;
+pub mod common;
 pub mod errors;
 mod parser;
 mod semantics;
 mod tokenizer;
+pub mod wast;
 
 // pub mod wasm;
 

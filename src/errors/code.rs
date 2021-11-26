@@ -19,7 +19,7 @@ struct MarkerLines {
     markers: HashMap<usize, (i32, i32)>,
 }
 
-fn marker_lines(source: &Vec<&str>, location: NodeLocation) -> MarkerLines {
+fn marker_lines(source: &[&str], location: NodeLocation) -> MarkerLines {
     let lines_above = 2;
     let lines_below = 3;
 
@@ -61,17 +61,15 @@ fn marker_lines(source: &Vec<&str>, location: NodeLocation) -> MarkerLines {
                 markers.insert(line_number as usize, (0, source_len as i32));
             }
         }
-    } else {
-        if start_col == end_col {
-            if start_col > 0 {
-                markers.insert(start_line as usize, (start_col, 0));
-            } else {
-                // markers[start_line] = true;
-                todo!()
-            }
+    } else if start_col == end_col {
+        if start_col > 0 {
+            markers.insert(start_line as usize, (start_col, 0));
         } else {
-            markers.insert(start_line as usize, (start_col, end_col - start_col));
+            // markers[start_line] = true;
+            todo!()
         }
+    } else {
+        markers.insert(start_line as usize, (start_col, end_col - start_col));
     }
 
     MarkerLines {
@@ -93,7 +91,7 @@ fn marker_lines(source: &Vec<&str>, location: NodeLocation) -> MarkerLines {
 /// TODO: Port over floating message support
 ///
 pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String {
-    let lines = source.split("\n").collect();
+    let lines = source.split('\n').collect::<Vec<&str>>();
     let MarkerLines {
         start,
         end,
@@ -104,12 +102,12 @@ pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String
     let context = &lines[start..end];
 
     context
-        .into_iter()
+        .iter()
         .enumerate()
         .map(|(index, line)| {
             let line_number = start + index + 1;
             let gutter = format!(" {: >width$} |", line_number, width = number_max_width);
-            let is_last_line = !markers.get(&(line_number + 1)).is_some();
+            let is_last_line = markers.get(&(line_number + 1)).is_none();
 
             if let Some((start_col, end_col)) = markers.get(&line_number) {
                 let marker_spacing = " ".repeat(0_i32.max(start_col - 1) as usize);
@@ -141,9 +139,7 @@ pub fn location_from_offset(source: &str, offset: usize) -> Location {
     let mut location = Location { line: 1, col: 1 };
     if offset > 0 {
         let mut remaining = offset;
-
-        let mut iter = source.chars().into_iter();
-        while let Some(ch) = iter.next() {
+        for ch in source.chars().into_iter() {
             if ch == '\n' {
                 location.line += 1;
                 location.col = 1;
@@ -152,7 +148,7 @@ pub fn location_from_offset(source: &str, offset: usize) -> Location {
             }
 
             remaining -= 1;
-            if remaining <= 0 {
+            if remaining == 0 {
                 break;
             }
         }
