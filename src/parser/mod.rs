@@ -566,6 +566,7 @@ mod test {
 
     use super::*;
     use crate::{
+        assert_str_eq,
         ast::{
             program::{FunctionDeclarationElement, NumberLiteral},
             span::Span,
@@ -1043,19 +1044,36 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 1 + 2;");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::Statement(StatementElement::Return(
-                    ReturnStatement {
-                        span: Span::new("test.1", 0, 10),
-                        expression: SingleExpression::Literal(Literal::Number(NumberLiteral {
-                            span: Span::new("test.1", 7, 9),
-                            value: 99,
-                        })),
-                    },
-                ))],
-            },
-        };
-        assert_eq!(expected, actual);
+        let expected = include_str!("../../test/test_parse_additive_expression.ast");
+        assert_str_eq!(expected, &format!("{:#?}", actual));
+    }
+
+    #[test]
+    fn test_parse_multiplicative_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "let x = 3 * 2;");
+        let actual = Parser::new(&mut tokenizer).parse().program;
+        let expected = include_str!("../../test/test_parse_multiplicative_expression.ast");
+        assert_str_eq!(expected, &format!("{:#?}", actual));
+    }
+
+    #[test]
+    fn test_parse_nested_math_expression_has_correct_precedence() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "let x = 3 * 2 + 1 * 0;");
+        let actual = Parser::new(&mut tokenizer).parse().program;
+        let expected =
+            include_str!("../../test/test_parse_nested_math_expression_has_correct_precedence.ast");
+        assert_str_eq!(expected, &format!("{:#?}", actual));
+    }
+
+    #[test]
+    fn test_parse_additive_expression_left_associativity() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "let x = 3 + 2 + 1 + 0;");
+        let actual = Parser::new(&mut tokenizer).parse().program;
+        let expected =
+            include_str!("../../test/test_parse_additive_expression_left_associativity.ast");
+        assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 }
