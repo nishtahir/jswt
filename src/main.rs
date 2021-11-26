@@ -4,7 +4,7 @@ extern crate clap;
 use clap::Arg;
 // use jswt::wasm::Module;
 // use jswt::wasm::Serialize;
-use jswt::errors::{print_parser_error, print_tokenizer_error};
+use jswt::errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
 use jswt::Parser;
 use jswt::Resolver;
 use jswt::Tokenizer;
@@ -69,6 +69,15 @@ fn main() {
 
     let mut resolver = Resolver::default();
     resolver.resolve(&ast);
+
+    for error in resolver.errors() {
+        has_errors = true;
+        print_semantic_error(&error, tokenizer.source_map())
+    }
+
+    if has_errors {
+        exit(1);
+    }
 
     // let module = Module::new(ast);
     // let serialized_wasm = module.serialize().unwrap();

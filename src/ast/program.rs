@@ -151,6 +151,14 @@ pub enum AssignableElement {
     Identifier(Ident),
 }
 
+impl Spannable for AssignableElement {
+    fn span(&self) -> Span {
+        match self {
+            AssignableElement::Identifier(ident) => ident.span.to_owned(),
+        }
+    }
+}
+
 impl From<Ident> for AssignableElement {
     fn from(v: Ident) -> Self {
         Self::Identifier(v)

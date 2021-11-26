@@ -1,18 +1,25 @@
 mod symbol;
-use std::panic;
 
 use self::symbol::{Symbol, SymbolTable, Type};
+use crate::ast::span::Spannable;
 use crate::ast::visitor::Visitor;
 use crate::ast::{program::*, Ast};
+use crate::errors::SemanticError;
 
 #[derive(Default)]
 pub struct Resolver {
     symbols: SymbolTable,
+    errors: Vec<SemanticError>,
 }
 
 impl Resolver {
     pub fn resolve(&mut self, ast: &Ast) {
         self.visit_program(&ast.program);
+    }
+
+    /// Get a reference to the resolver's errors.
+    pub fn errors(&self) -> Vec<SemanticError> {
+        self.errors.clone()
     }
 }
 
@@ -60,8 +67,8 @@ impl Visitor for Resolver {
         // No-op
     }
 
-    fn visit_return_statement(&mut self, _: &ReturnStatement) {
-        todo!();
+    fn visit_return_statement(&mut self, node: &ReturnStatement) {
+        self.visit_single_expression(&node.expression);
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
@@ -70,7 +77,11 @@ impl Visitor for Resolver {
         };
         self.visit_single_expression(&node.expression);
         if self.symbols.lookup_current(name).is_some() {
-            panic!("var with name '{}' is already defined in same scope", name);
+            let error = SemanticError::VariableAlreadyDefined {
+                name,
+                span: node.target.span(),
+            };
+            self.errors.push(error);
         }
         self.symbols.define(Symbol::new(Type::Unknown, name));
     }
@@ -82,12 +93,14 @@ impl Visitor for Resolver {
     }
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
-        let name = node.ident.value;
+        let ident = &node.ident;
+        let name = ident.value;
         if self.symbols.lookup_current(name).is_some() {
-            panic!(
-                "function with name '{}' is already defined in same scope",
-                name
-            );
+            let error = SemanticError::FunctionAlreadyDefined {
+                name,
+                span: ident.span.to_owned(),
+            };
+            self.errors.push(error);
         }
         self.symbols.define(Symbol::new(Type::Function, name));
         self.visit_function_body(&node.body);
@@ -106,13 +119,86 @@ impl Visitor for Resolver {
     fn visit_single_expression(&mut self, node: &SingleExpression) {
         match node {
             SingleExpression::Literal(lit) => self.visit_literal(lit),
-            SingleExpression::Multiplicative(_) => todo!(),
-            SingleExpression::Additive(_) => todo!(),
-            SingleExpression::Identifier(_) => todo!(),
+            SingleExpression::Multiplicative(exp) => self.visit_binary_expression(exp),
+            SingleExpression::Additive(exp) => self.visit_binary_expression(exp),
+            SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
         }
     }
 
     fn visit_literal(&mut self, _: &Literal) {
         // No-op
+    }
+
+    fn visit_binary_expression(&mut self, node: &BinaryExpression) {
+        self.visit_single_expression(&node.left);
+        self.visit_single_expression(&node.right);
+    }
+
+    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
+        let ident = &node.ident;
+        let name = ident.value;
+        if self.symbols.lookup(name).is_none() {
+            let error = SemanticError::VariableNotDefined {
+                name,
+                span: ident.span.to_owned(),
+            };
+            self.errors.push(error);
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::*;
+    use crate::{ast::span::Span, *};
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn test_duplicate_variable_declaration_generates_error() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "let x = 0; let x = 1;");
+        let ast = Parser::new(&mut tokenizer).parse();
+        let mut resolver = Resolver::default();
+        resolver.resolve(&ast);
+
+        let expected = vec![SemanticError::VariableAlreadyDefined {
+            name: "x",
+            span: Span::new("test.1", 15, 16),
+        }];
+
+        assert_eq!(expected, resolver.errors());
+    }
+
+    #[test]
+    fn test_duplicate_function_declaration_generates_error() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "function x() {} function x() {}");
+        let ast = Parser::new(&mut tokenizer).parse();
+        let mut resolver = Resolver::default();
+        resolver.resolve(&ast);
+
+        let expected = vec![SemanticError::FunctionAlreadyDefined {
+            name: "x",
+            span: Span::new("test.1", 25, 26),
+        }];
+
+        assert_eq!(expected, resolver.errors());
+    }
+
+    #[test]
+    fn test_variable_not_defined_generates_error() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "function test() { return x; }");
+        let ast = Parser::new(&mut tokenizer).parse();
+        let mut resolver = Resolver::default();
+        resolver.resolve(&ast);
+
+        let expected = vec![SemanticError::VariableNotDefined {
+            name: "x",
+            span: Span::new("test.1", 25, 26),
+        }];
+
+        assert_eq!(expected, resolver.errors());
     }
 }

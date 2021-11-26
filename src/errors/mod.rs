@@ -30,6 +30,63 @@ pub enum ParseError {
     },
 }
 
+#[derive(Debug, PartialEq, Clone)]
+pub enum SemanticError {
+    VariableNotDefined { name: &'static str, span: Span },
+    VariableAlreadyDefined { name: &'static str, span: Span },
+    FunctionAlreadyDefined { name: &'static str, span: Span },
+}
+
+pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, &'static str>) {
+    match error {
+        SemanticError::VariableNotDefined { name, span } => {
+            let file = &span.file;
+            let source = source_map[file];
+            let start = location_from_offset(source, span.start);
+            let end = location_from_offset(source, span.end);
+            println!("{}:{}:{} - error", file, start.line, start.col,);
+
+            let error_span = NodeLocation { end, start };
+            let frame = code_frame(
+                source,
+                error_span,
+                &format!("Variable '{}' was not defined in this scope", name),
+            );
+            println!("{}\n", frame);
+        }
+        SemanticError::VariableAlreadyDefined { name, span } => {
+            let file = &span.file;
+            let source = source_map[file];
+            let start = location_from_offset(source, span.start);
+            let end = location_from_offset(source, span.end);
+            println!("{}:{}:{} - error", file, start.line, start.col,);
+
+            let error_span = NodeLocation { end, start };
+            let frame = code_frame(
+                source,
+                error_span,
+                &format!("Variable '{}' was already defined in this scope", name),
+            );
+            println!("{}\n", frame);
+        }
+        SemanticError::FunctionAlreadyDefined { name, span } => {
+            let file = &span.file;
+            let source = source_map[file];
+            let start = location_from_offset(source, span.start);
+            let end = location_from_offset(source, span.end);
+            println!("{}:{}:{} - error", file, start.line, start.col,);
+
+            let error_span = NodeLocation { end, start };
+            let frame = code_frame(
+                source,
+                error_span,
+                &format!("Function '{}' was already defined in this scope", name),
+            );
+            println!("{}\n", frame);
+        }
+    }
+}
+
 pub fn print_tokenizer_error(error: &TokenizerError, source_map: &HashMap<String, &'static str>) {
     match error {
         TokenizerError::UnreconizedToken {
@@ -54,7 +111,7 @@ pub fn print_tokenizer_error(error: &TokenizerError, source_map: &HashMap<String
                 &format!("Unrecognized token '{}'", token),
             );
 
-            println!("{}", frame);
+            println!("{}\n", frame);
         }
         TokenizerError::UnexpectedEof => todo!(),
     }
@@ -83,7 +140,7 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
                 ),
             );
 
-            println!("{}", frame);
+            println!("{}\n", frame);
         }
         ParseError::NoViableAlternative {
             expected,
@@ -106,7 +163,7 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
                 ),
             );
 
-            println!("{}", frame);
+            println!("{}\n", frame);
         }
     }
 }

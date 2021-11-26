@@ -24,5 +24,7 @@ visitor![
     visit_function_body: FunctionBody,
     visit_assignable_element: AssignableElement,
     visit_single_expression: SingleExpression,
+    visit_binary_expression: BinaryExpression,
+    visit_identifier_expression: IdentifierExpression,
     visit_literal: Literal
 ];
