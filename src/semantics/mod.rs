@@ -108,6 +108,7 @@ impl Visitor for Resolver {
             SingleExpression::Literal(lit) => self.visit_literal(lit),
             SingleExpression::Multiplicative(_) => todo!(),
             SingleExpression::Additive(_) => todo!(),
+            SingleExpression::Identifier(_) => todo!(),
         }
     }
 

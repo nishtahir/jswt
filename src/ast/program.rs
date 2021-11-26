@@ -107,7 +107,6 @@ pub struct BlockStatement {
     pub statements: StatementList,
 }
 
-
 #[derive(Debug, PartialEq)]
 pub struct EmptyStatement {
     pub span: Span,
@@ -162,7 +161,14 @@ impl From<Ident> for AssignableElement {
 pub enum SingleExpression {
     Multiplicative(BinaryExpression),
     Additive(BinaryExpression),
+    Identifier(IdentifierExpression),
     Literal(Literal),
+}
+
+impl From<IdentifierExpression> for SingleExpression {
+    fn from(v: IdentifierExpression) -> Self {
+        Self::Identifier(v)
+    }
 }
 
 impl From<Literal> for SingleExpression {
@@ -183,6 +189,7 @@ impl Spannable for SingleExpression {
             SingleExpression::Multiplicative(exp) => exp.span(),
             SingleExpression::Additive(exp) => exp.span(),
             SingleExpression::Literal(exp) => exp.span(),
+            SingleExpression::Identifier(exp) => exp.span(),
         }
     }
 }
@@ -206,6 +213,11 @@ impl Spannable for BinaryExpression {
     fn span(&self) -> Span {
         self.span.to_owned()
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct IdentifierExpression {
+    pub ident: Ident,
 }
 
 #[derive(Debug, PartialEq)]
@@ -274,4 +286,9 @@ pub struct NumberLiteral {
 pub struct StringLiteral {
     pub span: Span,
     pub value: &'static str,
+}
+impl Spannable for IdentifierExpression {
+    fn span(&self) -> Span {
+        self.ident.span.to_owned()
+    }
 }

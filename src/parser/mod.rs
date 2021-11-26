@@ -2,8 +2,8 @@ use crate::ast::ident::Ident;
 use crate::ast::program::{
     AssignableElement, BinaryExpression, BinaryOperator, BlockStatement, BooleanLiteral,
     EmptyStatement, FormalParameterArg, FormalParameterList, FunctionBody,
-    FunctionDeclarationElement, FunctionDecorators, Literal, NumberLiteral, Program,
-    ReturnStatement, SingleExpression, SourceElement, SourceElements, StatementElement,
+    FunctionDeclarationElement, FunctionDecorators, IdentifierExpression, Literal, NumberLiteral,
+    Program, ReturnStatement, SingleExpression, SourceElement, SourceElements, StatementElement,
     StatementList, StringLiteral, VariableModifier, VariableStatement,
 };
 use crate::ast::span::{Span, Spannable};
@@ -39,6 +39,7 @@ macro_rules! consume_unchecked {
 /// as the given token then advances the tokenizer to the next token
 macro_rules! consume {
     ($self:ident, $token:expr) => {{
+        // TODO - this should generate a parse error, not panic
         let token = $self.lookahead.as_ref().expect("Unexpected end of input");
         if token.kind != $token {
             return Err(ParseError::MismatchedToken {
@@ -286,78 +287,90 @@ impl<'a> Parser<'a> {
 
     /// SingleExpression
     ///   :  
-    ///   | MultiplicativeExpresion ('+' | '-') MultiplicativeExpresion
+    ///   | SingleExpression ('+' | '-') SingleExpression
     ///   ;
     fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        self.multipicative_expression()
+        self.additive_expression()
     }
 
-    /// MultiplicativeExpresion
-    ///   : AdditiveExpresion ('*' | '/' | '%') AdditiveExpresion
+    /// AdditiveExpression
+    ///   : MultiplicativeExpression ('+' | '-') MultiplicativeExpression
+    ///   ;
+    fn additive_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        // This gives multiplicative expressions higher precedence
+        let mut left = self.multipicative_expression()?;
+        while let Some(token) = self.lookahead_type() {
+            match token {
+                TokenType::Plus => {
+                    let op_span = consume_unchecked!(self);
+                    let right = self.multipicative_expression()?;
+                    left = SingleExpression::Additive(BinaryExpression {
+                        span: left.span() + right.span(),
+                        left: Box::new(left),
+                        op: BinaryOperator::Plus(op_span),
+                        right: Box::new(right),
+                    });
+                }
+                TokenType::Minus => {
+                    let op_span = consume_unchecked!(self);
+                    let right = self.multipicative_expression()?;
+                    left = SingleExpression::Additive(BinaryExpression {
+                        span: left.span() + right.span(),
+                        left: Box::new(left),
+                        op: BinaryOperator::Minus(op_span),
+                        right: Box::new(right),
+                    });
+                }
+                _ => break,
+            }
+        }
+        Ok(left)
+    }
+
+    /// MultiplicativeExpression
+    ///   : IdentifierExpression ('*' | '/' | '%') IdentifierExpression
     ///   ;
     fn multipicative_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let left = self.additive_expression()?;
-        match self.lookahead_type() {
-            Some(TokenType::Star) => {
-                let op_span = consume_unchecked!(self);
-                let right = self.additive_expression()?;
-                return Ok({
-                    BinaryExpression {
+        let mut left = self.identifier_expression()?;
+        while let Some(token) = self.lookahead_type() {
+            match token {
+                TokenType::Star => {
+                    let op_span = consume_unchecked!(self);
+                    let right = self.identifier_expression()?;
+                    left = SingleExpression::Multiplicative(BinaryExpression {
                         span: left.span() + right.span(),
                         left: Box::new(left),
                         op: BinaryOperator::Star(op_span),
                         right: Box::new(right),
-                    }
+                    });
                 }
-                .into());
-            }
-            Some(TokenType::Slash) => {
-                let op_span = consume_unchecked!(self);
-                let right = self.additive_expression()?;
-                return Ok(BinaryExpression {
-                    span: left.span() + right.span(),
-                    left: Box::new(left),
-                    op: BinaryOperator::Star(op_span),
-                    right: Box::new(right),
+                TokenType::Slash => {
+                    let op_span = consume_unchecked!(self);
+                    let right = self.identifier_expression()?;
+                    left = SingleExpression::Multiplicative(BinaryExpression {
+                        span: left.span() + right.span(),
+                        left: Box::new(left),
+                        op: BinaryOperator::Slash(op_span),
+                        right: Box::new(right),
+                    });
                 }
-                .into());
+                _ => break,
             }
-            _ => { /* No-op */ }
         }
         Ok(left)
     }
 
-    /// AdditiveExpresion
-    ///   : Literal ('+' | '-') Literal
+    /// IdentifierExpression
+    ///   : Identifier
     ///   ;
-    fn additive_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let left = self.literal()?;
-        match self.lookahead_type() {
-            Some(TokenType::Plus) => {
-                let op_span = consume_unchecked!(self);
-                let right = self.literal()?;
-                return Ok(BinaryExpression {
-                    span: left.span() + right.span(),
-                    left: Box::new(left),
-                    op: BinaryOperator::Plus(op_span),
-                    right: Box::new(right),
-                }
-                .into());
-            }
-            Some(TokenType::Minus) => {
-                let op_span = consume_unchecked!(self);
-                let right = self.additive_expression()?;
-                return Ok(BinaryExpression {
-                    span: left.span() + right.span(),
-                    left: Box::new(left),
-                    op: BinaryOperator::Minus(op_span),
-                    right: Box::new(right),
-                }
-                .into());
-            }
-            _ => { /* No-op */ }
+    fn identifier_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        if self.lookahead_is(TokenType::Identifier) {
+            return Ok(SingleExpression::Identifier(IdentifierExpression {
+                ident: ident!(self),
+            }));
         }
-        Ok(left)
+        // If we can't find an ident, continue by trying to resolve a literal
+        self.literal()
     }
 
     /// Literal
@@ -396,7 +409,10 @@ impl<'a> Parser<'a> {
                 }
                 .into()
             }
-            _ => unreachable!(),
+            _ => {
+                // No viable alternative
+                todo!()
+            }
         };
         Ok(literal.into())
     }
@@ -1005,6 +1021,27 @@ mod test {
     fn test_parse_return_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "return 99;");
+        let actual = Parser::new(&mut tokenizer).parse().program;
+        let expected = Program {
+            source_elements: SourceElements {
+                source_elements: vec![SourceElement::Statement(StatementElement::Return(
+                    ReturnStatement {
+                        span: Span::new("test.1", 0, 10),
+                        expression: SingleExpression::Literal(Literal::Number(NumberLiteral {
+                            span: Span::new("test.1", 7, 9),
+                            value: 99,
+                        })),
+                    },
+                ))],
+            },
+        };
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_parse_additive_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "let x = 1 + 2;");
         let actual = Parser::new(&mut tokenizer).parse().program;
         let expected = Program {
             source_elements: SourceElements {
