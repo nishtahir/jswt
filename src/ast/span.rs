@@ -19,9 +19,7 @@ pub trait Spannable {
     fn span(&self) -> Span;
 }
 
-///
 /// Produces a new Span that encompases both spans
-///
 impl std::ops::Add<Span> for Span {
     type Output = Span;
 
@@ -30,6 +28,18 @@ impl std::ops::Add<Span> for Span {
             file: self.file,
             start: self.start,
             end: rhs.end,
+        }
+    }
+}
+
+impl std::ops::Sub<Span> for Span {
+    type Output = Span;
+
+    fn sub(self, rhs: Span) -> Span {
+        Span {
+            file: self.file,
+            start: self.start,
+            end: rhs.start,
         }
     }
 }

@@ -1,10 +1,12 @@
+use std::borrow::Borrow;
+
 use crate::{
     ast::program::*,
     ast::{visitor::Visitor, Ast},
     common::SymbolTable,
     wast::{
-        Export, Function, FunctionExport, FunctionType, Instruction, Module, Type, ValueType,
-        WastSymbol,
+        Export, Function, FunctionExport, FunctionImport, FunctionType, Import, Instruction,
+        Module, Type, ValueType, WastSymbol,
     },
 };
 
@@ -21,7 +23,11 @@ impl Default for CodeGenerator {
 #[derive(Debug)]
 pub struct CodeGenerator {
     module: Module,
-    scopes: Vec<Function>,
+    /// The architecture here assumes that this is an instruction scope stack
+    /// any lexical scope that wishes to recieve an emitted set of instructions
+    /// should push a new scope to the stack and pop the scope before pushing their own
+    /// instruction to the stack
+    scopes: Vec<Vec<Instruction>>,
     symbols: SymbolTable<WastSymbol>,
 }
 
@@ -29,6 +35,11 @@ impl CodeGenerator {
     pub fn generate_module(&mut self, ast: &Ast) -> &Module {
         self.visit_program(&ast.program);
         &self.module
+    }
+
+    fn push_import(&mut self, import: Import) -> usize {
+        self.module.imports.push(import);
+        self.module.imports.len() - 1
     }
 
     fn push_type(&mut self, new_ty: Type) -> usize {
@@ -52,13 +63,23 @@ impl CodeGenerator {
     }
 
     fn push_instruction(&mut self, inst: Instruction) {
-        let function = self.scopes.last_mut().unwrap();
-        function.instructions.push(inst);
+        let scope = self.scopes.last_mut().unwrap();
+        scope.push(inst);
     }
 }
 
 impl Visitor for CodeGenerator {
     fn visit_program(&mut self, node: &Program) {
+        // Push builtins
+        let println_type_idx = self.push_type(Type::Function(FunctionType {
+            params: vec![ValueType::I32],
+            ret: None,
+        }));
+        self.push_import(Import::Function(FunctionImport {
+            name: "println",
+            type_idx: println_type_idx,
+            module: "env",
+        }));
         self.visit_source_elements(&node.source_elements);
     }
 
@@ -83,6 +104,7 @@ impl Visitor for CodeGenerator {
             StatementElement::Empty(empty) => self.visit_empty_statement(empty),
             StatementElement::Return(ret) => self.visit_return_statement(ret),
             StatementElement::Variable(variable) => self.visit_variable_statement(variable),
+            StatementElement::Expression(exp) => self.visit_expression_statement(exp),
         }
     }
 
@@ -90,7 +112,7 @@ impl Visitor for CodeGenerator {
         self.visit_statement_list(&node.statements);
     }
 
-    fn visit_empty_statement(&mut self, node: &EmptyStatement) {
+    fn visit_empty_statement(&mut self, _: &EmptyStatement) {
         // No-op
     }
 
@@ -103,6 +125,10 @@ impl Visitor for CodeGenerator {
         // Emit assignment
         self.visit_assignable_element(&node.target);
         self.visit_single_expression(&node.expression);
+    }
+
+    fn visit_expression_statement(&mut self, node: &ExpressionStatement) {
+        self.visit_single_expression(&node.expression)
     }
 
     fn visit_statement_list(&mut self, node: &StatementList) {
@@ -130,26 +156,29 @@ impl Visitor for CodeGenerator {
         };
         // Add type definition to type index
         let type_idx = self.push_type(Type::Function(ty));
-        let function = Function {
-            type_idx,
-            ..Default::default()
-        };
-        // Make function the current scope context for emitting instructions
-        self.scopes.push(function);
+
+        // Push a new Instruction scope to hold emitted instructions
+        self.scopes.push(vec![]);
 
         // Generate instructions for the current scope context
         self.visit_function_body(&node.body);
 
-        // Function generation is done. Pop it from the current scope context
+        // Function generation is done. Pop the current instructions scope
         // and commit it to the module
-        let f = self.scopes.pop().unwrap();
-        let function_idx = self.push_function(f);
+        let instructions = self.scopes.pop().unwrap();
+        let function_name = node.ident.value;
+        let function = Function {
+            name: function_name,
+            type_idx,
+            instructions,
+        };
+        let function_idx = self.push_function(function);
 
         // Generate export descriptor if the function is marked for export
         if node.decorators.export {
             let desc = FunctionExport {
                 function_idx,
-                name: node.ident.value,
+                name: function_name,
             };
             self.push_export(Export::Function(desc));
         }
@@ -159,16 +188,17 @@ impl Visitor for CodeGenerator {
         self.visit_source_elements(&node.source_elements);
     }
 
-    fn visit_assignable_element(&mut self, node: &AssignableElement) {
+    fn visit_assignable_element(&mut self, _: &AssignableElement) {
         todo!()
     }
 
     fn visit_single_expression(&mut self, node: &SingleExpression) {
         match node {
+            SingleExpression::Additive(exp) => self.visit_binary_expression(exp),
+            SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
+            SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
             SingleExpression::Literal(lit) => self.visit_literal(lit),
             SingleExpression::Multiplicative(exp) => self.visit_binary_expression(exp),
-            SingleExpression::Additive(exp) => self.visit_binary_expression(exp),
-            SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
         }
     }
 
@@ -179,21 +209,40 @@ impl Visitor for CodeGenerator {
         // TODO - type check before pushing op
         match node.op {
             BinaryOperator::Plus(_) => self.push_instruction(Instruction::I32Add),
-            BinaryOperator::Minus(_) => todo!(),
-            BinaryOperator::Star(_) => todo!(),
+            BinaryOperator::Minus(_) => self.push_instruction(Instruction::I32Sub),
+            BinaryOperator::Star(_) => self.push_instruction(Instruction::I32Mul),
             BinaryOperator::Slash(_) => todo!(),
         }
     }
 
-    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
+    fn visit_identifier_expression(&mut self, _: &IdentifierExpression) {
         todo!()
+    }
+
+    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {
+        if let SingleExpression::Identifier(ident_exp) = node.ident.borrow() {
+            // Push a new instruction scope for the call isr
+            self.scopes.push(vec![]);
+            for exp in node.arguments.arguments.iter() {
+                self.visit_single_expression(exp);
+            }
+
+            // Pop the scope containing the args instructions
+            let arg_instructions = self.scopes.pop().unwrap();
+            self.push_instruction(Instruction::Call(ident_exp.ident.value, arg_instructions));
+        }
     }
 
     fn visit_literal(&mut self, node: &Literal) {
         match node {
             Literal::String(_) => todo!(),
             Literal::Number(lit) => self.push_instruction(Instruction::I32Const(lit.value)),
-            Literal::Boolean(_) => todo!(),
+            Literal::Boolean(lit) => match lit.value {
+                // Boolean values in WebAssembly are represented as values of type i32. In a boolean context,
+                // such as a br_if condition, any non-zero value is interpreted as true and 0 is interpreted as false.
+                true => self.push_instruction(Instruction::I32Const(1)),
+                false => self.push_instruction(Instruction::I32Const(0)),
+            },
         }
     }
 }
@@ -217,6 +266,7 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                imports: vec![],
                 exports: vec![],
                 types: vec![],
                 functions: vec![]
@@ -236,8 +286,8 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                imports: vec![],
                 exports: vec![],
-
                 types: vec![Type::Function(FunctionType {
                     params: vec![],
                     ret: None
@@ -259,8 +309,8 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                imports: vec![],
                 exports: vec![],
-
                 types: vec![Type::Function(FunctionType {
                     params: vec![ValueType::I32],
                     ret: None
@@ -281,8 +331,8 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                imports: vec![],
                 exports: vec![],
-
                 types: vec![Type::Function(FunctionType {
                     params: vec![ValueType::I32],
                     ret: Some(ValueType::I32)
@@ -304,13 +354,14 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                imports: vec![],
                 exports: vec![],
-
                 types: vec![Type::Function(FunctionType {
                     params: vec![],
                     ret: None
                 })],
                 functions: vec![Function {
+                    name: "test",
                     type_idx: 0,
                     instructions: vec![
                         Instruction::I32Const(1),

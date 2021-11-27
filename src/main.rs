@@ -10,7 +10,7 @@ use jswt::Tokenizer;
 use std::env;
 use std::fs;
 use std::process::exit;
-use wasmer::{imports, Instance, Module as WasmerModule, Store};
+use wasmer::{imports, Function, Instance, Module as WasmerModule, Store};
 
 fn main() {
     let matches = app_from_crate!()
@@ -83,15 +83,16 @@ fn main() {
     let store = Store::default();
     let module = WasmerModule::new(&store, wast).unwrap();
     let import_object = imports! {
-            // The module doesn't import anything, so we create an empty import object.
+        "env" => {
+            "println" => Function::new_native(&store, env_println)
+        },
     };
     let instance = Instance::new(&module, &import_object).unwrap();
 
     let main = instance.exports.get_function("main").unwrap();
     let result = main.call(&[]).unwrap();
-    println!("{:#?}", result[0]);
 }
 
-// fn native_println() {
-//     println!("Hello world");
-// }
+fn env_println(arg: i32) {
+    println!("{}", arg);
+}

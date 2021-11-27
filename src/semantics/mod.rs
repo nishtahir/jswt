@@ -1,5 +1,7 @@
 mod symbol;
 
+use std::borrow::Borrow;
+
 use self::symbol::{Symbol, Type};
 use crate::ast::span::Spannable;
 use crate::ast::visitor::Visitor;
@@ -36,6 +38,10 @@ impl Visitor for Resolver {
     fn visit_program(&mut self, node: &Program) {
         // Push global scope
         self.symbols.push_scope();
+        // Add built-ins to global scope
+        self.symbols
+            .define("println", Symbol::new(Type::Function, "println"));
+
         self.visit_source_elements(&node.source_elements);
         self.symbols.pop_scope();
     }
@@ -61,6 +67,7 @@ impl Visitor for Resolver {
             StatementElement::Empty(empty) => self.visit_empty_statement(empty),
             StatementElement::Return(ret) => self.visit_return_statement(ret),
             StatementElement::Variable(variable) => self.visit_variable_statement(variable),
+            StatementElement::Expression(exp) => self.visit_expression_statement(exp),
         }
     }
 
@@ -95,6 +102,10 @@ impl Visitor for Resolver {
         self.symbols.define(name, Symbol::new(Type::Unknown, name));
     }
 
+    fn visit_expression_statement(&mut self, node: &ExpressionStatement) {
+        self.visit_single_expression(&node.expression)
+    }
+
     fn visit_statement_list(&mut self, node: &StatementList) {
         for statement in &node.statements {
             self.visit_statement_element(statement);
@@ -127,15 +138,12 @@ impl Visitor for Resolver {
 
     fn visit_single_expression(&mut self, node: &SingleExpression) {
         match node {
+            SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
             SingleExpression::Literal(lit) => self.visit_literal(lit),
             SingleExpression::Multiplicative(exp) => self.visit_binary_expression(exp),
             SingleExpression::Additive(exp) => self.visit_binary_expression(exp),
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
         }
-    }
-
-    fn visit_literal(&mut self, _: &Literal) {
-        // No-op
     }
 
     fn visit_binary_expression(&mut self, node: &BinaryExpression) {
@@ -153,6 +161,25 @@ impl Visitor for Resolver {
             };
             self.errors.push(error);
         }
+    }
+
+    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {
+        let expression = node.ident.borrow();
+        match expression {
+            // Function calls but be followed by an identifier for now
+            SingleExpression::Identifier(exp) => {
+                // TODO - visit arguments
+                // &exp.arguments;
+            }
+            exp => self.errors.push(SemanticError::NotAFunctionError {
+                span: node.span(),
+                name_span: exp.span(),
+            }),
+        }
+    }
+
+    fn visit_literal(&mut self, _: &Literal) {
+        // No-op
     }
 }
 

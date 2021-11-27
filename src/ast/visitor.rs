@@ -19,6 +19,7 @@ visitor![
     visit_empty_statement: EmptyStatement,
     visit_return_statement: ReturnStatement,
     visit_variable_statement: VariableStatement,
+    visit_expression_statement: ExpressionStatement,
     visit_statement_list: StatementList,
     visit_function_declaration: FunctionDeclarationElement,
     visit_function_body: FunctionBody,
@@ -26,5 +27,6 @@ visitor![
     visit_single_expression: SingleExpression,
     visit_binary_expression: BinaryExpression,
     visit_identifier_expression: IdentifierExpression,
+    visit_argument_expression: ArgumentsExpression,
     visit_literal: Literal
 ];

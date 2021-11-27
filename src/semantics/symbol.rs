@@ -13,6 +13,6 @@ impl Symbol {
 #[derive(Debug, PartialEq)]
 pub enum Type {
     Function,
-    Number,
+    // TODO - add builtins
     Unknown,
 }

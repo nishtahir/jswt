@@ -1,10 +1,13 @@
+use std::vec;
+
 use crate::ast::ident::Ident;
 use crate::ast::program::{
-    AssignableElement, BinaryExpression, BinaryOperator, BlockStatement, BooleanLiteral,
-    EmptyStatement, FormalParameterArg, FormalParameterList, FunctionBody,
-    FunctionDeclarationElement, FunctionDecorators, IdentifierExpression, Literal, NumberLiteral,
-    Program, ReturnStatement, SingleExpression, SourceElement, SourceElements, StatementElement,
-    StatementList, StringLiteral, VariableModifier, VariableStatement,
+    ArgumentsExpression, ArgumentsList, AssignableElement, BinaryExpression, BinaryOperator,
+    BlockStatement, BooleanLiteral, EmptyStatement, ExpressionStatement, FormalParameterArg,
+    FormalParameterList, FunctionBody, FunctionDeclarationElement, FunctionDecorators,
+    IdentifierExpression, Literal, NumberLiteral, Program, ReturnStatement, SingleExpression,
+    SourceElement, SourceElements, StatementElement, StatementList, StringLiteral,
+    VariableModifier, VariableStatement,
 };
 use crate::ast::span::{Span, Spannable};
 use crate::ast::Ast;
@@ -153,6 +156,7 @@ impl<'a> Parser<'a> {
     ///   |  EmptyStatement
     ///   |  ReturnStatement
     ///   |  VariableStatement
+    ///   |  ExpressionStatement
     ///   ;
     fn statement(&mut self) -> Result<StatementElement, ParseError> {
         let elem = match self.lookahead_type() {
@@ -160,21 +164,7 @@ impl<'a> Parser<'a> {
             Some(TokenType::Semi) => self.empty_statement()?.into(),
             Some(TokenType::Return) => self.return_statement()?.into(),
             Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?.into(),
-            Some(token_type) => {
-                let lookahed = self.lookahead.as_ref().unwrap();
-                return Err(ParseError::NoViableAlternative {
-                    expected: vec![
-                        TokenType::LeftBrace,
-                        TokenType::Semi,
-                        TokenType::Return,
-                        TokenType::Let,
-                        TokenType::Const,
-                    ],
-                    actual: token_type,
-                    span: lookahed.into(),
-                });
-            }
-            _ => todo!(),
+            _ => self.expression_statement()?.into(),
         };
         Ok(elem)
     }
@@ -285,12 +275,65 @@ impl<'a> Parser<'a> {
         Ok(AssignableElement::Identifier(ident!(self)))
     }
 
+    /// ExpressionStatement
+    ///   : SingleExpression ';'
+    ///   ;
+    fn expression_statement(&mut self) -> Result<ExpressionStatement, ParseError> {
+        let expression = self.single_expression()?;
+        let end = consume!(self, TokenType::Semi)?;
+
+        Ok(ExpressionStatement {
+            span: expression.span() + end,
+            expression,
+        })
+    }
+
     /// SingleExpression
-    ///   :  
+    ///   : SingleExpression Arguments
+    ///   | SingleExpression ('+' | '-') SingleExpression
     ///   | SingleExpression ('+' | '-') SingleExpression
     ///   ;
     fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        self.additive_expression()
+        self.arguments_expression()
+    }
+
+    /// ArgumentsExpression
+    ///   :  AdditiveExpression ArgumentList
+    ///   ;
+    ///
+    fn arguments_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        // Eventually descend to ident
+        let left = self.additive_expression()?;
+        if self.lookahead_is(TokenType::LeftParen) {
+            let args = self.argument_list()?;
+            return Ok(SingleExpression::Arguments(ArgumentsExpression {
+                span: left.span() + args.span(),
+                ident: Box::new(left),
+                arguments: args,
+            }));
+        }
+
+        Ok(left)
+    }
+    /// ArgumentList
+    ///   :  '(' SingleExpression (',' SingleExpression)* ')'
+    ///   ;
+    fn argument_list(&mut self) -> Result<ArgumentsList, ParseError> {
+        let mut arguments = vec![];
+        let start = consume!(self, TokenType::LeftParen)?;
+        while !self.lookahead_is(TokenType::RightParen) {
+            let param = self.single_expression()?;
+            arguments.push(param);
+            if !self.lookahead_is(TokenType::Comma) {
+                break;
+            }
+        }
+        let end = consume!(self, TokenType::RightParen)?;
+        // return params
+        Ok(ArgumentsList {
+            span: start + end,
+            arguments,
+        })
     }
 
     /// AdditiveExpression
@@ -1074,6 +1117,26 @@ mod test {
         let actual = Parser::new(&mut tokenizer).parse().program;
         let expected =
             include_str!("../../test/test_parse_additive_expression_left_associativity.ast");
+        assert_str_eq!(expected, &format!("{:#?}", actual));
+    }
+
+    #[test]
+    fn test_parse_expression_statement_parses_function_invocation() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "export function main() { test(); }");
+        let actual = Parser::new(&mut tokenizer).parse();
+        let expected =
+            include_str!("../../test/test_parse_expression_statement_parses_function_invocation.ast");
+        assert_str_eq!(expected, &format!("{:#?}", actual));
+    }
+
+    #[test]
+    fn test_parse_argument_expression_with_expression_parameter() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "test(1 + 2);");
+        let actual = Parser::new(&mut tokenizer).parse();
+        let expected =
+            include_str!("../../test/test_parse_argument_expression_with_expression_parameter.ast");
         assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 }

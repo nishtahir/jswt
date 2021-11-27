@@ -35,6 +35,7 @@ pub enum SemanticError {
     VariableNotDefined { name: &'static str, span: Span },
     VariableAlreadyDefined { name: &'static str, span: Span },
     FunctionAlreadyDefined { name: &'static str, span: Span },
+    NotAFunctionError { span: Span, name_span: Span },
 }
 
 pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, &'static str>) {
@@ -81,6 +82,23 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
                 source,
                 error_span,
                 &format!("Function '{}' was already defined in this scope", name),
+            );
+            println!("{}\n", frame);
+        }
+        SemanticError::NotAFunctionError { span, name_span } => {
+            let file = &span.file;
+            let source = source_map[file];
+            let start = location_from_offset(source, span.start);
+            let end = location_from_offset(source, span.end);
+            println!("{}:{}:{} - error", file, start.line, start.col,);
+
+            let error_span = NodeLocation { end, start };
+
+            let offending_token = &source[name_span.start..name_span.end];
+            let frame = code_frame(
+                source,
+                error_span,
+                &format!("'{}' is not a function.", offending_token),
             );
             println!("{}\n", frame);
         }

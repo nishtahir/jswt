@@ -75,6 +75,13 @@ pub enum StatementElement {
     Empty(EmptyStatement),
     Return(ReturnStatement),
     Variable(VariableStatement),
+    Expression(ExpressionStatement),
+}
+
+impl From<ExpressionStatement> for StatementElement {
+    fn from(v: ExpressionStatement) -> Self {
+        Self::Expression(v)
+    }
 }
 
 impl From<ReturnStatement> for StatementElement {
@@ -127,6 +134,12 @@ pub struct VariableStatement {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct ExpressionStatement {
+    pub span: Span,
+    pub expression: SingleExpression,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct StatementList {
     pub statements: Vec<StatementElement>,
 }
@@ -167,10 +180,17 @@ impl From<Ident> for AssignableElement {
 
 #[derive(Debug, PartialEq)]
 pub enum SingleExpression {
+    Arguments(ArgumentsExpression),
     Multiplicative(BinaryExpression),
     Additive(BinaryExpression),
     Identifier(IdentifierExpression),
     Literal(Literal),
+}
+
+impl From<ArgumentsExpression> for SingleExpression {
+    fn from(v: ArgumentsExpression) -> Self {
+        Self::Arguments(v)
+    }
 }
 
 impl From<IdentifierExpression> for SingleExpression {
@@ -198,7 +218,33 @@ impl Spannable for SingleExpression {
             SingleExpression::Additive(exp) => exp.span(),
             SingleExpression::Literal(exp) => exp.span(),
             SingleExpression::Identifier(exp) => exp.span(),
+            SingleExpression::Arguments(exp) => exp.span(),
         }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ArgumentsExpression {
+    pub span: Span,
+    pub ident: Box<SingleExpression>,
+    pub arguments: ArgumentsList,
+}
+
+impl Spannable for ArgumentsExpression {
+    fn span(&self) -> Span {
+        self.span.to_owned()
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ArgumentsList {
+    pub span: Span,
+    pub arguments: Vec<SingleExpression>,
+}
+
+impl Spannable for ArgumentsList {
+    fn span(&self) -> Span {
+        self.span.to_owned()
     }
 }
 

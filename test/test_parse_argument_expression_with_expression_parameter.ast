@@ -1,0 +1,89 @@
+Ast {
+    program: Program {
+        source_elements: SourceElements {
+            source_elements: [
+                Statement(
+                    Expression(
+                        ExpressionStatement {
+                            span: Span {
+                                file: "test.1",
+                                start: 0,
+                                end: 12,
+                            },
+                            expression: Arguments(
+                                ArgumentsExpression {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 0,
+                                        end: 11,
+                                    },
+                                    ident: Identifier(
+                                        IdentifierExpression {
+                                            ident: Ident {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    start: 0,
+                                                    end: 4,
+                                                },
+                                                value: "test",
+                                            },
+                                        },
+                                    ),
+                                    arguments: ArgumentsList {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 4,
+                                            end: 11,
+                                        },
+                                        arguments: [
+                                            Additive(
+                                                BinaryExpression {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        start: 5,
+                                                        end: 10,
+                                                    },
+                                                    left: Literal(
+                                                        Number(
+                                                            NumberLiteral {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    start: 5,
+                                                                    end: 6,
+                                                                },
+                                                                value: 1,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    op: Plus(
+                                                        Span {
+                                                            file: "test.1",
+                                                            start: 7,
+                                                            end: 8,
+                                                        },
+                                                    ),
+                                                    right: Literal(
+                                                        Number(
+                                                            NumberLiteral {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    start: 9,
+                                                                    end: 10,
+                                                                },
+                                                                value: 2,
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            ),
+                        },
+                    ),
+                ),
+            ],
+        },
+    },
+}
