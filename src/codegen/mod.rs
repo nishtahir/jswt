@@ -21,13 +21,26 @@ impl Default for CodeGenerator {
 }
 
 #[derive(Debug)]
+enum InstructionScopeTarget {
+    Function(&'static str),
+    Local(&'static str),
+    Global(&'static str),
+}
+
+#[derive(Debug)]
+struct InstructionScope {
+    target: Option<InstructionScopeTarget>,
+    instructions: Vec<Instruction>,
+}
+
+#[derive(Debug)]
 pub struct CodeGenerator {
     module: Module,
     /// The architecture here assumes that this is an instruction scope stack
     /// any lexical scope that wishes to recieve an emitted set of instructions
     /// should push a new scope to the stack and pop the scope before pushing their own
     /// instruction to the stack
-    scopes: Vec<Vec<Instruction>>,
+    scopes: Vec<InstructionScope>,
     symbols: SymbolTable<WastSymbol>,
 }
 
@@ -84,13 +97,36 @@ impl CodeGenerator {
 
     fn push_instruction(&mut self, inst: Instruction) {
         let scope = self.scopes.last_mut().unwrap();
-        scope.push(inst);
+        scope.instructions.push(inst);
+    }
+
+    /// Adds a new instruction scope context to the stack
+    fn push_instruction_scope(&mut self, target: Option<InstructionScopeTarget>) {
+        self.scopes.push(InstructionScope {
+            target,
+            instructions: vec![],
+        });
+    }
+
+    fn set_instruction_scope_target(&mut self, target: Option<InstructionScopeTarget>) {
+        let scope = self.scopes.last_mut().unwrap();
+        scope.target = target;
+    }
+
+    /// Pops an Instruction scope from the stack
+    fn pop_instruction_scope(&mut self) -> Option<InstructionScope> {
+        self.scopes.pop()
     }
 }
 
 impl Visitor for CodeGenerator {
     fn visit_program(&mut self, node: &Program) {
+        // Push global scope
+        self.symbols.push_scope();
         self.visit_source_elements(&node.source_elements);
+        // Pop global scope from stack
+        debug_assert!(self.symbols.depth() == 1);
+        self.symbols.pop_scope();
     }
 
     fn visit_source_elements(&mut self, node: &SourceElements) {
@@ -133,8 +169,19 @@ impl Visitor for CodeGenerator {
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
         // Emit assignment
+        self.push_instruction_scope(None);
         self.visit_assignable_element(&node.target);
         self.visit_single_expression(&node.expression);
+        let scope = self.pop_instruction_scope().unwrap();
+        match scope.target {
+            Some(InstructionScopeTarget::Local(name)) => {
+                self.push_instruction(Instruction::LocalSet(name, scope.instructions));
+            }
+            Some(InstructionScopeTarget::Global(name)) => {
+                self.push_instruction(Instruction::GlobalSet(name, scope.instructions));
+            }
+            _ => todo!(),
+        }
     }
 
     fn visit_expression_statement(&mut self, node: &ExpressionStatement) {
@@ -152,9 +199,11 @@ impl Visitor for CodeGenerator {
         self.symbols.push_scope();
         let mut type_params = vec![];
         // Push Symbols for Params
-        for (i, arg) in node.params.parameters.iter().enumerate() {
+        for (_, arg) in node.params.parameters.iter().enumerate() {
+            let name = arg.ident.value;
             // Add to symbol table
-            self.symbols.define(arg.ident.value, WastSymbol::Param(i));
+            self.symbols
+                .define(arg.ident.value, WastSymbol::Param(name, ValueType::I32));
             // Todo, convert to ValueType
             type_params.push(ValueType::I32)
         }
@@ -168,7 +217,7 @@ impl Visitor for CodeGenerator {
         let type_idx = self.push_type(Type::Function(ty));
 
         // Push a new Instruction scope to hold emitted instructions
-        self.scopes.push(vec![]);
+        self.push_instruction_scope(None);
 
         // TODO - this was only a prototye abstract this out
         // Resolve the content of the annotation
@@ -195,12 +244,22 @@ impl Visitor for CodeGenerator {
 
         // Function generation is done. Pop the current instructions scope
         // and commit it to the module
-        let instructions = self.scopes.pop().unwrap();
+        let mut scope = self.pop_instruction_scope().unwrap();
+        // Push our locals to the instructions
+        self.symbols.all_current().iter().for_each(|sym| match sym {
+            WastSymbol::Function(_) => {}
+            WastSymbol::Param(_, _) => {}
+            WastSymbol::Global(_, _) => {}
+            WastSymbol::Local(name, ty) => {
+                scope.instructions.insert(0, Instruction::Local(name, *ty))
+            }
+        });
+
         let function_name = node.ident.value;
         let function = Function {
             name: function_name,
             type_idx,
-            instructions,
+            instructions: scope.instructions,
         };
         let function_idx = self.push_function(function);
 
@@ -212,14 +271,46 @@ impl Visitor for CodeGenerator {
             };
             self.push_export(Export::Function(desc));
         }
+
+        // Pop the current function scope from the symbol table
+        self.symbols.pop_scope();
     }
 
     fn visit_function_body(&mut self, node: &FunctionBody) {
         self.visit_source_elements(&node.source_elements);
     }
 
-    fn visit_assignable_element(&mut self, _: &AssignableElement) {
-        todo!()
+    fn visit_assignable_element(&mut self, elem: &AssignableElement) {
+        // Figure out the target for an assignment
+        // We assume that this is the target for
+        // the current instruction scope
+        match elem {
+            AssignableElement::Identifier(ident) => {
+                let name = ident.value;
+                // Check if this element has been defined
+                let sym = if let Some(sym) = self.symbols.lookup(name) {
+                    sym
+                } else if self.symbols.depth() == 1 {
+                    // Global scope
+                    self.symbols
+                        .define(name, WastSymbol::Global(name, ValueType::I32));
+                    self.symbols.lookup(name).unwrap()
+                } else {
+                    self.symbols
+                        .define(name, WastSymbol::Local(name, ValueType::I32));
+                    self.symbols.lookup(name).unwrap()
+                };
+
+                match sym {
+                    WastSymbol::Function(_) => todo!(),
+                    WastSymbol::Param(name, _) | WastSymbol::Local(name, _) => {
+                        self.set_instruction_scope_target(Some(InstructionScopeTarget::Local(name)))
+                    }
+                    WastSymbol::Global(name, ty) => self
+                        .set_instruction_scope_target(Some(InstructionScopeTarget::Global(name))),
+                }
+            }
+        }
     }
 
     fn visit_single_expression(&mut self, node: &SingleExpression) {
@@ -245,21 +336,24 @@ impl Visitor for CodeGenerator {
         }
     }
 
-    fn visit_identifier_expression(&mut self, _: &IdentifierExpression) {
-        todo!()
+    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
+        let target = node.ident.value;
+        self.push_instruction(Instruction::LocalGet(target));
     }
 
     fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {
         if let SingleExpression::Identifier(ident_exp) = node.ident.borrow() {
-            // Push a new instruction scope for the call isr
-            self.scopes.push(vec![]);
+            // Push a new instruction scope for the
+            // function call
+            let function_name = ident_exp.ident.value;
+            self.push_instruction_scope(Some(InstructionScopeTarget::Function(function_name)));
             for exp in node.arguments.arguments.iter() {
                 self.visit_single_expression(exp);
             }
 
             // Pop the scope containing the args instructions
-            let arg_instructions = self.scopes.pop().unwrap();
-            self.push_instruction(Instruction::Call(ident_exp.ident.value, arg_instructions));
+            let scope = self.pop_instruction_scope().unwrap();
+            self.push_instruction(Instruction::Call(function_name, scope.instructions));
         }
     }
 

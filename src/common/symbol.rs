@@ -45,6 +45,10 @@ impl<T> SymbolTable<T> {
         let scope = self.table.last()?;
         scope.get(name)
     }
+
+    pub fn all_current(&self) -> Vec<&T> {
+        self.table.last().unwrap().values().collect()
+    }
 }
 
 #[cfg(test)]

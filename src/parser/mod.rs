@@ -456,8 +456,18 @@ impl<'a> Parser<'a> {
                 .into()
             }
             _ => {
-                // No viable alternative
-                todo!()
+                // TODO -rename this error.to something more descriptive 
+                return Err(ParseError::NoViableAlternative {
+                    expected: vec![
+                        TokenType::Identifier,
+                        TokenType::Number,
+                        TokenType::String,
+                        TokenType::True,
+                        TokenType::False,
+                    ],
+                    actual: self.lookahead_type().unwrap(),
+                    span: self.lookahead_span(),
+                });
             }
         };
         Ok(literal.into())

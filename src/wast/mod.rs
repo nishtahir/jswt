@@ -32,6 +32,10 @@ pub struct Parameter {
 
 #[derive(Debug, PartialEq)]
 pub enum Instruction {
+    Local(&'static str, ValueType),
+    LocalGet(&'static str),
+    LocalSet(&'static str, Vec<Instruction>),
+    GlobalSet(&'static str, Vec<Instruction>),
     I32Const(i32),
     I32Add,
     I32Sub,
@@ -46,9 +50,17 @@ pub enum Instruction {
     RawWast(&'static str),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ValueType {
     I32,
+}
+
+impl std::fmt::Display for ValueType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ValueType::I32 => f.write_str("i32"),
+        }
+    }
 }
 
 impl From<&Instruction> for String {
@@ -70,16 +82,34 @@ impl From<&Instruction> for String {
                 )
             }
             Instruction::RawWast(text) => format!("{}", text),
+            Instruction::LocalGet(name) => format!("(local.get ${})", name),
+            Instruction::LocalSet(name, args) => format!(
+                "(local.set ${} {})",
+                name,
+                args.iter()
+                    .map(String::from)
+                    .collect::<Vec<String>>()
+                    .join(" ")
+            ),
+            Instruction::GlobalSet(name, args) => format!(
+                "(global.set ${} {})",
+                name,
+                args.iter()
+                    .map(String::from)
+                    .collect::<Vec<String>>()
+                    .join(" ")
+            ),
+            Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
         }
     }
 }
 
 #[derive(Debug, PartialEq)]
 pub enum WastSymbol {
-    Function,
-    Param(usize),
-    Local,
-    Global,
+    Function(&'static str),
+    Param(&'static str, ValueType),
+    Local(&'static str, ValueType),
+    Global(&'static str, ValueType),
 }
 
 #[derive(Debug, PartialEq)]
@@ -168,7 +198,7 @@ impl Module {
     }
 
     fn function_type_signature(&self, type_idx: usize, name: &str) -> String {
-        let mut wat = format!("func ${}", name);
+        let mut wat = format!("func ${} ", name);
         let type_def = &self.types[type_idx];
         match type_def {
             Type::Function(ty) => {

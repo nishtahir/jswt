@@ -2,7 +2,9 @@ import "./std/mem.jswt";
 import "./foo.jswt";
 
 export function main(): i32 {
-    i32Store(0, 10);
-    println(i32Load(0));
+    let memIdx = 0;
+    i32Store(memIdx, 10);
+    let value = i32Load(memIdx);
+    println(value);
     return 0;
 }
