@@ -82,11 +82,9 @@ pub enum Import {
 
 impl Import {
     pub fn as_function(&self) -> Option<&FunctionImport> {
-        if let Self::Function(v) = self {
-            Some(v)
-        } else {
-            None
-        }
+        // TODO - add other import variants
+        let Self::Function(v) = self;
+        Some(v)
     }
 }
 
@@ -133,7 +131,7 @@ impl Module {
                 wat += &format!("(import \"{}\" \"{}\" ({}))", e.module, e.name, signature);
             });
 
-        for (i, function) in self.functions.iter().enumerate() {
+        for function in self.functions.iter() {
             wat += "(";
             wat += &self.function_type_signature(function.type_idx, function.name);
             for isr in &function.instructions {

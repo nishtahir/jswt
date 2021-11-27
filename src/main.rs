@@ -89,8 +89,18 @@ fn main() {
     };
     let instance = Instance::new(&module, &import_object).unwrap();
 
+    // Assume main is a function that accepts no args and returns an i32
+    // The returned i32 is the exit code
+    // function main(): i32 { return 0; } // OK
     let main = instance.exports.get_function("main").unwrap();
     let result = main.call(&[]).unwrap();
+    if result.len() > 0 {
+        let exit_code = result[0].i32().unwrap_or(1);
+        exit(exit_code);
+    }
+    // No exit code will panic during the validation but for safety
+    // if no exit code was given assume there was a problem
+    exit(1);
 }
 
 fn env_println(arg: i32) {

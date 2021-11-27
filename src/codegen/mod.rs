@@ -32,7 +32,27 @@ pub struct CodeGenerator {
 }
 
 impl CodeGenerator {
+    #[cfg(test)]
     pub fn generate_module(&mut self, ast: &Ast) -> &Module {
+        // TODO - we should be accepting builtins externally from the env
+        // This is a stop gap so tests don't break
+        self.visit_program(&ast.program);
+        &self.module
+    }
+
+    #[cfg(not(test))]
+    pub fn generate_module(&mut self, ast: &Ast) -> &Module {
+        // Push builtins
+        let println_type_idx = self.push_type(Type::Function(FunctionType {
+            params: vec![ValueType::I32],
+            ret: None,
+        }));
+        self.push_import(Import::Function(FunctionImport {
+            name: "println",
+            type_idx: println_type_idx,
+            module: "env",
+        }));
+
         self.visit_program(&ast.program);
         &self.module
     }
@@ -70,16 +90,6 @@ impl CodeGenerator {
 
 impl Visitor for CodeGenerator {
     fn visit_program(&mut self, node: &Program) {
-        // Push builtins
-        let println_type_idx = self.push_type(Type::Function(FunctionType {
-            params: vec![ValueType::I32],
-            ret: None,
-        }));
-        self.push_import(Import::Function(FunctionImport {
-            name: "println",
-            type_idx: println_type_idx,
-            module: "env",
-        }));
         self.visit_source_elements(&node.source_elements);
     }
 
@@ -292,7 +302,11 @@ mod test {
                     params: vec![],
                     ret: None
                 })],
-                functions: vec![Function::default()]
+                functions: vec![Function {
+                    name: "test",
+                    type_idx: 0,
+                    instructions: vec![]
+                }]
             }
         )
     }
@@ -315,7 +329,11 @@ mod test {
                     params: vec![ValueType::I32],
                     ret: None
                 })],
-                functions: vec![Function::default()]
+                functions: vec![Function {
+                    name: "test",
+                    type_idx: 0,
+                    instructions: vec![]
+                }]
             }
         )
     }
@@ -337,7 +355,11 @@ mod test {
                     params: vec![ValueType::I32],
                     ret: Some(ValueType::I32)
                 })],
-                functions: vec![Function::default()]
+                functions: vec![Function {
+                    name: "test",
+                    type_idx: 0,
+                    instructions: vec![]
+                }]
             }
         )
     }

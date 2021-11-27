@@ -167,7 +167,7 @@ impl Visitor for Resolver {
         let expression = node.ident.borrow();
         match expression {
             // Function calls but be followed by an identifier for now
-            SingleExpression::Identifier(exp) => {
+            SingleExpression::Identifier(_) => {
                 // TODO - visit arguments
                 // &exp.arguments;
             }
