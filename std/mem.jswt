@@ -1,0 +1,5 @@
+@wast("(local.get 0)(i32.load offset=0 align=4)(return)")
+function i32Load(index: i32): i32 { }
+
+@wast("(local.get 0)(local.get 1)(i32.store align=4)")
+function i32Store(index: i32, value: i32) { }

@@ -11,8 +11,6 @@ mod semantics;
 mod tokenizer;
 pub mod wast;
 
-// pub mod wasm;
-
 pub use parser::Parser;
 pub use semantics::Resolver;
 pub use tokenizer::Tokenizer;

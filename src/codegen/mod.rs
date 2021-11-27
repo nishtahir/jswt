@@ -170,6 +170,26 @@ impl Visitor for CodeGenerator {
         // Push a new Instruction scope to hold emitted instructions
         self.scopes.push(vec![]);
 
+        // TODO - this was only a prototye abstract this out
+        // Resolve the content of the annotation
+        if let Some(annotation) = &node.decorators.annotation {
+            match annotation.name.value {
+                // The "wast" annotation allows the developer to emit
+                // WAST instructions directily into the instruction scope
+                // of the function.
+                "wast" => match &annotation.expr {
+                    SingleExpression::Literal(lit) => match lit {
+                        Literal::String(string_lit) => {
+                            self.push_instruction(Instruction::RawWast(string_lit.value));
+                        }
+                        _ => todo!(),
+                    },
+                    _ => todo!(),
+                },
+                _ => todo!(),
+            }
+        }
+
         // Generate instructions for the current scope context
         self.visit_function_body(&node.body);
 

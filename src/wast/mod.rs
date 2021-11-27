@@ -38,6 +38,12 @@ pub enum Instruction {
     I32Mul,
     Return,
     Call(&'static str, Vec<Instruction>),
+
+    // A meta instruction not part of the wasm specification but
+    // an instruction to the code generator to inline raw instructions
+    // exactly as they are provided.
+    // Warning: No checks are performed on the input before they are inlined
+    RawWast(&'static str),
 }
 
 #[derive(Debug, PartialEq)]
@@ -63,6 +69,7 @@ impl From<&Instruction> for String {
                         .join(" ")
                 )
             }
+            Instruction::RawWast(text) => format!("{}", text),
         }
     }
 }
@@ -131,6 +138,10 @@ impl Module {
                 wat += &format!("(import \"{}\" \"{}\" ({}))", e.module, e.name, signature);
             });
 
+        // TODO - make this configurable as part of the WAST IR
+        // Add built in memory
+        wat += " (memory $0 1)";
+
         for function in self.functions.iter() {
             wat += "(";
             wat += &self.function_type_signature(function.type_idx, function.name);
@@ -141,6 +152,9 @@ impl Module {
         }
 
         // Generate Export Definitions
+        // export built in memory
+        wat += "(export \"memory\" (memory $0))";
+        // Export functions
         // (export "addTwo" (func $addTwo))
         self.exports
             .iter()

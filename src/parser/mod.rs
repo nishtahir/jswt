@@ -2,12 +2,12 @@ use std::vec;
 
 use crate::ast::ident::Ident;
 use crate::ast::program::{
-    ArgumentsExpression, ArgumentsList, AssignableElement, BinaryExpression, BinaryOperator,
-    BlockStatement, BooleanLiteral, EmptyStatement, ExpressionStatement, FormalParameterArg,
-    FormalParameterList, FunctionBody, FunctionDeclarationElement, FunctionDecorators,
-    IdentifierExpression, Literal, NumberLiteral, Program, ReturnStatement, SingleExpression,
-    SourceElement, SourceElements, StatementElement, StatementList, StringLiteral,
-    VariableModifier, VariableStatement,
+    Annotation, ArgumentsExpression, ArgumentsList, AssignableElement, BinaryExpression,
+    BinaryOperator, BlockStatement, BooleanLiteral, EmptyStatement, ExpressionStatement,
+    FormalParameterArg, FormalParameterList, FunctionBody, FunctionDeclarationElement,
+    FunctionDecorators, IdentifierExpression, Literal, NumberLiteral, Program, ReturnStatement,
+    SingleExpression, SourceElement, SourceElements, StatementElement, StatementList,
+    StringLiteral, VariableModifier, VariableStatement,
 };
 use crate::ast::span::{Span, Spannable};
 use crate::ast::Ast;
@@ -143,7 +143,7 @@ impl<'a> Parser<'a> {
     fn source_element(&mut self) -> Result<SourceElement, ParseError> {
         let elem = match self.lookahead_type() {
             // Need to check for optional function decorators
-            Some(TokenType::Function) | Some(TokenType::Export) => {
+            Some(TokenType::Function) | Some(TokenType::Export) | Some(TokenType::At) => {
                 self.function_declaration()?.into()
             }
             _ => self.statement()?.into(),
@@ -229,7 +229,8 @@ impl<'a> Parser<'a> {
     }
 
     /// VariableStatement
-    ///   :  VariableModifier Assignable ('=' singleExpression)?
+    ///   :  VariableModifier Assignable ('=' singleExpression)? ';'
+    ///   ;
     fn variable_statement(&mut self) -> Result<VariableStatement, ParseError> {
         let modifier = self.variable_modifier()?;
         let target = self.assignable()?;
@@ -327,6 +328,8 @@ impl<'a> Parser<'a> {
             if !self.lookahead_is(TokenType::Comma) {
                 break;
             }
+            // Eat the comma
+            consume_unchecked!(self);
         }
         let end = consume!(self, TokenType::RightParen)?;
         // return params
@@ -461,9 +464,14 @@ impl<'a> Parser<'a> {
     }
 
     /// FunctionDeclaration
-    ///   :  'export'? 'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
+    ///   :  Annotation? 'export'? 'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
     ///   ;
     fn function_declaration(&mut self) -> Result<FunctionDeclarationElement, ParseError> {
+        let mut annotation = None;
+        if self.lookahead_is(TokenType::At) {
+            annotation = Some(self.annotation()?);
+        }
+
         let export_span = maybe_consume!(self, TokenType::Export);
         let function_span = consume!(self, TokenType::Function)?;
         let start_span = export_span.to_owned().unwrap_or(function_span);
@@ -483,6 +491,7 @@ impl<'a> Parser<'a> {
         let body = self.function_body()?;
 
         let decorators = FunctionDecorators {
+            annotation,
             export: export_span.is_some(),
         };
         Ok(FunctionDeclarationElement {
@@ -492,6 +501,20 @@ impl<'a> Parser<'a> {
             params,
             returns,
             body,
+        })
+    }
+
+    fn annotation(&mut self) -> Result<Annotation, ParseError> {
+        let start = consume!(self, TokenType::At)?;
+        let ident = ident!(self);
+        consume!(self, TokenType::LeftParen)?;
+        let expr = self.single_expression()?;
+        let end = consume!(self, TokenType::RightParen)?;
+
+        Ok(Annotation {
+            span: start + end,
+            name: ident,
+            expr,
         })
     }
 
@@ -628,7 +651,10 @@ mod test {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         span: Span::new("test.1", 0, 19),
-                        decorators: FunctionDecorators { export: false },
+                        decorators: FunctionDecorators {
+                            annotation: None,
+                            export: false,
+                        },
                         ident: Ident {
                             span: Span::new("test.1", 9, 13),
                             value: "test",
@@ -671,7 +697,10 @@ mod test {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         span: Span::new("test.1", 0, 25),
-                        decorators: FunctionDecorators { export: false },
+                        decorators: FunctionDecorators {
+                            annotation: None,
+                            export: false,
+                        },
                         ident: Ident {
                             span: Span::new("test.1", 9, 13),
                             value: "name",
@@ -712,7 +741,10 @@ mod test {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         span: Span::new("test.1", 0, 33),
-                        decorators: FunctionDecorators { export: false },
+                        decorators: FunctionDecorators {
+                            annotation: None,
+                            export: false,
+                        },
                         ident: Ident {
                             span: Span {
                                 file: "test.1".to_owned(),
@@ -785,7 +817,10 @@ mod test {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         span: Span::new("test.1", 0, 26),
-                        decorators: FunctionDecorators { export: true },
+                        decorators: FunctionDecorators {
+                            annotation: None,
+                            export: true,
+                        },
                         ident: Ident {
                             span: Span {
                                 file: "test.1".to_owned(),
@@ -819,7 +854,10 @@ mod test {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         span: Span::new("test.1", 0, 24),
-                        decorators: FunctionDecorators { export: false },
+                        decorators: FunctionDecorators {
+                            annotation: None,
+                            export: false,
+                        },
                         ident: Ident {
                             span: Span {
                                 file: "test.1".to_owned(),
@@ -860,7 +898,10 @@ mod test {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         span: Span::new("test.1", 0, 38),
-                        decorators: FunctionDecorators { export: false },
+                        decorators: FunctionDecorators {
+                            annotation: None,
+                            export: false,
+                        },
                         ident: Ident {
                             span: Span::new("test.1", 9, 13),
                             value: "test",
@@ -958,7 +999,10 @@ mod test {
                 source_elements: vec![SourceElement::FunctionDeclaration(
                     FunctionDeclarationElement {
                         span: Span::new("test.1", 0, 22),
-                        decorators: FunctionDecorators { export: false },
+                        decorators: FunctionDecorators {
+                            annotation: None,
+                            export: false,
+                        },
                         ident: Ident {
                             span: Span {
                                 file: "test.1".to_owned(),
@@ -1125,8 +1169,9 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function main() { test(); }");
         let actual = Parser::new(&mut tokenizer).parse();
-        let expected =
-            include_str!("../../test/test_parse_expression_statement_parses_function_invocation.ast");
+        let expected = include_str!(
+            "../../test/test_parse_expression_statement_parses_function_invocation.ast"
+        );
         assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 

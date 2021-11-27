@@ -103,6 +103,7 @@ lazy_static! {
         r"^\-" => TokenType::Minus,
 
         // Single character alternatives
+        r"^@" => TokenType::At,
         r"^," => TokenType::Comma,
         r"^:" => TokenType::Colon,
         r"^;" => TokenType::Semi,
@@ -243,6 +244,7 @@ impl Tokenizer {
 mod test {
 
     use super::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn test_tokenize_number() {
@@ -453,6 +455,22 @@ mod test {
             Token::new("test.1", "a", TokenType::Identifier, 4),
             Token::new("test.1", "=", TokenType::Equal, 6),
             Token::new("test.1", "99", TokenType::Number, 8),
+        ];
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_tokenize_annotation() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "@test(\"(local.get 0)\")");
+
+        let actual = tokenizer.tokenize();
+        let expected: Vec<Token> = vec![
+            Token::new("test.1", "@", TokenType::At, 0),
+            Token::new("test.1", "test", TokenType::Identifier, 1),
+            Token::new("test.1", "(", TokenType::LeftParen, 5),
+            Token::new("test.1", "\"(local.get 0)\"", TokenType::String, 6),
+            Token::new("test.1", ")", TokenType::RightParen, 21),
         ];
         assert_eq!(expected, actual);
     }
