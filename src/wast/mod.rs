@@ -14,7 +14,7 @@ pub struct Module {
 
 #[derive(Debug, PartialEq)]
 pub struct FunctionType {
-    pub params: Vec<ValueType>,
+    pub params: Vec<(&'static str, ValueType)>,
     pub ret: Option<ValueType>,
 }
 
@@ -51,10 +51,11 @@ pub enum Instruction {
     I32Mul,
     I32Eq,
     I32Neq,
+    I32And,
+    I32Or,
     Return,
     If(Vec<Instruction>, Vec<Instruction>),
     Call(&'static str, Vec<Instruction>),
-
     // A meta instruction not part of the wasm specification but
     // an instruction to the code generator to inline raw instructions
     // exactly as they are provided.
@@ -102,6 +103,8 @@ impl From<&Instruction> for String {
                 instructions_to_string(cons),
                 instructions_to_string(alt)
             ),
+            Instruction::I32And => "(i32.and)".into(),
+            Instruction::I32Or => "(i32.or)".into(),
         }
     }
 }
@@ -230,9 +233,9 @@ impl Module {
         // Generate Type Definition
         // function(p1: i32, p2: i32) : i32
         // (param $p1 i32) (param $p2 i32) (result i32)
-        for _ in &ty.params {
+        for (name, _) in &ty.params {
             // TODO - support more than just i32
-            wat += "(param i32)";
+            wat += &format!("(param ${} i32)", name);
         }
 
         if ty.ret.is_some() {
@@ -272,7 +275,7 @@ mod test {
         };
 
         assert_str_eq!(
-            "(module(func $test(i32.const 1)(i32.const 2)(i32.add)(return)))",
+            "(module (memory $0 1)(func $test (i32.const 1)(i32.const 2)(i32.add)(return))(export \"memory\" (memory $0)))",
             &module.as_wat()
         );
     }

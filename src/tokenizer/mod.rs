@@ -100,12 +100,14 @@ lazy_static! {
         r"^!=" => TokenType::BangEqual,
         r"^=" => TokenType::Equal,
 
+        // Single character alternatives
+        r"^\&" => TokenType::And,
+        r"^\|" => TokenType::Or,
+        r"^\~" => TokenType::Not,
         r"^\*" => TokenType::Star,
         r"^\\" => TokenType::Slash,
         r"^\+" => TokenType::Plus,
         r"^\-" => TokenType::Minus,
-
-        // Single character alternatives
         r"^@" => TokenType::At,
         r"^," => TokenType::Comma,
         r"^:" => TokenType::Colon,

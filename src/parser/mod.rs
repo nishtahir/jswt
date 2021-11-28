@@ -326,50 +326,62 @@ impl<'a> Parser<'a> {
     ///   | SingleExpression ('*' | '/') SingleExpression
     ///   | SingleExpression ('+' | '-') SingleExpression
     ///   | SingleExpression ('==' | '!=') SingleExpression
+    ///   | SingleExpression '&' SingleExpression
+    ///   | SingleExpression '|' SingleExpression
     ///   ;
     fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        self.arguments_expression()
+        self.bitwise_or_expression()
     }
 
-    /// ArgumentsExpression
-    ///   :  AdditiveExpression ArgumentList
+    /// Expressions are recursively declared with lower precendence items 
+    /// calling into higher precedence items
+
+    /// BitwiseOrExpression
+    ///   : BitwiseAndExpression '|' BitwiseAndExpression
     ///   ;
-    ///
-    fn arguments_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        // Eventually descend to ident
-        let left = self.equality_expression()?;
-        if self.lookahead_is(TokenType::LeftParen) {
-            let args = self.argument_list()?;
-            return Ok(SingleExpression::Arguments(ArgumentsExpression {
-                span: left.span() + args.span(),
-                ident: Box::new(left),
-                arguments: args,
-            }));
+    fn bitwise_or_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        let mut left = self.bitwise_and_expression()?;
+        while let Some(token) = self.lookahead_type() {
+            match token {
+                TokenType::Or => {
+                    let op_span = consume_unchecked!(self);
+                    let right = self.bitwise_and_expression()?;
+                    left = SingleExpression::Bitwise(BinaryExpression {
+                        span: left.span() + right.span(),
+                        left: Box::new(left),
+                        op: BinaryOperator::Or(op_span),
+                        right: Box::new(right),
+                    });
+                }
+                _ => break,
+            }
         }
 
         Ok(left)
     }
-    /// ArgumentList
-    ///   :  '(' SingleExpression (',' SingleExpression)* ')'
+
+    /// BitwiseAndExpression
+    ///   : AdditiveExpression '&' AdditiveExpression
     ///   ;
-    fn argument_list(&mut self) -> Result<ArgumentsList, ParseError> {
-        let mut arguments = vec![];
-        let start = consume!(self, TokenType::LeftParen)?;
-        while !self.lookahead_is(TokenType::RightParen) {
-            let param = self.single_expression()?;
-            arguments.push(param);
-            if !self.lookahead_is(TokenType::Comma) {
-                break;
+    fn bitwise_and_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        let mut left = self.equality_expression()?;
+        while let Some(token) = self.lookahead_type() {
+            match token {
+                TokenType::And => {
+                    let op_span = consume_unchecked!(self);
+                    let right = self.equality_expression()?;
+                    left = SingleExpression::Bitwise(BinaryExpression {
+                        span: left.span() + right.span(),
+                        left: Box::new(left),
+                        op: BinaryOperator::And(op_span),
+                        right: Box::new(right),
+                    });
+                }
+                _ => break,
             }
-            // Eat the comma
-            consume_unchecked!(self);
         }
-        let end = consume!(self, TokenType::RightParen)?;
-        // return params
-        Ok(ArgumentsList {
-            span: start + end,
-            arguments,
-        })
+
+        Ok(left)
     }
 
     /// EqualityExpression
@@ -443,12 +455,12 @@ impl<'a> Parser<'a> {
     ///   : IdentifierExpression ('*' | '/' | '%') IdentifierExpression
     ///   ;
     fn multipicative_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let mut left = self.identifier_expression()?;
+        let mut left = self.arguments_expression()?;
         while let Some(token) = self.lookahead_type() {
             match token {
                 TokenType::Star => {
                     let op_span = consume_unchecked!(self);
-                    let right = self.identifier_expression()?;
+                    let right = self.arguments_expression()?;
                     left = SingleExpression::Multiplicative(BinaryExpression {
                         span: left.span() + right.span(),
                         left: Box::new(left),
@@ -483,6 +495,48 @@ impl<'a> Parser<'a> {
         }
         // If we can't find an ident, continue by trying to resolve a literal
         self.literal()
+    }
+
+    /// ArgumentsExpression
+    ///   :  AdditiveExpression ArgumentList
+    ///   ;
+    ///
+    fn arguments_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        // Eventually descend to ident
+        let left = self.identifier_expression()?;
+        if self.lookahead_is(TokenType::LeftParen) {
+            let args = self.argument_list()?;
+            return Ok(SingleExpression::Arguments(ArgumentsExpression {
+                span: left.span() + args.span(),
+                ident: Box::new(left),
+                arguments: args,
+            }));
+        }
+
+        Ok(left)
+    }
+
+    /// ArgumentList
+    ///   :  '(' SingleExpression (',' SingleExpression)* ')'
+    ///   ;
+    fn argument_list(&mut self) -> Result<ArgumentsList, ParseError> {
+        let mut arguments = vec![];
+        let start = consume!(self, TokenType::LeftParen)?;
+        while !self.lookahead_is(TokenType::RightParen) {
+            let param = self.single_expression()?;
+            arguments.push(param);
+            if !self.lookahead_is(TokenType::Comma) {
+                break;
+            }
+            // Eat the comma
+            consume_unchecked!(self);
+        }
+        let end = consume!(self, TokenType::RightParen)?;
+        // return params
+        Ok(ArgumentsList {
+            span: start + end,
+            arguments,
+        })
     }
 
     /// Literal

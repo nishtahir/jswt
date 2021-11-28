@@ -46,6 +46,9 @@ pub enum TokenType {
     At,
 
     // One or two character tokens
+    And,
+    Or,
+    Not,
     Less,
     LessEqual,
     Greater,

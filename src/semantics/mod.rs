@@ -91,9 +91,9 @@ impl Visitor for Resolver {
             }
             SingleExpression::Literal(Literal::Boolean(_)) => {
                 // Valid boolean expression
-            },
+            }
             SingleExpression::Arguments(_) => todo!(), // TODO type check the function
-            SingleExpression::Identifier(_) => {}, // TODO Type check the symbol
+            SingleExpression::Identifier(_) => {}      // TODO Type check the symbol
             _ => {
                 let error = SemanticError::TypeError {
                     span: node.condition.span().to_owned(),
@@ -145,6 +145,15 @@ impl Visitor for Resolver {
             self.errors.push(error);
         }
         self.symbols.define(name, Symbol::new(Type::Function, name));
+
+        // Add function parameters as variables in scope
+        node.params.parameters.iter().for_each(|param| {
+            // Resolve Type from Type Annotation
+            let param_name = param.ident.value;
+            self.symbols
+                .define(param_name, Symbol::new(Type::Unknown, param_name));
+        });
+
         self.visit_function_body(&node.body);
     }
 
@@ -166,6 +175,7 @@ impl Visitor for Resolver {
             SingleExpression::Additive(exp) => self.visit_binary_expression(exp),
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
             SingleExpression::Equality(exp) => self.visit_binary_expression(exp),
+            SingleExpression::Bitwise(exp) => self.visit_binary_expression(exp),
         }
     }
 
@@ -191,8 +201,14 @@ impl Visitor for Resolver {
         match expression {
             // Function calls but be followed by an identifier for now
             SingleExpression::Identifier(_) => {
-                // TODO - visit arguments
-                // &exp.arguments;
+                // We should check that the function is defined
+                // but because we're doing a depth first pass we can't know if the function is
+                // defined later.
+
+                // Check that the args are defined in this scope
+                for arg in &node.arguments.arguments {
+                    self.visit_single_expression(&arg);
+                }
             }
             exp => self.errors.push(SemanticError::NotAFunctionError {
                 span: node.span(),

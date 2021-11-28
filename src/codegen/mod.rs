@@ -60,7 +60,7 @@ impl CodeGenerator {
     pub fn generate_module(&mut self, ast: &Ast) -> &Module {
         // Push builtins
         let println_type_idx = self.push_type(FunctionType {
-            params: vec![ValueType::I32],
+            params: vec![("value", ValueType::I32)],
             ret: None,
         });
         self.push_import(Import::Function(FunctionImport {
@@ -238,7 +238,7 @@ impl Visitor for CodeGenerator {
             self.symbols
                 .define(arg.ident.value, WastSymbol::Param(name, ValueType::I32));
             // Todo, convert to ValueType
-            type_params.push(ValueType::I32)
+            type_params.push((arg.ident.value, ValueType::I32))
         }
 
         // Resolve return Value
@@ -352,7 +352,8 @@ impl Visitor for CodeGenerator {
         match node {
             SingleExpression::Additive(exp)
             | SingleExpression::Multiplicative(exp)
-            | SingleExpression::Equality(exp) => self.visit_binary_expression(exp),
+            | SingleExpression::Equality(exp)
+            | SingleExpression::Bitwise(exp) => self.visit_binary_expression(exp),
             SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
             SingleExpression::Literal(lit) => self.visit_literal(lit),
@@ -371,6 +372,8 @@ impl Visitor for CodeGenerator {
             BinaryOperator::Equal(_) => Instruction::I32Eq,
             BinaryOperator::NotEqual(_) => Instruction::I32Neq,
             BinaryOperator::Slash(_) => todo!(),
+            BinaryOperator::And(_) => Instruction::I32And,
+            BinaryOperator::Or(_) => Instruction::I32And,
         };
         self.push_instruction(isr)
     }
@@ -482,7 +485,7 @@ mod test {
                 imports: vec![],
                 exports: vec![],
                 types: vec![FunctionType {
-                    params: vec![ValueType::I32],
+                    params: vec![("a", ValueType::I32)],
                     ret: None
                 }],
                 functions: vec![Function {
@@ -509,7 +512,7 @@ mod test {
                 imports: vec![],
                 exports: vec![],
                 types: vec![FunctionType {
-                    params: vec![ValueType::I32],
+                    params: vec![("a", ValueType::I32)],
                     ret: Some(ValueType::I32)
                 }],
                 functions: vec![Function {

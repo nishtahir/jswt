@@ -5,10 +5,8 @@ let __PAGE_SIZE = 1; // Extend the heap by this amount
 let __MEM_HEAP = 0; // Pointer to first byte of the heap
 let __MEM_HEAP_BRK = 1; // Pointer to last byte of the heap + 1
 
-
-
 // Initialize the memory manager runtime
-function __mm_init() : i32 {
+function __mm_init(): i32 {
     return 0;
 }
 
@@ -18,29 +16,22 @@ function __getSize(address: i32): i32 {
     // return value & ~0x07;
 }
 
-@wast("(local.get 0)(call $i32Load)(i32.const 1)(i32.and)(return)")
 function __getAlloc(address: i32): i32 {
-    // let value = i32Load(address);
-    // return value & 0x01;
+    return i32Load(address) & 1;
 }
-
-
 
 // Pack size and allocated bit into a word
-@wast("(local.get 0)(local.get 1)(i32.or)(return)")
 function __pack(size: i32, alloc: i32): i32 {
-    // return size | alloc
+    return size | alloc;
 }
 
-@wast("(local.get 0)(i32.load offset=0 align=4)(return)")
+@wast("(local.get $index)(i32.load offset=0 align=4)(return)")
 function i32Load(index: i32): i32 { }
 
-@wast("(local.get 0)(local.get 1)(i32.store align=4)")
+@wast("(local.get $index)(local.get $value)(i32.store align=4)")
 function i32Store(index: i32, value: i32) { }
 
-// // Not is not an i32 instruction
-// // https://github.com/WebAssembly/design/issues/379
-@wast("(i32.const 0)(local.get 0)(i32.sub)(return)")
-function i32not(value: i32): i32 {
-    // return 0 - value;
-}
+// i32.not an valid i32 instruction. So we have to rely on
+// an intentional underflow. Discussion here
+// https://github.com/WebAssembly/design/issues/379
+function i32not(value: i32): i32 { return 0 - value; }

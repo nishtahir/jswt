@@ -10,6 +10,7 @@ Ast {
                             end: 34,
                         },
                         decorators: FunctionDecorators {
+                            annotation: None,
                             export: true,
                         },
                         ident: Ident {

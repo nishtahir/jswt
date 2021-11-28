@@ -217,6 +217,7 @@ impl From<Ident> for AssignableElement {
 #[derive(Debug, PartialEq)]
 pub enum SingleExpression {
     Arguments(ArgumentsExpression),
+    Bitwise(BinaryExpression),
     Multiplicative(BinaryExpression),
     Additive(BinaryExpression),
     Equality(BinaryExpression),
@@ -257,6 +258,7 @@ impl Spannable for SingleExpression {
             SingleExpression::Identifier(exp) => exp.span(),
             SingleExpression::Arguments(exp) => exp.span(),
             SingleExpression::Equality(exp) => exp.span(),
+            SingleExpression::Bitwise(exp) => exp.span(),
         }
     }
 }
@@ -326,6 +328,8 @@ pub enum BinaryOperator {
     Slash(Span),
     Equal(Span),
     NotEqual(Span),
+    And(Span),
+    Or(Span),
 }
 
 #[derive(Debug, PartialEq)]
