@@ -5,8 +5,8 @@ use crate::{
     ast::{visitor::Visitor, Ast},
     common::SymbolTable,
     wast::{
-        Export, Function, FunctionExport, FunctionImport, FunctionType, Import, Instruction,
-        Module, Type, ValueType, WastSymbol,
+        Export, Function, FunctionExport, FunctionImport, FunctionType, GlobalType, Import,
+        Instruction, Module, ValueType, WastSymbol,
     },
 };
 
@@ -59,10 +59,10 @@ impl CodeGenerator {
     #[cfg(not(test))]
     pub fn generate_module(&mut self, ast: &Ast) -> &Module {
         // Push builtins
-        let println_type_idx = self.push_type(Type::Function(FunctionType {
+        let println_type_idx = self.push_type(FunctionType {
             params: vec![ValueType::I32],
             ret: None,
-        }));
+        });
         self.push_import(Import::Function(FunctionImport {
             name: "println",
             type_idx: println_type_idx,
@@ -78,7 +78,12 @@ impl CodeGenerator {
         self.module.imports.len() - 1
     }
 
-    fn push_type(&mut self, new_ty: Type) -> usize {
+    fn push_global(&mut self, global: GlobalType) -> usize {
+        self.module.globals.push(global);
+        self.module.globals.len() - 1
+    }
+
+    fn push_type(&mut self, new_ty: FunctionType) -> usize {
         for (i, ty) in self.module.types.iter().enumerate() {
             if *ty == new_ty {
                 return i;
@@ -189,17 +194,24 @@ impl Visitor for CodeGenerator {
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
-        // Emit assignment
+        // Push scope for the initializer
         self.push_instruction_scope(None);
         self.visit_assignable_element(&node.target);
         self.visit_single_expression(&node.expression);
-        let scope = self.pop_instruction_scope().unwrap();
-        match scope.target {
+        let initializer_sope = self.pop_instruction_scope().unwrap();
+        match initializer_sope.target {
             Some(InstructionScopeTarget::Local(name)) => {
-                self.push_instruction(Instruction::LocalSet(name, scope.instructions));
+                self.push_instruction(Instruction::LocalSet(name, initializer_sope.instructions));
             }
             Some(InstructionScopeTarget::Global(name)) => {
-                self.push_instruction(Instruction::GlobalSet(name, scope.instructions));
+                // For global variable declarations we want to emit a global rather
+                // than an instruction.
+                self.push_global(GlobalType {
+                    name,
+                    ty: ValueType::I32,
+                    mutable: true, // TODO - check mutability
+                    initializer: initializer_sope.instructions,
+                });
             }
             _ => todo!(),
         }
@@ -235,7 +247,7 @@ impl Visitor for CodeGenerator {
             ret: node.returns.as_ref().map(|_| ValueType::I32),
         };
         // Add type definition to type index
-        let type_idx = self.push_type(Type::Function(ty));
+        let type_idx = self.push_type(ty);
 
         // Push a new Instruction scope to hold emitted instructions
         self.push_instruction_scope(None);
@@ -417,6 +429,7 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                globals: vec![],
                 imports: vec![],
                 exports: vec![],
                 types: vec![],
@@ -437,12 +450,13 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                globals: vec![],
                 imports: vec![],
                 exports: vec![],
-                types: vec![Type::Function(FunctionType {
+                types: vec![FunctionType {
                     params: vec![],
                     ret: None
-                })],
+                }],
                 functions: vec![Function {
                     name: "test",
                     type_idx: 0,
@@ -464,12 +478,13 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                globals: vec![],
                 imports: vec![],
                 exports: vec![],
-                types: vec![Type::Function(FunctionType {
+                types: vec![FunctionType {
                     params: vec![ValueType::I32],
                     ret: None
-                })],
+                }],
                 functions: vec![Function {
                     name: "test",
                     type_idx: 0,
@@ -490,12 +505,13 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                globals: vec![],
                 imports: vec![],
                 exports: vec![],
-                types: vec![Type::Function(FunctionType {
+                types: vec![FunctionType {
                     params: vec![ValueType::I32],
                     ret: Some(ValueType::I32)
-                })],
+                }],
                 functions: vec![Function {
                     name: "test",
                     type_idx: 0,
@@ -517,12 +533,13 @@ mod test {
         assert_eq!(
             module,
             &Module {
+                globals: vec![],
                 imports: vec![],
                 exports: vec![],
-                types: vec![Type::Function(FunctionType {
+                types: vec![FunctionType {
                     params: vec![],
                     ret: None
-                })],
+                }],
                 functions: vec![Function {
                     name: "test",
                     type_idx: 0,

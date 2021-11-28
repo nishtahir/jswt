@@ -68,7 +68,9 @@ lazy_static! {
     static ref DIRECTIVES: Vec<TokenizerDirective> = directives![
         // import "./test.jswt". Group 1 is the unquoted path
         r#"^\bimport\b\s+"((?:/)?(?:[^"]+(?:/)?)+)""# => DirectiveType::Import,
-        r"^\s+" => DirectiveType::Skip
+        r"^\s+" => DirectiveType::Skip,
+        // Skip comments
+        r"^//[^\n]*" => DirectiveType::Skip
     ];
 
     // https://docs.rs/regex/1.5.4/regex/struct.Regex.html#method.find
@@ -116,10 +118,7 @@ lazy_static! {
         // Multi character sequences
         r"^\d+" => TokenType::Number,
         r"^[_$a-zA-Z][_$a-zA-Z0-9]*" => TokenType::Identifier,
-        r#"^"[^"]*""# => TokenType::String,
-
-        // Other
-        r"^//[^\n]*" => TokenType::Comment
+        r#"^"[^"]*""# => TokenType::String
     ];
 }
 
@@ -378,21 +377,6 @@ mod test {
 
         let actual = tokenizer.tokenize();
         let expected = vec![Token::new("test.1", ";", TokenType::Semi, 0)];
-        assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn test_tokenize_comment() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "// This is a test comment");
-
-        let actual = tokenizer.tokenize();
-        let expected = vec![Token::new(
-            "test.1",
-            "// This is a test comment",
-            TokenType::Comment,
-            0,
-        )];
         assert_eq!(expected, actual);
     }
 

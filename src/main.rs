@@ -78,7 +78,12 @@ fn main() {
 
     // Embed wasmer runtime and execute generated wasm
     let store = Store::default();
-    let module = WasmerModule::new(&store, wast).unwrap();
+    let module = match WasmerModule::new(&store, wast) {
+        Ok(module) => module,
+        Err(e) => {
+            panic!("{}", e);
+        }
+    };
     let import_object = imports! {
         "env" => {
             "println" => Function::new_native(&store, env_println)

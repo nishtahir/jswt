@@ -1,7 +1,9 @@
 import "./std/mem.jswt";
-import "./foo.jswt";
 
 export function main(): i32 {
-    i32Store(0, 10);
+    let headPtr = 0;
+    i32Store(headPtr, 255);
+    println(__getSize(headPtr));
+    println(__getAlloc(headPtr));
     return 0;
 }

@@ -74,6 +74,5 @@ pub enum TokenType {
     Const,
 
     // Other
-    Comment,
     Eof,
 }

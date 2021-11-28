@@ -1,20 +1,29 @@
+/// WebAssembly programs are organized into modules, which are the unit of deployment,
+/// loading, and compilation. A module collects definitions for types, functions,
+/// tables, memories, and globals. In addition, it can declare imports and exports
+/// and provide initialization in the form of data and element segments, or a start function.
+/// https://webassembly.github.io/spec/core/syntax/modules.html#syntax-module
 #[derive(Debug, Default, PartialEq)]
 pub struct Module {
+    pub globals: Vec<GlobalType>,
+    pub types: Vec<FunctionType>,
     pub imports: Vec<Import>,
-    pub types: Vec<Type>,
     pub functions: Vec<Function>,
     pub exports: Vec<Export>,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Type {
-    Function(FunctionType),
 }
 
 #[derive(Debug, PartialEq)]
 pub struct FunctionType {
     pub params: Vec<ValueType>,
     pub ret: Option<ValueType>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct GlobalType {
+    pub name: &'static str,
+    pub ty: ValueType,
+    pub mutable: bool,
+    pub initializer: Vec<Instruction>,
 }
 
 #[derive(Debug, Default, PartialEq)]
@@ -104,14 +113,6 @@ fn instructions_to_string(instructions: &Vec<Instruction>) -> String {
         .collect::<Vec<String>>()
         .join(" ")
 }
-// impl From<Vec<Instruction>> for String {
-//     fn from(instructions: Vec<Instruction>) -> Self {
-//         instructions.iter()
-//         .map(String::from)
-//         .collect::<Vec<String>>()
-//         .join(" ")
-//     }
-// }
 
 #[derive(Debug, PartialEq)]
 pub enum WastSymbol {
@@ -173,9 +174,26 @@ impl Module {
             .iter()
             .filter_map(|e| e.as_function())
             .for_each(|e| {
-                let signature = self.function_type_signature(e.type_idx, e.name);
+                let signature = self.type_signature(e.type_idx, e.name);
                 wat += &format!("(import \"{}\" \"{}\" ({}))", e.module, e.name, signature);
             });
+
+        self.globals.iter().for_each(|global| {
+            wat += &format!("(global ${} ", global.name);
+            wat += "(";
+            if global.mutable {
+                wat += "mut ";
+            }
+            wat += &global.ty.to_string();
+            wat += ")";
+
+            // Globals accept one and only one initializer instruction.
+            // Typically to load some constant value
+            // TODO - Make this a semantic error
+            debug_assert!(global.initializer.len() == 1);
+            wat += &format!("{}", instructions_to_string(&global.initializer));
+            wat += ")"
+        });
 
         // TODO - make this configurable as part of the WAST IR
         // Add built in memory
@@ -183,7 +201,7 @@ impl Module {
 
         for function in self.functions.iter() {
             wat += "(";
-            wat += &self.function_type_signature(function.type_idx, function.name);
+            wat += &self.type_signature(function.type_idx, function.name);
             for isr in &function.instructions {
                 wat += &String::from(isr);
             }
@@ -206,24 +224,21 @@ impl Module {
         wat
     }
 
-    fn function_type_signature(&self, type_idx: usize, name: &str) -> String {
+    fn type_signature(&self, type_idx: usize, name: &str) -> String {
         let mut wat = format!("func ${} ", name);
-        let type_def = &self.types[type_idx];
-        match type_def {
-            Type::Function(ty) => {
-                // Generate Type Definition
-                // function(p1: i32, p2: i32) : i32
-                // (param $p1 i32) (param $p2 i32) (result i32)
-                for _ in &ty.params {
-                    // TODO - support more than just i32
-                    wat += "(param i32)";
-                }
-
-                if ty.ret.is_some() {
-                    wat += "(result i32)";
-                }
-            }
+        let ty = &self.types[type_idx];
+        // Generate Type Definition
+        // function(p1: i32, p2: i32) : i32
+        // (param $p1 i32) (param $p2 i32) (result i32)
+        for _ in &ty.params {
+            // TODO - support more than just i32
+            wat += "(param i32)";
         }
+
+        if ty.ret.is_some() {
+            wat += "(result i32)";
+        }
+
         wat
     }
 }
@@ -237,12 +252,13 @@ mod test {
     #[test]
     fn test_wat_generation_for_simple_function() {
         let module = Module {
+            globals: vec![],
             imports: vec![],
             exports: vec![],
-            types: vec![Type::Function(FunctionType {
+            types: vec![FunctionType {
                 params: vec![],
                 ret: None,
-            })],
+            }],
             functions: vec![Function {
                 name: "test",
                 type_idx: 0,
