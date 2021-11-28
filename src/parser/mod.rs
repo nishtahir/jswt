@@ -5,9 +5,9 @@ use crate::ast::program::{
     Annotation, ArgumentsExpression, ArgumentsList, AssignableElement, BinaryExpression,
     BinaryOperator, BlockStatement, BooleanLiteral, EmptyStatement, ExpressionStatement,
     FormalParameterArg, FormalParameterList, FunctionBody, FunctionDeclarationElement,
-    FunctionDecorators, IdentifierExpression, Literal, NumberLiteral, Program, ReturnStatement,
-    SingleExpression, SourceElement, SourceElements, StatementElement, StatementList,
-    StringLiteral, VariableModifier, VariableStatement,
+    FunctionDecorators, IdentifierExpression, IfStatement, Literal, NumberLiteral, Program,
+    ReturnStatement, SingleExpression, SourceElement, SourceElements, StatementElement,
+    StatementList, StringLiteral, VariableModifier, VariableStatement,
 };
 use crate::ast::span::{Span, Spannable};
 use crate::ast::Ast;
@@ -154,6 +154,7 @@ impl<'a> Parser<'a> {
     /// Statement
     ///   :  Block
     ///   |  EmptyStatement
+    ///   |  IfStatement
     ///   |  ReturnStatement
     ///   |  VariableStatement
     ///   |  ExpressionStatement
@@ -162,6 +163,7 @@ impl<'a> Parser<'a> {
         let elem = match self.lookahead_type() {
             Some(TokenType::LeftBrace) => self.block()?.into(),
             Some(TokenType::Semi) => self.empty_statement()?.into(),
+            Some(TokenType::If) => self.if_statement()?.into(),
             Some(TokenType::Return) => self.return_statement()?.into(),
             Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?.into(),
             _ => self.expression_statement()?.into(),
@@ -188,6 +190,36 @@ impl<'a> Parser<'a> {
     fn empty_statement(&mut self) -> Result<EmptyStatement, ParseError> {
         let span = consume!(self, TokenType::Semi)?;
         Ok(EmptyStatement { span })
+    }
+
+    /// IfStatement
+    ///   : 'if' '(' SingleExpression ')' Statement 'else' Statement
+    ///   | 'if' '(' SingleExpression ')' Satement
+    ///   ;
+    fn if_statement(&mut self) -> Result<IfStatement, ParseError> {
+        let start = consume!(self, TokenType::If)?;
+        consume!(self, TokenType::LeftParen)?;
+        let condition = self.single_expression()?;
+        consume!(self, TokenType::RightParen)?;
+        let consequence = Box::new(self.statement()?);
+
+        let mut alternative = None;
+        if self.lookahead_is(TokenType::Else) {
+            consume!(self, TokenType::Else)?;
+            alternative = Some(Box::new(self.statement()?));
+        }
+
+        let end = alternative
+            .as_ref()
+            .map(|alt| alt.span())
+            .unwrap_or(consequence.span());
+
+        Ok(IfStatement {
+            span: start + end,
+            condition,
+            consequence,
+            alternative,
+        })
     }
 
     /// ReturnStatement
@@ -291,8 +323,9 @@ impl<'a> Parser<'a> {
 
     /// SingleExpression
     ///   : SingleExpression Arguments
+    ///   | SingleExpression ('*' | '/') SingleExpression
     ///   | SingleExpression ('+' | '-') SingleExpression
-    ///   | SingleExpression ('+' | '-') SingleExpression
+    ///   | SingleExpression ('==' | '!=') SingleExpression
     ///   ;
     fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
         self.arguments_expression()
@@ -304,7 +337,7 @@ impl<'a> Parser<'a> {
     ///
     fn arguments_expression(&mut self) -> Result<SingleExpression, ParseError> {
         // Eventually descend to ident
-        let left = self.additive_expression()?;
+        let left = self.equality_expression()?;
         if self.lookahead_is(TokenType::LeftParen) {
             let args = self.argument_list()?;
             return Ok(SingleExpression::Arguments(ArgumentsExpression {
@@ -337,6 +370,39 @@ impl<'a> Parser<'a> {
             span: start + end,
             arguments,
         })
+    }
+
+    /// EqualityExpression
+    ///   : AdditiveExpression ('==' | '!=') AdditiveExpression
+    ///   ;
+    fn equality_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        let mut left = self.additive_expression()?;
+        while let Some(token) = self.lookahead_type() {
+            match token {
+                TokenType::EqualEqual => {
+                    let op_span = consume_unchecked!(self);
+                    let right = self.additive_expression()?;
+                    left = SingleExpression::Equality(BinaryExpression {
+                        span: left.span() + right.span(),
+                        left: Box::new(left),
+                        op: BinaryOperator::Equal(op_span),
+                        right: Box::new(right),
+                    });
+                }
+                TokenType::BangEqual => {
+                    let op_span = consume_unchecked!(self);
+                    let right = self.additive_expression()?;
+                    left = SingleExpression::Equality(BinaryExpression {
+                        span: left.span() + right.span(),
+                        left: Box::new(left),
+                        op: BinaryOperator::NotEqual(op_span),
+                        right: Box::new(right),
+                    });
+                }
+                _ => break,
+            }
+        }
+        Ok(left)
     }
 
     /// AdditiveExpression
@@ -456,7 +522,7 @@ impl<'a> Parser<'a> {
                 .into()
             }
             _ => {
-                // TODO -rename this error.to something more descriptive 
+                // TODO -rename this error.to something more descriptive
                 return Err(ParseError::NoViableAlternative {
                     expected: vec![
                         TokenType::Identifier,

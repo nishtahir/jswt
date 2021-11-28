@@ -63,11 +63,12 @@ impl Visitor for Resolver {
 
     fn visit_statement_element(&mut self, node: &StatementElement) {
         match node {
-            StatementElement::Block(block) => self.visit_block_statement(block),
-            StatementElement::Empty(empty) => self.visit_empty_statement(empty),
-            StatementElement::Return(ret) => self.visit_return_statement(ret),
-            StatementElement::Variable(variable) => self.visit_variable_statement(variable),
-            StatementElement::Expression(exp) => self.visit_expression_statement(exp),
+            StatementElement::Block(stmt) => self.visit_block_statement(stmt),
+            StatementElement::Empty(stmt) => self.visit_empty_statement(stmt),
+            StatementElement::Return(stmt) => self.visit_return_statement(stmt),
+            StatementElement::Variable(stmt) => self.visit_variable_statement(stmt),
+            StatementElement::Expression(stmt) => self.visit_expression_statement(stmt),
+            StatementElement::If(stmt) => self.visit_if_statement(stmt),
         }
     }
 
@@ -81,6 +82,10 @@ impl Visitor for Resolver {
 
     fn visit_empty_statement(&mut self, _: &EmptyStatement) {
         // No-op
+    }
+
+    fn visit_if_statement(&mut self, node: &IfStatement) {
+        // TODO - Check that the condition is a boolean expression
     }
 
     fn visit_return_statement(&mut self, node: &ReturnStatement) {
@@ -143,6 +148,7 @@ impl Visitor for Resolver {
             SingleExpression::Multiplicative(exp) => self.visit_binary_expression(exp),
             SingleExpression::Additive(exp) => self.visit_binary_expression(exp),
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
+            SingleExpression::Equality(exp) => self.visit_binary_expression(exp),
         }
     }
 

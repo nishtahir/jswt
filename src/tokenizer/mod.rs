@@ -95,6 +95,7 @@ lazy_static! {
         r"^>=" => TokenType::GreaterEqual,
         r"^>" => TokenType::Greater,
         r"^==" => TokenType::EqualEqual,
+        r"^!=" => TokenType::BangEqual,
         r"^=" => TokenType::Equal,
 
         r"^\*" => TokenType::Star,

@@ -81,9 +81,16 @@ impl Spannable for FunctionBody {
 pub enum StatementElement {
     Block(BlockStatement),
     Empty(EmptyStatement),
+    If(IfStatement),
     Return(ReturnStatement),
     Variable(VariableStatement),
     Expression(ExpressionStatement),
+}
+
+impl From<IfStatement> for StatementElement {
+    fn from(v: IfStatement) -> Self {
+        Self::If(v)
+    }
 }
 
 impl From<ExpressionStatement> for StatementElement {
@@ -128,6 +135,14 @@ pub struct EmptyStatement {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct IfStatement {
+    pub span: Span,
+    pub condition: SingleExpression,
+    pub consequence: Box<StatementElement>,
+    pub alternative: Option<Box<StatementElement>>,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct ReturnStatement {
     pub span: Span,
     pub expression: SingleExpression,
@@ -145,6 +160,19 @@ pub struct VariableStatement {
 pub struct ExpressionStatement {
     pub span: Span,
     pub expression: SingleExpression,
+}
+
+impl Spannable for StatementElement {
+    fn span(&self) -> Span {
+        match self {
+            StatementElement::Block(stmt) => stmt.span.to_owned(),
+            StatementElement::Empty(stmt) => stmt.span.to_owned(),
+            StatementElement::If(stmt) => stmt.span.to_owned(),
+            StatementElement::Return(stmt) => stmt.span.to_owned(),
+            StatementElement::Variable(stmt) => stmt.span.to_owned(),
+            StatementElement::Expression(stmt) => stmt.span.to_owned(),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -191,6 +219,7 @@ pub enum SingleExpression {
     Arguments(ArgumentsExpression),
     Multiplicative(BinaryExpression),
     Additive(BinaryExpression),
+    Equality(BinaryExpression),
     Identifier(IdentifierExpression),
     Literal(Literal),
 }
@@ -227,6 +256,7 @@ impl Spannable for SingleExpression {
             SingleExpression::Literal(exp) => exp.span(),
             SingleExpression::Identifier(exp) => exp.span(),
             SingleExpression::Arguments(exp) => exp.span(),
+            SingleExpression::Equality(exp) => exp.span(),
         }
     }
 }
@@ -294,6 +324,8 @@ pub enum BinaryOperator {
     Minus(Span),
     Star(Span),
     Slash(Span),
+    Equal(Span),
+    NotEqual(Span),
 }
 
 #[derive(Debug, PartialEq)]

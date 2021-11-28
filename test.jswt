@@ -2,9 +2,11 @@ import "./std/mem.jswt";
 import "./foo.jswt";
 
 export function main(): i32 {
-    let memIdx = 0;
-    i32Store(memIdx, 10);
-    let value = i32Load(memIdx);
-    println(value);
+    let x = 9;
+    if(x == 8) {
+        println(1);
+    } else if (x == 9) {
+        println(8);
+    }
     return 0;
 }

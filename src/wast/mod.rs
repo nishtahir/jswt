@@ -40,7 +40,10 @@ pub enum Instruction {
     I32Add,
     I32Sub,
     I32Mul,
+    I32Eq,
+    I32Neq,
     Return,
+    If(Vec<Instruction>, Vec<Instruction>),
     Call(&'static str, Vec<Instruction>),
 
     // A meta instruction not part of the wasm specification but
@@ -72,37 +75,43 @@ impl From<&Instruction> for String {
             Instruction::I32Mul => "(i32.mul)".into(),
             Instruction::Return => "(return)".into(),
             Instruction::Call(name, args) => {
-                format!(
-                    "(call ${} {})",
-                    name,
-                    args.iter()
-                        .map(String::from)
-                        .collect::<Vec<String>>()
-                        .join(" ")
-                )
+                format!("(call ${} {})", name, instructions_to_string(args))
             }
             Instruction::RawWast(text) => format!("{}", text),
             Instruction::LocalGet(name) => format!("(local.get ${})", name),
-            Instruction::LocalSet(name, args) => format!(
-                "(local.set ${} {})",
-                name,
-                args.iter()
-                    .map(String::from)
-                    .collect::<Vec<String>>()
-                    .join(" ")
-            ),
-            Instruction::GlobalSet(name, args) => format!(
-                "(global.set ${} {})",
-                name,
-                args.iter()
-                    .map(String::from)
-                    .collect::<Vec<String>>()
-                    .join(" ")
-            ),
+            Instruction::LocalSet(name, args) => {
+                format!("(local.set ${} {})", name, instructions_to_string(args))
+            }
+            Instruction::GlobalSet(name, args) => {
+                format!("(global.set ${} {})", name, instructions_to_string(args))
+            }
             Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
+            Instruction::I32Eq => "(i32.eq)".into(),
+            Instruction::I32Neq => "(i32.ne)".into(),
+            Instruction::If(cons, alt) => format!(
+                "(if (then {}) (else {}))",
+                instructions_to_string(cons),
+                instructions_to_string(alt)
+            ),
         }
     }
 }
+
+fn instructions_to_string(instructions: &Vec<Instruction>) -> String {
+    instructions
+        .iter()
+        .map(String::from)
+        .collect::<Vec<String>>()
+        .join(" ")
+}
+// impl From<Vec<Instruction>> for String {
+//     fn from(instructions: Vec<Instruction>) -> Self {
+//         instructions.iter()
+//         .map(String::from)
+//         .collect::<Vec<String>>()
+//         .join(" ")
+//     }
+// }
 
 #[derive(Debug, PartialEq)]
 pub enum WastSymbol {

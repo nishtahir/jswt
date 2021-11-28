@@ -22,6 +22,9 @@ impl Default for CodeGenerator {
 
 #[derive(Debug)]
 enum InstructionScopeTarget {
+    // Control flow Ifs
+    Then,
+    Else,
     Function(&'static str),
     Local(&'static str),
     Global(&'static str),
@@ -146,11 +149,12 @@ impl Visitor for CodeGenerator {
 
     fn visit_statement_element(&mut self, node: &StatementElement) {
         match node {
-            StatementElement::Block(block) => self.visit_block_statement(block),
-            StatementElement::Empty(empty) => self.visit_empty_statement(empty),
-            StatementElement::Return(ret) => self.visit_return_statement(ret),
-            StatementElement::Variable(variable) => self.visit_variable_statement(variable),
-            StatementElement::Expression(exp) => self.visit_expression_statement(exp),
+            StatementElement::Block(stmt) => self.visit_block_statement(stmt),
+            StatementElement::Empty(stmt) => self.visit_empty_statement(stmt),
+            StatementElement::Return(stmt) => self.visit_return_statement(stmt),
+            StatementElement::Variable(stmt) => self.visit_variable_statement(stmt),
+            StatementElement::Expression(stmt) => self.visit_expression_statement(stmt),
+            StatementElement::If(stmt) => self.visit_if_statement(stmt),
         }
     }
 
@@ -160,6 +164,23 @@ impl Visitor for CodeGenerator {
 
     fn visit_empty_statement(&mut self, _: &EmptyStatement) {
         // No-op
+    }
+
+    fn visit_if_statement(&mut self, node: &IfStatement) {
+        self.visit_single_expression(&node.condition);
+
+        // Handle the consequence instructions
+        self.push_instruction_scope(Some(InstructionScopeTarget::Then));
+        self.visit_statement_element(&node.consequence);
+        let cons = self.pop_instruction_scope().unwrap();
+
+        // Handle the alternative instructions
+        self.push_instruction_scope(Some(InstructionScopeTarget::Else));
+        if let Some(alternative) = node.alternative.borrow() {
+            self.visit_statement_element(alternative);
+        }
+        let alt = self.pop_instruction_scope().unwrap();
+        self.push_instruction(Instruction::If(cons.instructions, alt.instructions));
     }
 
     fn visit_return_statement(&mut self, node: &ReturnStatement) {
@@ -287,26 +308,28 @@ impl Visitor for CodeGenerator {
         match elem {
             AssignableElement::Identifier(ident) => {
                 let name = ident.value;
+
                 // Check if this element has been defined
-                let sym = if let Some(sym) = self.symbols.lookup(name) {
-                    sym
-                } else if self.symbols.depth() == 1 {
-                    // Global scope
-                    self.symbols
-                        .define(name, WastSymbol::Global(name, ValueType::I32));
-                    self.symbols.lookup(name).unwrap()
-                } else {
-                    self.symbols
-                        .define(name, WastSymbol::Local(name, ValueType::I32));
-                    self.symbols.lookup(name).unwrap()
-                };
+                if self.symbols.lookup(name).is_none() {
+                    if self.symbols.depth() == 1 {
+                        self.symbols
+                            .define(name, WastSymbol::Global(name, ValueType::I32));
+                    } else {
+                        self.symbols
+                            .define(name, WastSymbol::Local(name, ValueType::I32));
+                    }
+                }
+
+                // Guaranteed exists
+                // TODO fix immutable and mutable borrow
+                let sym = self.symbols.lookup(name).unwrap();
 
                 match sym {
                     WastSymbol::Function(_) => todo!(),
                     WastSymbol::Param(name, _) | WastSymbol::Local(name, _) => {
                         self.set_instruction_scope_target(Some(InstructionScopeTarget::Local(name)))
                     }
-                    WastSymbol::Global(name, ty) => self
+                    WastSymbol::Global(name, _) => self
                         .set_instruction_scope_target(Some(InstructionScopeTarget::Global(name))),
                 }
             }
@@ -315,11 +338,12 @@ impl Visitor for CodeGenerator {
 
     fn visit_single_expression(&mut self, node: &SingleExpression) {
         match node {
-            SingleExpression::Additive(exp) => self.visit_binary_expression(exp),
+            SingleExpression::Additive(exp)
+            | SingleExpression::Multiplicative(exp)
+            | SingleExpression::Equality(exp) => self.visit_binary_expression(exp),
             SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
             SingleExpression::Literal(lit) => self.visit_literal(lit),
-            SingleExpression::Multiplicative(exp) => self.visit_binary_expression(exp),
         }
     }
 
@@ -328,12 +352,15 @@ impl Visitor for CodeGenerator {
         self.visit_single_expression(&node.right);
 
         // TODO - type check before pushing op
-        match node.op {
-            BinaryOperator::Plus(_) => self.push_instruction(Instruction::I32Add),
-            BinaryOperator::Minus(_) => self.push_instruction(Instruction::I32Sub),
-            BinaryOperator::Star(_) => self.push_instruction(Instruction::I32Mul),
+        let isr = match node.op {
+            BinaryOperator::Plus(_) => Instruction::I32Add,
+            BinaryOperator::Minus(_) => Instruction::I32Sub,
+            BinaryOperator::Star(_) => Instruction::I32Mul,
+            BinaryOperator::Equal(_) => Instruction::I32Eq,
+            BinaryOperator::NotEqual(_) => Instruction::I32Neq,
             BinaryOperator::Slash(_) => todo!(),
-        }
+        };
+        self.push_instruction(isr)
     }
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
