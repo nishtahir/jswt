@@ -7,39 +7,36 @@ use jswt::errors::{print_parser_error, print_semantic_error, print_tokenizer_err
 use jswt::Parser;
 use jswt::Resolver;
 use jswt::Tokenizer;
+use std::cell::Cell;
 use std::env;
 use std::fs;
 use std::process::exit;
-use wasmer::{imports, Function, Instance, Module as WasmerModule, Store};
+use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, Store};
 
 fn main() {
     let matches = app_from_crate!()
         .arg(
-            Arg::with_name("INPUT")
-                .help("Sets the input file to use")
+            Arg::with_name("source")
+                .help("Input file to begin compiling")
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("tokenize")
-                .short("t")
-                .help("Run the tokenizer"),
+            Arg::with_name("log-mem")
+                .long("log-mem")
+                .required(false)
+                .takes_value(false)
+                .help("Log the memory layout after execution"),
         )
         .get_matches();
 
-    let i = match matches.value_of("INPUT") {
+    let i = match matches.value_of("source") {
         Some(it) => it,
         _ => return,
     };
 
     let mut tokenizer = Tokenizer::default();
     tokenizer.push_source(i);
-
-    if matches.is_present("tokenize") {
-        let tokens = tokenizer.tokenize();
-        fs::write("test.tokens", format!("{:#?}", tokens)).unwrap();
-        return;
-    }
 
     // parse tokens and generate AST
     let mut parser = Parser::new(&mut tokenizer);
@@ -93,7 +90,31 @@ fn main() {
     // The returned i32 is the exit code
     // function main(): i32 { return 0; } // OK
     let main = instance.exports.get_function("main").unwrap();
+
     let result = main.call(&[]).unwrap();
+
+    if matches.is_present("log-mem") {
+        // Log memory contents to a file
+        let memory = instance.exports.get_memory("memory").unwrap();
+        let view: MemoryView<u8> = memory.view();
+        let mem = view
+            // log the memory with 16 bytes per row
+            // This will give us 4096 rows per page
+            .chunks(16)
+            .map(|chunk| {
+                chunk
+                    .iter()
+                    .map(Cell::get)
+                    .map(|val| format!("{:02x?}", val))
+                    .collect::<Vec<String>>()
+                    .join(" ")
+            })
+            .collect::<Vec<String>>()
+            .join("\n");
+
+        fs::write("test.mem", &mem).unwrap();
+    }
+
     if result.len() > 0 {
         let exit_code = result[0].i32().unwrap_or(1);
         exit(exit_code);

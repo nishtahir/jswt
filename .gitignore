@@ -4,6 +4,7 @@
 *.tokens
 *.wast
 *.wasm
+*.mem
 
 # Don't ignore test resources
 !test/*.ast
