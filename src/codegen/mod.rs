@@ -373,14 +373,18 @@ impl Visitor for CodeGenerator {
             BinaryOperator::NotEqual(_) => Instruction::I32Neq,
             BinaryOperator::Slash(_) => todo!(),
             BinaryOperator::And(_) => Instruction::I32And,
-            BinaryOperator::Or(_) => Instruction::I32And,
+            BinaryOperator::Or(_) => Instruction::I32Or,
         };
         self.push_instruction(isr)
     }
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
         let target = node.ident.value;
-        self.push_instruction(Instruction::LocalGet(target));
+        if self.symbols.lookup_current(target).is_some() {
+            self.push_instruction(Instruction::LocalGet(target));
+        } else {
+            self.push_instruction(Instruction::GlobalGet(target));
+        }
     }
 
     fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {

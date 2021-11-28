@@ -1,21 +1,56 @@
-let __W_SIZE = 4; // Word and header/footer size (bytes)
-let __D_SIZE = 8; // Double word size (bytes)
-let __PAGE_SIZE = 1; // Extend the heap by this amount
+const __W_SIZE = 4; // Word and header/footer size (bytes)
+const __D_SIZE = 8; // Double word size (bytes)
+const __PAGE_SIZE = 1; // Extend the heap by this amount
 
-let __MEM_HEAP = 0; // Pointer to first byte of the heap
-let __MEM_HEAP_BRK = 1; // Pointer to last byte of the heap + 1
+let __mem_heap = 0; // Pointer to first byte of the heap
+let __mem_brk = 1; // Pointer to last byte of the heap + 1
+let __mem_max_addr = 1025; // Max legal heap + 1
+
+let __heap_list_ptr = 0;
 
 // Initialize the memory manager runtime
-function __mm_init(): i32 {
-    return 0;
+function __mm_init() {
+    // Empty heap has already been allocated by the module loader
+    let startAddr = __mem_brk;
+    i32Store(startAddr, 0); // Allignment Padding
+    i32Store(__heap_list_ptr + 1 * __W_SIZE, __pack(__D_SIZE, 1)); // Prologue Header
+    i32Store(__heap_list_ptr + 2 * __W_SIZE, __pack(__D_SIZE, 1)); // Prologue Footer
+    i32Store(__heap_list_ptr + 3 * __W_SIZE, __pack(0, 1)); // Epilogue Header
+    
+    // TODO - implement assignment
+    __set_heap_list_ptr(__heap_list_ptr + 2 * __W_SIZE);
 }
 
-@wast("(local.get 0)(call $i32Load)(i32.const 7)(call $i32not)(i32.and)(return)")
+@wast("(global.set $__heap_list_ptr (local.get $value))")
+function __set_heap_list_ptr(value: i32) {}
+
+// Computed header pointer from the given block pointer
+function __headerPointer(blockPointer: i32): i32 {
+    return blockPointer - __W_SIZE;
+}
+
+// Computer footer pointer from the given block pointer
+function __footerPointer(blockPointer: i32): i32 {
+    return blockPointer + __getSize(__headerPointer(blockPointer)) - __D_SIZE;
+}
+
+function __nextBlockPointer(blockPointer: i32): i32 {
+    return blockPointer + __getSize(blockPointer - __W_SIZE);
+}
+
+function __prevBlockPointer(blockPointer: i32): i32 {
+    return blockPointer - __getSize(blockPointer - __D_SIZE);
+}
+
+// Size of the block Assuming that it's a multiple of 8
+// The last 3 bits are assumed to be always 0
 function __getSize(address: i32): i32 {
-    // let value = i32Load(address);
-    // return value & ~0x07;
+    let value = i32Load(address);
+    return value & i32not(7);
 }
 
+// Compute the allocation bit. The last bit is of the block header/footer
+// Are reserved as indicators of whether the block is allocated
 function __getAlloc(address: i32): i32 {
     return i32Load(address) & 1;
 }

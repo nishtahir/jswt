@@ -45,6 +45,7 @@ pub enum Instruction {
     LocalGet(&'static str),
     LocalSet(&'static str, Vec<Instruction>),
     GlobalSet(&'static str, Vec<Instruction>),
+    GlobalGet(&'static str),
     I32Const(i32),
     I32Add,
     I32Sub,
@@ -105,6 +106,7 @@ impl From<&Instruction> for String {
             ),
             Instruction::I32And => "(i32.and)".into(),
             Instruction::I32Or => "(i32.or)".into(),
+            Instruction::GlobalGet(name) => format!("(global.get ${})", name),
         }
     }
 }

@@ -95,8 +95,12 @@ fn main() {
     // The returned i32 is the exit code
     // function main(): i32 { return 0; } // OK
     let main = instance.exports.get_function("main").unwrap();
-
-    let result = main.call(&[]).unwrap();
+    let result = match main.call(&[]) {
+        Ok(result) => result,
+        Err(e) => {
+            panic!("{}", e);
+        }
+    };
 
     if matches.is_present("log-mem") {
         // Log memory contents to a file

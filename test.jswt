@@ -1,9 +1,9 @@
 import "./std/mem.jswt";
 
 export function main(): i32 {
-    let headPtr = 0;
-    i32Store(headPtr, 255);
-    println(__getSize(headPtr));
-    println(__getAlloc(headPtr));
+    __mm_init();
+    let headPtr = 8;
+    println(__nextBlockPointer(headPtr));
+    println(__prevBlockPointer(headPtr));
     return 0;
 }
