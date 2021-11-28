@@ -32,10 +32,27 @@ pub enum ParseError {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum SemanticError {
-    VariableNotDefined { name: &'static str, span: Span },
-    VariableAlreadyDefined { name: &'static str, span: Span },
-    FunctionAlreadyDefined { name: &'static str, span: Span },
-    NotAFunctionError { span: Span, name_span: Span },
+    VariableNotDefined {
+        name: &'static str,
+        span: Span,
+    },
+    VariableAlreadyDefined {
+        name: &'static str,
+        span: Span,
+    },
+    FunctionAlreadyDefined {
+        name: &'static str,
+        span: Span,
+    },
+    NotAFunctionError {
+        span: Span,
+        name_span: Span,
+    },
+    TypeError {
+        span: Span,
+        offending_token: Span,
+        expected: &'static str,
+    },
 }
 
 pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, &'static str>) {
@@ -99,6 +116,30 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
                 source,
                 error_span,
                 &format!("'{}' is not a function.", offending_token),
+            );
+            println!("{}\n", frame);
+        }
+        SemanticError::TypeError {
+            span,
+            offending_token,
+            expected,
+        } => {
+            let file = &span.file;
+            let source = source_map[file];
+            let start = location_from_offset(source, span.start);
+            let end = location_from_offset(source, span.end);
+            println!("{}:{}:{} - error", file, start.line, start.col,);
+
+            let error_span = NodeLocation { end, start };
+
+            let offending_token = &source[offending_token.start..offending_token.end];
+            let frame = code_frame(
+                source,
+                error_span,
+                &format!(
+                    "Type Error: '{}' is not a {} expression.",
+                    offending_token, expected
+                ),
             );
             println!("{}\n", frame);
         }

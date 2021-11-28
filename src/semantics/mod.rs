@@ -85,7 +85,24 @@ impl Visitor for Resolver {
     }
 
     fn visit_if_statement(&mut self, node: &IfStatement) {
-        // TODO - Check that the condition is a boolean expression
+        match node.condition {
+            SingleExpression::Equality(_) => {
+                // Valid boolean expression
+            }
+            SingleExpression::Literal(Literal::Boolean(_)) => {
+                // Valid boolean expression
+            },
+            SingleExpression::Arguments(_) => todo!(), // TODO type check the function
+            SingleExpression::Identifier(_) => {}, // TODO Type check the symbol
+            _ => {
+                let error = SemanticError::TypeError {
+                    span: node.condition.span().to_owned(),
+                    offending_token: node.condition.span().to_owned(),
+                    expected: "Boolean",
+                };
+                self.errors.push(error);
+            }
+        }
     }
 
     fn visit_return_statement(&mut self, node: &ReturnStatement) {
