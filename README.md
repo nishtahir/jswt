@@ -1,5 +1,7 @@
 # JSWT
 
+[![Rust](https://github.com/nishtahir/jswt/actions/workflows/rust.yml/badge.svg)](https://github.com/nishtahir/jswt/actions/workflows/rust.yml)
+
 An experiment in compilation targetting WebAssembly.
 
 ## Demo

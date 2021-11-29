@@ -7,6 +7,6 @@
 *.mem
 
 # Don't ignore test resources
-!test/*.ast
-!test/*.wast
-!test/*.wasm
+!**/test/*.ast
+!**/test/*.wast
+!**/test/*.wasm
