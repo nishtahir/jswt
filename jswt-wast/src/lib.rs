@@ -1,3 +1,11 @@
+mod instruction;
+mod value_type;
+
+use instruction::Stringify;
+
+pub use instruction::Instruction;
+pub use value_type::ValueType;
+
 /// WebAssembly programs are organized into modules, which are the unit of deployment,
 /// loading, and compilation. A module collects definitions for types, functions,
 /// tables, memories, and globals. In addition, it can declare imports and exports
@@ -37,102 +45,6 @@ pub struct Function {
 pub struct Parameter {
     name: &'static str,
     ty: ValueType,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Instruction {
-    Local(&'static str, ValueType),
-    LocalGet(&'static str),
-    LocalSet(&'static str, Vec<Instruction>),
-    GlobalSet(&'static str, Vec<Instruction>),
-    GlobalGet(&'static str),
-    I32Const(i32),
-    I32Add,
-    I32Sub,
-    I32Mul,
-    I32Eq,
-    I32Neq,
-    I32And,
-    I32Or,
-    I32Gt,
-    I32Ge,
-    I32Lt,
-    I32Le,
-    Return,
-    If(Vec<Instruction>, Vec<Instruction>),
-    Call(&'static str, Vec<Instruction>),
-    // A meta instruction not part of the wasm specification but
-    // an instruction to the code generator to inline raw instructions
-    // exactly as they are provided.
-    // Warning: No checks are performed on the input before they are inlined
-    RawWast(&'static str),
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub enum ValueType {
-    I32,
-}
-
-impl std::fmt::Display for ValueType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ValueType::I32 => f.write_str("i32"),
-        }
-    }
-}
-
-impl From<&Instruction> for String {
-    fn from(isr: &Instruction) -> Self {
-        match isr {
-            Instruction::I32Const(value) => format!("(i32.const {})", value),
-            Instruction::I32Add => "(i32.add)".into(),
-            Instruction::I32Sub => "(i32.sub)".into(),
-            Instruction::I32Mul => "(i32.mul)".into(),
-            Instruction::I32Eq => "(i32.eq)".into(),
-            Instruction::I32Neq => "(i32.ne)".into(),
-            Instruction::I32Gt => "(i32.gt_s)".into(),
-            Instruction::I32Ge => "(i32.ge_s)".into(),
-            Instruction::I32Lt => "(i32.lt_s)".into(),
-            Instruction::I32Le => "(i32.le_s)".into(),
-            Instruction::Return => "(return)".into(),
-            Instruction::Call(name, args) => {
-                format!("(call ${} {})", name, instructions_to_string(args))
-            }
-            Instruction::RawWast(text) => format!("{}", text),
-            Instruction::LocalGet(name) => format!("(local.get ${})", name),
-            Instruction::LocalSet(name, args) => {
-                format!("(local.set ${} {})", name, instructions_to_string(args))
-            }
-            Instruction::GlobalSet(name, args) => {
-                format!("(global.set ${} {})", name, instructions_to_string(args))
-            }
-            Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
-            Instruction::If(cons, alt) => format!(
-                "(if (then {}) (else {}))",
-                instructions_to_string(cons),
-                instructions_to_string(alt)
-            ),
-            Instruction::I32And => "(i32.and)".into(),
-            Instruction::I32Or => "(i32.or)".into(),
-            Instruction::GlobalGet(name) => format!("(global.get ${})", name),
-        }
-    }
-}
-
-fn instructions_to_string(instructions: &Vec<Instruction>) -> String {
-    instructions
-        .iter()
-        .map(String::from)
-        .collect::<Vec<String>>()
-        .join(" ")
-}
-
-#[derive(Debug, PartialEq)]
-pub enum WastSymbol {
-    Function(&'static str),
-    Param(&'static str, ValueType),
-    Local(&'static str, ValueType),
-    Global(&'static str, ValueType),
 }
 
 #[derive(Debug, PartialEq)]
@@ -204,7 +116,7 @@ impl Module {
             // Typically to load some constant value
             // TODO - Make this a semantic error
             debug_assert!(global.initializer.len() == 1);
-            wat += &format!("{}", instructions_to_string(&global.initializer));
+            wat += &format!("{}", global.initializer.to_string());
             wat += ")"
         });
 

@@ -1,20 +1,18 @@
 [package]
-name = "jswt"
+name = "jswt-codegen"
 version = "0.1.0"
 authors = ["Nish Tahir <nishtahir@outlook.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+doctest = false
 
 [dependencies]
-clap = "2.33.3"
 jswt-ast = {path = "../jswt-ast"}
-jswt-codeframe = {path = "../jswt-codeframe"}
-jswt-codegen = {path = "../jswt-codegen"}
 jswt-common = {path = "../jswt-common"}
 jswt-parser = {path = "../jswt-parser"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
-wasmer = "2.0.0"
+jswt-wast = {path = "../jswt-wast"}
 
 [dev-dependencies]
 jswt-assert = {path = "../jswt-assert"}

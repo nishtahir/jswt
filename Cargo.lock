@@ -380,6 +380,7 @@ dependencies = [
  "jswt-assert",
  "jswt-ast",
  "jswt-codeframe",
+ "jswt-codegen",
  "jswt-common",
  "jswt-parser",
  "jswt-tokenizer",
@@ -405,6 +406,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "jswt-codegen"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
+ "jswt-parser",
+ "jswt-tokenizer",
+ "jswt-wast",
+]
+
+[[package]]
 name = "jswt-common"
 version = "0.1.0"
 
@@ -425,6 +438,15 @@ dependencies = [
  "lazy_static",
  "pretty_assertions",
  "regex",
+]
+
+[[package]]
+name = "jswt-wast"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
 ]
 
 [[package]]

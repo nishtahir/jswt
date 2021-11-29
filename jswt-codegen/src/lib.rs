@@ -1,22 +1,24 @@
 use std::borrow::Borrow;
 
-use crate::{
-    wast::{
-        Export, Function, FunctionExport, FunctionImport, FunctionType, GlobalType, Import,
-        Instruction, Module, ValueType, WastSymbol,
-    },
-};
 use jswt_ast::*;
 use jswt_common::SymbolTable;
+use jswt_wast::*;
 
-impl Default for CodeGenerator {
-    fn default() -> Self {
-        Self {
-            module: Default::default(),
-            scopes: Default::default(),
-            symbols: SymbolTable::new(vec![]),
-        }
-    }
+#[derive(Debug)]
+pub struct CodeGenerator {
+    module: Module,
+    /// The architecture here assumes that this is an instruction scope stack
+    /// any lexical scope that wishes to recieve an emitted set of instructions
+    /// should push a new scope to the stack and pop the scope before pushing their own
+    /// instruction to the stack
+    scopes: Vec<InstructionScope>,
+    symbols: SymbolTable<WastSymbol>,
+}
+
+#[derive(Debug)]
+struct InstructionScope {
+    target: Option<InstructionScopeTarget>,
+    instructions: Vec<Instruction>,
 }
 
 #[derive(Debug)]
@@ -29,21 +31,22 @@ enum InstructionScopeTarget {
     Global(&'static str),
 }
 
-#[derive(Debug)]
-struct InstructionScope {
-    target: Option<InstructionScopeTarget>,
-    instructions: Vec<Instruction>,
+#[derive(Debug, PartialEq)]
+pub enum WastSymbol {
+    Function(&'static str),
+    Param(&'static str, ValueType),
+    Local(&'static str, ValueType),
+    Global(&'static str, ValueType),
 }
 
-#[derive(Debug)]
-pub struct CodeGenerator {
-    module: Module,
-    /// The architecture here assumes that this is an instruction scope stack
-    /// any lexical scope that wishes to recieve an emitted set of instructions
-    /// should push a new scope to the stack and pop the scope before pushing their own
-    /// instruction to the stack
-    scopes: Vec<InstructionScope>,
-    symbols: SymbolTable<WastSymbol>,
+impl Default for CodeGenerator {
+    fn default() -> Self {
+        Self {
+            module: Default::default(),
+            scopes: Default::default(),
+            symbols: SymbolTable::new(vec![]),
+        }
+    }
 }
 
 impl CodeGenerator {
@@ -425,9 +428,9 @@ impl Visitor for CodeGenerator {
 #[cfg(test)]
 mod test {
     use super::*;
+    use jswt_assert::assert_eq;
     use jswt_parser::Parser;
     use jswt_tokenizer::Tokenizer;
-    use jswt_assert::assert_eq;
 
     #[test]
     fn test_empty_ast_generates_empty_module() {

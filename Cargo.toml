@@ -2,9 +2,11 @@
 
 members = [
     "jswt-ast",
+    "jswt-codegen",
     "jswt-codeframe",
     "jswt-common",
     "jswt-compiler",
     "jswt-parser",
-    "jswt-tokenizer"
+    "jswt-tokenizer",
+    "jswt-wast"
 ]

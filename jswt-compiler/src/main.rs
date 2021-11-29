@@ -2,16 +2,17 @@
 extern crate clap;
 
 use clap::Arg;
-use jswt::codegen::CodeGenerator;
-use jswt::errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
-use jswt::Resolver;
-use jswt_parser::Parser;
-use jswt_tokenizer::Tokenizer;
 use std::cell::Cell;
 use std::env;
 use std::fs;
 use std::process::exit;
 use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, Store};
+
+use jswt::errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
+use jswt::Resolver;
+use jswt_codegen::CodeGenerator;
+use jswt_parser::Parser;
+use jswt_tokenizer::Tokenizer;
 
 fn main() {
     let matches = app_from_crate!()
