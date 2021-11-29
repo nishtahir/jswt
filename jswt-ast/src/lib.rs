@@ -343,8 +343,8 @@ pub enum UnaryOperator {
 pub enum BinaryOperator {
     Plus(Span),
     Minus(Span),
-    Star(Span),
-    Slash(Span),
+    Mult(Span),
+    Div(Span),
     Equal(Span),
     NotEqual(Span),
     Greater(Span),

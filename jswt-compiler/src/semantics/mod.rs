@@ -3,9 +3,9 @@ mod symbol;
 use std::borrow::Borrow;
 
 use self::symbol::{Symbol, Type};
-use crate::common::SymbolTable;
 use crate::errors::SemanticError;
 use jswt_ast::*;
+use jswt_common::SymbolTable;
 
 impl Default for Resolver {
     fn default() -> Self {
@@ -224,9 +224,9 @@ impl Visitor for Resolver {
 mod test {
 
     use super::*;
+    use jswt_assert::assert_eq;
     use jswt_parser::Parser;
     use jswt_tokenizer::Tokenizer;
-    use pretty_assertions::assert_eq;
 
     #[test]
     fn test_duplicate_variable_declaration_generates_error() {

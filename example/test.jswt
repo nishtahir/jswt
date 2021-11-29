@@ -15,7 +15,7 @@ export function main(): i32 {
 function max(a: i32, b: i32): i32 {
     let max = a;
     if (b > max) {
-        max = b;
+        println(5);
     }
     return max;
 }

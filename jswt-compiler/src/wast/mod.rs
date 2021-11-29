@@ -259,7 +259,7 @@ impl Module {
 #[cfg(test)]
 mod test {
     use super::*;
-    use jswt_common::assert_str_eq;
+    use jswt_assert::assert_str_eq;
 
     #[test]
     fn test_wat_generation_for_simple_function() {

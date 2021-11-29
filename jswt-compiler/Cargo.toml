@@ -16,4 +16,4 @@ jswt-tokenizer = {path = "../jswt-tokenizer"}
 wasmer = "2.0.0"
 
 [dev-dependencies]
-pretty_assertions = "1.0.0"
+jswt-assert = {path = "../jswt-assert"}

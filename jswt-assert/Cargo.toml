@@ -1,0 +1,11 @@
+[package]
+name = "jswt-assert"
+version = "0.1.0"
+authors = ["Nish Tahir <nishtahir@outlook.com>"]
+edition = "2018"
+
+[lib]
+doctest = false
+
+[dependencies]
+pretty_assertions = "1.0.0"

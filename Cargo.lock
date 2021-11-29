@@ -377,13 +377,20 @@ name = "jswt"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "jswt-assert",
  "jswt-ast",
  "jswt-codeframe",
  "jswt-common",
  "jswt-parser",
  "jswt-tokenizer",
- "pretty_assertions",
  "wasmer",
+]
+
+[[package]]
+name = "jswt-assert"
+version = "0.1.0"
+dependencies = [
+ "pretty_assertions",
 ]
 
 [[package]]
@@ -405,10 +412,10 @@ version = "0.1.0"
 name = "jswt-parser"
 version = "0.1.0"
 dependencies = [
+ "jswt-assert",
  "jswt-ast",
  "jswt-common",
  "jswt-tokenizer",
- "pretty_assertions",
 ]
 
 [[package]]

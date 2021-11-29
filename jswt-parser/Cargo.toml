@@ -13,4 +13,4 @@ jswt-common = {path = "../jswt-common"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
 
 [dev-dependencies]
-pretty_assertions = "1.0.0"
+jswt-assert = {path = "../jswt-assert"}

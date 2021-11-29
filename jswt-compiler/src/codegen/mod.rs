@@ -1,13 +1,13 @@
 use std::borrow::Borrow;
 
 use crate::{
-    common::SymbolTable,
     wast::{
         Export, Function, FunctionExport, FunctionImport, FunctionType, GlobalType, Import,
         Instruction, Module, ValueType, WastSymbol,
     },
 };
 use jswt_ast::*;
+use jswt_common::SymbolTable;
 
 impl Default for CodeGenerator {
     fn default() -> Self {
@@ -368,10 +368,10 @@ impl Visitor for CodeGenerator {
         let isr = match node.op {
             BinaryOperator::Plus(_) => Instruction::I32Add,
             BinaryOperator::Minus(_) => Instruction::I32Sub,
-            BinaryOperator::Star(_) => Instruction::I32Mul,
+            BinaryOperator::Mult(_) => Instruction::I32Mul,
             BinaryOperator::Equal(_) => Instruction::I32Eq,
             BinaryOperator::NotEqual(_) => Instruction::I32Neq,
-            BinaryOperator::Slash(_) => todo!(),
+            BinaryOperator::Div(_) => todo!(),
             BinaryOperator::And(_) => Instruction::I32And,
             BinaryOperator::Or(_) => Instruction::I32Or,
             BinaryOperator::Greater(_) => Instruction::I32Gt,
@@ -427,7 +427,7 @@ mod test {
     use super::*;
     use jswt_parser::Parser;
     use jswt_tokenizer::Tokenizer;
-    use pretty_assertions::assert_eq;
+    use jswt_assert::assert_eq;
 
     #[test]
     fn test_empty_ast_generates_empty_module() {

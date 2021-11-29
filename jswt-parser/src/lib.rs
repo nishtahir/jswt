@@ -66,6 +66,33 @@ macro_rules! ident {
     }};
 }
 
+macro_rules! binary_expression {
+    ($name:ident, next: $next:ident, $([exp => $exp:ident, op => $op:ident, token => $token:ident]),*) => {
+        fn $name(&mut self) -> Result<SingleExpression, ParseError> {
+            let mut left = self.$next()?;
+            while let Some(token) = self.lookahead_type() {
+                match token {
+                    $(
+                        TokenType::$token => {
+                            let op_span = consume_unchecked!(self);
+                            let right = self.$next()?;
+                            left = SingleExpression::$exp(BinaryExpression {
+                                span: left.span() + right.span(),
+                                left: Box::new(left),
+                                op: BinaryOperator::$op(op_span),
+                                right: Box::new(right),
+                            });
+                        }
+                    )*
+                    _ => break,
+                }
+            }
+
+            Ok(left)
+        }
+    };
+}
+
 /// Predictive LL(1) parser
 pub struct Parser<'a> {
     tokenizer: &'a mut Tokenizer,
@@ -325,251 +352,71 @@ impl<'a> Parser<'a> {
     ///   | SingleExpression ('==' | '!=') SingleExpression
     ///   | SingleExpression '&' SingleExpression
     ///   | SingleExpression '|' SingleExpression
-    ///   | SingleExpression '=' SingleExpression
+    ///   | SingleExpression '=' SingleExpression # assignment - TODO
     ///   ;
     fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        self.assignment_expression()
+        self.bitwise_or_expression()
     }
 
-    /// Expressions are recursively declared with lower precendence items
-    /// calling into higher precedence items
+    //  BitwiseOrExpression
+    //    : BitwiseAndExpression '|' BitwiseAndExpression
+    //    ;
+    binary_expression!(
+        bitwise_or_expression,
+        next: bitwise_and_expression,
+        [exp => Bitwise, op => Or, token => Or]
+    );
 
-    /// AssignmentExpression
-    ///   : BitwiseOrExpression '=' BitwiseOrExpression  
-    ///   ;
-    fn assignment_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let mut left = self.bitwise_and_expression()?;
-        while let Some(token) = self.lookahead_type() {
-            match token {
-                TokenType::Equal => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.bitwise_and_expression()?;
-                    left = SingleExpression::Bitwise(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Assign(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                _ => break,
-            }
-        }
-        Ok(left)
-    }
+    //  BitwiseAndExpression
+    //    : EqualityExpression '&' EqualityExpression
+    //    ;
+    binary_expression!(
+        bitwise_and_expression,
+        next: equality_expression,
+        [exp => Bitwise, op => And, token => And]
+    );
 
-    /// BitwiseOrExpression
-    ///   : BitwiseAndExpression '|' BitwiseAndExpression
-    ///   ;
-    fn bitwise_or_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let mut left = self.bitwise_and_expression()?;
-        while let Some(token) = self.lookahead_type() {
-            match token {
-                TokenType::Or => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.bitwise_and_expression()?;
-                    left = SingleExpression::Bitwise(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Or(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                _ => break,
-            }
-        }
+    // EqualityExpression
+    //    : RelationalExpression ('==' | '!=') RelationalExpression
+    //    ;
+    binary_expression!(
+        equality_expression,
+        next: relational_expression,
+        [exp => Equality, op => Equal, token => EqualEqual],
+        [exp => Equality, op => NotEqual, token => BangEqual]
+    );
 
-        Ok(left)
-    }
+    //  RelationalExpression
+    //    : AdditiveExpression ('<' | '>' | '<=' | '>=') AdditiveExpression
+    //    ;
+    binary_expression!(
+        relational_expression,
+        next: additive_expression,
+        [exp => Relational, op => Greater, token => Greater],
+        [exp => Relational, op => GreaterEqual, token => GreaterEqual],
+        [exp => Relational, op => Less, token => Less],
+        [exp => Relational, op => LessEqual, token => LessEqual]
+    );
 
-    /// BitwiseAndExpression
-    ///   : EqualityExpression '&' EqualityExpression
-    ///   ;
-    fn bitwise_and_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let mut left = self.equality_expression()?;
-        while let Some(token) = self.lookahead_type() {
-            match token {
-                TokenType::And => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.equality_expression()?;
-                    left = SingleExpression::Bitwise(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::And(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                _ => break,
-            }
-        }
+    // AdditiveExpression
+    //    : MultiplicativeExpression ('+' | '-') MultiplicativeExpression
+    //    ;
+    binary_expression!(
+        additive_expression,
+        next: multipicative_expression,
+        [exp => Additive, op => Plus, token => Plus],
+        [exp => Additive, op => Minus, token => Minus]
+    );
 
-        Ok(left)
-    }
-
-    /// EqualityExpression
-    ///   : AdditiveExpression ('==' | '!=') AdditiveExpression
-    ///   ;
-    fn equality_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let mut left = self.relational_expression()?;
-        while let Some(token) = self.lookahead_type() {
-            match token {
-                TokenType::EqualEqual => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.relational_expression()?;
-                    left = SingleExpression::Equality(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Equal(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                TokenType::BangEqual => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.relational_expression()?;
-                    left = SingleExpression::Equality(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::NotEqual(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                _ => break,
-            }
-        }
-        Ok(left)
-    }
-
-    /// RelationalExpression
-    ///   : SingleExpression ('<' | '>' | '<=' | '>=') SingleExpression
-    ///   ;
-    fn relational_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let mut left = self.additive_expression()?;
-        while let Some(token) = self.lookahead_type() {
-            match token {
-                TokenType::Greater => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.additive_expression()?;
-                    left = SingleExpression::Relational(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Greater(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                TokenType::GreaterEqual => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.additive_expression()?;
-                    left = SingleExpression::Relational(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::GreaterEqual(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                TokenType::Less => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.additive_expression()?;
-                    left = SingleExpression::Relational(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Less(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                TokenType::LessEqual => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.additive_expression()?;
-                    left = SingleExpression::Relational(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::LessEqual(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                _ => break,
-            }
-        }
-        Ok(left)
-    }
-
-    /// AdditiveExpression
-    ///   : MultiplicativeExpression ('+' | '-') MultiplicativeExpression
-    ///   ;
-    fn additive_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        // This gives multiplicative expressions higher precedence
-        let mut left = self.multipicative_expression()?;
-        while let Some(token) = self.lookahead_type() {
-            match token {
-                TokenType::Plus => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.multipicative_expression()?;
-                    left = SingleExpression::Additive(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Plus(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                TokenType::Minus => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.multipicative_expression()?;
-                    left = SingleExpression::Additive(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Minus(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                _ => break,
-            }
-        }
-        Ok(left)
-    }
-
-    /// MultiplicativeExpression
-    ///   : IdentifierExpression ('*' | '/' | '%') IdentifierExpression
-    ///   ;
-    fn multipicative_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        let mut left = self.arguments_expression()?;
-        while let Some(token) = self.lookahead_type() {
-            match token {
-                TokenType::Star => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.arguments_expression()?;
-                    left = SingleExpression::Multiplicative(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Star(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                TokenType::Slash => {
-                    let op_span = consume_unchecked!(self);
-                    let right = self.identifier_expression()?;
-                    left = SingleExpression::Multiplicative(BinaryExpression {
-                        span: left.span() + right.span(),
-                        left: Box::new(left),
-                        op: BinaryOperator::Slash(op_span),
-                        right: Box::new(right),
-                    });
-                }
-                _ => break,
-            }
-        }
-        Ok(left)
-    }
-
-    /// IdentifierExpression
-    ///   : Identifier
-    ///   ;
-    fn identifier_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        if self.lookahead_is(TokenType::Identifier) {
-            return Ok(SingleExpression::Identifier(IdentifierExpression {
-                ident: ident!(self),
-            }));
-        }
-        // If we can't find an ident, continue by trying to resolve a literal
-        self.literal()
-    }
+    // MultiplicativeExpression
+    //    : IdentifierExpression ('*' | '/' | '%') IdentifierExpression
+    //    ;
+    binary_expression!(
+        multipicative_expression,
+        next: arguments_expression,
+        [exp => Multiplicative, op => Mult, token => Star],
+        [exp => Multiplicative, op => Div, token => Slash]
+    );
 
     /// ArgumentsExpression
     ///   :  AdditiveExpression ArgumentList
@@ -588,6 +435,19 @@ impl<'a> Parser<'a> {
         }
 
         Ok(left)
+    }
+
+    /// IdentifierExpression
+    ///   : Identifier
+    ///   ;
+    fn identifier_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        if self.lookahead_is(TokenType::Identifier) {
+            return Ok(SingleExpression::Identifier(IdentifierExpression {
+                ident: ident!(self),
+            }));
+        }
+        // If we can't find an ident, continue by trying to resolve a literal
+        self.literal()
     }
 
     /// ArgumentList
@@ -824,8 +684,7 @@ mod test {
     use std::vec;
 
     use super::*;
-    use jswt_common::assert_str_eq;
-    use pretty_assertions::assert_eq;
+    use jswt_assert::{assert_eq, assert_str_eq};
 
     #[test]
     fn test_function_declaration_statement() {
