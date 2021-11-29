@@ -16,13 +16,13 @@ function __mm_init() {
     i32Store(__heap_list_ptr + 1 * __W_SIZE, __pack(__D_SIZE, 1)); // Prologue Header
     i32Store(__heap_list_ptr + 2 * __W_SIZE, __pack(__D_SIZE, 1)); // Prologue Footer
     i32Store(__heap_list_ptr + 3 * __W_SIZE, __pack(0, 1)); // Epilogue Header
-    
+
     // TODO - implement assignment
     __set_heap_list_ptr(__heap_list_ptr + 2 * __W_SIZE);
 }
 
 @wast("(global.set $__heap_list_ptr (local.get $value))")
-function __set_heap_list_ptr(value: i32) {}
+function __set_heap_list_ptr(value: i32) { }
 
 // Computed header pointer from the given block pointer
 function __headerPointer(blockPointer: i32): i32 {

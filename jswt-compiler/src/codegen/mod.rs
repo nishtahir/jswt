@@ -1,14 +1,13 @@
 use std::borrow::Borrow;
 
 use crate::{
-    ast::program::*,
-    ast::{visitor::Visitor, Ast},
     common::SymbolTable,
     wast::{
         Export, Function, FunctionExport, FunctionImport, FunctionType, GlobalType, Import,
         Instruction, Module, ValueType, WastSymbol,
     },
 };
+use jswt_ast::*;
 
 impl Default for CodeGenerator {
     fn default() -> Self {
@@ -353,7 +352,8 @@ impl Visitor for CodeGenerator {
             SingleExpression::Additive(exp)
             | SingleExpression::Multiplicative(exp)
             | SingleExpression::Equality(exp)
-            | SingleExpression::Bitwise(exp) => self.visit_binary_expression(exp),
+            | SingleExpression::Bitwise(exp)
+            | SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
             SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
             SingleExpression::Literal(lit) => self.visit_literal(lit),
@@ -374,6 +374,11 @@ impl Visitor for CodeGenerator {
             BinaryOperator::Slash(_) => todo!(),
             BinaryOperator::And(_) => Instruction::I32And,
             BinaryOperator::Or(_) => Instruction::I32Or,
+            BinaryOperator::Greater(_) => Instruction::I32Gt,
+            BinaryOperator::GreaterEqual(_) => Instruction::I32Ge,
+            BinaryOperator::Less(_) => Instruction::I32Lt,
+            BinaryOperator::LessEqual(_) => Instruction::I32Le,
+            BinaryOperator::Assign(_) => todo!(),
         };
         self.push_instruction(isr)
     }

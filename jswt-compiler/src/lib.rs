@@ -2,7 +2,6 @@
 extern crate lazy_static;
 
 pub mod assert;
-mod ast;
 pub mod codegen;
 pub mod common;
 pub mod errors;

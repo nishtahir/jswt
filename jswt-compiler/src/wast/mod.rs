@@ -54,6 +54,10 @@ pub enum Instruction {
     I32Neq,
     I32And,
     I32Or,
+    I32Gt,
+    I32Ge,
+    I32Lt,
+    I32Le,
     Return,
     If(Vec<Instruction>, Vec<Instruction>),
     Call(&'static str, Vec<Instruction>),
@@ -84,6 +88,12 @@ impl From<&Instruction> for String {
             Instruction::I32Add => "(i32.add)".into(),
             Instruction::I32Sub => "(i32.sub)".into(),
             Instruction::I32Mul => "(i32.mul)".into(),
+            Instruction::I32Eq => "(i32.eq)".into(),
+            Instruction::I32Neq => "(i32.ne)".into(),
+            Instruction::I32Gt => "(i32.gt_s)".into(),
+            Instruction::I32Ge => "(i32.ge_s)".into(),
+            Instruction::I32Lt => "(i32.lt_s)".into(),
+            Instruction::I32Le => "(i32.le_s)".into(),
             Instruction::Return => "(return)".into(),
             Instruction::Call(name, args) => {
                 format!("(call ${} {})", name, instructions_to_string(args))
@@ -97,8 +107,6 @@ impl From<&Instruction> for String {
                 format!("(global.set ${} {})", name, instructions_to_string(args))
             }
             Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
-            Instruction::I32Eq => "(i32.eq)".into(),
-            Instruction::I32Neq => "(i32.ne)".into(),
             Instruction::If(cons, alt) => format!(
                 "(if (then {}) (else {}))",
                 instructions_to_string(cons),

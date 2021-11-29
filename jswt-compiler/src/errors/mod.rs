@@ -2,9 +2,9 @@ mod code;
 
 use std::collections::HashMap;
 
+use crate::tokenizer::TokenType;
 pub use code::{code_frame, location_from_offset, Location, NodeLocation};
-
-use crate::{ast::span::Span, tokenizer::TokenType};
+use jswt_ast::*;
 
 #[derive(Debug, Clone)]
 pub enum TokenizerError {

@@ -3,11 +3,9 @@ mod symbol;
 use std::borrow::Borrow;
 
 use self::symbol::{Symbol, Type};
-use crate::ast::span::Spannable;
-use crate::ast::visitor::Visitor;
-use crate::ast::{program::*, Ast};
 use crate::common::SymbolTable;
 use crate::errors::SemanticError;
+use jswt_ast::*;
 
 impl Default for Resolver {
     fn default() -> Self {
@@ -86,10 +84,9 @@ impl Visitor for Resolver {
 
     fn visit_if_statement(&mut self, node: &IfStatement) {
         match node.condition {
-            SingleExpression::Equality(_) => {
-                // Valid boolean expression
-            }
-            SingleExpression::Literal(Literal::Boolean(_)) => {
+            SingleExpression::Equality(_)
+            | SingleExpression::Relational(_)
+            | SingleExpression::Literal(Literal::Boolean(_)) => {
                 // Valid boolean expression
             }
             SingleExpression::Arguments(_) => todo!(), // TODO type check the function
@@ -176,6 +173,7 @@ impl Visitor for Resolver {
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
             SingleExpression::Equality(exp) => self.visit_binary_expression(exp),
             SingleExpression::Bitwise(exp) => self.visit_binary_expression(exp),
+            SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
         }
     }
 
@@ -226,7 +224,7 @@ impl Visitor for Resolver {
 mod test {
 
     use super::*;
-    use crate::{ast::span::Span, *};
+    use crate::{Parser, Tokenizer};
     use pretty_assertions::assert_eq;
 
     #[test]

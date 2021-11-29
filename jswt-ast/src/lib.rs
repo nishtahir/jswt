@@ -1,7 +1,24 @@
-use super::{
+mod ident;
+mod span;
+mod visitor;
+
+pub use crate::visitor::Visitor;
+pub use crate::{
     ident::Ident,
     span::{Span, Spannable},
 };
+
+#[derive(Debug)]
+
+pub struct Ast {
+    pub program: Program,
+}
+
+impl Ast {
+    pub fn new(program: Program) -> Self {
+        Self { program }
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
@@ -221,6 +238,7 @@ pub enum SingleExpression {
     Multiplicative(BinaryExpression),
     Additive(BinaryExpression),
     Equality(BinaryExpression),
+    Relational(BinaryExpression),
     Identifier(IdentifierExpression),
     Literal(Literal),
 }
@@ -259,6 +277,7 @@ impl Spannable for SingleExpression {
             SingleExpression::Arguments(exp) => exp.span(),
             SingleExpression::Equality(exp) => exp.span(),
             SingleExpression::Bitwise(exp) => exp.span(),
+            SingleExpression::Relational(exp) => exp.span(),
         }
     }
 }
@@ -328,8 +347,13 @@ pub enum BinaryOperator {
     Slash(Span),
     Equal(Span),
     NotEqual(Span),
+    Greater(Span),
+    GreaterEqual(Span),
+    Less(Span),
+    LessEqual(Span),
     And(Span),
     Or(Span),
+    Assign(Span),
 }
 
 #[derive(Debug, PartialEq)]

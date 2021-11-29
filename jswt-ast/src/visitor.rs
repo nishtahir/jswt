@@ -1,4 +1,4 @@
-use crate::ast::program::*;
+use crate::*;
 
 macro_rules! visitor {
     ( $($fname:ident: $node:tt),*) => {
