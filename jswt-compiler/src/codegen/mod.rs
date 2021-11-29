@@ -424,9 +424,9 @@ impl Visitor for CodeGenerator {
 
 #[cfg(test)]
 mod test {
-    use crate::{Parser, Tokenizer};
-
     use super::*;
+    use jswt_parser::Parser;
+    use jswt_tokenizer::Tokenizer;
     use pretty_assertions::assert_eq;
 
     #[test]

@@ -1,8 +1,8 @@
+mod errors;
 mod source;
 mod token;
 
-use crate::errors::TokenizerError;
-pub use crate::tokenizer::token::{Token, TokenType};
+use lazy_static::lazy_static;
 use regex::Regex;
 use std::{
     cell::RefCell,
@@ -12,7 +12,9 @@ use std::{
     rc::Rc,
 };
 
-use self::source::Source;
+pub use errors::TokenizerError;
+pub use source::Source;
+pub use token::{Token, TokenType};
 
 // Utility to read a file from a given path
 fn read_to_string(path: &Path) -> String {

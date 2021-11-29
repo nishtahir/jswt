@@ -2,5 +2,9 @@
 
 members = [
     "jswt-ast",
-    "jswt-compiler"
+    "jswt-codeframe",
+    "jswt-common",
+    "jswt-compiler",
+    "jswt-parser",
+    "jswt-tokenizer"
 ]

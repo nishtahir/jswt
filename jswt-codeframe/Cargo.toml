@@ -1,0 +1,18 @@
+[package]
+name = "jswt-codeframe"
+version = "0.1.0"
+authors = ["Nish Tahir <nishtahir@outlook.com>"]
+edition = "2018"
+
+[lib]
+doctest = false
+
+[dependencies]
+regex = "1.5.4"
+
+# [dependencies]
+# jswt-ast = {path = "../jswt-ast"}
+# jswt-tokenizer = {path = "../jswt-tokenizer"}
+
+# [dev-dependencies]
+# pretty_assertions = "1.0.0"

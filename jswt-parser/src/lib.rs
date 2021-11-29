@@ -1,9 +1,9 @@
+mod errors;
 use std::vec;
 
-use crate::errors::{ParseError, TokenizerError};
-use crate::tokenizer::{Token, TokenType};
-use crate::Tokenizer;
+pub use errors::ParseError;
 use jswt_ast::*;
+use jswt_tokenizer::*;
 
 /// Returns true if a token matching the given token type
 /// was consumed.
@@ -57,7 +57,9 @@ macro_rules! ident {
         if token.kind != TokenType::Identifier {
             panic!("Mismatched token type {:?}", token);
         }
-        let ident = Ident::from(token);
+
+        let span = Span::new(&token.file, token.offset, token.offset + token.lexme.len());
+        let ident = Ident::new(token.lexme, span);
         // Advance lookahead
         $self.lookahead = $self.tokenizer.next_token();
         ident
@@ -282,7 +284,11 @@ impl<'a> Parser<'a> {
                 return Err(ParseError::NoViableAlternative {
                     expected: vec![TokenType::Let, TokenType::Const],
                     actual: lookahead.kind,
-                    span: lookahead.into(),
+                    span: Span::new(
+                        &lookahead.file,
+                        lookahead.offset,
+                        lookahead.offset + lookahead.lexme.len(),
+                    ),
                 });
             }
         };
@@ -790,7 +796,8 @@ impl<'a> Parser<'a> {
     /// as the given TokenType. This unsafely unwraps because
     /// It's assumed that all relevant checks have been done first
     fn lookahead_span(&self) -> Span {
-        self.lookahead.as_ref().unwrap().into()
+        let token = self.lookahead.as_ref().unwrap();
+        Span::new(&token.file, token.offset, token.offset + token.lexme.len())
     }
 
     /// Bail out of the current parse context
@@ -812,24 +819,12 @@ impl<'a> Parser<'a> {
     }
 }
 
-impl From<&Token> for Ident {
-    fn from(token: &Token) -> Self {
-        Ident::new(token.lexme, token.into())
-    }
-}
-
-impl From<&Token> for Span {
-    fn from(token: &Token) -> Self {
-        Span::new(&token.file, token.offset, token.offset + token.lexme.len())
-    }
-}
-
 #[cfg(test)]
 mod test {
     use std::vec;
 
     use super::*;
-    use crate::{assert_str_eq, Tokenizer};
+    use jswt_common::assert_str_eq;
     use pretty_assertions::assert_eq;
 
     #[test]
@@ -1322,7 +1317,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 1 + 2;");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = include_str!("../../test/test_parse_additive_expression.ast");
+        let expected = include_str!("../test/test_parse_additive_expression.ast");
         assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 
@@ -1331,7 +1326,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 * 2;");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = include_str!("../../test/test_parse_multiplicative_expression.ast");
+        let expected = include_str!("../test/test_parse_multiplicative_expression.ast");
         assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 
@@ -1341,7 +1336,7 @@ mod test {
         tokenizer.push_source_str("test.1", "let x = 3 * 2 + 1 * 0;");
         let actual = Parser::new(&mut tokenizer).parse().program;
         let expected =
-            include_str!("../../test/test_parse_nested_math_expression_has_correct_precedence.ast");
+            include_str!("../test/test_parse_nested_math_expression_has_correct_precedence.ast");
         assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 
@@ -1351,7 +1346,7 @@ mod test {
         tokenizer.push_source_str("test.1", "let x = 3 + 2 + 1 + 0;");
         let actual = Parser::new(&mut tokenizer).parse().program;
         let expected =
-            include_str!("../../test/test_parse_additive_expression_left_associativity.ast");
+            include_str!("../test/test_parse_additive_expression_left_associativity.ast");
         assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 
@@ -1360,9 +1355,8 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function main() { test(); }");
         let actual = Parser::new(&mut tokenizer).parse();
-        let expected = include_str!(
-            "../../test/test_parse_expression_statement_parses_function_invocation.ast"
-        );
+        let expected =
+            include_str!("../test/test_parse_expression_statement_parses_function_invocation.ast");
         assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 
@@ -1372,7 +1366,7 @@ mod test {
         tokenizer.push_source_str("test.1", "test(1 + 2);");
         let actual = Parser::new(&mut tokenizer).parse();
         let expected =
-            include_str!("../../test/test_parse_argument_expression_with_expression_parameter.ast");
+            include_str!("../test/test_parse_argument_expression_with_expression_parameter.ast");
         assert_str_eq!(expected, &format!("{:#?}", actual));
     }
 }

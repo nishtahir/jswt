@@ -378,15 +378,47 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "jswt-ast",
- "lazy_static",
+ "jswt-codeframe",
+ "jswt-common",
+ "jswt-parser",
+ "jswt-tokenizer",
  "pretty_assertions",
- "regex",
  "wasmer",
 ]
 
 [[package]]
 name = "jswt-ast"
 version = "0.1.0"
+
+[[package]]
+name = "jswt-codeframe"
+version = "0.1.0"
+dependencies = [
+ "regex",
+]
+
+[[package]]
+name = "jswt-common"
+version = "0.1.0"
+
+[[package]]
+name = "jswt-parser"
+version = "0.1.0"
+dependencies = [
+ "jswt-ast",
+ "jswt-common",
+ "jswt-tokenizer",
+ "pretty_assertions",
+]
+
+[[package]]
+name = "jswt-tokenizer"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "pretty_assertions",
+ "regex",
+]
 
 [[package]]
 name = "lazy_static"

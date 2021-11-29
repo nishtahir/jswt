@@ -224,7 +224,8 @@ impl Visitor for Resolver {
 mod test {
 
     use super::*;
-    use crate::{Parser, Tokenizer};
+    use jswt_parser::Parser;
+    use jswt_tokenizer::Tokenizer;
     use pretty_assertions::assert_eq;
 
     #[test]

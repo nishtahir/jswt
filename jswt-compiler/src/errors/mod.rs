@@ -1,34 +1,9 @@
-mod code;
-
 use std::collections::HashMap;
 
-use crate::tokenizer::TokenType;
-pub use code::{code_frame, location_from_offset, Location, NodeLocation};
 use jswt_ast::*;
-
-#[derive(Debug, Clone)]
-pub enum TokenizerError {
-    UnreconizedToken {
-        file: String,
-        token: &'static str,
-        offset: usize,
-    },
-    UnexpectedEof,
-}
-
-#[derive(Debug, Clone)]
-pub enum ParseError {
-    MismatchedToken {
-        expected: TokenType,
-        actual: TokenType,
-        span: Span,
-    },
-    NoViableAlternative {
-        expected: Vec<TokenType>,
-        actual: TokenType,
-        span: Span,
-    },
-}
+use jswt_codeframe::*;
+use jswt_parser::ParseError;
+use jswt_tokenizer::TokenizerError;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum SemanticError {
