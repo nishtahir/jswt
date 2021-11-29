@@ -45,7 +45,7 @@ Program {
                                         },
                                     ),
                                 ),
-                                op: Star(
+                                op: Mult(
                                     Span {
                                         file: "test.1",
                                         start: 10,

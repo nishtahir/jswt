@@ -52,7 +52,7 @@ Program {
                                                 },
                                             ),
                                         ),
-                                        op: Star(
+                                        op: Mult(
                                             Span {
                                                 file: "test.1",
                                                 start: 10,
@@ -99,7 +99,7 @@ Program {
                                                 },
                                             ),
                                         ),
-                                        op: Star(
+                                        op: Mult(
                                             Span {
                                                 file: "test.1",
                                                 start: 18,
