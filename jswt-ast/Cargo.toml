@@ -6,3 +6,6 @@ edition = "2018"
 
 [lib]
 doctest = false
+
+[dependencies]
+jswt-common = {path = "../jswt-common"}

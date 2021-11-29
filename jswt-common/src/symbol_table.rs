@@ -1,12 +1,13 @@
+use core::hash::Hash;
 use std::collections::HashMap;
 
 #[derive(Debug)]
-pub struct SymbolTable<T> {
-    table: Vec<HashMap<&'static str, T>>,
+pub struct SymbolTable<K: Eq + Hash, V> {
+    table: Vec<HashMap<K, V>>,
 }
 
-impl<T> SymbolTable<T> {
-    pub fn new(table: Vec<HashMap<&'static str, T>>) -> Self {
+impl<K: Eq + Hash, V> SymbolTable<K, V> {
+    pub fn new(table: Vec<HashMap<K, V>>) -> Self {
         Self { table }
     }
 
@@ -22,13 +23,13 @@ impl<T> SymbolTable<T> {
         self.table.len()
     }
 
-    pub fn define(&mut self, name: &'static str, symbol: T) {
-        // TODO - make this safe
+    pub fn define(&mut self, name: K, symbol: V) {
         let current_scope = self.table.last_mut().unwrap();
         current_scope.insert(name, symbol);
     }
 
-    pub fn lookup(&self, name: &'static str) -> Option<&T> {
+    /// Looks
+    pub fn lookup(&self, name: &K) -> Option<&V> {
         // Apparently descending ranges aren't a thing.
         // as of 1.53, trying to use one doesn't generate a warning
         // https://github.com/rust-lang/rust/issues/70925
@@ -41,12 +42,15 @@ impl<T> SymbolTable<T> {
         None
     }
 
-    pub fn lookup_current(&self, name: &'static str) -> Option<&T> {
+    /// Look for the
+    pub fn lookup_current(&self, name: &K) -> Option<&V> {
         let scope = self.table.last()?;
         scope.get(name)
     }
 
-    pub fn all_current(&self) -> Vec<&T> {
+    /// Returns all the symbols available in
+    /// the current local scope
+    pub fn symbols_in_current_scope(&self) -> Vec<&V> {
         self.table.last().unwrap().values().collect()
     }
 }
@@ -68,7 +72,7 @@ mod test {
 
     #[test]
     fn test_symbol_table_push_pop_scope() {
-        let mut sym = SymbolTable::<MockSymbol>::new(vec![]);
+        let mut sym = SymbolTable::<&'static str, MockSymbol>::new(vec![]);
         sym.push_scope();
         assert_eq!(1, sym.depth());
 
@@ -78,7 +82,7 @@ mod test {
 
     #[test]
     fn test_symbol_lookup_in_local_scope() {
-        let mut sym = SymbolTable::<MockSymbol>::new(vec![]);
+        let mut sym = SymbolTable::<&'static str, MockSymbol>::new(vec![]);
         // Push global scope
         sym.push_scope();
         // Push local scope
@@ -86,44 +90,44 @@ mod test {
         let x = MockSymbol::new("x");
         sym.define("x", x);
 
-        let actual = sym.lookup("x");
+        let actual = sym.lookup(&"x");
         let x = MockSymbol::new("x");
         assert_eq!(Some(&x), actual);
 
         sym.pop_scope();
-        let actual = sym.lookup("x");
+        let actual = sym.lookup(&"x");
         assert_eq!(None, actual);
     }
 
     #[test]
     fn test_symbol_lookup_searches_in_higher_scopes() {
-        let mut sym = SymbolTable::<MockSymbol>::new(vec![]);
+        let mut sym = SymbolTable::<&'static str, MockSymbol>::new(vec![]);
         // Push global scope
         sym.push_scope();
         let x = MockSymbol::new("x");
         sym.define("x", x);
         sym.push_scope();
 
-        let actual = sym.lookup("x");
+        let actual = sym.lookup(&"x");
         let x = MockSymbol::new("x");
         assert_eq!(Some(&x), actual);
     }
 
     #[test]
     fn test_symbol_lookup_current_only_searches_current_scope() {
-        let mut sym = SymbolTable::new(vec![]);
+        let mut sym = SymbolTable::<&'static str, MockSymbol>::new(vec![]);
         // Push global scope
         sym.push_scope();
         let x = MockSymbol::new("x");
         sym.define("x", x);
         sym.push_scope();
 
-        let actual = sym.lookup_current("x");
+        let actual = sym.lookup_current(&"x");
         assert_eq!(None, actual);
 
         sym.pop_scope();
 
-        let actual = sym.lookup_current("x");
+        let actual = sym.lookup_current(&"x");
         let x = MockSymbol::new("x");
         assert_eq!(Some(&x), actual);
     }

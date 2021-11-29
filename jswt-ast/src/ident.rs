@@ -1,7 +1,6 @@
-use super::span::Span;
+pub use jswt_common::{Span, Spannable};
 
 #[derive(Debug, PartialEq)]
-
 pub struct Ident {
     pub span: Span,
     pub value: &'static str,

@@ -126,14 +126,27 @@ lazy_static! {
     ];
 }
 
-#[derive(Default)]
 pub struct Tokenizer {
-    source_map: HashMap<String, &'static str>,
+    source_map: Rc<RefCell<HashMap<String, &'static str>>>,
     source_stack: Vec<Rc<RefCell<Source>>>,
     errors: Vec<TokenizerError>,
 }
 
+impl<'a> Default for Tokenizer {
+    fn default() -> Self {
+        todo!()
+    }
+}
+
 impl Tokenizer {
+    pub fn new(source_map: Rc<RefCell<HashMap<String, &'static str>>>) -> Self {
+        Self {
+            source_map,
+            source_stack: vec![],
+            errors: vec![],
+        }
+    }
+
     pub fn next_token(&mut self) -> Option<Token> {
         if !self.has_more_sources() {
             return None;
@@ -159,7 +172,7 @@ impl Tokenizer {
                 match directive.kind {
                     DirectiveType::Import => {
                         // Push the source where we found the import to the stack
-                        self.push_source(res.get(1).unwrap().as_str());
+                        self.push_source(&PathBuf::from(res.get(1).unwrap().as_str()));
                     }
                     DirectiveType::Skip => {}
                 }
@@ -203,10 +216,10 @@ impl Tokenizer {
         tokens
     }
 
-    pub fn push_source(&mut self, path: &str) {
+    pub fn push_source(&mut self, path: &PathBuf) {
         // Resolve the fully qualified path from relative paths
         // TODO - handle errors
-        let path = fs::canonicalize(&PathBuf::from(path)).unwrap();
+        let path = fs::canonicalize(path).unwrap();
         let qualified_path = path.to_str().unwrap();
 
         // We're intentionally leaking this to make lifetime management easier
@@ -216,7 +229,9 @@ impl Tokenizer {
     }
 
     pub fn push_source_str(&mut self, path: &str, content: &'static str) {
-        self.source_map.insert(path.to_owned(), content);
+        self.source_map
+            .borrow_mut()
+            .insert(path.to_owned(), content);
         let source = Source::new(path.to_string(), content);
         self.source_stack.push(Rc::new(RefCell::new(source)));
     }
@@ -232,15 +247,6 @@ impl Tokenizer {
     /// Get a reference to the tokenizer's errors.
     pub fn errors(&self) -> Vec<TokenizerError> {
         self.errors.clone()
-    }
-
-    pub fn get_source(&self, path: &str) -> &'static str {
-        self.source_map.get(path).unwrap()
-    }
-
-    /// Get a reference to the tokenizer's source map.
-    pub fn source_map(&self) -> &HashMap<String, &'static str> {
-        &self.source_map
     }
 }
 

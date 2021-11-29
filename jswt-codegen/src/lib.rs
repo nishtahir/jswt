@@ -12,7 +12,7 @@ pub struct CodeGenerator {
     /// should push a new scope to the stack and pop the scope before pushing their own
     /// instruction to the stack
     scopes: Vec<InstructionScope>,
-    symbols: SymbolTable<WastSymbol>,
+    symbols: SymbolTable<&'static str, WastSymbol>,
 }
 
 #[derive(Debug)]
@@ -262,12 +262,9 @@ impl Visitor for CodeGenerator {
                 // WAST instructions directily into the instruction scope
                 // of the function.
                 "wast" => match &annotation.expr {
-                    SingleExpression::Literal(lit) => match lit {
-                        Literal::String(string_lit) => {
-                            self.push_instruction(Instruction::RawWast(string_lit.value));
-                        }
-                        _ => todo!(),
-                    },
+                    SingleExpression::Literal(Literal::String(string_lit)) => {
+                        self.push_instruction(Instruction::RawWast(string_lit.value));
+                    }
                     _ => todo!(),
                 },
                 _ => todo!(),
@@ -281,14 +278,17 @@ impl Visitor for CodeGenerator {
         // and commit it to the module
         let mut scope = self.pop_instruction_scope().unwrap();
         // Push our locals to the instructions
-        self.symbols.all_current().iter().for_each(|sym| match sym {
-            WastSymbol::Function(_) => {}
-            WastSymbol::Param(_, _) => {}
-            WastSymbol::Global(_, _) => {}
-            WastSymbol::Local(name, ty) => {
-                scope.instructions.insert(0, Instruction::Local(name, *ty))
-            }
-        });
+        self.symbols
+            .symbols_in_current_scope()
+            .iter()
+            .for_each(|sym| match sym {
+                WastSymbol::Function(_) => {}
+                WastSymbol::Param(_, _) => {}
+                WastSymbol::Global(_, _) => {}
+                WastSymbol::Local(name, ty) => {
+                    scope.instructions.insert(0, Instruction::Local(name, *ty))
+                }
+            });
 
         let function_name = node.ident.value;
         let function = Function {
@@ -324,7 +324,7 @@ impl Visitor for CodeGenerator {
                 let name = ident.value;
 
                 // Check if this element has been defined
-                if self.symbols.lookup(name).is_none() {
+                if self.symbols.lookup(&name).is_none() {
                     if self.symbols.depth() == 1 {
                         self.symbols
                             .define(name, WastSymbol::Global(name, ValueType::I32));
@@ -336,7 +336,7 @@ impl Visitor for CodeGenerator {
 
                 // Guaranteed exists
                 // TODO fix immutable and mutable borrow
-                let sym = self.symbols.lookup(name).unwrap();
+                let sym = self.symbols.lookup(&name).unwrap();
 
                 match sym {
                     WastSymbol::Function(_) => todo!(),
@@ -388,7 +388,7 @@ impl Visitor for CodeGenerator {
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
         let target = node.ident.value;
-        if self.symbols.lookup_current(target).is_some() {
+        if self.symbols.lookup_current(&target).is_some() {
             self.push_instruction(Instruction::LocalGet(target));
         } else {
             self.push_instruction(Instruction::GlobalGet(target));

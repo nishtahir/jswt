@@ -1,15 +1,12 @@
 mod ident;
 mod literal;
 mod single_expression;
-mod span;
 mod statement_element;
 mod visitor;
 
-pub use crate::{
-    ident::Ident,
-    span::{Span, Spannable},
-};
+pub use crate::ident::Ident;
 
+pub use jswt_common::{Span, Spannable};
 pub use literal::*;
 pub use single_expression::*;
 pub use statement_element::*;

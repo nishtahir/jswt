@@ -1,8 +1,7 @@
+pub use jswt_common::{Span, Spannable};
+
+pub use crate::ident::Ident;
 use crate::Literal;
-pub use crate::{
-    ident::Ident,
-    span::{Span, Spannable},
-};
 
 #[derive(Debug, PartialEq)]
 pub enum SingleExpression {

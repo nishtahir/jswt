@@ -17,7 +17,7 @@ impl Default for Resolver {
 }
 
 pub struct Resolver {
-    symbols: SymbolTable<Symbol>,
+    symbols: SymbolTable<&'static str, Symbol>,
     errors: Vec<SemanticError>,
 }
 
@@ -93,8 +93,8 @@ impl Visitor for Resolver {
             SingleExpression::Identifier(_) => {}      // TODO Type check the symbol
             _ => {
                 let error = SemanticError::TypeError {
-                    span: node.condition.span().to_owned(),
-                    offending_token: node.condition.span().to_owned(),
+                    span: node.condition.span(),
+                    offending_token: node.condition.span(),
                     expected: "Boolean",
                 };
                 self.errors.push(error);
@@ -111,7 +111,7 @@ impl Visitor for Resolver {
             AssignableElement::Identifier(ident) => ident.value,
         };
         self.visit_single_expression(&node.expression);
-        if self.symbols.lookup_current(name).is_some() {
+        if self.symbols.lookup_current(&name).is_some() {
             let error = SemanticError::VariableAlreadyDefined {
                 name,
                 span: node.target.span(),
@@ -134,7 +134,7 @@ impl Visitor for Resolver {
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
         let ident = &node.ident;
         let name = ident.value;
-        if self.symbols.lookup_current(name).is_some() {
+        if self.symbols.lookup_current(&name).is_some() {
             let error = SemanticError::FunctionAlreadyDefined {
                 name,
                 span: ident.span.to_owned(),
@@ -185,7 +185,7 @@ impl Visitor for Resolver {
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
         let ident = &node.ident;
         let name = ident.value;
-        if self.symbols.lookup(name).is_none() {
+        if self.symbols.lookup(&name).is_none() {
             let error = SemanticError::VariableNotDefined {
                 name,
                 span: ident.span.to_owned(),
@@ -205,7 +205,7 @@ impl Visitor for Resolver {
 
                 // Check that the args are defined in this scope
                 for arg in &node.arguments.arguments {
-                    self.visit_single_expression(&arg);
+                    self.visit_single_expression(arg);
                 }
             }
             exp => self.errors.push(SemanticError::NotAFunctionError {

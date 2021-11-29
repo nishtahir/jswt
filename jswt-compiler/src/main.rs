@@ -3,9 +3,13 @@ extern crate clap;
 
 use clap::Arg;
 use std::cell::Cell;
+use std::cell::RefCell;
+use std::collections::HashMap;
 use std::env;
 use std::fs;
+use std::path::PathBuf;
 use std::process::exit;
+use std::rc::Rc;
 use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, Store};
 
 use jswt::errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
@@ -17,7 +21,14 @@ use jswt_tokenizer::Tokenizer;
 fn main() {
     let matches = app_from_crate!()
         .arg(
-            Arg::with_name("source")
+            Arg::with_name("output")
+                .short("o")
+                .help("Write output to file")
+                .required(false)
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("file")
                 .help("Input file to begin compiling")
                 .required(true)
                 .index(1),
@@ -31,19 +42,33 @@ fn main() {
         )
         .get_matches();
 
-    let i = match matches.value_of("source") {
-        Some(it) => it,
+    let input = match matches.value_of("file") {
+        Some(it) => PathBuf::from(it)
+            .canonicalize()
+            .expect("Failed to determine canonical input"),
         _ => return,
     };
 
-    let mut tokenizer = Tokenizer::default();
-    tokenizer.push_source(i);
+    let output = match matches.value_of("output") {
+        Some(it) => PathBuf::from(it),
+        None => input.clone(),
+    };
+
+    // Main cache of source files that have been read for compilation
+    // It may be worth building an abstraction around this to help with resolving paths
+    // for imports and preventing issues like duplicate file reads
+    let source_map = Rc::new(RefCell::new(HashMap::new()));
+
+    // Let binding to prevent the ref being dropped before getting passed to the tokenizer
+    let mut tokenizer = Tokenizer::new(source_map.clone());
+    tokenizer.push_source(&input);
 
     // parse tokens and generate AST
     let mut parser = Parser::new(&mut tokenizer);
-
     let ast = parser.parse();
-    fs::write("test.ast", format!("{:#?}", ast)).unwrap();
+
+    // Write AST for debugging
+    fs::write(output.with_extension("ast"), format!("{:#?}", ast)).unwrap();
 
     let mut has_errors = false;
     let parser_errors = parser.errors();
@@ -51,12 +76,12 @@ fn main() {
     // Report errors
     for error in parser_errors.1 {
         has_errors = true;
-        print_tokenizer_error(&error, tokenizer.source_map())
+        print_tokenizer_error(&error, &source_map.clone().borrow());
     }
 
     for error in parser_errors.0 {
         has_errors = true;
-        print_parser_error(&error, tokenizer.source_map());
+        print_parser_error(&error, &source_map.clone().borrow());
     }
 
     // Semantic analytis pass
@@ -65,7 +90,7 @@ fn main() {
 
     for error in resolver.errors() {
         has_errors = true;
-        print_semantic_error(&error, tokenizer.source_map())
+        print_semantic_error(&error, &source_map.borrow())
     }
 
     if has_errors {
@@ -74,8 +99,10 @@ fn main() {
 
     let mut code_gen = CodeGenerator::default();
     let module = code_gen.generate_module(&ast);
+
+    // Write generated wasm AST for debugging
     let wast = module.as_wat();
-    fs::write("test.wast", &wast).unwrap();
+    fs::write(output.with_extension("wast"), &wast).unwrap();
 
     // Embed wasmer runtime and execute generated wasm
     let store = Store::default();
@@ -122,7 +149,7 @@ fn main() {
             .collect::<Vec<String>>()
             .join("\n");
 
-        fs::write("test.mem", &mem).unwrap();
+        fs::write(output.with_extension("mem"), &mem).unwrap();
     }
 
     if result.len() > 0 {

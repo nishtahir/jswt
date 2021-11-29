@@ -1,4 +1,4 @@
-use crate::{Span, Spannable};
+pub use jswt_common::{Span, Spannable};
 
 #[derive(Debug, PartialEq)]
 pub enum Literal {

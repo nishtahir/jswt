@@ -8,7 +8,12 @@
 //     return 0;
 // }
 
-export function main(): i32 {
+?export function main(): i32 {
+    return max(2, 3);
+}
+
+
+?export function main(): i32 {
     return max(2, 3);
 }
 

@@ -397,6 +397,9 @@ dependencies = [
 [[package]]
 name = "jswt-ast"
 version = "0.1.0"
+dependencies = [
+ "jswt-common",
+]
 
 [[package]]
 name = "jswt-codeframe"
