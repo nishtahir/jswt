@@ -134,7 +134,7 @@ pub struct Tokenizer {
 
 impl<'a> Default for Tokenizer {
     fn default() -> Self {
-        todo!()
+        Tokenizer::new(Rc::new(RefCell::new(HashMap::new())))
     }
 }
 
