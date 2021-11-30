@@ -1,8 +1,10 @@
+use jswt_derive::FromEnumVariant;
+
 use crate::{
     AssignableElement, SingleExpression, Span, Spannable, StatementList, VariableModifier,
 };
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, FromEnumVariant)]
 pub enum StatementElement {
     Block(BlockStatement),
     Empty(EmptyStatement),
@@ -10,42 +12,6 @@ pub enum StatementElement {
     Return(ReturnStatement),
     Variable(VariableStatement),
     Expression(ExpressionStatement),
-}
-
-impl From<IfStatement> for StatementElement {
-    fn from(v: IfStatement) -> Self {
-        Self::If(v)
-    }
-}
-
-impl From<ExpressionStatement> for StatementElement {
-    fn from(v: ExpressionStatement) -> Self {
-        Self::Expression(v)
-    }
-}
-
-impl From<ReturnStatement> for StatementElement {
-    fn from(v: ReturnStatement) -> Self {
-        Self::Return(v)
-    }
-}
-
-impl From<VariableStatement> for StatementElement {
-    fn from(v: VariableStatement) -> Self {
-        Self::Variable(v)
-    }
-}
-
-impl From<EmptyStatement> for StatementElement {
-    fn from(v: EmptyStatement) -> Self {
-        Self::Empty(v)
-    }
-}
-
-impl From<BlockStatement> for StatementElement {
-    fn from(v: BlockStatement) -> Self {
-        Self::Block(v)
-    }
 }
 
 #[derive(Debug, PartialEq)]

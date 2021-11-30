@@ -524,7 +524,8 @@ impl<'a> Parser<'a> {
                 });
             }
         };
-        Ok(literal.into())
+
+        Ok(SingleExpression::Literal(literal))
     }
 
     /// FunctionDeclaration

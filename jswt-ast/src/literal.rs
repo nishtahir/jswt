@@ -1,6 +1,7 @@
 pub use jswt_common::{Span, Spannable};
+use jswt_derive::FromEnumVariant;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, FromEnumVariant)]
 pub enum Literal {
     String(StringLiteral),
     Number(NumberLiteral),
@@ -14,24 +15,6 @@ impl Spannable for Literal {
             Literal::Number(n) => n.span.to_owned(),
             Literal::Boolean(b) => b.span.to_owned(),
         }
-    }
-}
-
-impl From<StringLiteral> for Literal {
-    fn from(v: StringLiteral) -> Self {
-        Self::String(v)
-    }
-}
-
-impl From<NumberLiteral> for Literal {
-    fn from(v: NumberLiteral) -> Self {
-        Self::Number(v)
-    }
-}
-
-impl From<BooleanLiteral> for Literal {
-    fn from(v: BooleanLiteral) -> Self {
-        Self::Boolean(v)
     }
 }
 

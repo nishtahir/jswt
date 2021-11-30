@@ -6,37 +6,13 @@ use crate::Literal;
 #[derive(Debug, PartialEq)]
 pub enum SingleExpression {
     Arguments(ArgumentsExpression),
-    Bitwise(BinaryExpression),
     Multiplicative(BinaryExpression),
+    Bitwise(BinaryExpression),
     Additive(BinaryExpression),
     Equality(BinaryExpression),
     Relational(BinaryExpression),
     Identifier(IdentifierExpression),
     Literal(Literal),
-}
-
-impl From<ArgumentsExpression> for SingleExpression {
-    fn from(v: ArgumentsExpression) -> Self {
-        Self::Arguments(v)
-    }
-}
-
-impl From<IdentifierExpression> for SingleExpression {
-    fn from(v: IdentifierExpression) -> Self {
-        Self::Identifier(v)
-    }
-}
-
-impl From<Literal> for SingleExpression {
-    fn from(v: Literal) -> Self {
-        Self::Literal(v)
-    }
-}
-
-impl From<BinaryExpression> for SingleExpression {
-    fn from(v: BinaryExpression) -> Self {
-        Self::Additive(v)
-    }
 }
 
 impl Spannable for SingleExpression {

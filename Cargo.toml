@@ -7,6 +7,7 @@ members = [
     "jswt-common",
     "jswt-compiler",
     "jswt-parser",
+    "jswt-derive",
     "jswt-tokenizer",
     "jswt-wast"
 ]

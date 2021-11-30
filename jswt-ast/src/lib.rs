@@ -4,16 +4,16 @@ mod single_expression;
 mod statement_element;
 mod visitor;
 
-pub use crate::ident::Ident;
-
-pub use jswt_common::{Span, Spannable};
+pub use ident::Ident;
 pub use literal::*;
 pub use single_expression::*;
 pub use statement_element::*;
 pub use visitor::*;
 
-#[derive(Debug)]
+pub use jswt_common::{Span, Spannable};
+use jswt_derive::{FromEnumVariant, Spannable};
 
+#[derive(Debug)]
 pub struct Ast {
     pub program: Program,
 }
@@ -34,25 +34,13 @@ pub struct SourceElements {
     pub source_elements: Vec<SourceElement>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, FromEnumVariant)]
 pub enum SourceElement {
     FunctionDeclaration(FunctionDeclarationElement),
     Statement(StatementElement),
 }
 
-impl From<StatementElement> for SourceElement {
-    fn from(v: StatementElement) -> Self {
-        Self::Statement(v)
-    }
-}
-
-impl From<FunctionDeclarationElement> for SourceElement {
-    fn from(v: FunctionDeclarationElement) -> Self {
-        Self::FunctionDeclaration(v)
-    }
-}
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct FunctionDeclarationElement {
     pub span: Span,
     pub decorators: FunctionDecorators,
@@ -68,7 +56,7 @@ pub struct FunctionDecorators {
     pub export: bool,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct Annotation {
     pub span: Span,
     pub name: Ident,
@@ -86,16 +74,10 @@ pub struct FormalParameterArg {
     pub type_annotation: Ident,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct FunctionBody {
     pub span: Span,
     pub source_elements: SourceElements,
-}
-
-impl Spannable for FunctionBody {
-    fn span(&self) -> Span {
-        self.span.to_owned()
-    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -118,7 +100,7 @@ impl Spannable for VariableModifier {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, FromEnumVariant)]
 pub enum AssignableElement {
     Identifier(Ident),
 }
@@ -128,11 +110,5 @@ impl Spannable for AssignableElement {
         match self {
             AssignableElement::Identifier(ident) => ident.span.to_owned(),
         }
-    }
-}
-
-impl From<Ident> for AssignableElement {
-    fn from(v: Ident) -> Self {
-        Self::Identifier(v)
     }
 }

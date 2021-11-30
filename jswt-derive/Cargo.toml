@@ -1,12 +1,16 @@
 [package]
-name = "jswt-ast"
+name = "jswt-derive"
 version = "0.1.0"
 authors = ["Nish Tahir <nishtahir@outlook.com>"]
 edition = "2018"
 
 [lib]
 doctest = false
+proc-macro = true
+
 
 [dependencies]
 jswt-common = {path = "../jswt-common"}
-jswt-derive = {path = "../jswt-derive"}
+syn = { version = "1.0", features = ["full"] }
+quote = "1.0"
+proc-macro2 = "1.0"

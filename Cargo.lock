@@ -399,6 +399,7 @@ name = "jswt-ast"
 version = "0.1.0"
 dependencies = [
  "jswt-common",
+ "jswt-derive",
 ]
 
 [[package]]
@@ -423,6 +424,16 @@ dependencies = [
 [[package]]
 name = "jswt-common"
 version = "0.1.0"
+
+[[package]]
+name = "jswt-derive"
+version = "0.1.0"
+dependencies = [
+ "jswt-common",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "jswt-parser"
