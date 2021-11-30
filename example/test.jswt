@@ -1,23 +1,6 @@
-// import "./std/mem.jswt";
-
-// export function main(): i32 {
-//     __mm_init();
-
-//     println(__nextBlockPointer(headPtr));
-//     println(__prevBlockPointer(headPtr));
-//     return 0;
-// }
+ import "./stdlib/mem.jswt";
 
 export function main(): i32 {
-    let x = max(7, 9);
-    println(x);
+    __mm_init();
     return 0;
-}
-
-function max(a: i32, b: i32): i32 {
-    if (a > b) {
-        return a;
-    } else {
-        return b;
-    }
 }

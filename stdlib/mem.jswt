@@ -18,11 +18,28 @@ function __mm_init() {
     i32Store(__heap_list_ptr + 3 * __W_SIZE, __pack(0, 1)); // Epilogue Header
 
     // TODO - implement assignment
-    __set_heap_list_ptr(__heap_list_ptr + 2 * __W_SIZE);
+    __setHeapListPtr(__heap_list_ptr + 2 * __W_SIZE);
+}
+
+function __mm_free(blockPointer: i32) {
+    let headerPointer = __headerPointer(blockPointer);
+    let size = __getSize(headerPointer);
+
+    i32Store(headerPointer, __pack(size, 0));
+
+    let footerPointer = __footerPointer(blockPointer);
+    i32Store(footerPointer, __pack(size, 0));
+
+    // TODO - coalesce blocks
+}
+
+function __mm_malloc(size: i32): i32 {
+    // TODO
+    return 0;
 }
 
 @wast("(global.set $__heap_list_ptr (local.get $value))")
-function __set_heap_list_ptr(value: i32) { }
+function __setHeapListPtr(value: i32) { }
 
 // Computed header pointer from the given block pointer
 function __headerPointer(blockPointer: i32): i32 {
@@ -58,6 +75,14 @@ function __getAlloc(address: i32): i32 {
 // Pack size and allocated bit into a word
 function __pack(size: i32, alloc: i32): i32 {
     return size | alloc;
+}
+
+// Single max utility function
+function __max(a: i32, b: i32): i32 {
+    if (a > b) {
+        return a;
+    }
+    return b;
 }
 
 @wast("(local.get $index)(i32.load offset=0 align=4)(return)")
