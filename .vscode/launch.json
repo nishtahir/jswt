@@ -39,7 +39,7 @@
                 }
             },
             "args": [
-                "test.jswt"
+                "example/test.jswt"
             ],
             "cwd": "${workspaceFolder}"
         },

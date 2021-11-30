@@ -55,11 +55,25 @@ impl From<&Instruction> for String {
                 format!("(global.set ${} {})", name, args.to_string())
             }
             Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
-            Instruction::If(cons, alt) => format!(
-                "(if (then {}) (else {}))",
-                cons.to_string(),
-                alt.to_string()
-            ),
+            Instruction::If(cons, alt) => {
+                // https://github.com/WebAssembly/wabt/issues/1075
+                // The wat format requires that you annotate any blocks that return values with their signature. 
+                // If no signature is provided, it is assumed that the block has no parameters and no results.
+                if cons.contains(&Instruction::Return) && alt.contains(&Instruction::Return) {
+                    format!(
+                        // TODO type check here and annotate appropriately
+                        "(if (result i32) (then {}) (else {}))",
+                        cons.to_string(),
+                        alt.to_string()
+                    )
+                } else {
+                    format!(
+                        "(if (then {}) (else {}))",
+                        cons.to_string(),
+                        alt.to_string()
+                    )
+                }
+            }
             Instruction::I32And => "(i32.and)".into(),
             Instruction::I32Or => "(i32.or)".into(),
             Instruction::GlobalGet(name) => format!("(global.get ${})", name),

@@ -8,19 +8,16 @@
 //     return 0;
 // }
 
-?export function main(): i32 {
-    return max(2, 3);
-}
-
-
-?export function main(): i32 {
-    return max(2, 3);
+export function main(): i32 {
+    let x = max(7, 9);
+    println(x);
+    return 0;
 }
 
 function max(a: i32, b: i32): i32 {
-    let max = a;
-    if (b > max) {
-        println(5);
+    if (a > b) {
+        return a;
+    } else {
+        return b;
     }
-    return max;
 }
