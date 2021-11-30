@@ -50,7 +50,7 @@ expression: actual
         file: "test.1",
         lexme: "print",
         offset: 17,
-        kind: Print,
+        kind: Identifier,
     },
     Token {
         file: "test.1",
