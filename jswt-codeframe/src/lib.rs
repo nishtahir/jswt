@@ -28,17 +28,8 @@ fn marker_lines(source: &[&str], location: NodeLocation) -> MarkerLines {
     let end_line = location.end.line;
     let end_col = location.end.col;
 
-    let mut start = (start_line - (lines_above + 1)).max(0);
-    let mut end = (source.len() as i32).min(end_line + lines_below);
-
-    if start_line < 0 {
-        start = 0;
-    }
-
-    if end_line < 0 {
-        end = source.len() as i32;
-    }
-
+    let start = (start_line - (lines_above + 1)).max(0);
+    let end = ((source.len() as i32).min(end_line + lines_below)).max(0);
     let line_diff = end_line - start_line;
 
     let mut markers: HashMap<usize, (i32, i32)> = HashMap::new();
@@ -89,7 +80,6 @@ fn marker_lines(source: &[&str], location: NodeLocation) -> MarkerLines {
 ///   3 | }
 ///
 /// TODO: Port over floating message support
-///
 pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String {
     let lines = source.split('\n').collect::<Vec<&str>>();
     let MarkerLines {

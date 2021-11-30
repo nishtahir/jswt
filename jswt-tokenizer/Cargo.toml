@@ -12,4 +12,4 @@ regex = "1.5.4"
 lazy_static ="1.4.0"
 
 [dev-dependencies]
-pretty_assertions = "1.0.0"
+jswt-assert = {path = "../jswt-assert"}

@@ -682,42 +682,15 @@ impl<'a> Parser<'a> {
 
 #[cfg(test)]
 mod test {
-    use std::vec;
-
     use super::*;
-    use jswt_assert::{assert_eq, assert_str_eq};
+    use jswt_assert::assert_debug_snapshot;
 
     #[test]
     fn test_function_declaration_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { }");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::FunctionDeclaration(
-                    FunctionDeclarationElement {
-                        span: Span::new("test.1", 0, 19),
-                        decorators: FunctionDecorators {
-                            annotation: None,
-                            export: false,
-                        },
-                        ident: Ident {
-                            span: Span::new("test.1", 9, 13),
-                            value: "test",
-                        },
-                        params: FormalParameterList { parameters: vec![] },
-                        returns: None,
-                        body: FunctionBody {
-                            span: Span::new("test.1", 16, 19),
-                            source_elements: SourceElements {
-                                source_elements: vec![],
-                            },
-                        },
-                    },
-                )],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -725,12 +698,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -738,43 +706,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32) { }");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::FunctionDeclaration(
-                    FunctionDeclarationElement {
-                        span: Span::new("test.1", 0, 25),
-                        decorators: FunctionDecorators {
-                            annotation: None,
-                            export: false,
-                        },
-                        ident: Ident {
-                            span: Span::new("test.1", 9, 13),
-                            value: "name",
-                        },
-                        params: FormalParameterList {
-                            parameters: vec![FormalParameterArg {
-                                ident: Ident {
-                                    span: Span::new("test.1", 14, 15),
-                                    value: "a",
-                                },
-                                type_annotation: Ident {
-                                    span: Span::new("test.1", 17, 20),
-                                    value: "i32",
-                                },
-                            }],
-                        },
-                        returns: None,
-                        body: FunctionBody {
-                            span: Span::new("test.1", 22, 25),
-                            source_elements: SourceElements {
-                                source_elements: vec![],
-                            },
-                        },
-                    },
-                )],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -782,75 +714,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32, b: f32) { }");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::FunctionDeclaration(
-                    FunctionDeclarationElement {
-                        span: Span::new("test.1", 0, 33),
-                        decorators: FunctionDecorators {
-                            annotation: None,
-                            export: false,
-                        },
-                        ident: Ident {
-                            span: Span {
-                                file: "test.1".to_owned(),
-                                start: 9,
-                                end: 13,
-                            },
-                            value: "name",
-                        },
-                        params: FormalParameterList {
-                            parameters: vec![
-                                FormalParameterArg {
-                                    ident: Ident {
-                                        span: Span {
-                                            file: "test.1".to_owned(),
-                                            start: 14,
-                                            end: 15,
-                                        },
-                                        value: "a",
-                                    },
-                                    type_annotation: Ident {
-                                        span: Span {
-                                            file: "test.1".to_owned(),
-                                            start: 17,
-                                            end: 20,
-                                        },
-                                        value: "i32",
-                                    },
-                                },
-                                FormalParameterArg {
-                                    ident: Ident {
-                                        span: Span {
-                                            file: "test.1".to_owned(),
-                                            start: 22,
-                                            end: 23,
-                                        },
-                                        value: "b",
-                                    },
-                                    type_annotation: Ident {
-                                        span: Span {
-                                            file: "test.1".to_owned(),
-                                            start: 25,
-                                            end: 28,
-                                        },
-                                        value: "f32",
-                                    },
-                                },
-                            ],
-                        },
-                        returns: None,
-                        body: FunctionBody {
-                            span: Span::new("test.1", 30, 33),
-                            source_elements: SourceElements {
-                                source_elements: vec![],
-                            },
-                        },
-                    },
-                )],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -858,36 +722,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function test() { }");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::FunctionDeclaration(
-                    FunctionDeclarationElement {
-                        span: Span::new("test.1", 0, 26),
-                        decorators: FunctionDecorators {
-                            annotation: None,
-                            export: true,
-                        },
-                        ident: Ident {
-                            span: Span {
-                                file: "test.1".to_owned(),
-                                start: 16,
-                                end: 20,
-                            },
-                            value: "test",
-                        },
-                        params: FormalParameterList { parameters: vec![] },
-                        returns: None,
-                        body: FunctionBody {
-                            span: Span::new("test.1", 23, 26),
-                            source_elements: SourceElements {
-                                source_elements: vec![],
-                            },
-                        },
-                    },
-                )],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -895,43 +730,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(): i32 { }");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::FunctionDeclaration(
-                    FunctionDeclarationElement {
-                        span: Span::new("test.1", 0, 24),
-                        decorators: FunctionDecorators {
-                            annotation: None,
-                            export: false,
-                        },
-                        ident: Ident {
-                            span: Span {
-                                file: "test.1".to_owned(),
-                                start: 9,
-                                end: 13,
-                            },
-                            value: "test",
-                        },
-                        params: FormalParameterList { parameters: vec![] },
-                        returns: Some(Ident {
-                            span: Span {
-                                file: "test.1".to_owned(),
-                                start: 17,
-                                end: 20,
-                            },
-                            value: "i32",
-                        }),
-                        body: FunctionBody {
-                            span: Span::new("test.1", 21, 24),
-                            source_elements: SourceElements {
-                                source_elements: vec![],
-                            },
-                        },
-                    },
-                )],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -939,59 +738,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(a: i32, b: i32): i32 { }");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::FunctionDeclaration(
-                    FunctionDeclarationElement {
-                        span: Span::new("test.1", 0, 38),
-                        decorators: FunctionDecorators {
-                            annotation: None,
-                            export: false,
-                        },
-                        ident: Ident {
-                            span: Span::new("test.1", 9, 13),
-                            value: "test",
-                        },
-                        params: FormalParameterList {
-                            parameters: vec![
-                                FormalParameterArg {
-                                    ident: Ident {
-                                        span: Span::new("test.1", 14, 15),
-
-                                        value: "a",
-                                    },
-                                    type_annotation: Ident {
-                                        span: Span::new("test.1", 17, 20),
-                                        value: "i32",
-                                    },
-                                },
-                                FormalParameterArg {
-                                    ident: Ident {
-                                        span: Span::new("test.1", 22, 23),
-                                        value: "b",
-                                    },
-                                    type_annotation: Ident {
-                                        span: Span::new("test.1", 25, 28),
-                                        value: "i32",
-                                    },
-                                },
-                            ],
-                        },
-                        returns: Some(Ident {
-                            span: Span::new("test.1", 31, 34),
-                            value: "i32",
-                        }),
-                        body: FunctionBody {
-                            span: Span::new("test.1", 35, 38),
-                            source_elements: SourceElements {
-                                source_elements: vec![],
-                            },
-                        },
-                    },
-                )],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -999,17 +746,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{}");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::Statement(StatementElement::Block(
-                    BlockStatement {
-                        span: Span::new("test.1", 0, 2),
-                        statements: StatementList { statements: vec![] },
-                    },
-                ))],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1017,22 +754,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{ {} }");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::Statement(StatementElement::Block(
-                    BlockStatement {
-                        span: Span::new("test.1", 0, 6),
-                        statements: StatementList {
-                            statements: vec![StatementElement::Block(BlockStatement {
-                                span: Span::new("test.1", 2, 4),
-                                statements: StatementList { statements: vec![] },
-                            })],
-                        },
-                    },
-                ))],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1040,41 +762,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { {} }");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::FunctionDeclaration(
-                    FunctionDeclarationElement {
-                        span: Span::new("test.1", 0, 22),
-                        decorators: FunctionDecorators {
-                            annotation: None,
-                            export: false,
-                        },
-                        ident: Ident {
-                            span: Span {
-                                file: "test.1".to_owned(),
-                                start: 9,
-                                end: 13,
-                            },
-                            value: "test",
-                        },
-                        params: FormalParameterList { parameters: vec![] },
-                        returns: None,
-                        body: FunctionBody {
-                            span: Span::new("test.1", 16, 22),
-                            source_elements: SourceElements {
-                                source_elements: vec![SourceElement::Statement(
-                                    StatementElement::Block(BlockStatement {
-                                        span: Span::new("test.1", 18, 20),
-                                        statements: StatementList { statements: vec![] },
-                                    }),
-                                )],
-                            },
-                        },
-                    },
-                )],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1082,43 +770,15 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ";");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::Statement(StatementElement::Empty(
-                    EmptyStatement {
-                        span: Span::new("test.1", 0, 1),
-                    },
-                ))],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_parse_variable_statement_with_number() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 42;");
-
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::Statement(StatementElement::Variable(
-                    VariableStatement {
-                        span: Span::new("test.1", 0, 11),
-                        modifier: VariableModifier::Let(Span::new("test.1", 0, 3)),
-                        target: AssignableElement::Identifier(Ident {
-                            span: Span::new("test.1", 4, 5),
-                            value: "x",
-                        }),
-                        expression: SingleExpression::Literal(Literal::Number(NumberLiteral {
-                            span: Span::new("test.1", 8, 10),
-                            value: 42,
-                        })),
-                    },
-                ))],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1126,29 +786,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = \"Hello World\";");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::Statement(StatementElement::Variable(
-                    VariableStatement {
-                        span: Span::new("test.1", 0, 22),
-                        modifier: VariableModifier::Let(Span::new("test.1", 0, 3)),
-                        target: AssignableElement::Identifier(Ident {
-                            span: Span {
-                                file: "test.1".to_owned(),
-                                start: 4,
-                                end: 5,
-                            },
-                            value: "x",
-                        }),
-                        expression: SingleExpression::Literal(Literal::String(StringLiteral {
-                            span: Span::new("test.1", 8, 21),
-                            value: "Hello World",
-                        })),
-                    },
-                ))],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1156,20 +794,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "return 99;");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = Program {
-            source_elements: SourceElements {
-                source_elements: vec![SourceElement::Statement(StatementElement::Return(
-                    ReturnStatement {
-                        span: Span::new("test.1", 0, 10),
-                        expression: SingleExpression::Literal(Literal::Number(NumberLiteral {
-                            span: Span::new("test.1", 7, 9),
-                            value: 99,
-                        })),
-                    },
-                ))],
-            },
-        };
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1177,8 +802,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 1 + 2;");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = include_str!("../test/test_parse_additive_expression.ast");
-        assert_str_eq!(expected, &format!("{:#?}", actual));
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1186,8 +810,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 * 2;");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected = include_str!("../test/test_parse_multiplicative_expression.ast");
-        assert_str_eq!(expected, &format!("{:#?}", actual));
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1195,9 +818,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 * 2 + 1 * 0;");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected =
-            include_str!("../test/test_parse_nested_math_expression_has_correct_precedence.ast");
-        assert_str_eq!(expected, &format!("{:#?}", actual));
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1205,9 +826,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 + 2 + 1 + 0;");
         let actual = Parser::new(&mut tokenizer).parse().program;
-        let expected =
-            include_str!("../test/test_parse_additive_expression_left_associativity.ast");
-        assert_str_eq!(expected, &format!("{:#?}", actual));
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1215,9 +834,7 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function main() { test(); }");
         let actual = Parser::new(&mut tokenizer).parse();
-        let expected =
-            include_str!("../test/test_parse_expression_statement_parses_function_invocation.ast");
-        assert_str_eq!(expected, &format!("{:#?}", actual));
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -1225,8 +842,6 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "test(1 + 2);");
         let actual = Parser::new(&mut tokenizer).parse();
-        let expected =
-            include_str!("../test/test_parse_argument_expression_with_expression_parameter.ast");
-        assert_str_eq!(expected, &format!("{:#?}", actual));
+        assert_debug_snapshot!(actual);
     }
 }

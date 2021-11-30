@@ -29,7 +29,6 @@ function __mm_free(blockPointer: i32) {
 
     let footerPointer = __footerPointer(blockPointer);
     i32Store(footerPointer, __pack(size, 0));
-
     // TODO - coalesce blocks
 }
 

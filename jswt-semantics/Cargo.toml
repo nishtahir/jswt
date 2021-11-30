@@ -1,5 +1,5 @@
 [package]
-name = "jswt-parser"
+name = "jswt-semantics"
 version = "0.1.0"
 authors = ["Nish Tahir <nishtahir@outlook.com>"]
 edition = "2018"
@@ -10,6 +10,7 @@ doctest = false
 [dependencies]
 jswt-ast = {path = "../jswt-ast"}
 jswt-common = {path = "../jswt-common"}
+jswt-parser = {path = "../jswt-parser"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
 
 [dev-dependencies]

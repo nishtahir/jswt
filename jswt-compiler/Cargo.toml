@@ -13,6 +13,7 @@ jswt-codeframe = {path = "../jswt-codeframe"}
 jswt-codegen = {path = "../jswt-codegen"}
 jswt-common = {path = "../jswt-common"}
 jswt-parser = {path = "../jswt-parser"}
+jswt-semantics = {path = "../jswt-semantics"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
 wasmer = "2.0.0"
 

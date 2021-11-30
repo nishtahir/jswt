@@ -56,23 +56,17 @@ impl From<&Instruction> for String {
             }
             Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
             Instruction::If(cons, alt) => {
+                let mut stmt = "(if ".to_owned();
                 // https://github.com/WebAssembly/wabt/issues/1075
-                // The wat format requires that you annotate any blocks that return values with their signature. 
+                // The wat format requires that you annotate any blocks that return values with their signature.
                 // If no signature is provided, it is assumed that the block has no parameters and no results.
                 if cons.contains(&Instruction::Return) && alt.contains(&Instruction::Return) {
-                    format!(
-                        // TODO type check here and annotate appropriately
-                        "(if (result i32) (then {}) (else {}))",
-                        cons.to_string(),
-                        alt.to_string()
-                    )
+                    stmt += "(result i32)";
                 } else {
-                    format!(
-                        "(if (then {}) (else {}))",
-                        cons.to_string(),
-                        alt.to_string()
-                    )
+                    stmt += &format!("(then {}) (else {})", cons.to_string(), alt.to_string());
                 }
+                stmt += ")";
+                stmt
             }
             Instruction::I32And => "(i32.and)".into(),
             Instruction::I32Or => "(i32.or)".into(),

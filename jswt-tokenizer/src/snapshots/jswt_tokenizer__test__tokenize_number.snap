@@ -1,0 +1,13 @@
+---
+source: jswt-tokenizer/src/lib.rs
+expression: actual
+
+---
+[
+    Token {
+        file: "test.1",
+        lexme: "42",
+        offset: 0,
+        kind: Number,
+    },
+]

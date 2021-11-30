@@ -9,3 +9,4 @@ doctest = false
 
 [dependencies]
 pretty_assertions = "1.0.0"
+insta = "1.8.0"

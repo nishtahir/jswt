@@ -1,3 +1,8 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
 Program {
     source_elements: SourceElements {
         source_elements: [
@@ -26,7 +31,7 @@ Program {
                                 value: "x",
                             },
                         ),
-                        expression: Additive(
+                        expression: Multiplicative(
                             BinaryExpression {
                                 span: Span {
                                     file: "test.1",
@@ -41,11 +46,11 @@ Program {
                                                 start: 8,
                                                 end: 9,
                                             },
-                                            value: 1,
+                                            value: 3,
                                         },
                                     ),
                                 ),
-                                op: Plus(
+                                op: Mult(
                                     Span {
                                         file: "test.1",
                                         start: 10,

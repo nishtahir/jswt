@@ -1,0 +1,22 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Program {
+    source_elements: SourceElements {
+        source_elements: [
+            Statement(
+                Empty(
+                    EmptyStatement {
+                        span: Span {
+                            file: "test.1",
+                            start: 0,
+                            end: 1,
+                        },
+                    },
+                ),
+            ),
+        ],
+    },
+}

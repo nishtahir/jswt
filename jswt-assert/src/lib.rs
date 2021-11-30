@@ -1,7 +1,8 @@
+pub use insta::assert_debug_snapshot;
 pub use pretty_assertions::assert_eq;
 /// Workaround for https://github.com/colin-kiegel/rust-pretty-assertions/issues/24
 /// Until this lands we have to use this as our string assertions
-/// 
+///
 /// Wrapper around string slice that makes debug output `{:?}` to print string same way as `{}`.
 /// Used in different `assert*!` macros in combination with `pretty_assertions` crate to make
 /// test failures to show nice diffs.

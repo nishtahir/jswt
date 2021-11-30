@@ -1,0 +1,19 @@
+---
+source: jswt-tokenizer/src/lib.rs
+expression: actual
+
+---
+[
+    Token {
+        file: "test.1",
+        lexme: "user",
+        offset: 0,
+        kind: Identifier,
+    },
+    Token {
+        file: "test.1",
+        lexme: "identifier",
+        offset: 5,
+        kind: Identifier,
+    },
+]

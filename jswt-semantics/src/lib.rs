@@ -1,9 +1,11 @@
+mod error;
 mod symbol;
 
-use std::borrow::Borrow;
+pub use error::SemanticError;
 
 use self::symbol::{Symbol, Type};
-use crate::errors::SemanticError;
+use std::borrow::Borrow;
+
 use jswt_ast::*;
 use jswt_common::SymbolTable;
 

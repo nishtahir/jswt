@@ -1,34 +1,9 @@
 use std::collections::HashMap;
 
-use jswt_ast::*;
+use jswt_semantics::*;
 use jswt_codeframe::*;
 use jswt_parser::ParseError;
 use jswt_tokenizer::TokenizerError;
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum SemanticError {
-    VariableNotDefined {
-        name: &'static str,
-        span: Span,
-    },
-    VariableAlreadyDefined {
-        name: &'static str,
-        span: Span,
-    },
-    FunctionAlreadyDefined {
-        name: &'static str,
-        span: Span,
-    },
-    NotAFunctionError {
-        span: Span,
-        name_span: Span,
-    },
-    TypeError {
-        span: Span,
-        offending_token: Span,
-        expected: &'static str,
-    },
-}
 
 pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, &'static str>) {
     match error {

@@ -1,0 +1,92 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Program {
+    source_elements: SourceElements {
+        source_elements: [
+            FunctionDeclaration(
+                FunctionDeclarationElement {
+                    span: Span {
+                        file: "test.1",
+                        start: 0,
+                        end: 38,
+                    },
+                    decorators: FunctionDecorators {
+                        annotation: None,
+                        export: false,
+                    },
+                    ident: Ident {
+                        span: Span {
+                            file: "test.1",
+                            start: 9,
+                            end: 13,
+                        },
+                        value: "test",
+                    },
+                    params: FormalParameterList {
+                        parameters: [
+                            FormalParameterArg {
+                                ident: Ident {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 14,
+                                        end: 15,
+                                    },
+                                    value: "a",
+                                },
+                                type_annotation: Ident {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 17,
+                                        end: 20,
+                                    },
+                                    value: "i32",
+                                },
+                            },
+                            FormalParameterArg {
+                                ident: Ident {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 22,
+                                        end: 23,
+                                    },
+                                    value: "b",
+                                },
+                                type_annotation: Ident {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 25,
+                                        end: 28,
+                                    },
+                                    value: "i32",
+                                },
+                            },
+                        ],
+                    },
+                    returns: Some(
+                        Ident {
+                            span: Span {
+                                file: "test.1",
+                                start: 31,
+                                end: 34,
+                            },
+                            value: "i32",
+                        },
+                    ),
+                    body: FunctionBody {
+                        span: Span {
+                            file: "test.1",
+                            start: 35,
+                            end: 38,
+                        },
+                        source_elements: SourceElements {
+                            source_elements: [],
+                        },
+                    },
+                },
+            ),
+        ],
+    },
+}

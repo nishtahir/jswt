@@ -254,219 +254,149 @@ impl Tokenizer {
 mod test {
 
     use super::*;
-    use pretty_assertions::assert_eq;
+    use jswt_assert::assert_debug_snapshot;
 
     #[test]
     fn test_tokenize_number() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "42");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("test.1", "42", TokenType::Number, 0)];
-        assert_eq!(expected, actual)
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_numbers_with_whitespace() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "   4  2   ");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![
-            Token::new("test.1", "4", TokenType::Number, 3),
-            Token::new("test.1", "2", TokenType::Number, 6),
-        ];
-        assert_eq!(expected, actual)
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_string() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "\"Hello World\"");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new(
-            "test.1",
-            "\"Hello World\"",
-            TokenType::String,
-            0,
-        )];
-        assert_eq!(expected, actual)
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_braces() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{}");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![
-            Token::new("test.1", "{", TokenType::LeftBrace, 0),
-            Token::new("test.1", "}", TokenType::RightBrace, 1),
-        ];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_parens() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "()");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![
-            Token::new("test.1", "(", TokenType::LeftParen, 0),
-            Token::new("test.1", ")", TokenType::RightParen, 1),
-        ];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_comma() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ",");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("test.1", ",", TokenType::Comma, 0)];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_less_than() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "<");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("test.1", "<", TokenType::Less, 0)];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_less_than_equal() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "<=");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("test.1", "<=", TokenType::LessEqual, 0)];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_greater_than() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ">");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("test.1", ">", TokenType::Greater, 0)];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_greater_than_equal() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ">=");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("test.1", ">=", TokenType::GreaterEqual, 0)];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_equal() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "=");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("test.1", "=", TokenType::Equal, 0)];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_semi_colon() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ";");
-
         let actual = tokenizer.tokenize();
-        let expected = vec![Token::new("test.1", ";", TokenType::Semi, 0)];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_whitespace_generates_no_tokens() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "  ");
-
         let actual = tokenizer.tokenize();
-        let expected: Vec<Token> = vec![];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_identifiers() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "user identifier");
-
         let actual = tokenizer.tokenize();
-        let expected: Vec<Token> = vec![
-            Token::new("test.1", "user", TokenType::Identifier, 0),
-            Token::new("test.1", "identifier", TokenType::Identifier, 5),
-        ];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_alphanumeric_identifiers() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "i32");
-
         let actual = tokenizer.tokenize();
-        let expected: Vec<Token> = vec![Token::new("test.1", "i32", TokenType::Identifier, 0)];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_keywords() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let false true return function");
-
         let actual = tokenizer.tokenize();
-        let expected: Vec<Token> = vec![
-            Token::new("test.1", "let", TokenType::Let, 0),
-            Token::new("test.1", "false", TokenType::False, 4),
-            Token::new("test.1", "true", TokenType::True, 10),
-            Token::new("test.1", "return", TokenType::Return, 15),
-            Token::new("test.1", "function", TokenType::Function, 22),
-        ];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_let_assignment() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let a = 99");
-
         let actual = tokenizer.tokenize();
-        let expected: Vec<Token> = vec![
-            Token::new("test.1", "let", TokenType::Let, 0),
-            Token::new("test.1", "a", TokenType::Identifier, 4),
-            Token::new("test.1", "=", TokenType::Equal, 6),
-            Token::new("test.1", "99", TokenType::Number, 8),
-        ];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_tokenize_annotation() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "@test(\"(local.get 0)\")");
-
         let actual = tokenizer.tokenize();
-        let expected: Vec<Token> = vec![
-            Token::new("test.1", "@", TokenType::At, 0),
-            Token::new("test.1", "test", TokenType::Identifier, 1),
-            Token::new("test.1", "(", TokenType::LeftParen, 5),
-            Token::new("test.1", "\"(local.get 0)\"", TokenType::String, 6),
-            Token::new("test.1", ")", TokenType::RightParen, 21),
-        ];
-        assert_eq!(expected, actual);
+        assert_debug_snapshot!(actual);
     }
 }

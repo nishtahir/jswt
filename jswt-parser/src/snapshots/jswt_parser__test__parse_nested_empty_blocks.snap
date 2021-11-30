@@ -1,0 +1,38 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Program {
+    source_elements: SourceElements {
+        source_elements: [
+            Statement(
+                Block(
+                    BlockStatement {
+                        span: Span {
+                            file: "test.1",
+                            start: 0,
+                            end: 6,
+                        },
+                        statements: StatementList {
+                            statements: [
+                                Block(
+                                    BlockStatement {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 2,
+                                            end: 4,
+                                        },
+                                        statements: StatementList {
+                                            statements: [],
+                                        },
+                                    },
+                                ),
+                            ],
+                        },
+                    },
+                ),
+            ),
+        ],
+    },
+}

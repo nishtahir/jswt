@@ -13,7 +13,7 @@ use std::rc::Rc;
 use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, Store};
 
 use jswt::errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
-use jswt::Resolver;
+use jswt_semantics::Resolver;
 use jswt_codegen::CodeGenerator;
 use jswt_parser::Parser;
 use jswt_tokenizer::Tokenizer;

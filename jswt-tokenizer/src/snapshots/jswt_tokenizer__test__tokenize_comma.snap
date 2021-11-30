@@ -1,0 +1,13 @@
+---
+source: jswt-tokenizer/src/lib.rs
+expression: actual
+
+---
+[
+    Token {
+        file: "test.1",
+        lexme: ",",
+        offset: 0,
+        kind: Comma,
+    },
+]

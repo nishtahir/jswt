@@ -1,0 +1,51 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Program {
+    source_elements: SourceElements {
+        source_elements: [
+            Statement(
+                Variable(
+                    VariableStatement {
+                        span: Span {
+                            file: "test.1",
+                            start: 0,
+                            end: 11,
+                        },
+                        modifier: Let(
+                            Span {
+                                file: "test.1",
+                                start: 0,
+                                end: 3,
+                            },
+                        ),
+                        target: Identifier(
+                            Ident {
+                                span: Span {
+                                    file: "test.1",
+                                    start: 4,
+                                    end: 5,
+                                },
+                                value: "x",
+                            },
+                        ),
+                        expression: Literal(
+                            Number(
+                                NumberLiteral {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 8,
+                                        end: 10,
+                                    },
+                                    value: 42,
+                                },
+                            ),
+                        ),
+                    },
+                ),
+            ),
+        ],
+    },
+}
