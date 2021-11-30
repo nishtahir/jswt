@@ -66,7 +66,6 @@ pub enum TokenType {
     // Keywords
     True,
     False,
-    Print,
     Function,
     Import,
     Export,

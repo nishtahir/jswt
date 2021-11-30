@@ -83,7 +83,6 @@ lazy_static! {
         // Keywords
         r"^\btrue\b" => TokenType::True,
         r"^\bfalse\b" => TokenType::False,
-        r"^\bprint\b" => TokenType::Print,
         r"^\bfunction\b" => TokenType::Function,
         r"^\bexport\b" => TokenType::Export,
         r"^\bimport\b" => TokenType::Import,
@@ -397,6 +396,22 @@ mod test {
     fn test_tokenize_annotation() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "@test(\"(local.get 0)\")");
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_tokenize_if_statement() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "if(x == y) { return 0; } else { return 1; }");
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_tokenize_if_else_if_statement() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "if(x == y) { return 0; } else { return 1; }");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }

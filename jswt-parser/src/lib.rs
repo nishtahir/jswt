@@ -262,10 +262,9 @@ impl<'a> Parser<'a> {
     ///   ;
     fn while_statement(&mut self) -> Result<IterationStatement, ParseError> {
         let start = consume!(self, TokenType::While)?;
-        consume!(self, TokenType::LeftParen);
+        consume!(self, TokenType::LeftParen)?;
         let expression = self.single_expression()?;
-        consume!(self, TokenType::RightParen);
-
+        consume!(self, TokenType::RightParen)?;
         let statement = self.statement()?;
 
         Ok(WhileIterationElement {
@@ -884,9 +883,34 @@ mod test {
     }
 
     #[test]
+    fn test_parse_if_statement() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "if(x == y) { return 0; } else { return 1; }");
+        let actual = Parser::new(&mut tokenizer).parse();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_parse_if_else_if_statement() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "if(x == y) { return 0; } else if (x > y) { return 1; } else { return -1; }");
+        let actual = Parser::new(&mut tokenizer).parse();
+        assert_debug_snapshot!(actual);
+    }
+
+
+    #[test]
     fn test_parse_while_iteration_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "while(x < 99) { println(\"hey taco\"); }");
+        let actual = Parser::new(&mut tokenizer).parse();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_parse_arguments_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "print(6);");
         let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }

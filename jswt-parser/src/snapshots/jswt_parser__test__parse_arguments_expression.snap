@@ -1,0 +1,66 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        source_elements: SourceElements {
+            source_elements: [
+                Statement(
+                    Expression(
+                        ExpressionStatement {
+                            span: Span {
+                                file: "test.1",
+                                start: 0,
+                                end: 9,
+                            },
+                            expression: Arguments(
+                                ArgumentsExpression {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 0,
+                                        end: 8,
+                                    },
+                                    ident: Identifier(
+                                        IdentifierExpression {
+                                            ident: Ident {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    start: 0,
+                                                    end: 5,
+                                                },
+                                                value: "print",
+                                            },
+                                        },
+                                    ),
+                                    arguments: ArgumentsList {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 5,
+                                            end: 8,
+                                        },
+                                        arguments: [
+                                            Literal(
+                                                Number(
+                                                    NumberLiteral {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            start: 6,
+                                                            end: 7,
+                                                        },
+                                                        value: 6,
+                                                    },
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                },
+                            ),
+                        },
+                    ),
+                ),
+            ],
+        },
+    },
+}
