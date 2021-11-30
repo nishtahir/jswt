@@ -3,32 +3,34 @@ source: jswt-parser/src/lib.rs
 expression: actual
 
 ---
-Program {
-    source_elements: SourceElements {
-        source_elements: [
-            Statement(
-                Return(
-                    ReturnStatement {
-                        span: Span {
-                            file: "test.1",
-                            start: 0,
-                            end: 10,
-                        },
-                        expression: Literal(
-                            Number(
-                                NumberLiteral {
-                                    span: Span {
-                                        file: "test.1",
-                                        start: 7,
-                                        end: 9,
+Ast {
+    program: Program {
+        source_elements: SourceElements {
+            source_elements: [
+                Statement(
+                    Return(
+                        ReturnStatement {
+                            span: Span {
+                                file: "test.1",
+                                start: 0,
+                                end: 10,
+                            },
+                            expression: Literal(
+                                Number(
+                                    NumberLiteral {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 7,
+                                            end: 9,
+                                        },
+                                        value: 99,
                                     },
-                                    value: 99,
-                                },
+                                ),
                             ),
-                        ),
-                    },
+                        },
+                    ),
                 ),
-            ),
-        ],
+            ],
+        },
     },
 }

@@ -162,6 +162,7 @@ impl Visitor for CodeGenerator {
             StatementElement::Variable(stmt) => self.visit_variable_statement(stmt),
             StatementElement::Expression(stmt) => self.visit_expression_statement(stmt),
             StatementElement::If(stmt) => self.visit_if_statement(stmt),
+            StatementElement::Iteration(_) => todo!(),
         }
     }
 

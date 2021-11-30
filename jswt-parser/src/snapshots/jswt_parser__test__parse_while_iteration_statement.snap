@@ -1,0 +1,130 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        source_elements: SourceElements {
+            source_elements: [
+                Statement(
+                    Iteration(
+                        While(
+                            WhileIterationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    start: 0,
+                                    end: 38,
+                                },
+                                expression: Relational(
+                                    BinaryExpression {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 6,
+                                            end: 12,
+                                        },
+                                        left: Identifier(
+                                            IdentifierExpression {
+                                                ident: Ident {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        start: 6,
+                                                        end: 7,
+                                                    },
+                                                    value: "x",
+                                                },
+                                            },
+                                        ),
+                                        op: Less(
+                                            Span {
+                                                file: "test.1",
+                                                start: 8,
+                                                end: 9,
+                                            },
+                                        ),
+                                        right: Literal(
+                                            Number(
+                                                NumberLiteral {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        start: 10,
+                                                        end: 12,
+                                                    },
+                                                    value: 99,
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                statement: Block(
+                                    BlockStatement {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 14,
+                                            end: 38,
+                                        },
+                                        statements: StatementList {
+                                            statements: [
+                                                Expression(
+                                                    ExpressionStatement {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            start: 16,
+                                                            end: 36,
+                                                        },
+                                                        expression: Arguments(
+                                                            ArgumentsExpression {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    start: 16,
+                                                                    end: 35,
+                                                                },
+                                                                ident: Identifier(
+                                                                    IdentifierExpression {
+                                                                        ident: Ident {
+                                                                            span: Span {
+                                                                                file: "test.1",
+                                                                                start: 16,
+                                                                                end: 23,
+                                                                            },
+                                                                            value: "println",
+                                                                        },
+                                                                    },
+                                                                ),
+                                                                arguments: ArgumentsList {
+                                                                    span: Span {
+                                                                        file: "test.1",
+                                                                        start: 23,
+                                                                        end: 35,
+                                                                    },
+                                                                    arguments: [
+                                                                        Literal(
+                                                                            String(
+                                                                                StringLiteral {
+                                                                                    span: Span {
+                                                                                        file: "test.1",
+                                                                                        start: 24,
+                                                                                        end: 34,
+                                                                                    },
+                                                                                    value: "hey taco",
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                    ],
+                                                                },
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                    },
+                                ),
+                            },
+                        ),
+                    ),
+                ),
+            ],
+        },
+    },
+}

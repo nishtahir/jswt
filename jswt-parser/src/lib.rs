@@ -174,18 +174,20 @@ impl<'a> Parser<'a> {
     ///   :  Block
     ///   |  EmptyStatement
     ///   |  IfStatement
+    ///   |  IterationStatement
     ///   |  ReturnStatement
     ///   |  VariableStatement
     ///   |  ExpressionStatement
     ///   ;
     fn statement(&mut self) -> Result<StatementElement, ParseError> {
         let elem = match self.lookahead_type() {
-            Some(TokenType::LeftBrace) => self.block()?.into(),
-            Some(TokenType::Semi) => self.empty_statement()?.into(),
-            Some(TokenType::If) => self.if_statement()?.into(),
-            Some(TokenType::Return) => self.return_statement()?.into(),
-            Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?.into(),
-            _ => self.expression_statement()?.into(),
+            Some(TokenType::LeftBrace) => self.block()?,
+            Some(TokenType::Semi) => self.empty_statement()?,
+            Some(TokenType::If) => self.if_statement()?,
+            Some(TokenType::While) => self.iteration_statement()?,
+            Some(TokenType::Return) => self.return_statement()?,
+            Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?,
+            _ => self.expression_statement()?,
         };
         Ok(elem)
     }
@@ -193,29 +195,30 @@ impl<'a> Parser<'a> {
     /// Block
     ///   :  '{' statementList? '}'
     ///   ;
-    fn block(&mut self) -> Result<BlockStatement, ParseError> {
+    fn block(&mut self) -> Result<StatementElement, ParseError> {
         let start = consume!(self, TokenType::LeftBrace)?;
         let statements = self.statement_list(Some(TokenType::RightBrace))?;
         let end = consume!(self, TokenType::RightBrace)?;
         Ok(BlockStatement {
             span: start + end,
             statements,
-        })
+        }
+        .into())
     }
 
     /// EmptyStatement
     ///   : ';'
     ///   ;
-    fn empty_statement(&mut self) -> Result<EmptyStatement, ParseError> {
+    fn empty_statement(&mut self) -> Result<StatementElement, ParseError> {
         let span = consume!(self, TokenType::Semi)?;
-        Ok(EmptyStatement { span })
+        Ok(EmptyStatement { span }.into())
     }
 
     /// IfStatement
     ///   : 'if' '(' SingleExpression ')' Statement 'else' Statement
     ///   | 'if' '(' SingleExpression ')' Satement
     ///   ;
-    fn if_statement(&mut self) -> Result<IfStatement, ParseError> {
+    fn if_statement(&mut self) -> Result<StatementElement, ParseError> {
         let start = consume!(self, TokenType::If)?;
         consume!(self, TokenType::LeftParen)?;
         let condition = self.single_expression()?;
@@ -238,13 +241,45 @@ impl<'a> Parser<'a> {
             condition,
             consequence,
             alternative,
-        })
+        }
+        .into())
+    }
+
+    /// IterationStatement
+    ///   :  WhileStatement
+    ///   ;
+    fn iteration_statement(&mut self) -> Result<StatementElement, ParseError> {
+        let elem = match self.lookahead_type() {
+            Some(TokenType::While) => self.while_statement()?,
+            _ => todo!(),
+        };
+
+        Ok(elem.into())
+    }
+
+    /// WhileStatement
+    ///   : 'while' '(' SingleExpression ')' Statement
+    ///   ;
+    fn while_statement(&mut self) -> Result<IterationStatement, ParseError> {
+        let start = consume!(self, TokenType::While)?;
+        consume!(self, TokenType::LeftParen);
+        let expression = self.single_expression()?;
+        consume!(self, TokenType::RightParen);
+
+        let statement = self.statement()?;
+
+        Ok(WhileIterationElement {
+            span: start + statement.span(),
+            expression,
+            statement: Box::new(statement),
+        }
+        .into())
     }
 
     /// ReturnStatement
     ///   : 'return' SingleExpression ';'
     ///   ;
-    fn return_statement(&mut self) -> Result<ReturnStatement, ParseError> {
+    fn return_statement(&mut self) -> Result<StatementElement, ParseError> {
         let start = consume!(self, TokenType::Return)?;
         let expression = self.single_expression()?;
         let end = consume!(self, TokenType::Semi)?;
@@ -252,7 +287,8 @@ impl<'a> Parser<'a> {
         Ok(ReturnStatement {
             span: start + end,
             expression,
-        })
+        }
+        .into())
     }
 
     /// StatementList
@@ -282,7 +318,7 @@ impl<'a> Parser<'a> {
     /// VariableStatement
     ///   :  VariableModifier Assignable ('=' singleExpression)? ';'
     ///   ;
-    fn variable_statement(&mut self) -> Result<VariableStatement, ParseError> {
+    fn variable_statement(&mut self) -> Result<StatementElement, ParseError> {
         let modifier = self.variable_modifier()?;
         let target = self.assignable()?;
         consume!(self, TokenType::Equal)?;
@@ -294,7 +330,8 @@ impl<'a> Parser<'a> {
             modifier,
             target,
             expression,
-        })
+        }
+        .into())
     }
 
     /// VariableModifier
@@ -334,14 +371,15 @@ impl<'a> Parser<'a> {
     /// ExpressionStatement
     ///   : SingleExpression ';'
     ///   ;
-    fn expression_statement(&mut self) -> Result<ExpressionStatement, ParseError> {
+    fn expression_statement(&mut self) -> Result<StatementElement, ParseError> {
         let expression = self.single_expression()?;
         let end = consume!(self, TokenType::Semi)?;
 
         Ok(ExpressionStatement {
             span: expression.span() + end,
             expression,
-        })
+        }
+        .into())
     }
 
     /// SingleExpression
@@ -689,7 +727,7 @@ mod test {
     fn test_function_declaration_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { }");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -697,7 +735,7 @@ mod test {
     fn test_parse_empty_program() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -705,7 +743,7 @@ mod test {
     fn test_function_declaration_statement_with_one_param() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32) { }");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -713,7 +751,7 @@ mod test {
     fn test_function_declaration_statement_with_two_params() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32, b: f32) { }");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -721,7 +759,7 @@ mod test {
     fn test_function_declaration_statement_with_export_decorator() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function test() { }");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -729,7 +767,7 @@ mod test {
     fn test_function_declaration_statement_with_return_value() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(): i32 { }");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -737,7 +775,7 @@ mod test {
     fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(a: i32, b: i32): i32 { }");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -745,7 +783,7 @@ mod test {
     fn test_parse_empty_block() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{}");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -753,7 +791,7 @@ mod test {
     fn test_parse_nested_empty_blocks() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{ {} }");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -761,7 +799,7 @@ mod test {
     fn test_function_declaration_statement_with_block_body() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { {} }");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -769,7 +807,7 @@ mod test {
     fn test_parse_empty_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ";");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -777,7 +815,7 @@ mod test {
     fn test_parse_variable_statement_with_number() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 42;");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -785,7 +823,7 @@ mod test {
     fn test_parse_variable_statement_with_string() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = \"Hello World\";");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -793,7 +831,7 @@ mod test {
     fn test_parse_return_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "return 99;");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -801,7 +839,7 @@ mod test {
     fn test_parse_additive_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 1 + 2;");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -809,7 +847,7 @@ mod test {
     fn test_parse_multiplicative_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 * 2;");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -817,7 +855,7 @@ mod test {
     fn test_parse_nested_math_expression_has_correct_precedence() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 * 2 + 1 * 0;");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -825,7 +863,7 @@ mod test {
     fn test_parse_additive_expression_left_associativity() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 + 2 + 1 + 0;");
-        let actual = Parser::new(&mut tokenizer).parse().program;
+        let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
 
@@ -841,6 +879,14 @@ mod test {
     fn test_parse_argument_expression_with_expression_parameter() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "test(1 + 2);");
+        let actual = Parser::new(&mut tokenizer).parse();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_parse_while_iteration_statement() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "while(x < 99) { println(\"hey taco\"); }");
         let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }

@@ -75,6 +75,7 @@ pub enum TokenType {
     Return,
     Let,
     Const,
+    While,
 
     // Other
     Eof,

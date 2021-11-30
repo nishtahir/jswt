@@ -3,44 +3,46 @@ source: jswt-parser/src/lib.rs
 expression: actual
 
 ---
-Program {
-    source_elements: SourceElements {
-        source_elements: [
-            FunctionDeclaration(
-                FunctionDeclarationElement {
-                    span: Span {
-                        file: "test.1",
-                        start: 0,
-                        end: 19,
-                    },
-                    decorators: FunctionDecorators {
-                        annotation: None,
-                        export: false,
-                    },
-                    ident: Ident {
+Ast {
+    program: Program {
+        source_elements: SourceElements {
+            source_elements: [
+                FunctionDeclaration(
+                    FunctionDeclarationElement {
                         span: Span {
                             file: "test.1",
-                            start: 9,
-                            end: 13,
-                        },
-                        value: "test",
-                    },
-                    params: FormalParameterList {
-                        parameters: [],
-                    },
-                    returns: None,
-                    body: FunctionBody {
-                        span: Span {
-                            file: "test.1",
-                            start: 16,
+                            start: 0,
                             end: 19,
                         },
-                        source_elements: SourceElements {
-                            source_elements: [],
+                        decorators: FunctionDecorators {
+                            annotation: None,
+                            export: false,
+                        },
+                        ident: Ident {
+                            span: Span {
+                                file: "test.1",
+                                start: 9,
+                                end: 13,
+                            },
+                            value: "test",
+                        },
+                        params: FormalParameterList {
+                            parameters: [],
+                        },
+                        returns: None,
+                        body: FunctionBody {
+                            span: Span {
+                                file: "test.1",
+                                start: 16,
+                                end: 19,
+                            },
+                            source_elements: SourceElements {
+                                source_elements: [],
+                            },
                         },
                     },
-                },
-            ),
-        ],
+                ),
+            ],
+        },
     },
 }

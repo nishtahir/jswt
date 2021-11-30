@@ -1,5 +1,4 @@
 [tasks.coverage]
-toolchain = "nightly"
 env = { CARGO_INCREMENTAL = 0, RUSTFLAGS = "-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off" }
 run_task = { name = ["test", "grcov"] }
 
@@ -14,4 +13,13 @@ args = [
     "--branch", 
     "--ignore-not-existing",
     "-o", "./target/debug/coverage/"
+]
+
+[tasks.review]
+workspace = false
+install_crate = "cargo-insta"
+command = "cargo"
+args = [
+    "insta",
+    "review"
 ]

@@ -92,6 +92,7 @@ lazy_static! {
         r"^\breturn\b" => TokenType::Return,
         r"^\blet\b" => TokenType::Let,
         r"^\bconst\b" => TokenType::Const,
+        r"^\bwhile\b" => TokenType::While,
 
         // Multi character alternatives
         r"^<=" => TokenType::LessEqual,
@@ -396,6 +397,14 @@ mod test {
     fn test_tokenize_annotation() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "@test(\"(local.get 0)\")");
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_tokenize_while_loop() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "while(x == 99) { print(\"test\"); }");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }

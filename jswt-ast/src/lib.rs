@@ -1,10 +1,12 @@
 mod ident;
+mod iteration_statement;
 mod literal;
 mod single_expression;
 mod statement_element;
 mod visitor;
 
 pub use ident::Ident;
+pub use iteration_statement::*;
 pub use literal::*;
 pub use single_expression::*;
 pub use statement_element::*;
