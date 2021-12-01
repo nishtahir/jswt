@@ -1,8 +1,8 @@
 use crate::*;
 
-macro_rules! visitor {
+macro_rules! statement_visitor {
     ( $($fname:ident: $node:tt),*) => {
-        pub trait Visitor {
+        pub trait StatementVisitor {
             $(
                 fn $fname(&mut self, node: &$node);
             )*
@@ -10,7 +10,17 @@ macro_rules! visitor {
     };
 }
 
-visitor![
+macro_rules! expression_visitor {
+    ( $($fname:ident: $node:tt),*) => {
+        pub trait ExpressionVisitor<T> {
+            $(
+                fn $fname(&mut self, node: &$node)-> T;
+            )*
+        }
+    };
+}
+
+statement_visitor![
     visit_program: Program,
     visit_source_elements: SourceElements,
     visit_source_element: SourceElement,
@@ -23,7 +33,10 @@ visitor![
     visit_expression_statement: ExpressionStatement,
     visit_statement_list: StatementList,
     visit_function_declaration: FunctionDeclarationElement,
-    visit_function_body: FunctionBody,
+    visit_function_body: FunctionBody
+];
+
+expression_visitor![
     visit_assignable_element: AssignableElement,
     visit_single_expression: SingleExpression,
     visit_binary_expression: BinaryExpression,

@@ -1,13 +1,14 @@
 mod error;
 mod symbol;
+mod value;
 
 pub use error::SemanticError;
 
 use self::symbol::{Symbol, Type};
-use std::borrow::Borrow;
-
 use jswt_ast::*;
 use jswt_common::SymbolTable;
+use std::borrow::Borrow;
+use value::Value;
 
 impl Default for Resolver {
     fn default() -> Self {
@@ -34,7 +35,7 @@ impl Resolver {
     }
 }
 
-impl Visitor for Resolver {
+impl StatementVisitor for Resolver {
     fn visit_program(&mut self, node: &Program) {
         // Push global scope
         self.symbols.push_scope();
@@ -162,7 +163,9 @@ impl Visitor for Resolver {
         self.visit_source_elements(&node.source_elements);
         self.symbols.pop_scope();
     }
+}
 
+impl ExpressionVisitor<()> for Resolver {
     fn visit_assignable_element(&mut self, _: &AssignableElement) {
         // No-op
     }

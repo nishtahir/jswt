@@ -129,7 +129,7 @@ impl CodeGenerator {
     }
 }
 
-impl Visitor for CodeGenerator {
+impl StatementVisitor for CodeGenerator {
     fn visit_program(&mut self, node: &Program) {
         // Push global scope
         self.symbols.push_scope();
@@ -315,7 +315,8 @@ impl Visitor for CodeGenerator {
     fn visit_function_body(&mut self, node: &FunctionBody) {
         self.visit_source_elements(&node.source_elements);
     }
-
+}
+impl ExpressionVisitor<()> for CodeGenerator {
     fn visit_assignable_element(&mut self, elem: &AssignableElement) {
         // Figure out the target for an assignment
         // We assume that this is the target for
@@ -350,7 +351,6 @@ impl Visitor for CodeGenerator {
             }
         }
     }
-
     fn visit_single_expression(&mut self, node: &SingleExpression) {
         match node {
             SingleExpression::Additive(exp)
