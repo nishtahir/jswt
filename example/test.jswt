@@ -1,6 +1,10 @@
- import "./stdlib/mem.jswt";
+import "./stdlib/mem.jswt";
 
 export function main(): i32 {
-    __mm_init();
+    i32Store(0, 0);
+    while(i32Load(0) < 10) {
+        println(i32Load(0));
+        i32Store(0, i32Load(0) + 1);
+    }
     return 0;
 }

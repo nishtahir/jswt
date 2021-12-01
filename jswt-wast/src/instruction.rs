@@ -22,6 +22,8 @@ pub enum Instruction {
     Return,
     If(Vec<Instruction>, Vec<Instruction>),
     Call(&'static str, Vec<Instruction>),
+    Loop(usize, Vec<Instruction>),
+    Br(usize),
     // A meta instruction not part of the wasm specification but
     // an instruction to the code generator to inline raw instructions
     // exactly as they are provided.
@@ -71,6 +73,8 @@ impl From<&Instruction> for String {
             Instruction::I32And => "(i32.and)".into(),
             Instruction::I32Or => "(i32.or)".into(),
             Instruction::GlobalGet(name) => format!("(global.get ${})", name),
+            Instruction::Loop(label, args) => format!("(loop $loop{} {})", label, args.to_string()),
+            Instruction::Br(label) => format!("(br $loop{})", label),
         }
     }
 }

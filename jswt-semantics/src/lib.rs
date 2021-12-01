@@ -70,7 +70,7 @@ impl StatementVisitor for Resolver {
             StatementElement::Variable(stmt) => self.visit_variable_statement(stmt),
             StatementElement::Expression(stmt) => self.visit_expression_statement(stmt),
             StatementElement::If(stmt) => self.visit_if_statement(stmt),
-            StatementElement::Iteration(_) => todo!(),
+            StatementElement::Iteration(stmt) => self.visit_iteration_statement(stmt),
         }
     }
 
@@ -104,6 +104,16 @@ impl StatementVisitor for Resolver {
                 self.errors.push(error);
             }
         }
+    }
+
+    fn visit_iteration_statement(&mut self, node: &IterationStatement) {
+        match node {
+            IterationStatement::While(elem) => self.visit_while_iteration_element(elem),
+        }
+    }
+
+    fn visit_while_iteration_element(&mut self, node: &WhileIterationElement) {
+        // Check that exp is boolean
     }
 
     fn visit_return_statement(&mut self, node: &ReturnStatement) {

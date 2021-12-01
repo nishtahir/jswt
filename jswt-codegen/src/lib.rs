@@ -13,6 +13,7 @@ pub struct CodeGenerator {
     /// instruction to the stack
     scopes: Vec<InstructionScope>,
     symbols: SymbolTable<&'static str, WastSymbol>,
+    label_counter: usize,
 }
 
 #[derive(Debug)]
@@ -26,6 +27,7 @@ enum InstructionScopeTarget {
     // Control flow Ifs
     Then,
     Else,
+    Loop,
     Function(&'static str),
     Local(&'static str),
     Global(&'static str),
@@ -45,6 +47,7 @@ impl Default for CodeGenerator {
             module: Default::default(),
             scopes: Default::default(),
             symbols: SymbolTable::new(vec![]),
+            label_counter: 0,
         }
     }
 }
@@ -162,7 +165,7 @@ impl StatementVisitor for CodeGenerator {
             StatementElement::Variable(stmt) => self.visit_variable_statement(stmt),
             StatementElement::Expression(stmt) => self.visit_expression_statement(stmt),
             StatementElement::If(stmt) => self.visit_if_statement(stmt),
-            StatementElement::Iteration(_) => todo!(),
+            StatementElement::Iteration(stmt) => self.visit_iteration_statement(stmt),
         }
     }
 
@@ -189,6 +192,36 @@ impl StatementVisitor for CodeGenerator {
         }
         let alt = self.pop_instruction_scope().unwrap();
         self.push_instruction(Instruction::If(cons.instructions, alt.instructions));
+    }
+
+    fn visit_iteration_statement(&mut self, node: &IterationStatement) {
+        match node {
+            IterationStatement::While(elem) => self.visit_while_iteration_element(elem),
+        }
+    }
+
+    fn visit_while_iteration_element(&mut self, node: &WhileIterationElement) {
+        let loop_label = self.label_counter;
+        self.label_counter += 1;
+
+        self.push_instruction_scope(Some(InstructionScopeTarget::Loop));
+
+        // First push the expression result onto the stack
+        self.visit_single_expression(&node.expression);
+
+        // Push an if scope for branching
+        self.push_instruction_scope(Some(InstructionScopeTarget::Then));
+        // Add the statements to the scope
+        self.visit_statement_element(&node.statement);
+
+        // Add the branch back to the top of the loop to test
+        self.push_instruction(Instruction::Br(loop_label));
+
+        let if_scope = self.pop_instruction_scope().unwrap();
+        self.push_instruction(Instruction::If(if_scope.instructions, vec![]));
+        
+        let loop_scope = self.pop_instruction_scope().unwrap();
+        self.push_instruction(Instruction::Loop(loop_label, loop_scope.instructions));
     }
 
     fn visit_return_statement(&mut self, node: &ReturnStatement) {

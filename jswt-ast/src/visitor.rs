@@ -28,6 +28,8 @@ statement_visitor![
     visit_block_statement: BlockStatement,
     visit_empty_statement: EmptyStatement,
     visit_if_statement: IfStatement,
+    visit_iteration_statement: IterationStatement,
+    visit_while_iteration_element: WhileIterationElement,
     visit_return_statement: ReturnStatement,
     visit_variable_statement: VariableStatement,
     visit_expression_statement: ExpressionStatement,
