@@ -219,7 +219,7 @@ impl StatementVisitor for CodeGenerator {
 
         let if_scope = self.pop_instruction_scope().unwrap();
         self.push_instruction(Instruction::If(if_scope.instructions, vec![]));
-        
+
         let loop_scope = self.pop_instruction_scope().unwrap();
         self.push_instruction(Instruction::Loop(loop_label, loop_scope.instructions));
     }
@@ -350,6 +350,26 @@ impl StatementVisitor for CodeGenerator {
     }
 }
 impl ExpressionVisitor<()> for CodeGenerator {
+    fn visit_assignment_expression(&mut self, node: &BinaryExpression) {
+        // Push scope for value
+        self.push_instruction_scope(None);
+        self.visit_single_expression(node.right.borrow());
+        let rhs_scope = self.pop_instruction_scope().unwrap();
+
+        match node.left.borrow() {
+            SingleExpression::Identifier(exp) => {
+                let name = exp.ident.value;
+                if self.symbols.lookup_global(&name).is_some() {
+                    self.push_instruction(Instruction::GlobalSet(name, rhs_scope.instructions))
+                } else {
+                    self.push_instruction(Instruction::LocalSet(name, rhs_scope.instructions))
+                }
+                // figure out the scope of the variable
+            }
+            _ => todo!(),
+        };
+    }
+
     fn visit_assignable_element(&mut self, elem: &AssignableElement) {
         // Figure out the target for an assignment
         // We assume that this is the target for
@@ -384,6 +404,7 @@ impl ExpressionVisitor<()> for CodeGenerator {
             }
         }
     }
+
     fn visit_single_expression(&mut self, node: &SingleExpression) {
         match node {
             SingleExpression::Additive(exp)
@@ -394,6 +415,7 @@ impl ExpressionVisitor<()> for CodeGenerator {
             SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
             SingleExpression::Literal(lit) => self.visit_literal(lit),
+            SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
         }
     }
 
@@ -408,7 +430,7 @@ impl ExpressionVisitor<()> for CodeGenerator {
             BinaryOperator::Mult(_) => Instruction::I32Mul,
             BinaryOperator::Equal(_) => Instruction::I32Eq,
             BinaryOperator::NotEqual(_) => Instruction::I32Neq,
-            BinaryOperator::Div(_) => todo!(),
+            BinaryOperator::Div(_) => Instruction::I32Div,
             BinaryOperator::And(_) => Instruction::I32And,
             BinaryOperator::Or(_) => Instruction::I32Or,
             BinaryOperator::Greater(_) => Instruction::I32Gt,

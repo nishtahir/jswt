@@ -17,15 +17,6 @@ impl Token {
             kind,
         }
     }
-
-    pub fn eof(file: &str, offset: usize) -> Self {
-        Token {
-            file: file.to_owned(),
-            lexme: "",
-            kind: TokenType::Eof,
-            offset,
-        }
-    }
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -75,7 +66,4 @@ pub enum TokenType {
     Let,
     Const,
     While,
-
-    // Other
-    Eof,
 }

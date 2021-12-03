@@ -1,44 +1,42 @@
 const __W_SIZE = 4; // Word and header/footer size (bytes)
 const __D_SIZE = 8; // Double word size (bytes)
-const __PAGE_SIZE = 1; // Extend the heap by this amount
 
-let __mem_heap = 0; // Pointer to first byte of the heap
-let __mem_brk = 1; // Pointer to last byte of the heap + 1
-let __mem_max_addr = 1025; // Max legal heap + 1
+// Offset by 16 bytes 
+let __heapPointer = 16;
 
-let __heap_list_ptr = 0;
-
-// Initialize the memory manager runtime
-function __mm_init() {
-    // Empty heap has already been allocated by the module loader
-    let startAddr = __mem_brk;
-    i32Store(startAddr, 0); // Allignment Padding
-    i32Store(__heap_list_ptr + 1 * __W_SIZE, __pack(__D_SIZE, 1)); // Prologue Header
-    i32Store(__heap_list_ptr + 2 * __W_SIZE, __pack(__D_SIZE, 1)); // Prologue Footer
-    i32Store(__heap_list_ptr + 3 * __W_SIZE, __pack(0, 1)); // Epilogue Header
-
-    // TODO - implement assignment
-    __setHeapListPtr(__heap_list_ptr + 2 * __W_SIZE);
-}
-
-function __mm_free(blockPointer: i32) {
-    let headerPointer = __headerPointer(blockPointer);
-    let size = __getSize(headerPointer);
-
-    i32Store(headerPointer, __pack(size, 0));
-
-    let footerPointer = __footerPointer(blockPointer);
-    i32Store(footerPointer, __pack(size, 0));
-    // TODO - coalesce blocks
-}
-
+// Naive bump allocator
+// Allocates a block by adding a header and footer
+// then proceeds to increment the heap pointer
 function __mm_malloc(size: i32): i32 {
-    // TODO
-    return 0;
+
+    if (size == 0) {
+        return 0;
+    }
+
+    // Compute adjusted block size which needs to be
+    // a multiple of 8
+    let adjustedBlockSize = 0;
+    if (size <= __D_SIZE) {
+        adjustedBlockSize = 2 * __D_SIZE;
+    } else {
+        // Don't have parens yet
+        adjustedBlockSize = nextMultipleOf8(size) + __D_SIZE;
+    }
+
+    // Place the header and footer then 
+    // bump the allocation pointer
+    __place(__heapPointer, adjustedBlockSize);
+    let oldPointer = __heapPointer;
+    __heapPointer = __heapPointer + adjustedBlockSize;
+    
+    return oldPointer;
 }
 
-@wast("(global.set $__heap_list_ptr (local.get $value))")
-function __setHeapListPtr(value: i32) { }
+
+function __place(blockPointer: i32, size: i32) {
+    i32Store(__headerPointer(blockPointer), __pack(size, 1));
+    i32Store(__footerPointer(blockPointer), __pack(size, 1));
+}
 
 // Computed header pointer from the given block pointer
 function __headerPointer(blockPointer: i32): i32 {
@@ -76,6 +74,7 @@ function __pack(size: i32, alloc: i32): i32 {
     return size | alloc;
 }
 
+
 // Single max utility function
 function __max(a: i32, b: i32): i32 {
     if (a > b) {
@@ -93,4 +92,9 @@ function i32Store(index: i32, value: i32) { }
 // i32.not an valid i32 instruction. So we have to rely on
 // an intentional underflow. Discussion here
 // https://github.com/WebAssembly/design/issues/379
-function i32not(value: i32): i32 { return 0 - value; }
+// https://github.com/WebAssembly/design/issues/701
+@wast("(i32.xor (local.get $value) (i32.const -1))")
+function i32not(value: i32): i32 { }
+
+@wast("(i32.and (i32.add (local.get $value) (i32.const 7)) (i32.const -8))")
+function nextMultipleOf8(value: i32): i32 { }

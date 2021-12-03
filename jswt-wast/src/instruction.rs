@@ -11,6 +11,7 @@ pub enum Instruction {
     I32Add,
     I32Sub,
     I32Mul,
+    I32Div,
     I32Eq,
     I32Neq,
     I32And,
@@ -38,6 +39,7 @@ impl From<&Instruction> for String {
             Instruction::I32Add => "(i32.add)".into(),
             Instruction::I32Sub => "(i32.sub)".into(),
             Instruction::I32Mul => "(i32.mul)".into(),
+            Instruction::I32Div => "(i32.div_s)".into(),
             Instruction::I32Eq => "(i32.eq)".into(),
             Instruction::I32Neq => "(i32.ne)".into(),
             Instruction::I32Gt => "(i32.gt_s)".into(),
@@ -78,6 +80,7 @@ impl From<&Instruction> for String {
         }
     }
 }
+
 
 impl Stringify for Vec<Instruction> {
     fn to_string(&self) -> String {

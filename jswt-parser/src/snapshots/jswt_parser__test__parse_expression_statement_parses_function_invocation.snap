@@ -55,6 +55,11 @@ Ast {
                                                         },
                                                         ident: Identifier(
                                                             IdentifierExpression {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    start: 25,
+                                                                    end: 29,
+                                                                },
                                                                 ident: Ident {
                                                                     span: Span {
                                                                         file: "test.1",

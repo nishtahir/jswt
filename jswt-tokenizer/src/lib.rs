@@ -4,22 +4,11 @@ mod token;
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::{
-    cell::RefCell,
-    collections::HashMap,
-    fs,
-    path::{Path, PathBuf},
-    rc::Rc,
-};
+use std::{cell::RefCell, collections::HashMap, fs, path::PathBuf, rc::Rc};
 
 pub use errors::TokenizerError;
 pub use source::Source;
 pub use token::{Token, TokenType};
-
-// Utility to read a file from a given path
-fn read_to_string(path: &Path) -> String {
-    fs::read_to_string(&path).unwrap()
-}
 
 macro_rules! rules {
     ($($e:expr => $i:expr),*) => {
@@ -107,7 +96,7 @@ lazy_static! {
         r"^\|" => TokenType::Or,
         r"^\~" => TokenType::Not,
         r"^\*" => TokenType::Star,
-        r"^\\" => TokenType::Slash,
+        r"^/" => TokenType::Slash,
         r"^\+" => TokenType::Plus,
         r"^\-" => TokenType::Minus,
         r"^@" => TokenType::At,
@@ -224,7 +213,7 @@ impl Tokenizer {
 
         // We're intentionally leaking this to make lifetime management easier
         // since we plan to pass references to the original sources in place of copying it
-        let content = Box::leak(read_to_string(&path).into_boxed_str());
+        let content = Box::leak(fs::read_to_string(&path).unwrap().into_boxed_str());
         self.push_source_str(qualified_path, content)
     }
 

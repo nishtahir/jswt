@@ -1,10 +1,12 @@
 pub use jswt_common::{Span, Spannable};
+use jswt_derive::Spannable;
 
 pub use crate::ident::Ident;
 use crate::Literal;
 
 #[derive(Debug, PartialEq)]
 pub enum SingleExpression {
+    Assignment(BinaryExpression),
     Arguments(ArgumentsExpression),
     Multiplicative(BinaryExpression),
     Bitwise(BinaryExpression),
@@ -26,33 +28,22 @@ impl Spannable for SingleExpression {
             SingleExpression::Equality(exp) => exp.span(),
             SingleExpression::Bitwise(exp) => exp.span(),
             SingleExpression::Relational(exp) => exp.span(),
+            SingleExpression::Assignment(exp) => exp.span(),
         }
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct ArgumentsExpression {
     pub span: Span,
     pub ident: Box<SingleExpression>,
     pub arguments: ArgumentsList,
 }
 
-impl Spannable for ArgumentsExpression {
-    fn span(&self) -> Span {
-        self.span.to_owned()
-    }
-}
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct ArgumentsList {
     pub span: Span,
     pub arguments: Vec<SingleExpression>,
-}
-
-impl Spannable for ArgumentsList {
-    fn span(&self) -> Span {
-        self.span.to_owned()
-    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -62,7 +53,7 @@ pub struct UnaryExpression {
     expr: Box<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct BinaryExpression {
     pub span: Span,
     pub left: Box<SingleExpression>,
@@ -70,21 +61,10 @@ pub struct BinaryExpression {
     pub right: Box<SingleExpression>,
 }
 
-impl Spannable for BinaryExpression {
-    fn span(&self) -> Span {
-        self.span.to_owned()
-    }
-}
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct IdentifierExpression {
+    pub span: Span,
     pub ident: Ident,
-}
-
-impl Spannable for IdentifierExpression {
-    fn span(&self) -> Span {
-        self.ident.span.to_owned()
-    }
 }
 
 #[derive(Debug, PartialEq)]

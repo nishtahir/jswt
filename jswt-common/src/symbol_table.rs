@@ -42,9 +42,17 @@ impl<K: Eq + Hash, V> SymbolTable<K, V> {
         None
     }
 
-    /// Look for the
+    /// Look for the symbol in the local scope on
+    /// the top of the stack
     pub fn lookup_current(&self, name: &K) -> Option<&V> {
         let scope = self.table.last()?;
+        scope.get(name)
+    }
+
+    /// Look for the symbol in the local scope on
+    /// the bottom of the stack
+    pub fn lookup_global(&self, name: &K) -> Option<&V> {
+        let scope = self.table.first()?;
         scope.get(name)
     }
 

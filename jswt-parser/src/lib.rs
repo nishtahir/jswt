@@ -123,7 +123,7 @@ impl<'a> Parser<'a> {
     fn program(&mut self) -> Program {
         Program {
             // Read until the end of the file
-            source_elements: self.source_elements(Some(TokenType::Eof)),
+            source_elements: self.source_elements(None),
         }
     }
 
@@ -389,11 +389,20 @@ impl<'a> Parser<'a> {
     ///   | SingleExpression ('==' | '!=') SingleExpression
     ///   | SingleExpression '&' SingleExpression
     ///   | SingleExpression '|' SingleExpression
-    ///   | SingleExpression '=' SingleExpression # assignment - TODO
+    ///   | SingleExpression '=' SingleExpression
     ///   ;
     fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        self.bitwise_or_expression()
+        self.assignment_expression()
     }
+
+    //  AssignmentExpression
+    //    : BitwiseOrExpression '=' BitwiseOrExpression
+    //    ;
+    binary_expression!(
+        assignment_expression,
+        next: bitwise_or_expression,
+        [exp => Assignment, op => Assign, token => Equal]
+    );
 
     //  BitwiseOrExpression
     //    : BitwiseAndExpression '|' BitwiseAndExpression
@@ -479,8 +488,10 @@ impl<'a> Parser<'a> {
     ///   ;
     fn identifier_expression(&mut self) -> Result<SingleExpression, ParseError> {
         if self.lookahead_is(TokenType::Identifier) {
+            let ident = ident!(self);
             return Ok(SingleExpression::Identifier(IdentifierExpression {
-                ident: ident!(self),
+                span: ident.span.to_owned(),
+                ident,
             }));
         }
         // If we can't find an ident, continue by trying to resolve a literal
@@ -893,11 +904,13 @@ mod test {
     #[test]
     fn test_parse_if_else_if_statement() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "if(x == y) { return 0; } else if (x > y) { return 1; } else { return -1; }");
+        tokenizer.push_source_str(
+            "test.1",
+            "if(x == y) { return 0; } else if (x > y) { return 1; } else { return -1; }",
+        );
         let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
-
 
     #[test]
     fn test_parse_while_iteration_statement() {

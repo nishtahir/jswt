@@ -39,6 +39,7 @@ statement_visitor![
 ];
 
 expression_visitor![
+    visit_assignment_expression: BinaryExpression,
     visit_assignable_element: AssignableElement,
     visit_single_expression: SingleExpression,
     visit_binary_expression: BinaryExpression,

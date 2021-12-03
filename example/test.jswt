@@ -1,10 +1,15 @@
 import "./stdlib/mem.jswt";
 
 export function main(): i32 {
-    i32Store(0, 0);
-    while(i32Load(0) < 10) {
-        println(i32Load(0));
-        i32Store(0, i32Load(0) + 1);
-    }
+    let pointer = __mm_malloc(11);
+    println(pointer);
+    println(__getSize(__headerPointer(pointer)));
+        
+    let pointer2 = __mm_malloc(50);
+    println(pointer2);
+
+    let pointer3 = __mm_malloc(4);
+    println(pointer3);
+
     return 0;
 }

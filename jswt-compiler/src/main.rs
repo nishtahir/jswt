@@ -146,6 +146,8 @@ fn main() {
                     .collect::<Vec<String>>()
                     .join(" ")
             })
+            .enumerate()
+            .map(|(i, line)| format!("{:04X?}0  {}", i, line))
             .collect::<Vec<String>>()
             .join("\n");
 
