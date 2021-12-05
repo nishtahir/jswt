@@ -3,4 +3,4 @@ source: jswt-errors/src/codeframe.rs
 expression: actual
 
 ---
-" \u{1b}[90m 1 |\u{1b}[0m \u{1b}[90mfunction a(b, c) {\u{1b}[0m\n> 2 |   return b + c;\n    |   ^^^^^^^^^^^^^ test message\n \u{1b}[90m 3 |\u{1b}[0m \u{1b}[90m}\u{1b}[0m"
+"  1 | function a(b, c) {\n> 2 |   return b + c;\n    |   ^^^^^^^^^^^^^ test message\n  3 | }"
