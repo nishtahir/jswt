@@ -111,7 +111,11 @@ lazy_static! {
         // Multi character sequences
         r"^\d+" => TokenType::Number,
         r"^[_$a-zA-Z][_$a-zA-Z0-9]*" => TokenType::Identifier,
-        r#"^"[^"]*""# => TokenType::String
+        r#"^"[^"]*""# => TokenType::String,
+
+        // Skip comments
+        r"^\s+" => TokenType::WhiteSpace,
+        r"^//[^\n]*" => TokenType::Comment
     ];
 }
 
@@ -134,6 +138,11 @@ impl Tokenizer {
             source_stack: vec![],
             errors: vec![],
         }
+    }
+
+    /// Get a reference to the tokenizer's errors.
+    pub fn errors(&self) -> Vec<TokenizerError> {
+        self.errors.clone()
     }
 
     pub fn next_token(&mut self) -> Option<Token> {
@@ -160,8 +169,20 @@ impl Tokenizer {
                 let match_text = res.get(0).unwrap().as_str();
                 match directive.kind {
                     DirectiveType::Import => {
+                        let import_path = res.get(1).unwrap().as_str();
+
+                        // Construct path relative to the import file directory
+                        // as opposed to using pwd as the root path for imports
+                        let source_path = PathBuf::from(&source.name);
+                        let source_dir = source_path.parent().unwrap();
+                        let relative_source_path = PathBuf::from(format!(
+                            "{}/{}",
+                            source_dir.to_str().unwrap(),
+                            import_path
+                        ));
+
                         // Push the source where we found the import to the stack
-                        self.push_source(&PathBuf::from(res.get(1).unwrap().as_str()));
+                        self.push_source(&relative_source_path);
                     }
                     DirectiveType::Skip => {}
                 }
@@ -208,8 +229,13 @@ impl Tokenizer {
     pub fn push_source(&mut self, path: &PathBuf) {
         // Resolve the fully qualified path from relative paths
         // TODO - handle errors
+
         let path = fs::canonicalize(path).unwrap();
         let qualified_path = path.to_str().unwrap();
+        if self.source_map.borrow().get(qualified_path).is_some() {
+            // we already have this source don't reimport
+            return;
+        }
 
         // We're intentionally leaking this to make lifetime management easier
         // since we plan to pass references to the original sources in place of copying it
@@ -225,17 +251,12 @@ impl Tokenizer {
         self.source_stack.push(Rc::new(RefCell::new(source)));
     }
 
-    pub fn pop_source(&mut self) {
+    fn pop_source(&mut self) {
         self.source_stack.pop();
     }
 
-    pub fn has_more_sources(&self) -> bool {
+    fn has_more_sources(&self) -> bool {
         !self.source_stack.is_empty()
-    }
-
-    /// Get a reference to the tokenizer's errors.
-    pub fn errors(&self) -> Vec<TokenizerError> {
-        self.errors.clone()
     }
 }
 

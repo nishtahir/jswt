@@ -1,0 +1,12 @@
+---
+source: jswt-codegen/src/lib.rs
+expression: actual
+
+---
+Module {
+    globals: [],
+    types: [],
+    imports: [],
+    functions: [],
+    exports: [],
+}

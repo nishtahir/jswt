@@ -12,10 +12,10 @@ use std::process::exit;
 use std::rc::Rc;
 use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, Store};
 
-use jswt::errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
-use jswt_semantics::Resolver;
 use jswt_codegen::CodeGenerator;
+use jswt_errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
 use jswt_parser::Parser;
+use jswt_semantics::Resolver;
 use jswt_tokenizer::Tokenizer;
 
 fn main() {
@@ -112,6 +112,7 @@ fn main() {
             panic!("{}", e);
         }
     };
+
     let import_object = imports! {
         "env" => {
             "println" => Function::new_native(&store, env_println)

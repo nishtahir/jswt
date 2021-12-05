@@ -484,7 +484,7 @@ impl ExpressionVisitor<()> for CodeGenerator {
 #[cfg(test)]
 mod test {
     use super::*;
-    use jswt_assert::assert_eq;
+    use jswt_assert::*;
     use jswt_parser::Parser;
     use jswt_tokenizer::Tokenizer;
 
@@ -495,18 +495,8 @@ mod test {
         let ast = Parser::new(&mut tokenizer).parse();
 
         let mut generator = CodeGenerator::default();
-        let module = generator.generate_module(&ast);
-
-        assert_eq!(
-            module,
-            &Module {
-                globals: vec![],
-                imports: vec![],
-                exports: vec![],
-                types: vec![],
-                functions: vec![]
-            }
-        )
+        let actual = generator.generate_module(&ast);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -514,27 +504,9 @@ mod test {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() {}");
         let ast = Parser::new(&mut tokenizer).parse();
-
         let mut generator = CodeGenerator::default();
-        let module = generator.generate_module(&ast);
-
-        assert_eq!(
-            module,
-            &Module {
-                globals: vec![],
-                imports: vec![],
-                exports: vec![],
-                types: vec![FunctionType {
-                    params: vec![],
-                    ret: None
-                }],
-                functions: vec![Function {
-                    name: "test",
-                    type_idx: 0,
-                    instructions: vec![]
-                }]
-            }
-        )
+        let actual = generator.generate_module(&ast);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
@@ -544,25 +516,8 @@ mod test {
         let ast = Parser::new(&mut tokenizer).parse();
 
         let mut generator = CodeGenerator::default();
-        let module = generator.generate_module(&ast);
-
-        assert_eq!(
-            module,
-            &Module {
-                globals: vec![],
-                imports: vec![],
-                exports: vec![],
-                types: vec![FunctionType {
-                    params: vec![("a", ValueType::I32)],
-                    ret: None
-                }],
-                functions: vec![Function {
-                    name: "test",
-                    type_idx: 0,
-                    instructions: vec![]
-                }]
-            }
-        )
+        let actual = generator.generate_module(&ast);
+        assert_debug_snapshot!(actual);
     }
     #[test]
     fn test_ast_with_empty_function_with_params_and_return_value_generates_module() {
@@ -571,57 +526,19 @@ mod test {
         let ast = Parser::new(&mut tokenizer).parse();
 
         let mut generator = CodeGenerator::default();
-        let module = generator.generate_module(&ast);
-
-        assert_eq!(
-            module,
-            &Module {
-                globals: vec![],
-                imports: vec![],
-                exports: vec![],
-                types: vec![FunctionType {
-                    params: vec![("a", ValueType::I32)],
-                    ret: Some(ValueType::I32)
-                }],
-                functions: vec![Function {
-                    name: "test",
-                    type_idx: 0,
-                    instructions: vec![]
-                }]
-            }
-        )
+        let actual = generator.generate_module(&ast);
+        assert_debug_snapshot!(actual);
     }
 
     #[test]
     fn test_ast_with_function_containing_return_expression_generates_module() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { return 1 + 2; }");
-        let ast = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let ast = parser.parse();
 
         let mut generator = CodeGenerator::default();
-        let module = generator.generate_module(&ast);
-
-        assert_eq!(
-            module,
-            &Module {
-                globals: vec![],
-                imports: vec![],
-                exports: vec![],
-                types: vec![FunctionType {
-                    params: vec![],
-                    ret: None
-                }],
-                functions: vec![Function {
-                    name: "test",
-                    type_idx: 0,
-                    instructions: vec![
-                        Instruction::I32Const(1),
-                        Instruction::I32Const(2),
-                        Instruction::I32Add,
-                        Instruction::Return,
-                    ]
-                }]
-            }
-        )
+        let actual = generator.generate_module(&ast);
+        assert_debug_snapshot!(actual);
     }
 }

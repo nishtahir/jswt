@@ -1,9 +1,21 @@
+mod codeframe;
+mod highlighter;
+
+use colored::*;
+use jswt_parser::ParseError;
+use jswt_semantics::*;
+use jswt_tokenizer::TokenizerError;
 use std::collections::HashMap;
 
-use jswt_semantics::*;
-use jswt_codeframe::*;
-use jswt_parser::ParseError;
-use jswt_tokenizer::TokenizerError;
+pub enum Level {
+    Error,
+    Warning,
+}
+
+use crate::{
+    codeframe::{code_frame, location_from_offset, Location, NodeLocation},
+    highlighter::highlight,
+};
 
 pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, &'static str>) {
     match error {
@@ -12,62 +24,60 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
-            println!("{}:{}:{} - error", file, start.line, start.col,);
+            let header = create_header(file, &start, Level::Error);
 
             let error_span = NodeLocation { end, start };
-            let frame = code_frame(
+            let frame = create_codeframe(
                 source,
                 error_span,
                 &format!("Variable '{}' was not defined in this scope", name),
             );
-            println!("{}\n", frame);
+            println!("{}\n{}\n", header, frame);
         }
         SemanticError::VariableAlreadyDefined { name, span } => {
             let file = &span.file;
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
-            println!("{}:{}:{} - error", file, start.line, start.col,);
+            let header = create_header(file, &start, Level::Error);
 
             let error_span = NodeLocation { end, start };
-            let frame = code_frame(
+            let frame = create_codeframe(
                 source,
                 error_span,
                 &format!("Variable '{}' was already defined in this scope", name),
             );
-            println!("{}\n", frame);
+            println!("{}\n{}\n", header, frame);
         }
         SemanticError::FunctionAlreadyDefined { name, span } => {
             let file = &span.file;
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
-            println!("{}:{}:{} - error", file, start.line, start.col,);
+            let header = create_header(file, &start, Level::Error);
 
             let error_span = NodeLocation { end, start };
-            let frame = code_frame(
+            let frame = create_codeframe(
                 source,
                 error_span,
                 &format!("Function '{}' was already defined in this scope", name),
             );
-            println!("{}\n", frame);
+            println!("{}\n{}\n", header, frame);
         }
         SemanticError::NotAFunctionError { span, name_span } => {
             let file = &span.file;
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
-            println!("{}:{}:{} - error", file, start.line, start.col,);
-
+            let header = create_header(file, &start, Level::Error);
             let error_span = NodeLocation { end, start };
-
             let offending_token = &source[name_span.start..name_span.end];
-            let frame = code_frame(
+            let frame = create_codeframe(
                 source,
                 error_span,
                 &format!("'{}' is not a function.", offending_token),
             );
-            println!("{}\n", frame);
+            println!("{}\n{}\n", header, frame);
         }
         SemanticError::TypeError {
             span,
@@ -78,12 +88,11 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
-            println!("{}:{}:{} - error", file, start.line, start.col,);
 
+            let header = create_header(file, &start, Level::Error);
             let error_span = NodeLocation { end, start };
-
             let offending_token = &source[offending_token.start..offending_token.end];
-            let frame = code_frame(
+            let frame = create_codeframe(
                 source,
                 error_span,
                 &format!(
@@ -91,7 +100,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
                     offending_token, expected
                 ),
             );
-            println!("{}\n", frame);
+            println!("{}\n{}\n", header, frame);
         }
     }
 }
@@ -105,8 +114,8 @@ pub fn print_tokenizer_error(error: &TokenizerError, source_map: &HashMap<String
         } => {
             let source = source_map[file];
             let location = location_from_offset(source, *offset);
-            println!("{}:{}:{} - error", file, location.line, location.col,);
 
+            let header = create_header(file, &location, Level::Error);
             let error_span = NodeLocation {
                 end: Location {
                     line: location.line,
@@ -114,13 +123,14 @@ pub fn print_tokenizer_error(error: &TokenizerError, source_map: &HashMap<String
                 },
                 start: location,
             };
-            let frame = code_frame(
+
+            let frame = create_codeframe(
                 source,
                 error_span,
                 &format!("Unrecognized token '{}'", token),
             );
 
-            println!("{}\n", frame);
+            println!("{}\n{}\n", header, frame);
         }
         TokenizerError::UnexpectedEof => todo!(),
     }
@@ -137,10 +147,10 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
-            println!("{}:{}:{} - error", file, start.line, start.col,);
 
+            let header = create_header(file, &start, Level::Error);
             let error_span = NodeLocation { end, start };
-            let frame = code_frame(
+            let frame = create_codeframe(
                 source,
                 error_span,
                 &format!(
@@ -149,7 +159,7 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
                 ),
             );
 
-            println!("{}\n", frame);
+            println!("{}\n{}\n", header, frame);
         }
         ParseError::NoViableAlternative {
             expected,
@@ -160,10 +170,10 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
-            println!("{}:{}:{} - error", file, start.line, start.col,);
 
+            let header = create_header(file, &start, Level::Error);
             let error_span = NodeLocation { end, start };
-            let frame = code_frame(
+            let frame = create_codeframe(
                 source,
                 error_span,
                 &format!(
@@ -171,8 +181,20 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
                     expected, actual
                 ),
             );
-
-            println!("{}\n", frame);
+            println!("{}\n{}\n", header, frame);
         }
     }
+}
+
+fn create_header(file: &str, location: &Location, level: Level) -> String {
+    let err = match level {
+        Level::Error => "error".bright_red().bold(),
+        Level::Warning => "warning".yellow().bold(),
+    };
+
+    format!("{}: {}:{}:{}", err, file, location.line, location.col)
+}
+
+fn create_codeframe(source: &str, location: NodeLocation, message: &str) -> String {
+    code_frame(&highlight(source), location, message)
 }

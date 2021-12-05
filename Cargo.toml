@@ -3,10 +3,10 @@
 members = [
     "jswt-ast",
     "jswt-codegen",
-    "jswt-codeframe",
     "jswt-common",
     "jswt-compiler",
     "jswt-derive",
+    "jswt-errors",
     "jswt-parser",
     "jswt-semantics",
     "jswt-tokenizer",

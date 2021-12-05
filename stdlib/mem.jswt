@@ -1,3 +1,5 @@
+import "./math.jswt";
+
 const __W_SIZE = 4; // Word and header/footer size (bytes)
 const __D_SIZE = 8; // Double word size (bytes)
 
@@ -72,15 +74,6 @@ function __getAlloc(address: i32): i32 {
 // Pack size and allocated bit into a word
 function __pack(size: i32, alloc: i32): i32 {
     return size | alloc;
-}
-
-
-// Single max utility function
-function __max(a: i32, b: i32): i32 {
-    if (a > b) {
-        return a;
-    }
-    return b;
 }
 
 @wast("(local.get $index)(i32.load offset=0 align=4)(return)")

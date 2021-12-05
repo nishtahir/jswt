@@ -1,0 +1,28 @@
+---
+source: jswt-codegen/src/lib.rs
+expression: actual
+
+---
+Module {
+    globals: [],
+    types: [
+        FunctionType {
+            params: [
+                (
+                    "a",
+                    I32,
+                ),
+            ],
+            ret: None,
+        },
+    ],
+    imports: [],
+    functions: [
+        Function {
+            name: "test",
+            type_idx: 0,
+            instructions: [],
+        },
+    ],
+    exports: [],
+}

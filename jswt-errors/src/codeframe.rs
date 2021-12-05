@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use regex::Regex;
+use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
 pub struct Location {
@@ -101,7 +100,7 @@ pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String
 
             if let Some((start_col, end_col)) = markers.get(&line_number) {
                 let marker_spacing = " ".repeat(0_i32.max(start_col - 1) as usize);
-                let number_of_markers = *end_col as usize; // const numberOfMarkers = hasMarker[1] || 1
+                let number_of_markers = *end_col as usize;
 
                 let rg = Regex::new(r"\d").unwrap();
                 let mut marker_line = format!(
@@ -115,9 +114,9 @@ pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String
                     marker_line += " ";
                     marker_line += message;
                 }
-                format!(">{} {}{}", gutter, *line, marker_line)
+                format!(">{} {}{}", gutter, line, marker_line)
             } else {
-                format!(" {} {}", gutter, *line)
+                format!(" {} {}", gutter, line)
             }
         })
         .collect::<Vec<String>>()
@@ -149,6 +148,8 @@ pub fn location_from_offset(source: &str, offset: usize) -> Location {
 
 #[cfg(test)]
 mod test {
+    use jswt_assert::assert_debug_snapshot;
+
     use super::*;
 
     #[test]
@@ -171,21 +172,6 @@ mod test {
         expected_markers.insert(3, (0, 1));
 
         assert_eq!(expected_markers, marker_lines.markers);
-    }
-
-    #[test]
-    fn test_code_frame() {
-        let err_location = NodeLocation {
-            start: Location { line: 2, col: 3 },
-            end: Location { line: 2, col: 16 },
-        };
-
-        let raw_source = "function a(b, c) {\n  return b + c;\n}";
-        let frame = code_frame(raw_source, err_location, "test message");
-        assert_eq!(
-            "  1 | function a(b, c) {\n> 2 |   return b + c;\n    |   ^^^^^^^^^^^^^ test message\n  3 | }",
-            frame
-        );
     }
 
     #[test]
@@ -221,5 +207,17 @@ mod test {
         let actual = location_from_offset(raw_source, 0);
         let expected = Location { line: 1, col: 1 };
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_code_frame() {
+        let err_location = NodeLocation {
+            start: Location { line: 2, col: 3 },
+            end: Location { line: 2, col: 16 },
+        };
+
+        let raw_source = "function a(b, c) {\n  return b + c;\n}";
+        let actual = code_frame(raw_source, err_location, "test message");
+        assert_debug_snapshot!(actual);
     }
 }

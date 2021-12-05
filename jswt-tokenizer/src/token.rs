@@ -66,4 +66,8 @@ pub enum TokenType {
     Let,
     Const,
     While,
+
+    // Other
+    WhiteSpace,
+    Comment,
 }

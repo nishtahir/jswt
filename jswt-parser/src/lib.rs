@@ -303,6 +303,7 @@ impl<'a> Parser<'a> {
                     err,
                     &[
                         TokenType::LeftBrace,
+                        TokenType::RightBrace,
                         TokenType::Semi,
                         TokenType::Return,
                         TokenType::Let,
