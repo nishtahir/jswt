@@ -18,6 +18,32 @@ function init() {
     isInit = true;
 }
 
+/**
+ * Grow the heap by the given number of pages
+ * @param pages pages to grow the heap by
+ */
+function extend(pages: i32) {
+    let prevFooter = maxAddr - 4;
+    let nBytes = pages * 65536;
+    
+    grow(pages);
+
+    hdrSetSize(maxAddr, nBytes - 8);
+    hdrSetFree(maxAddr, true);
+
+    maxAddr = maxAddr + nBytes;
+    let footer = maxAddr - 4;
+    hdrSetSize(footer, nBytes - 8);
+    hdrSetFree(footer, true);
+
+    if (hdrGetFree(prevFooter) != false) {
+        let prevSize = hdrGetSize(prevFooter);
+        let prevHdr = prevFooter - prevSize - 4;
+        hdrSetSize(prevHdr, prevSize + nBytes);
+        hdrSetSize(footer, prevSize + nBytes);
+    }
+}
+
 // read payload_size from header/footer given pointer to header/footer
 @inline("")
 function hdrGetSize(pointer: i32): i32 {
@@ -45,100 +71,9 @@ function align4(value: i32): i32 {
     return temp & 0xFFFFFFFC;
 }
 
-
-
-// ;; read is_free from header/footer
-// (func $hdr_get_free (param $ptr i32) (result i32)
-//   (i32.and (i32.load (local.get $ptr)) (i32.const 0x00000001))
-// )
-
 // i32.not an valid i32 instruction. So we have to rely on
 // an intentional underflow. Discussion here
 // https://github.com/WebAssembly/design/issues/379
 // https://github.com/WebAssembly/design/issues/701
 @wast("(i32.xor (local.get $value) (i32.const -1))")
 function i32not(value: i32): i32 { }
-
-
-// @wast("(i32.and (i32.add (local.get $value) (i32.const 7)) (i32.const -8))")
-// function nextMultipleOf8(value: i32): i32 { }
-
-// // Naive bump allocator
-// // Allocates a block by adding a header and footer
-// // then proceeds to increment the heap pointer
-// function __mm_malloc(size: i32): i32 {
-
-//     if (size == 0) {
-//         return 0;
-//     }
-
-//     // Compute adjusted block size which needs to be
-//     // a multiple of 8
-//     let adjustedBlockSize = 0;
-//     if (size <= __D_SIZE) {
-//         adjustedBlockSize = 2 * __D_SIZE;
-//     } else {
-//         // Don't have parens yet
-//         adjustedBlockSize = nextMultipleOf8(size) + __D_SIZE;
-//     }
-
-//     // Place the header and footer then 
-//     // bump the allocation pointer
-//     __place(__heapPointer, adjustedBlockSize);
-//     let oldPointer = __heapPointer;
-//     __heapPointer = __heapPointer + adjustedBlockSize;
-
-//     return oldPointer;
-// }
-
-
-// function __place(blockPointer: i32, size: i32) {
-//     i32Store(__headerPointer(blockPointer), __pack(size, 1));
-//     i32Store(__footerPointer(blockPointer), __pack(size, 1));
-// }
-
-// // Computed header pointer from the given block pointer
-// function __headerPointer(blockPointer: i32): i32 {
-//     return blockPointer - __W_SIZE;
-// }
-
-// // Computer footer pointer from the given block pointer
-// function __footerPointer(blockPointer: i32): i32 {
-//     return blockPointer + __getSize(__headerPointer(blockPointer)) - __D_SIZE;
-// }
-
-// function __nextBlockPointer(blockPointer: i32): i32 {
-//     return blockPointer + __getSize(blockPointer - __W_SIZE);
-// }
-
-// function __prevBlockPointer(blockPointer: i32): i32 {
-//     return blockPointer - __getSize(blockPointer - __D_SIZE);
-// }
-
-// // Size of the block Assuming that it's a multiple of 8
-// // The last 3 bits are assumed to be always 0
-// function __getSize(address: i32): i32 {
-//     let value = i32Load(address);
-//     return value & i32not(7);
-// }
-
-// // Compute the allocation bit. The last bit is of the block header/footer
-// // Are reserved as indicators of whether the block is allocated
-// function __getAlloc(address: i32): i32 {
-//     return i32Load(address) & 1;
-// }
-
-// // Pack size and allocated bit into a word
-// function __pack(size: i32, alloc: i32): i32 {
-//     return size | alloc;
-// }
-
-// // i32.not an valid i32 instruction. So we have to rely on
-// // an intentional underflow. Discussion here
-// // https://github.com/WebAssembly/design/issues/379
-// // https://github.com/WebAssembly/design/issues/701
-// @wast("(i32.xor (local.get $value) (i32.const -1))")
-// function i32not(value: i32): i32 { }
-
-// @wast("(i32.and (i32.add (local.get $value) (i32.const 7)) (i32.const -8))")
-// function nextMultipleOf8(value: i32): i32 { }

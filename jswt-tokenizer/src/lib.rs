@@ -61,6 +61,8 @@ lazy_static! {
         r#"^\bimport\b\s+"((?:/)?(?:[^"]+(?:/)?)+)""# => DirectiveType::Import,
         r"^\s+" => DirectiveType::Skip,
         // Skip comments
+        //https://docs.rs/regex/latest/regex/#grouping-and-flags
+        r"(?s)^/\*.*\*/" => DirectiveType::Skip,
         r"^//[^\n]*" => DirectiveType::Skip
     ];
 
@@ -115,8 +117,7 @@ lazy_static! {
         r#"^"[^"]*""# => TokenType::String,
 
         // Skip comments
-        r"^\s+" => TokenType::WhiteSpace,
-        r"^//[^\n]*" => TokenType::Comment
+        r"^\s+" => TokenType::WhiteSpace
     ];
 }
 
@@ -439,6 +440,14 @@ mod test {
     fn test_tokenize_hexadecimal_number() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "0xABCD01234");
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_tokenize_comments() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "/* content more \n content */");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
