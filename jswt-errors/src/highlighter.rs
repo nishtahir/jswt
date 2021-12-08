@@ -17,6 +17,16 @@ pub fn highlight(source: &str) -> String {
             color: Color::Cyan,
         },
         HighlightRule {
+            // built-ins
+            matcher: Regex::new(r"^\b(i32|f32|string)\b").unwrap(),
+            color: Color::Yellow,
+        },
+        HighlightRule {
+            // Ident
+            matcher: Regex::new(r"^\b\w+\b").unwrap(),
+            color: Color::White,
+        },
+        HighlightRule {
             matcher: Regex::new(r"^\d+").unwrap(),
             color: Color::Magenta,
         },

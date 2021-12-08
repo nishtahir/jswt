@@ -109,6 +109,7 @@ lazy_static! {
         r"^\}"=> TokenType::RightBrace,
 
         // Multi character sequences
+        r"^0[xX][0-9a-fA-F]+" => TokenType::HexNumber,
         r"^\d+" => TokenType::Number,
         r"^[_$a-zA-Z][_$a-zA-Z0-9]*" => TokenType::Identifier,
         r#"^"[^"]*""# => TokenType::String,
@@ -430,6 +431,14 @@ mod test {
     fn test_tokenize_while_loop() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "while(x == 99) { print(\"test\"); }");
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_tokenize_hexadecimal_number() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "0xABCD01234");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }

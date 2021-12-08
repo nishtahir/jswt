@@ -15,6 +15,7 @@ jswt-errors = {path = "../jswt-errors"}
 jswt-parser = {path = "../jswt-parser"}
 jswt-semantics = {path = "../jswt-semantics"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
+jswt-wast = {path = "../jswt-wast"}
 wasmer = "2.0.0"
 
 [dev-dependencies]

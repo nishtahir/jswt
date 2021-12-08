@@ -1,0 +1,4 @@
+// @ts-nocheck
+
+import "./malloc.jswt";
+import "../stdlib/math.jswt";

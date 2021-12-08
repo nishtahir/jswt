@@ -1,6 +1,13 @@
 // Single max utility function
-function __max(a: i32, b: i32): i32 {
+function max(a: i32, b: i32): i32 {
     if (a > b) {
+        return a;
+    }
+    return b;
+}
+
+function min(a: i32, b: i32): i32 {
+    if (a < b) {
         return a;
     }
     return b;

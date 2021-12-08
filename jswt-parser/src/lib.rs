@@ -558,6 +558,17 @@ impl<'a> Parser<'a> {
                 }
                 .into()
             }
+            Some(TokenType::HexNumber) => {
+                let inner = self.lookahead.as_ref().unwrap().lexme;
+                let without_prefix = inner.trim_start_matches("0x");
+                let span = consume_unchecked!(self);
+                NumberLiteral {
+                    span,
+                    // Allow integer overflows in this specific instance
+                    value: u32::from_str_radix(without_prefix, 16).unwrap() as i32,
+                }
+                .into()
+            }
             _ => {
                 // TODO -rename this error.to something more descriptive
                 return Err(ParseError::NoViableAlternative {

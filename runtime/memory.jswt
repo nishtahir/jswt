@@ -1,0 +1,13 @@
+// @ts-nocheck
+
+// @inline("")
+@wast("(local.get $index)(i32.load offset=0 align=4)(return)")
+function i32Load(index: i32): i32 { }
+
+// @inline("")
+@wast("(local.get $index)(local.get $value)(i32.store align=4)")
+function i32Store(index: i32, value: i32) { }
+
+// @inline("")
+@wast("(drop (memory.grow (local.get $pages)))")
+function grow(pages: i32) { }

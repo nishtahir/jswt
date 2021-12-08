@@ -1,15 +1,4 @@
-import "../stdlib/mem.jswt";
-
 export function main(): i32 {
-    let pointer = __mm_malloc(11);
-    println(pointer);
-    println(__getSize(__headerPointer(pointer)));
-        
-    let pointer2 = __mm_malloc(50);
-    println(pointer2);
-
-    let pointer3 = __mm_malloc(4);
-    println(pointer3);
-
+    init();
     return 0;
 }

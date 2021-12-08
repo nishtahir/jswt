@@ -442,6 +442,7 @@ dependencies = [
  "jswt-parser",
  "jswt-semantics",
  "jswt-tokenizer",
+ "jswt-wast",
  "wasmer",
 ]
 

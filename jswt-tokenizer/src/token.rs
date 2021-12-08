@@ -53,6 +53,7 @@ pub enum TokenType {
     Identifier,
     String,
     Number,
+    HexNumber,
 
     // Keywords
     True,

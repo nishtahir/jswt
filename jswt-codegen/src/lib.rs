@@ -301,6 +301,7 @@ impl StatementVisitor for CodeGenerator {
                     }
                     _ => todo!(),
                 },
+                "inline" => {}
                 _ => todo!(),
             }
         }
