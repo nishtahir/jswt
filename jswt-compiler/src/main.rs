@@ -40,6 +40,13 @@ fn main() {
                 .takes_value(false)
                 .help("Log the memory layout after execution"),
         )
+        .arg(
+            Arg::with_name("minified")
+                .long("minified")
+                .required(false)
+                .takes_value(false)
+                .help("Minify WAST output"),
+        )
         .get_matches();
 
     let input = match matches.value_of("file") {
@@ -101,7 +108,7 @@ fn main() {
     let module = code_gen.generate_module(&ast);
 
     // Write generated wasm AST for debugging
-    let wast = module.as_wat();
+    let wast = module.as_wat(matches.is_present("minified"));
     fs::write(output.with_extension("wast"), &wast).unwrap();
 
     // Embed wasmer runtime and execute generated wasm

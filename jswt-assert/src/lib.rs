@@ -1,4 +1,5 @@
 pub use insta::assert_debug_snapshot;
+pub use insta::assert_snapshot;
 pub use pretty_assertions::assert_eq;
 /// Workaround for https://github.com/colin-kiegel/rust-pretty-assertions/issues/24
 /// Until this lands we have to use this as our string assertions

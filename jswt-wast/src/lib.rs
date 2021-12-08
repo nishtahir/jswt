@@ -90,7 +90,7 @@ pub struct FunctionExport {
 }
 
 impl Module {
-    pub fn as_wat(&self) -> String {
+    pub fn as_wat(&self, minified: bool) -> String {
         let mut wat = "(module".to_string();
 
         // Add Imports
@@ -146,7 +146,12 @@ impl Module {
             });
 
         wat += ")";
-        wat
+
+        if minified {
+            return wat;
+        }
+
+        format_wat(wat)
     }
 
     fn type_signature(&self, type_idx: usize, name: &str) -> String {
@@ -168,10 +173,52 @@ impl Module {
     }
 }
 
+// Barebones S expression formatter to make
+// WAST out put easier to read.
+fn format_wat(source: String) -> String {
+    let mut result = String::from("");
+    let mut indent = 0;
+    let mut is_char_esc = false;
+    let mut is_new_line = true;
+
+    for ch in source.chars() {
+        match ch {
+            '(' => {
+                if !is_new_line {
+                    result += &"\n";
+                }
+                if !is_char_esc {
+                    result += &"  ".repeat(indent);
+                    indent += 1;
+                }
+                is_new_line = false;
+                is_char_esc = false;
+                result.push(ch);
+            }
+            ')' => {
+                is_char_esc = false;
+                indent -= 1;
+                result.push(ch);
+            }
+            '\\' => {
+                is_char_esc = !is_char_esc;
+                result.push(ch);
+            }
+            '\n' | '\r' => { /* skip */ }
+            _ => {
+                is_char_esc = false;
+                result.push(ch)
+            }
+        }
+    }
+
+    result
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
-    use jswt_assert::assert_str_eq;
+    use jswt_assert::{assert_snapshot, assert_str_eq};
 
     #[test]
     fn test_wat_generation_for_simple_function() {
@@ -197,7 +244,14 @@ mod test {
 
         assert_str_eq!(
             "(module (memory $0 1)(func $test (i32.const 1)(i32.const 2)(i32.add)(return))(export \"memory\" (memory $0)))",
-            &module.as_wat()
+            &module.as_wat(true)
         );
+    }
+
+    #[test]
+    fn test_format_wat() {
+        let test ="(module (memory $0 1)(func $test (i32.const 1)(i32.const 2)(i32.add)(return))(export \"memory\" (memory $0)))";
+        let actual = format_wat(test.to_owned());
+        assert_snapshot!(actual);
     }
 }
