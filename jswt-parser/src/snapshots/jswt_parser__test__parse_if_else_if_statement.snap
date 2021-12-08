@@ -201,13 +201,41 @@ Ast {
                                                     },
                                                     statements: StatementList {
                                                         statements: [
-                                                            Empty(
-                                                                EmptyStatement {
+                                                            Return(
+                                                                ReturnStatement {
                                                                     span: Span {
                                                                         file: "test.1",
-                                                                        start: 71,
+                                                                        start: 62,
                                                                         end: 72,
                                                                     },
+                                                                    expression: Unary(
+                                                                        UnaryExpression {
+                                                                            span: Span {
+                                                                                file: "test.1",
+                                                                                start: 69,
+                                                                                end: 71,
+                                                                            },
+                                                                            op: Minus(
+                                                                                Span {
+                                                                                    file: "test.1",
+                                                                                    start: 69,
+                                                                                    end: 70,
+                                                                                },
+                                                                            ),
+                                                                            expr: Literal(
+                                                                                Number(
+                                                                                    NumberLiteral {
+                                                                                        span: Span {
+                                                                                            file: "test.1",
+                                                                                            start: 70,
+                                                                                            end: 71,
+                                                                                        },
+                                                                                        value: 1,
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        },
+                                                                    ),
                                                                 },
                                                             ),
                                                         ],

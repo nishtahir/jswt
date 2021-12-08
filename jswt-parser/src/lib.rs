@@ -382,15 +382,21 @@ impl<'a> Parser<'a> {
         .into())
     }
 
+    /// In increasing order of precedence. Meaning lower should have
+    /// higher precedence
+    ///
     /// SingleExpression
-    ///   : SingleExpression Arguments
-    ///   | SingleExpression ('*' | '/') SingleExpression
-    ///   | SingleExpression ('+' | '-') SingleExpression
-    ///   | SingleExpression ('<' | '>' | '<=' | '>=') SingleExpression
-    ///   | SingleExpression ('==' | '!=') SingleExpression
-    ///   | SingleExpression '&' SingleExpression
+    ///   : SingleExpression '=' SingleExpression
     ///   | SingleExpression '|' SingleExpression
-    ///   | SingleExpression '=' SingleExpression
+    ///   | SingleExpression '&' SingleExpression
+    ///   | SingleExpression ('==' | '!=') SingleExpression
+    ///   | SingleExpression ('<' | '>' | '<=' | '>=') SingleExpression
+    ///   | SingleExpression ('+' | '-') SingleExpression
+    ///   | SingleExpression ('*' | '/') SingleExpression
+    ///   | '!' SingleExpression
+    ///   | '-' SingleExpression
+    ///   | '+' SingleExpression
+    ///   | SingleExpression Arguments
     ///   ;
     fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
         self.assignment_expression()
@@ -460,13 +466,52 @@ impl<'a> Parser<'a> {
     //    ;
     binary_expression!(
         multipicative_expression,
-        next: arguments_expression,
+        next: unary_expression,
         [exp => Multiplicative, op => Mult, token => Star],
         [exp => Multiplicative, op => Div, token => Slash]
     );
 
+    /// UnaryExpression
+    ///   : '+' ArgumentsExpression
+    ///   | '-' ArgumentsExpression
+    ///   | '!' ArgumentsExpression
+    ///   ;
+    fn unary_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        if self.lookahead_is(TokenType::Plus) {
+            let op = consume_unchecked!(self);
+            let expr = self.unary_expression()?;
+            return Ok(SingleExpression::Unary(UnaryExpression {
+                span: op.to_owned() + expr.span(),
+                op: UnaryOperator::Plus(op),
+                expr: Box::new(expr),
+            }));
+        }
+
+        if self.lookahead_is(TokenType::Minus) {
+            let op = consume_unchecked!(self);
+            let expr = self.unary_expression()?;
+            return Ok(SingleExpression::Unary(UnaryExpression {
+                span: op.to_owned() + expr.span(),
+                op: UnaryOperator::Minus(op),
+                expr: Box::new(expr),
+            }));
+        }
+
+        if self.lookahead_is(TokenType::Bang) {
+            let op = consume_unchecked!(self);
+            let expr = self.unary_expression()?;
+            return Ok(SingleExpression::Unary(UnaryExpression {
+                span: op.to_owned() + expr.span(),
+                op: UnaryOperator::Not(op),
+                expr: Box::new(expr),
+            }));
+        }
+
+        self.arguments_expression()
+    }
+
     /// ArgumentsExpression
-    ///   :  AdditiveExpression ArgumentList
+    ///   :  IdentifierExpression ArgumentList
     ///   ;
     ///
     fn arguments_expression(&mut self) -> Result<SingleExpression, ParseError> {
@@ -725,7 +770,22 @@ impl<'a> Parser<'a> {
     /// by throwing out tokens until we find a new
     /// token that allows us to recover
     fn handle_error_and_recover(&mut self, e: ParseError, recovery_set: &[TokenType]) {
+        let mut fixed_with_single_char_insertion = false;
+        if let ParseError::MismatchedToken { expected, .. } = &e {
+            match expected {
+                TokenType::Semi => fixed_with_single_char_insertion = true,
+                _ => {
+                    fixed_with_single_char_insertion = false;
+                }
+            }
+        };
+
         self.errors.push(e);
+
+        if fixed_with_single_char_insertion {
+            return;
+        }
+
         while self.lookahead.is_some() {
             if recovery_set.contains(&self.lookahead.as_ref().unwrap().kind) {
                 break;
@@ -936,6 +996,14 @@ mod test {
     fn test_parse_arguments_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "print(6);");
+        let actual = Parser::new(&mut tokenizer).parse();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_parse_unary_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "-1 * 10 + -5;");
         let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }

@@ -1,26 +1,28 @@
+use std::{borrow::Borrow, fmt::Display};
+
 use crate::ValueType;
 
 #[derive(Debug, PartialEq)]
 pub enum Instruction {
     Local(&'static str, ValueType),
     LocalGet(&'static str),
-    LocalSet(&'static str, Vec<Instruction>),
-    GlobalSet(&'static str, Vec<Instruction>),
+    LocalSet(&'static str, Box<Instruction>),
+    GlobalSet(&'static str, Box<Instruction>),
     GlobalGet(&'static str),
     I32Const(i32),
-    I32Add,
-    I32Sub,
-    I32Mul,
-    I32Div,
-    I32Eq,
-    I32Neq,
-    I32And,
-    I32Or,
-    I32Gt,
-    I32Ge,
-    I32Lt,
-    I32Le,
-    Return,
+    I32Add(Box<Instruction>, Box<Instruction>),
+    I32Sub(Box<Instruction>, Box<Instruction>),
+    I32Mul(Box<Instruction>, Box<Instruction>),
+    I32Div(Box<Instruction>, Box<Instruction>),
+    I32Eq(Box<Instruction>, Box<Instruction>),
+    I32Neq(Box<Instruction>, Box<Instruction>),
+    I32And(Box<Instruction>, Box<Instruction>),
+    I32Or(Box<Instruction>, Box<Instruction>),
+    I32Gt(Box<Instruction>, Box<Instruction>),
+    I32Ge(Box<Instruction>, Box<Instruction>),
+    I32Lt(Box<Instruction>, Box<Instruction>),
+    I32Le(Box<Instruction>, Box<Instruction>),
+    Return(Box<Instruction>),
     If(Vec<Instruction>, Vec<Instruction>),
     Call(&'static str, Vec<Instruction>),
     Loop(usize, Vec<Instruction>),
@@ -30,23 +32,32 @@ pub enum Instruction {
     // exactly as they are provided.
     // Warning: No checks are performed on the input before they are inlined
     RawWast(&'static str),
+    Noop,
+}
+
+impl Display for Instruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", String::from(self))
+    }
 }
 
 impl From<&Instruction> for String {
     fn from(isr: &Instruction) -> Self {
         match isr {
             Instruction::I32Const(value) => format!("(i32.const {})", value),
-            Instruction::I32Add => "(i32.add)".into(),
-            Instruction::I32Sub => "(i32.sub)".into(),
-            Instruction::I32Mul => "(i32.mul)".into(),
-            Instruction::I32Div => "(i32.div_s)".into(),
-            Instruction::I32Eq => "(i32.eq)".into(),
-            Instruction::I32Neq => "(i32.ne)".into(),
-            Instruction::I32Gt => "(i32.gt_s)".into(),
-            Instruction::I32Ge => "(i32.ge_s)".into(),
-            Instruction::I32Lt => "(i32.lt_s)".into(),
-            Instruction::I32Le => "(i32.le_s)".into(),
-            Instruction::Return => "(return)".into(),
+            Instruction::I32Add(lhs, rhs) => format!("(i32.add {}, {})", *lhs, *rhs),
+            Instruction::I32Sub(lhs, rhs) => format!("(i32.sub {}, {})", *lhs, *rhs),
+            Instruction::I32Mul(lhs, rhs) => format!("(i32.mul {}, {})", *lhs, *rhs),
+            Instruction::I32Div(lhs, rhs) => format!("(i32.div_s {}, {})", *lhs, *rhs),
+            Instruction::I32Eq(lhs, rhs) => format!("(i32.eq {}, {})", *lhs, *rhs),
+            Instruction::I32Neq(lhs, rhs) => format!("(i32.ne {}, {})", *lhs, *rhs),
+            Instruction::I32Gt(lhs, rhs) => format!("(i32.gt_s {}, {})", *lhs, *rhs),
+            Instruction::I32Ge(lhs, rhs) => format!("(i32.ge_s {}, {})", *lhs, *rhs),
+            Instruction::I32Lt(lhs, rhs) => format!("(i32.lt_s {}, {})", *lhs, *rhs),
+            Instruction::I32Le(lhs, rhs) => format!("(i32.le_s {}, {})", *lhs, *rhs),
+            Instruction::I32And(lhs, rhs) => format!("(i32.and {}, {})", *lhs, *rhs),
+            Instruction::I32Or(lhs, rhs) => format!("(i32.or {}, {})", *lhs, *rhs),
+            Instruction::Return(instruction) => format!("(return {})", *instruction),
             Instruction::Call(name, args) => {
                 format!("(call ${} {})", name, args.to_string())
             }
@@ -64,23 +75,21 @@ impl From<&Instruction> for String {
                 // https://github.com/WebAssembly/wabt/issues/1075
                 // The wat format requires that you annotate any blocks that return values with their signature.
                 // If no signature is provided, it is assumed that the block has no parameters and no results.
-                if cons.contains(&Instruction::Return) && alt.contains(&Instruction::Return) {
-                    stmt += "(result i32)";
-                } else {
-                    stmt += &format!("(then {}) (else {})", cons.to_string(), alt.to_string());
-                }
+                // if cons.contains(&Instruction::Return() && alt.contains(&Instruction::Return) {
+                //     stmt += "(result i32)";
+                // } else {
+                //     stmt += &format!("(then {}) (else {})", cons.to_string(), alt.to_string());
+                // }
                 stmt += ")";
                 stmt
-            }
-            Instruction::I32And => "(i32.and)".into(),
-            Instruction::I32Or => "(i32.or)".into(),
+            },
             Instruction::GlobalGet(name) => format!("(global.get ${})", name),
             Instruction::Loop(label, args) => format!("(loop $loop{} {})", label, args.to_string()),
             Instruction::Br(label) => format!("(br $loop{})", label),
+            Instruction::Noop => "".into(),
         }
     }
 }
-
 
 impl Stringify for Vec<Instruction> {
     fn to_string(&self) -> String {

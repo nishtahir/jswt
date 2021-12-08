@@ -28,9 +28,6 @@ enum InstructionScopeTarget {
     Then,
     Else,
     Loop,
-    Function(&'static str),
-    Local(&'static str),
-    Global(&'static str),
 }
 
 #[derive(Debug, PartialEq)]
@@ -225,36 +222,33 @@ impl StatementVisitor for CodeGenerator {
     }
 
     fn visit_return_statement(&mut self, node: &ReturnStatement) {
-        self.visit_single_expression(&node.expression);
-        self.push_instruction(Instruction::Return);
+        let exp = self.visit_single_expression(&node.expression);
+        self.push_instruction(Instruction::Return(Box::new(exp)));
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
-        // Push scope for the initializer
-        self.push_instruction_scope(None);
-        self.visit_assignable_element(&node.target);
-        self.visit_single_expression(&node.expression);
-        let initializer_sope = self.pop_instruction_scope().unwrap();
-        match initializer_sope.target {
-            Some(InstructionScopeTarget::Local(name)) => {
-                self.push_instruction(Instruction::LocalSet(name, initializer_sope.instructions));
-            }
-            Some(InstructionScopeTarget::Global(name)) => {
-                // For global variable declarations we want to emit a global rather
-                // than an instruction.
+        // This should be assignment local.set, global.set
+        let target = self.visit_assignable_element(&node.target);
+        let exp = self.visit_single_expression(&node.expression);
+        match target {
+            Instruction::GlobalSet(name, _) => {
                 self.push_global(GlobalType {
                     name,
                     ty: ValueType::I32,
                     mutable: true, // TODO - check mutability
-                    initializer: initializer_sope.instructions,
+                    initializer: exp,
                 });
             }
-            _ => todo!(),
+            Instruction::LocalSet(name, _) => {
+                let exp = Instruction::LocalSet(name, Box::new(exp));
+                self.push_instruction(exp)
+            }
+            _ => self.push_instruction(exp),
         }
     }
 
     fn visit_expression_statement(&mut self, node: &ExpressionStatement) {
-        self.visit_single_expression(&node.expression)
+        self.visit_single_expression(&node.expression);
     }
 
     fn visit_statement_list(&mut self, node: &StatementList) {
@@ -350,64 +344,52 @@ impl StatementVisitor for CodeGenerator {
         self.visit_source_elements(&node.source_elements);
     }
 }
-impl ExpressionVisitor<()> for CodeGenerator {
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) {
-        // Push scope for value
-        self.push_instruction_scope(None);
-        self.visit_single_expression(node.right.borrow());
-        let rhs_scope = self.pop_instruction_scope().unwrap();
+impl ExpressionVisitor<Instruction> for CodeGenerator {
+    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> Instruction {
+        let exp = self.visit_single_expression(node.right.borrow());
 
         match node.left.borrow() {
-            SingleExpression::Identifier(exp) => {
-                let name = exp.ident.value;
-                if self.symbols.lookup_global(&name).is_some() {
-                    self.push_instruction(Instruction::GlobalSet(name, rhs_scope.instructions))
-                } else {
-                    self.push_instruction(Instruction::LocalSet(name, rhs_scope.instructions))
-                }
+            SingleExpression::Identifier(ident_exp) => {
+                let name = ident_exp.ident.value;
                 // figure out the scope of the variable
+                let isr = if self.symbols.lookup_global(&name).is_some() {
+                    Instruction::GlobalSet
+                } else {
+                    Instruction::LocalSet
+                };
+                isr(name, Box::new(exp))
             }
             _ => todo!(),
-        };
+        }
     }
 
-    fn visit_assignable_element(&mut self, elem: &AssignableElement) {
+    fn visit_assignable_element(&mut self, elem: &AssignableElement) -> Instruction {
         // Figure out the target for an assignment
         // We assume that this is the target for
         // the current instruction scope
         match elem {
             AssignableElement::Identifier(ident) => {
                 let name = ident.value;
-
                 // Check if this element has been defined
                 if self.symbols.lookup(&name).is_none() {
                     if self.symbols.depth() == 1 {
                         self.symbols
                             .define(name, WastSymbol::Global(name, ValueType::I32));
+                        return Instruction::GlobalSet(name, Box::new(Instruction::Noop));
                     } else {
                         self.symbols
                             .define(name, WastSymbol::Local(name, ValueType::I32));
+
+                        return Instruction::LocalSet(name, Box::new(Instruction::Noop));
                     }
                 }
-
-                // Guaranteed exists
-                // TODO fix immutable and mutable borrow
-                let sym = self.symbols.lookup(&name).unwrap();
-
-                match sym {
-                    WastSymbol::Function(_) => todo!(),
-                    WastSymbol::Param(name, _) | WastSymbol::Local(name, _) => {
-                        self.set_instruction_scope_target(Some(InstructionScopeTarget::Local(name)))
-                    }
-                    WastSymbol::Global(name, _) => self
-                        .set_instruction_scope_target(Some(InstructionScopeTarget::Global(name))),
-                }
+                unreachable!()
             }
         }
     }
 
-    fn visit_single_expression(&mut self, node: &SingleExpression) {
-        match node {
+    fn visit_single_expression(&mut self, node: &SingleExpression) -> Instruction {
+        return match node {
             SingleExpression::Additive(exp)
             | SingleExpression::Multiplicative(exp)
             | SingleExpression::Equality(exp)
@@ -417,66 +399,75 @@ impl ExpressionVisitor<()> for CodeGenerator {
             SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
             SingleExpression::Literal(lit) => self.visit_literal(lit),
             SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
+            SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
+        };
+    }
+
+    fn visit_unary_expression(&mut self, node: &UnaryExpression) -> Instruction {
+        match node.op {
+            UnaryOperator::Plus(_) => todo!(),
+            UnaryOperator::Minus(_) => todo!(),
+            UnaryOperator::Not(_) => todo!(),
         }
     }
 
-    fn visit_binary_expression(&mut self, node: &BinaryExpression) {
-        self.visit_single_expression(&node.left);
-        self.visit_single_expression(&node.right);
+    fn visit_binary_expression(&mut self, node: &BinaryExpression) -> Instruction {
+        let lhs = self.visit_single_expression(&node.left);
+        let rhs = self.visit_single_expression(&node.right);
 
         // TODO - type check before pushing op
-        let isr = match node.op {
-            BinaryOperator::Plus(_) => Instruction::I32Add,
-            BinaryOperator::Minus(_) => Instruction::I32Sub,
-            BinaryOperator::Mult(_) => Instruction::I32Mul,
-            BinaryOperator::Equal(_) => Instruction::I32Eq,
-            BinaryOperator::NotEqual(_) => Instruction::I32Neq,
-            BinaryOperator::Div(_) => Instruction::I32Div,
-            BinaryOperator::And(_) => Instruction::I32And,
-            BinaryOperator::Or(_) => Instruction::I32Or,
-            BinaryOperator::Greater(_) => Instruction::I32Gt,
-            BinaryOperator::GreaterEqual(_) => Instruction::I32Ge,
-            BinaryOperator::Less(_) => Instruction::I32Lt,
-            BinaryOperator::LessEqual(_) => Instruction::I32Le,
+        match node.op {
+            BinaryOperator::Plus(_) => Instruction::I32Add(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::Minus(_) => Instruction::I32Sub(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::Mult(_) => Instruction::I32Mul(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::Equal(_) => Instruction::I32Eq(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::NotEqual(_) => Instruction::I32Neq(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::Div(_) => Instruction::I32Div(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::And(_) => Instruction::I32And(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::Or(_) => Instruction::I32Or(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::Greater(_) => Instruction::I32Gt(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::GreaterEqual(_) => Instruction::I32Ge(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::Less(_) => Instruction::I32Lt(Box::new(lhs), Box::new(rhs)),
+            BinaryOperator::LessEqual(_) => Instruction::I32Le(Box::new(lhs), Box::new(rhs)),
             BinaryOperator::Assign(_) => todo!(),
-        };
-        self.push_instruction(isr)
-    }
-
-    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
-        let target = node.ident.value;
-        if self.symbols.lookup_current(&target).is_some() {
-            self.push_instruction(Instruction::LocalGet(target));
-        } else {
-            self.push_instruction(Instruction::GlobalGet(target));
         }
     }
 
-    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {
+    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Instruction {
+        let target = node.ident.value;
+        if self.symbols.lookup_current(&target).is_some() {
+            Instruction::LocalGet(target)
+        } else {
+            Instruction::GlobalGet(target)
+        }
+    }
+
+    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) -> Instruction {
         if let SingleExpression::Identifier(ident_exp) = node.ident.borrow() {
             // Push a new instruction scope for the
             // function call
             let function_name = ident_exp.ident.value;
-            self.push_instruction_scope(Some(InstructionScopeTarget::Function(function_name)));
+
+            let mut instructions = vec![];
             for exp in node.arguments.arguments.iter() {
-                self.visit_single_expression(exp);
+                instructions.push(self.visit_single_expression(exp));
             }
 
-            // Pop the scope containing the args instructions
-            let scope = self.pop_instruction_scope().unwrap();
-            self.push_instruction(Instruction::Call(function_name, scope.instructions));
+            return Instruction::Call(function_name, instructions);
         }
+
+        todo!()
     }
 
-    fn visit_literal(&mut self, node: &Literal) {
+    fn visit_literal(&mut self, node: &Literal) -> Instruction {
         match node {
             Literal::String(_) => todo!(),
-            Literal::Number(lit) => self.push_instruction(Instruction::I32Const(lit.value)),
+            Literal::Number(lit) => Instruction::I32Const(lit.value),
             Literal::Boolean(lit) => match lit.value {
                 // Boolean values in WebAssembly are represented as values of type i32. In a boolean context,
                 // such as a br_if condition, any non-zero value is interpreted as true and 0 is interpreted as false.
-                true => self.push_instruction(Instruction::I32Const(1)),
-                false => self.push_instruction(Instruction::I32Const(0)),
+                true => Instruction::I32Const(1),
+                false => Instruction::I32Const(0),
             },
         }
     }

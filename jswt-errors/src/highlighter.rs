@@ -13,7 +13,7 @@ pub fn highlight(source: &str) -> String {
     let rules = [
         HighlightRule {
             // Keywords
-            matcher: Regex::new(r"^(\bfunction|let|const)\b").unwrap(),
+            matcher: Regex::new(r"^(\bfunction|let|const|return)\b").unwrap(),
             color: Color::Cyan,
         },
         HighlightRule {
@@ -23,8 +23,13 @@ pub fn highlight(source: &str) -> String {
         },
         HighlightRule {
             // Ident
-            matcher: Regex::new(r"^\b\w+\b").unwrap(),
+            matcher: Regex::new(r"^\b[a-z_][A-Za-z0-9]*\b").unwrap(),
             color: Color::White,
+        },
+        HighlightRule {
+            // Class?
+            matcher: Regex::new(r"^\b[A-Za-z_][A-Za-z0-9]*\b").unwrap(),
+            color: Color::Yellow,
         },
         HighlightRule {
             matcher: Regex::new(r"^\d+").unwrap(),
@@ -53,5 +58,4 @@ pub fn highlight(source: &str) -> String {
     }
 
     highlighted_source.to_owned()
-    // Attempt to match the next token with a defined lexer rule
 }

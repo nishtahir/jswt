@@ -176,6 +176,10 @@ impl StatementVisitor for Resolver {
 }
 
 impl ExpressionVisitor<()> for Resolver {
+    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> () {
+        // We should assert the the element on the left is assignable
+    }
+
     fn visit_assignable_element(&mut self, _: &AssignableElement) {
         // No-op
     }
@@ -191,7 +195,11 @@ impl ExpressionVisitor<()> for Resolver {
             SingleExpression::Bitwise(exp) => self.visit_binary_expression(exp),
             SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
             SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
+            SingleExpression::Unary(_) => todo!(),
         }
+    }
+
+    fn visit_unary_expression(&mut self, node: &UnaryExpression) {
     }
 
     fn visit_binary_expression(&mut self, node: &BinaryExpression) {
@@ -234,10 +242,6 @@ impl ExpressionVisitor<()> for Resolver {
 
     fn visit_literal(&mut self, _: &Literal) {
         // No-op
-    }
-
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> () {
-        // We should assert the the element on the left is assignable
     }
 }
 

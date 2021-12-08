@@ -1,8 +1,6 @@
 mod instruction;
 mod value_type;
 
-use instruction::Stringify;
-
 pub use instruction::Instruction;
 pub use value_type::ValueType;
 
@@ -31,7 +29,7 @@ pub struct GlobalType {
     pub name: &'static str,
     pub ty: ValueType,
     pub mutable: bool,
-    pub initializer: Vec<Instruction>,
+    pub initializer: Instruction,
 }
 
 #[derive(Debug, Default, PartialEq)]
@@ -112,10 +110,6 @@ impl Module {
             wat += &global.ty.to_string();
             wat += ")";
 
-            // Globals accept one and only one initializer instruction.
-            // Typically to load some constant value
-            // TODO - Make this a semantic error
-            debug_assert!(global.initializer.len() == 1);
             wat += &format!("{}", global.initializer.to_string());
             wat += ")"
         });
@@ -233,19 +227,14 @@ mod test {
             functions: vec![Function {
                 name: "test",
                 type_idx: 0,
-                instructions: vec![
-                    Instruction::I32Const(1),
-                    Instruction::I32Const(2),
-                    Instruction::I32Add,
-                    Instruction::Return,
-                ],
+                instructions: vec![Instruction::Return(Box::new(Instruction::I32Add(
+                    Box::new(Instruction::I32Const(1)),
+                    Box::new(Instruction::I32Const(2)),
+                )))],
             }],
         };
-
-        assert_str_eq!(
-            "(module (memory $0 1)(func $test (i32.const 1)(i32.const 2)(i32.add)(return))(export \"memory\" (memory $0)))",
-            &module.as_wat(true)
-        );
+        let actual = &module.as_wat(true);
+        assert_snapshot!(actual);
     }
 
     #[test]

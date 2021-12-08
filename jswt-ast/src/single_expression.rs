@@ -6,6 +6,7 @@ use crate::Literal;
 
 #[derive(Debug, PartialEq)]
 pub enum SingleExpression {
+    Unary(UnaryExpression),
     Assignment(BinaryExpression),
     Arguments(ArgumentsExpression),
     Multiplicative(BinaryExpression),
@@ -29,6 +30,7 @@ impl Spannable for SingleExpression {
             SingleExpression::Bitwise(exp) => exp.span(),
             SingleExpression::Relational(exp) => exp.span(),
             SingleExpression::Assignment(exp) => exp.span(),
+            SingleExpression::Unary(exp) => exp.span(),
         }
     }
 }
@@ -46,11 +48,11 @@ pub struct ArgumentsList {
     pub arguments: Vec<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct UnaryExpression {
     pub span: Span,
-    op: UnaryOperator,
-    expr: Box<SingleExpression>,
+    pub op: UnaryOperator,
+    pub expr: Box<SingleExpression>,
 }
 
 #[derive(Debug, PartialEq, Spannable)]
@@ -71,6 +73,7 @@ pub struct IdentifierExpression {
 pub enum UnaryOperator {
     Plus(Span),
     Minus(Span),
+    Not(Span),
 }
 
 #[derive(Debug, PartialEq)]

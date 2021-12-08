@@ -48,6 +48,13 @@ fn main() {
                 .takes_value(false)
                 .help("Minify WAST output"),
         )
+        .arg(
+            Arg::with_name("no-std")
+                .long("no-std")
+                .required(false)
+                .takes_value(false)
+                .help("Do not include the runtime and stdlib"),
+        )
         .get_matches();
 
     let input = match matches.value_of("file") {
@@ -62,7 +69,7 @@ fn main() {
         None => input.clone(),
     };
 
-    let ast = compile_module(&input, &output);
+    let ast = compile_module(&input, &output, !matches.is_present("no-std"));
     let mut code_gen = CodeGenerator::default();
     let module = code_gen.generate_module(&ast);
     // Write generated wasm AST for debugging
@@ -130,7 +137,7 @@ fn main() {
     exit(1);
 }
 
-fn compile_module(input: &PathBuf, output: &PathBuf) -> Ast {
+fn compile_module(input: &PathBuf, output: &PathBuf, include_std: bool) -> Ast {
     // Main cache of source files that have been read for compilation
     // It may be worth building an abstraction around this to help with resolving paths
     // for imports and preventing issues like duplicate file reads
@@ -139,11 +146,14 @@ fn compile_module(input: &PathBuf, output: &PathBuf) -> Ast {
     // Let binding to prevent the ref being dropped before getting passed to the tokenizer
     let mut tokenizer = Tokenizer::new(source_map.clone());
     tokenizer.push_source(&input);
-    // Sources at the top of the source stack will be resolved first
-    // This has implications in the parsing and semantic analysis process
-    // As errors related to redefinitions and shadowing
-    // should point to user defined sources
-    tokenizer.push_source(&PathBuf::from("./runtime/rt.jswt"));
+
+    if include_std {
+        // Sources at the top of the source stack will be resolved first
+        // This has implications in the parsing and semantic analysis process
+        // As errors related to redefinitions and shadowing
+        // should point to user defined sources
+        tokenizer.push_source(&PathBuf::from("./runtime/rt.jswt"));
+    }
 
     // parse tokens and generate AST
     let mut parser = Parser::new(&mut tokenizer);

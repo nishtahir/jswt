@@ -1,0 +1,6 @@
+---
+source: jswt-wast/src/lib.rs
+expression: actual
+
+---
+(module (memory $0 1)(func $test (return (i32.add (i32.const 1), (i32.const 2))))(export "memory" (memory $0)))

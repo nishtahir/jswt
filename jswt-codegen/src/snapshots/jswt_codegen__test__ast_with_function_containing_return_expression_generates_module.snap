@@ -17,14 +17,16 @@ Module {
             name: "test",
             type_idx: 0,
             instructions: [
-                I32Const(
-                    1,
+                Return(
+                    I32Add(
+                        I32Const(
+                            1,
+                        ),
+                        I32Const(
+                            2,
+                        ),
+                    ),
                 ),
-                I32Const(
-                    2,
-                ),
-                I32Add,
-                Return,
             ],
         },
     ],
