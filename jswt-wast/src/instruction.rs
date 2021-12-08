@@ -23,7 +23,7 @@ pub enum Instruction {
     I32Lt(Box<Instruction>, Box<Instruction>),
     I32Le(Box<Instruction>, Box<Instruction>),
     Return(Box<Instruction>),
-    If(Vec<Instruction>, Vec<Instruction>),
+    If(Box<Instruction>, Vec<Instruction>, Vec<Instruction>),
     Call(&'static str, Vec<Instruction>),
     Loop(usize, Vec<Instruction>),
     Br(usize),
@@ -33,6 +33,15 @@ pub enum Instruction {
     // Warning: No checks are performed on the input before they are inlined
     RawWast(&'static str),
     Noop,
+}
+
+impl Instruction {
+    /// Returns `true` if the instruction is [`Return`].
+    ///
+    /// [`Return`]: Instruction::Return
+    pub fn is_return(&self) -> bool {
+        matches!(self, Self::Return(..))
+    }
 }
 
 impl Display for Instruction {
@@ -45,18 +54,18 @@ impl From<&Instruction> for String {
     fn from(isr: &Instruction) -> Self {
         match isr {
             Instruction::I32Const(value) => format!("(i32.const {})", value),
-            Instruction::I32Add(lhs, rhs) => format!("(i32.add {}, {})", *lhs, *rhs),
-            Instruction::I32Sub(lhs, rhs) => format!("(i32.sub {}, {})", *lhs, *rhs),
-            Instruction::I32Mul(lhs, rhs) => format!("(i32.mul {}, {})", *lhs, *rhs),
-            Instruction::I32Div(lhs, rhs) => format!("(i32.div_s {}, {})", *lhs, *rhs),
-            Instruction::I32Eq(lhs, rhs) => format!("(i32.eq {}, {})", *lhs, *rhs),
-            Instruction::I32Neq(lhs, rhs) => format!("(i32.ne {}, {})", *lhs, *rhs),
-            Instruction::I32Gt(lhs, rhs) => format!("(i32.gt_s {}, {})", *lhs, *rhs),
-            Instruction::I32Ge(lhs, rhs) => format!("(i32.ge_s {}, {})", *lhs, *rhs),
-            Instruction::I32Lt(lhs, rhs) => format!("(i32.lt_s {}, {})", *lhs, *rhs),
-            Instruction::I32Le(lhs, rhs) => format!("(i32.le_s {}, {})", *lhs, *rhs),
-            Instruction::I32And(lhs, rhs) => format!("(i32.and {}, {})", *lhs, *rhs),
-            Instruction::I32Or(lhs, rhs) => format!("(i32.or {}, {})", *lhs, *rhs),
+            Instruction::I32Add(lhs, rhs) => format!("(i32.add {} {})", *lhs, *rhs),
+            Instruction::I32Sub(lhs, rhs) => format!("(i32.sub {} {})", *lhs, *rhs),
+            Instruction::I32Mul(lhs, rhs) => format!("(i32.mul {} {})", *lhs, *rhs),
+            Instruction::I32Div(lhs, rhs) => format!("(i32.div_s {} {})", *lhs, *rhs),
+            Instruction::I32Eq(lhs, rhs) => format!("(i32.eq {} {})", *lhs, *rhs),
+            Instruction::I32Neq(lhs, rhs) => format!("(i32.ne {} {})", *lhs, *rhs),
+            Instruction::I32Gt(lhs, rhs) => format!("(i32.gt_s {} {})", *lhs, *rhs),
+            Instruction::I32Ge(lhs, rhs) => format!("(i32.ge_s {} {})", *lhs, *rhs),
+            Instruction::I32Lt(lhs, rhs) => format!("(i32.lt_s {} {})", *lhs, *rhs),
+            Instruction::I32Le(lhs, rhs) => format!("(i32.le_s {} {})", *lhs, *rhs),
+            Instruction::I32And(lhs, rhs) => format!("(i32.and {} {})", *lhs, *rhs),
+            Instruction::I32Or(lhs, rhs) => format!("(i32.or {} {})", *lhs, *rhs),
             Instruction::Return(instruction) => format!("(return {})", *instruction),
             Instruction::Call(name, args) => {
                 format!("(call ${} {})", name, args.to_string())
@@ -70,19 +79,20 @@ impl From<&Instruction> for String {
                 format!("(global.set ${} {})", name, args.to_string())
             }
             Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
-            Instruction::If(cons, alt) => {
-                let mut stmt = "(if ".to_owned();
+            Instruction::If(cond, cons, alt) => {
+                let mut stmt = format!("(if {}", *cond);
                 // https://github.com/WebAssembly/wabt/issues/1075
                 // The wat format requires that you annotate any blocks that return values with their signature.
                 // If no signature is provided, it is assumed that the block has no parameters and no results.
-                // if cons.contains(&Instruction::Return() && alt.contains(&Instruction::Return) {
-                //     stmt += "(result i32)";
-                // } else {
-                //     stmt += &format!("(then {}) (else {})", cons.to_string(), alt.to_string());
-                // }
+                let cons_returns = cons.iter().any(|i| i.is_return());
+                let alt_returns = alt.iter().any(|i| i.is_return());
+                if cons_returns && alt_returns {
+                    stmt += "(result i32)";
+                }
+                stmt += &format!("(then {}) (else {})", cons.to_string(), alt.to_string());
                 stmt += ")";
                 stmt
-            },
+            }
             Instruction::GlobalGet(name) => format!("(global.get ${})", name),
             Instruction::Loop(label, args) => format!("(loop $loop{} {})", label, args.to_string()),
             Instruction::Br(label) => format!("(br $loop{})", label),

@@ -175,7 +175,7 @@ impl StatementVisitor for CodeGenerator {
     }
 
     fn visit_if_statement(&mut self, node: &IfStatement) {
-        self.visit_single_expression(&node.condition);
+        let cond = self.visit_single_expression(&node.condition);
 
         // Handle the consequence instructions
         self.push_instruction_scope(Some(InstructionScopeTarget::Then));
@@ -188,7 +188,12 @@ impl StatementVisitor for CodeGenerator {
             self.visit_statement_element(alternative);
         }
         let alt = self.pop_instruction_scope().unwrap();
-        self.push_instruction(Instruction::If(cons.instructions, alt.instructions));
+
+        self.push_instruction(Instruction::If(
+            Box::new(cond),
+            cons.instructions,
+            alt.instructions,
+        ));
     }
 
     fn visit_iteration_statement(&mut self, node: &IterationStatement) {
@@ -204,7 +209,7 @@ impl StatementVisitor for CodeGenerator {
         self.push_instruction_scope(Some(InstructionScopeTarget::Loop));
 
         // First push the expression result onto the stack
-        self.visit_single_expression(&node.expression);
+        let cond = self.visit_single_expression(&node.expression);
 
         // Push an if scope for branching
         self.push_instruction_scope(Some(InstructionScopeTarget::Then));
@@ -215,7 +220,11 @@ impl StatementVisitor for CodeGenerator {
         self.push_instruction(Instruction::Br(loop_label));
 
         let if_scope = self.pop_instruction_scope().unwrap();
-        self.push_instruction(Instruction::If(if_scope.instructions, vec![]));
+        self.push_instruction(Instruction::If(
+            Box::new(cond),
+            if_scope.instructions,
+            vec![],
+        ));
 
         let loop_scope = self.pop_instruction_scope().unwrap();
         self.push_instruction(Instruction::Loop(loop_label, loop_scope.instructions));
