@@ -2,10 +2,10 @@
 
 export function main(): i32 {
     let ptr = malloc(8);
-    i32Store(ptr, 10);
-    println(ptr);
-    hdrGetSize(ptr + 4);
-    println();
+    i32Store(ptr, 9999);
+    
+    let newPtr = malloc(16);
+    memcpy(newPtr, ptr, 8);
 
     return -1;
 }

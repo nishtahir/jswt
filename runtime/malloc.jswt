@@ -115,6 +115,15 @@ function malloc(size: i32): i32 {
     return pointer;
 }
 
+function memcpy(dest: i32, src: i32, size: i32): i32 {
+    let offset = 0;
+    while(lessUnsigned(offset, size)) {
+        let data = i32Load8Unsigned(src + offset);
+        i32Store8(dest + offset, data);
+        offset = offset + 1;
+    }
+}
+
 // read payload_size from header/footer given pointer to header/footer
 @inline("")
 function hdrGetSize(pointer: i32): i32 {

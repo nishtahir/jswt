@@ -212,7 +212,7 @@ fn format_wat(source: String) -> String {
 #[cfg(test)]
 mod test {
     use super::*;
-    use jswt_assert::{assert_snapshot, assert_str_eq};
+    use jswt_assert::assert_snapshot;
 
     #[test]
     fn test_wat_generation_for_simple_function() {
