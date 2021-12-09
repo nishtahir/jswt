@@ -397,6 +397,9 @@ impl<'a> Parser<'a> {
     ///   | '-' SingleExpression
     ///   | '+' SingleExpression
     ///   | SingleExpression Arguments
+    ///   | Identifier
+    ///   | ArrayLiteral
+    ///   | Literal
     ///   ;
     fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
         self.assignment_expression()
@@ -529,21 +532,6 @@ impl<'a> Parser<'a> {
         Ok(left)
     }
 
-    /// IdentifierExpression
-    ///   : Identifier
-    ///   ;
-    fn identifier_expression(&mut self) -> Result<SingleExpression, ParseError> {
-        if self.lookahead_is(TokenType::Identifier) {
-            let ident = ident!(self);
-            return Ok(SingleExpression::Identifier(IdentifierExpression {
-                span: ident.span.to_owned(),
-                ident,
-            }));
-        }
-        // If we can't find an ident, continue by trying to resolve a literal
-        self.literal()
-    }
-
     /// ArgumentList
     ///   :  '(' SingleExpression (',' SingleExpression)* ')'
     ///   ;
@@ -565,6 +553,51 @@ impl<'a> Parser<'a> {
             span: start + end,
             arguments,
         })
+    }
+
+    /// IdentifierExpression
+    ///   : Identifier
+    ///   ;
+    fn identifier_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        if self.lookahead_is(TokenType::Identifier) {
+            let ident = ident!(self);
+            return Ok(SingleExpression::Identifier(IdentifierExpression {
+                span: ident.span.to_owned(),
+                ident,
+            }));
+        }
+        // If we can't find an ident, continue by
+        // trying to resolve an array literal
+        self.array_literal_expression()
+    }
+
+    /// ArrayLiteral
+    ///   :  '[' (SingleExpression ,)* ']'
+    ///   ;
+    fn array_literal_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        if self.lookahead_is(TokenType::LeftBracket) {
+            let start = consume_unchecked!(self);
+
+            let mut elements = vec![];
+            while !self.lookahead_is(TokenType::RightBracket) {
+                let element = self.single_expression()?;
+                elements.push(element);
+                if !self.lookahead_is(TokenType::Comma) {
+                    break;
+                }
+                // Eat the comma
+                consume_unchecked!(self);
+            }
+
+            let end = consume!(self, TokenType::RightBracket)?;
+
+            return Ok(SingleExpression::Literal(Literal::Array(ArrayLiteral {
+                span: start + end,
+                elements,
+            })));
+        };
+
+        self.literal()
     }
 
     /// Literal
@@ -1004,6 +1037,14 @@ mod test {
     fn test_parse_unary_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "-1 * 10 + -5;");
+        let actual = Parser::new(&mut tokenizer).parse();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_parse_array_literal() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "[-1, 10, -5, \"test\"];");
         let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }

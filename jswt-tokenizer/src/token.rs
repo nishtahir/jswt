@@ -22,6 +22,8 @@ impl Token {
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum TokenType {
     // Single Character Tokens
+    LeftBracket,
+    RightBracket,
     LeftParen,
     RightParen,
     LeftBrace,
@@ -71,4 +73,56 @@ pub enum TokenType {
     // Other
     WhiteSpace,
     Comment,
+}
+
+impl From<TokenType> for &'static str {
+    fn from(ty: TokenType) -> Self {
+        match ty {
+            TokenType::LeftBracket => "[",
+            TokenType::RightBracket => "]",
+            TokenType::LeftParen => "(",
+            TokenType::RightParen => ")",
+            TokenType::LeftBrace => "{",
+            TokenType::RightBrace => "}",
+            TokenType::Star => "*",
+            TokenType::Slash => "/",
+            TokenType::Plus => "+",
+            TokenType::Minus => "-",
+            TokenType::Comma => ",",
+            TokenType::Dot => ".",
+            TokenType::Semi => ";",
+            TokenType::Colon => ":",
+            TokenType::At => "@",
+            TokenType::And => "&",
+            TokenType::Or => "|",
+            TokenType::Not => "!",
+            TokenType::Less => "<",
+            TokenType::LessEqual => "<=",
+            TokenType::Greater => ">",
+            TokenType::GreaterEqual => ">=",
+            TokenType::Equal => "=",
+            TokenType::EqualEqual => "==",
+            TokenType::Bang => "!",
+            TokenType::BangEqual => "!=",
+            TokenType::True => "true",
+            TokenType::False => "false",
+            TokenType::Import => "import",
+            TokenType::Export => "export",
+            TokenType::Function => "function",
+            TokenType::If => "if",
+            TokenType::Else => "else",
+            TokenType::Return => "return",
+            TokenType::Let => "let",
+            TokenType::Const => "const",
+            TokenType::While => "while",
+            // Non punctuation. We shouldn't be trying 
+            // to serialize these
+            TokenType::Identifier => todo!(),
+            TokenType::String => todo!(),
+            TokenType::Number => todo!(),
+            TokenType::HexNumber => todo!(),
+            TokenType::WhiteSpace => todo!(),
+            TokenType::Comment => todo!(),
+        }
+    }
 }

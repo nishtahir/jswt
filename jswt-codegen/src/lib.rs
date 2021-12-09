@@ -506,6 +506,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
                 true => Instruction::I32Const(1),
                 false => Instruction::I32Const(0),
             },
+            Literal::Array(_) => todo!(),
         }
     }
 }

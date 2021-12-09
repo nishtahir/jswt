@@ -1,0 +1,73 @@
+---
+source: jswt-tokenizer/src/lib.rs
+expression: actual
+
+---
+[
+    Token {
+        file: "test.1",
+        lexme: "let",
+        offset: 0,
+        kind: Let,
+    },
+    Token {
+        file: "test.1",
+        lexme: "arr",
+        offset: 4,
+        kind: Identifier,
+    },
+    Token {
+        file: "test.1",
+        lexme: "=",
+        offset: 8,
+        kind: Equal,
+    },
+    Token {
+        file: "test.1",
+        lexme: "[",
+        offset: 10,
+        kind: LeftBracket,
+    },
+    Token {
+        file: "test.1",
+        lexme: "1",
+        offset: 11,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: ",",
+        offset: 12,
+        kind: Comma,
+    },
+    Token {
+        file: "test.1",
+        lexme: "2",
+        offset: 14,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: ",",
+        offset: 15,
+        kind: Comma,
+    },
+    Token {
+        file: "test.1",
+        lexme: "3",
+        offset: 17,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: "]",
+        offset: 18,
+        kind: RightBracket,
+    },
+    Token {
+        file: "test.1",
+        lexme: ";",
+        offset: 19,
+        kind: Semi,
+    },
+]

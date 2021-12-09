@@ -109,6 +109,8 @@ lazy_static! {
         r"^\)"=> TokenType::RightParen,
         r"^\{"=> TokenType::LeftBrace,
         r"^\}"=> TokenType::RightBrace,
+        r"^\["=> TokenType::LeftBracket,
+        r"^\]"=> TokenType::RightBracket,
 
         // Multi character sequences
         r"^0[xX][0-9a-fA-F]+" => TokenType::HexNumber,
@@ -448,6 +450,14 @@ mod test {
     fn test_tokenize_comments() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "/* content more \n content */");
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_tokenize_array() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "let arr = [1, 2, 3];");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
