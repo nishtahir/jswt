@@ -195,12 +195,11 @@ impl ExpressionVisitor<()> for Resolver {
             SingleExpression::Bitwise(exp) => self.visit_binary_expression(exp),
             SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
             SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
-            SingleExpression::Unary(_) => todo!(),
+            SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
         }
     }
 
-    fn visit_unary_expression(&mut self, node: &UnaryExpression) {
-    }
+    fn visit_unary_expression(&mut self, node: &UnaryExpression) {}
 
     fn visit_binary_expression(&mut self, node: &BinaryExpression) {
         self.visit_single_expression(&node.left);

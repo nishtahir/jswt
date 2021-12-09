@@ -1,11 +1,11 @@
 // @ts-nocheck
 
 // @inline("")
-@wast("(local.get $index)(i32.load offset=0 align=4)(return)")
+@wast("(return (i32.load (local.get $index)))")
 function i32Load(index: i32): i32 { }
 
 // @inline("")
-@wast("(local.get $index)(local.get $value)(i32.store align=4)")
+@wast("(i32.store (local.get $index)(local.get $value))")
 function i32Store(index: i32, value: i32) { }
 
 // @inline("")

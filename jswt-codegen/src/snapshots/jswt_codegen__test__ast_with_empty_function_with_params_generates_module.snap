@@ -21,7 +21,12 @@ Module {
         Function {
             name: "test",
             type_idx: 0,
-            instructions: [],
+            instructions: [
+                Block(
+                    0,
+                    [],
+                ),
+            ],
         },
     ],
     exports: [],

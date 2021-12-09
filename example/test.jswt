@@ -1,4 +1,11 @@
+// @ts-nocheck
+
 export function main(): i32 {
-    init();
-    return 0;
+    let ptr = malloc(8);
+    i32Store(ptr, 10);
+    println(ptr);
+    hdrGetSize(ptr + 4);
+    println();
+
+    return -1;
 }

@@ -217,7 +217,7 @@ impl StatementVisitor for CodeGenerator {
         self.visit_statement_element(&node.statement);
 
         // Add the branch back to the top of the loop to test
-        self.push_instruction(Instruction::Br(loop_label));
+        self.push_instruction(Instruction::BrLoop(loop_label));
 
         let if_scope = self.pop_instruction_scope().unwrap();
         self.push_instruction(Instruction::If(
@@ -257,7 +257,8 @@ impl StatementVisitor for CodeGenerator {
     }
 
     fn visit_expression_statement(&mut self, node: &ExpressionStatement) {
-        self.visit_single_expression(&node.expression);
+        let isr = self.visit_single_expression(&node.expression);
+        self.push_instruction(isr);
     }
 
     fn visit_statement_list(&mut self, node: &StatementList) {
@@ -291,8 +292,9 @@ impl StatementVisitor for CodeGenerator {
         // Push a new Instruction scope to hold emitted instructions
         self.push_instruction_scope(None);
 
-        // TODO - this was only a prototye abstract this out
-        // Resolve the content of the annotation
+        // Resolve annotations
+
+        let mut has_inlined_body = false;
         if let Some(annotation) = &node.decorators.annotation {
             match annotation.name.value {
                 // The "wast" annotation allows the developer to emit
@@ -300,6 +302,7 @@ impl StatementVisitor for CodeGenerator {
                 // of the function.
                 "wast" => match &annotation.expr {
                     SingleExpression::Literal(Literal::String(string_lit)) => {
+                        has_inlined_body = true;
                         self.push_instruction(Instruction::RawWast(string_lit.value));
                     }
                     _ => todo!(),
@@ -309,12 +312,32 @@ impl StatementVisitor for CodeGenerator {
             }
         }
 
+        let mut instructions = vec![];
         // Generate instructions for the current scope context
-        self.visit_function_body(&node.body);
+        // If we haven't already inlined a function body
+        if !has_inlined_body {
+            self.visit_function_body(&node.body);
+            // Function generation is done. Pop the current instructions scope
+            // and commit it to the module
+            let scope = self.pop_instruction_scope().unwrap();
 
-        // Function generation is done. Pop the current instructions scope
-        // and commit it to the module
-        let mut scope = self.pop_instruction_scope().unwrap();
+            instructions.push(Instruction::Block(0, scope.instructions));
+            // Add synthetic return value
+            // This is to make dealing with branching returns easier to manage
+            // We're using a keyword here to prevent users from accidentally shadowing the value
+            if node.returns.is_some() {
+                self.symbols
+                    .define("return", WastSymbol::Local("return", ValueType::I32));
+
+                // We're pushing the synthetic return to the end of the function
+                instructions.push(Instruction::SynthReturn);
+            }
+        } else {
+            // Just use the scope as is we assume that the user knows what
+            // they are doing.
+            instructions = self.pop_instruction_scope().unwrap().instructions;
+        }
+
         // Push our locals to the instructions
         self.symbols
             .symbols_in_current_scope()
@@ -324,7 +347,7 @@ impl StatementVisitor for CodeGenerator {
                 WastSymbol::Param(_, _) => {}
                 WastSymbol::Global(_, _) => {}
                 WastSymbol::Local(name, ty) => {
-                    scope.instructions.insert(0, Instruction::Local(name, *ty))
+                    instructions.insert(0, Instruction::Local(name, *ty))
                 }
             });
 
@@ -332,7 +355,7 @@ impl StatementVisitor for CodeGenerator {
         let function = Function {
             name: function_name,
             type_idx,
-            instructions: scope.instructions,
+            instructions,
         };
         let function_idx = self.push_function(function);
 
@@ -413,10 +436,15 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
     }
 
     fn visit_unary_expression(&mut self, node: &UnaryExpression) -> Instruction {
+        let exp = self.visit_single_expression(&node.expr);
         match node.op {
             UnaryOperator::Plus(_) => todo!(),
-            UnaryOperator::Minus(_) => todo!(),
-            UnaryOperator::Not(_) => todo!(),
+            UnaryOperator::Minus(_) => {
+                Instruction::I32Sub(Box::new(Instruction::I32Const(0)), Box::new(exp))
+            }
+            UnaryOperator::Not(_) => {
+                Instruction::I32Xor(Box::new(exp), Box::new(Instruction::I32Const(-1)))
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-use std::{borrow::Borrow, fmt::Display};
+use std::fmt::Display;
 
 use crate::ValueType;
 
@@ -18,21 +18,27 @@ pub enum Instruction {
     I32Neq(Box<Instruction>, Box<Instruction>),
     I32And(Box<Instruction>, Box<Instruction>),
     I32Or(Box<Instruction>, Box<Instruction>),
+    I32Xor(Box<Instruction>, Box<Instruction>),
     I32Gt(Box<Instruction>, Box<Instruction>),
     I32Ge(Box<Instruction>, Box<Instruction>),
     I32Lt(Box<Instruction>, Box<Instruction>),
     I32Le(Box<Instruction>, Box<Instruction>),
+    Block(usize, Vec<Instruction>),
     Return(Box<Instruction>),
     If(Box<Instruction>, Vec<Instruction>, Vec<Instruction>),
     Call(&'static str, Vec<Instruction>),
     Loop(usize, Vec<Instruction>),
-    Br(usize),
+    BrLoop(usize),
+    BrBlock(usize),
+    Noop,
     // A meta instruction not part of the wasm specification but
     // an instruction to the code generator to inline raw instructions
     // exactly as they are provided.
     // Warning: No checks are performed on the input before they are inlined
     RawWast(&'static str),
-    Noop,
+    // Synthetic return intended to exit the function with the
+    // '$return' value set
+    SynthReturn,
 }
 
 impl Instruction {
@@ -66,7 +72,11 @@ impl From<&Instruction> for String {
             Instruction::I32Le(lhs, rhs) => format!("(i32.le_s {} {})", *lhs, *rhs),
             Instruction::I32And(lhs, rhs) => format!("(i32.and {} {})", *lhs, *rhs),
             Instruction::I32Or(lhs, rhs) => format!("(i32.or {} {})", *lhs, *rhs),
-            Instruction::Return(instruction) => format!("(return {})", *instruction),
+            Instruction::I32Xor(lhs, rhs) => format!("(i32.xor {} {})", *lhs, *rhs),
+            Instruction::Return(instruction) => {
+                // Set the synthetic value and break into the function block scope
+                format!("(local.set $return {}) (br $blk0)", *instruction)
+            }
             Instruction::Call(name, args) => {
                 format!("(call ${} {})", name, args.to_string())
             }
@@ -80,23 +90,28 @@ impl From<&Instruction> for String {
             }
             Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
             Instruction::If(cond, cons, alt) => {
-                let mut stmt = format!("(if {}", *cond);
+                let mut stmt = format!("(if ");
                 // https://github.com/WebAssembly/wabt/issues/1075
                 // The wat format requires that you annotate any blocks that return values with their signature.
                 // If no signature is provided, it is assumed that the block has no parameters and no results.
-                let cons_returns = cons.iter().any(|i| i.is_return());
-                let alt_returns = alt.iter().any(|i| i.is_return());
-                if cons_returns && alt_returns {
-                    stmt += "(result i32)";
-                }
+                // let cons_returns = cons.iter().any(|i| i.is_return());
+                // let alt_returns = alt.iter().any(|i| i.is_return());
+                // if cons_returns && alt_returns {
+                //     stmt += "(result i32)";
+                // }
+
+                stmt += &format!("{}", *cond);
                 stmt += &format!("(then {}) (else {})", cons.to_string(), alt.to_string());
                 stmt += ")";
                 stmt
             }
             Instruction::GlobalGet(name) => format!("(global.get ${})", name),
             Instruction::Loop(label, args) => format!("(loop $loop{} {})", label, args.to_string()),
-            Instruction::Br(label) => format!("(br $loop{})", label),
+            Instruction::BrBlock(label) => format!("(br $blk{})", label),
+            Instruction::BrLoop(label) => format!("(br $loop{})", label),
             Instruction::Noop => "".into(),
+            Instruction::SynthReturn => "(return (local.get $return))".into(),
+            Instruction::Block(label, args) => format!("(block $blk{} {})", label, args.to_string()),
         }
     }
 }

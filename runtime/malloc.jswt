@@ -25,7 +25,7 @@ function init() {
 function extend(pages: i32) {
     let prevFooter = maxAddr - 4;
     let nBytes = pages * 65536;
-    
+
     grow(pages);
 
     hdrSetSize(maxAddr, nBytes - 8);
@@ -42,6 +42,77 @@ function extend(pages: i32) {
         hdrSetSize(prevHdr, prevSize + nBytes);
         hdrSetSize(footer, prevSize + nBytes);
     }
+}
+
+function find(nBytes: i32): i32 {
+    let pointer = 0;
+    while (lessUnsigned(pointer, maxAddr)) {
+        let size = hdrGetSize(pointer);
+        let isFree = hdrGetFree(pointer);
+        let payloadPointer = pointer + 4;
+
+        if (isFree) {
+            if (greaterUnsigned(nBytes, size)) {
+                // Block is free but too small
+            }
+            else if (lessUnsigned(nBytes, size - 8)) {
+                // Block is free but large enough to split
+                // We split by allocating the new block on the left 
+                // [hdr|     free         |ftr]
+                // [hdr|alloc|ftr|hdr|free|ftr]
+
+                
+                // Write header and allocation bit
+                hdrSetSize(pointer, nBytes);
+                hdrSetFree(pointer, false);
+                
+                // Write footer and allocation bit
+                hdrSetSize(pointer + nBytes + 4, nBytes);
+                hdrSetFree(pointer + nBytes + 4, false);
+                
+                // Size of the block after allocation
+                let rest = size - nBytes - 8;
+
+                // Header of next block after split
+                hdrSetSize(pointer + nBytes + 8, rest);
+                hdrSetFree(pointer + nBytes + 8, true);
+                // Footer of next block after split
+                hdrSetSize(pointer + size + 4, rest);
+
+                return payloadPointer;
+            }
+            else {
+                // Block is free, but not large enough to be split into two blocks 
+                // Mark header as allocated
+                hdrSetFree(pointer, false);
+                // Mark footer as allocated
+                hdrSetFree(pointer + size + 4, false);
+                return payloadPointer;
+            }
+        }
+
+        // Move onto the next block
+        pointer = pointer + size + 8;
+    }
+
+    // We couldn't find a free block
+    return 0;
+}
+
+function malloc(size: i32): i32 {
+    if (isInit == false) {
+        init();
+    }
+
+    const aligned_size = align4(size);
+    let pointer = find(aligned_size);
+    if(pointer == 0) {
+        let pages = divUnsigned(aligned_size + 65527, 65528);
+        extend(pages);
+        return find(aligned_size);
+    }
+
+    return pointer;
 }
 
 // read payload_size from header/footer given pointer to header/footer
@@ -71,9 +142,14 @@ function align4(value: i32): i32 {
     return temp & 0xFFFFFFFC;
 }
 
-// i32.not an valid i32 instruction. So we have to rely on
-// an intentional underflow. Discussion here
-// https://github.com/WebAssembly/design/issues/379
-// https://github.com/WebAssembly/design/issues/701
-@wast("(i32.xor (local.get $value) (i32.const -1))")
-function i32not(value: i32): i32 { }
+@wast("(i32.lt_u (local.get $a) (local.get $b))")
+function lessUnsigned(a: i32, b: i32): bool { }
+
+@wast("(i32.ge_u (local.get $a) (local.get $b))")
+function greaterEqUnsigned(a: i32, b: i32): bool { }
+
+@wast("(i32.gt_u (local.get $a) (local.get $b))")
+function greaterUnsigned(a: i32, b: i32): bool { }
+
+@wast("(i32.div_u (local.get $a) (local.get $b))")
+function divUnsigned(a: i32, b: i32): bool { }
