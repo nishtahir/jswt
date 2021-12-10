@@ -41,7 +41,6 @@ impl Default for CodeGenerator {
 }
 
 impl CodeGenerator {
-    #[cfg(test)]
     pub fn generate_module(&mut self, ast: &Ast) -> &Module {
         // TODO - we should be accepting builtins externally from the env
         // This is a stop gap so tests don't break
@@ -49,24 +48,6 @@ impl CodeGenerator {
         &self.module
     }
 
-    #[cfg(not(test))]
-    pub fn generate_module(&mut self, ast: &Ast) -> &Module {
-        // Push builtins
-        let println_type_idx = self.push_type(FunctionType {
-            params: vec![("value", ValueType::I32)],
-            ret: None,
-        });
-        self.push_import(Import::Function(FunctionImport {
-            name: "println",
-            type_idx: println_type_idx,
-            module: "env",
-        }));
-
-        self.visit_program(&ast.program);
-        &self.module
-    }
-
-    #[cfg(not(test))]
     fn push_import(&mut self, import: Import) -> usize {
         self.module.imports.push(import);
         self.module.imports.len() - 1
@@ -254,6 +235,8 @@ impl StatementVisitor for CodeGenerator {
     }
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+        let function_name = node.ident.value;
+
         // Push the scope for the function body
         self.symbols.push_scope();
         let mut type_params = vec![];
@@ -280,6 +263,7 @@ impl StatementVisitor for CodeGenerator {
 
         // Resolve annotations
         let mut has_inlined_body = false;
+        let mut is_predefined_function = false;
         for annotation in &node.decorators.annotations {
             match annotation.name.value {
                 // The "wast" annotation allows the developer to emit
@@ -289,6 +273,18 @@ impl StatementVisitor for CodeGenerator {
                     Some(SingleExpression::Literal(Literal::String(string_lit))) => {
                         has_inlined_body = true;
                         self.push_instruction(Instruction::RawWast(string_lit.value));
+                    }
+                    _ => todo!(),
+                },
+                "native" => match &annotation.expr {
+                    Some(SingleExpression::Literal(Literal::String(string_lit))) => {
+                        has_inlined_body = true;
+                        is_predefined_function = true;
+                        self.push_import(Import::Function(FunctionImport {
+                            name: function_name,
+                            type_idx,
+                            module: string_lit.value,
+                        }));
                     }
                     _ => todo!(),
                 },
@@ -333,21 +329,22 @@ impl StatementVisitor for CodeGenerator {
                 }
             });
 
-        let function_name = node.ident.value;
-        let function = Function {
-            name: function_name,
-            type_idx,
-            instructions,
-        };
-        let function_idx = self.push_function(function);
-
-        // Generate export descriptor if the function is marked for export
-        if node.decorators.export {
-            let desc = FunctionExport {
-                function_idx,
+        if !is_predefined_function {
+            let function = Function {
                 name: function_name,
+                type_idx,
+                instructions,
             };
-            self.push_export(Export::Function(desc));
+            let function_idx = self.push_function(function);
+
+            // Generate export descriptor if the function is marked for export
+            if node.decorators.export {
+                let desc = FunctionExport {
+                    function_idx,
+                    name: function_name,
+                };
+                self.push_export(Export::Function(desc));
+            }
         }
 
         // Pop the current function scope from the symbol table

@@ -14,6 +14,10 @@ pub enum SemanticError {
         name: &'static str,
         span: Span,
     },
+    FunctionNotDefined {
+        name_span: Span,
+        span: Span,
+    },
     NotAFunctionError {
         span: Span,
         name_span: Span,

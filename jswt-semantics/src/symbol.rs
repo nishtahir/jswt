@@ -1,7 +1,7 @@
 #[derive(Debug, PartialEq)]
 pub struct Symbol {
-    ty: Type,
-    name: &'static str,
+    pub ty: Type,
+    pub name: &'static str,
 }
 
 impl Symbol {
@@ -15,4 +15,13 @@ pub enum Type {
     Function,
     // TODO - add builtins
     Unknown,
+}
+
+impl Type {
+    /// Returns `true` if the type is [`Function`].
+    ///
+    /// [`Function`]: Type::Function
+    pub fn is_function(&self) -> bool {
+        matches!(self, Self::Function)
+    }
 }

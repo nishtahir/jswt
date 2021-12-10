@@ -13,7 +13,7 @@ pub fn highlight(source: &str) -> String {
     let rules = [
         HighlightRule {
             // Keywords
-            matcher: Regex::new(r"^(\bfunction|let|const|return)\b").unwrap(),
+            matcher: Regex::new(r"^(\bexport|import|function|let|const|return)\b").unwrap(),
             color: Color::Cyan,
         },
         HighlightRule {

@@ -1,15 +1,15 @@
 mod ident;
-mod iteration_statement;
+mod iteration;
 mod literal;
-mod single_expression;
-mod statement_element;
+mod expression;
+mod statement;
 mod visitor;
 
 pub use ident::Ident;
-pub use iteration_statement::*;
+pub use iteration::*;
 pub use literal::*;
-pub use single_expression::*;
-pub use statement_element::*;
+pub use expression::*;
+pub use statement::*;
 pub use visitor::*;
 
 pub use jswt_common::{Span, Spannable};

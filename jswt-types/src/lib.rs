@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-pub enum TypeDefinition {
+pub enum Type {
     Primitive(PrimitiveType),
     Object,
 }

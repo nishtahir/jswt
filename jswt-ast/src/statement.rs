@@ -1,7 +1,7 @@
 use jswt_derive::FromEnumVariant;
 
 use crate::{
-    iteration_statement::IterationStatement, AssignableElement, SingleExpression, Span, Spannable,
+    iteration::IterationStatement, AssignableElement, SingleExpression, Span, Spannable,
     StatementList, VariableModifier,
 };
 

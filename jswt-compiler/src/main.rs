@@ -1,3 +1,5 @@
+mod env;
+
 #[macro_use]
 extern crate clap;
 
@@ -6,7 +8,6 @@ use jswt_ast::Ast;
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::env;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
@@ -17,7 +18,7 @@ use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, St
 use jswt_codegen::CodeGenerator;
 use jswt_errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
 use jswt_parser::Parser;
-use jswt_semantics::Resolver;
+use jswt_semantics::SemanticAnalyzer;
 use jswt_tokenizer::Tokenizer;
 
 fn main() {
@@ -89,7 +90,8 @@ fn main() {
 
     let import_object = imports! {
         "env" => {
-            "println" => Function::new_native(&store, env_println)
+            "println" => Function::new_native(&store, env::println),
+            "exit" => Function::new_native(&store, env::exit)
         },
     };
     let instance = Instance::new(&module, &import_object).unwrap();
@@ -178,10 +180,8 @@ fn compile_module(input: &Path, output: &Path, include_std: bool) -> Ast {
     }
 
     // Semantic analytis pass
-    let mut resolver = Resolver::default();
-    resolver.resolve(&ast);
-
-    for error in resolver.errors() {
+    let semantic_errors = SemanticAnalyzer::analyze(&ast);
+    for error in semantic_errors {
         has_errors = true;
         print_semantic_error(&error, &source_map.borrow())
     }
@@ -191,8 +191,4 @@ fn compile_module(input: &Path, output: &Path, include_std: bool) -> Ast {
     }
 
     ast
-}
-
-fn env_println(arg: i32) {
-    println!("{}", arg);
 }

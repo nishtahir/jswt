@@ -102,6 +102,21 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             );
             println!("{}\n{}\n", header, frame);
         }
+        SemanticError::FunctionNotDefined { span, name_span } => {
+            let file = &span.file;
+            let source = source_map[file];
+            let start = location_from_offset(source, name_span.start);
+            let end = location_from_offset(source, name_span.end);
+            let header = create_header(file, &start, Level::Error);
+            let error_span = NodeLocation { end, start };
+            let offending_token = &source[name_span.start..name_span.end];
+            let frame = create_codeframe(
+                source,
+                error_span,
+                &format!("'{}' is not defined in this scope.", offending_token),
+            );
+            println!("{}\n{}\n", header, frame);
+        }
     }
 }
 
