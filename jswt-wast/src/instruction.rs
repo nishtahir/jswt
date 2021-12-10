@@ -80,7 +80,7 @@ impl From<&Instruction> for String {
             Instruction::Call(name, args) => {
                 format!("(call ${} {})", name, args.to_string())
             }
-            Instruction::RawWast(text) => format!("{}", text),
+            Instruction::RawWast(text) => text.to_string(),
             Instruction::LocalGet(name) => format!("(local.get ${})", name),
             Instruction::LocalSet(name, args) => {
                 format!("(local.set ${} {})", name, args.to_string())
@@ -90,7 +90,7 @@ impl From<&Instruction> for String {
             }
             Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
             Instruction::If(cond, cons, alt) => {
-                let mut stmt = format!("(if ");
+                let mut stmt = "(if ".to_string();
                 // https://github.com/WebAssembly/wabt/issues/1075
                 // The wat format requires that you annotate any blocks that return values with their signature.
                 // If no signature is provided, it is assumed that the block has no parameters and no results.
@@ -111,7 +111,9 @@ impl From<&Instruction> for String {
             Instruction::BrLoop(label) => format!("(br $loop{})", label),
             Instruction::Noop => "".into(),
             Instruction::SynthReturn => "(return (local.get $return))".into(),
-            Instruction::Block(label, args) => format!("(block $blk{} {})", label, args.to_string()),
+            Instruction::Block(label, args) => {
+                format!("(block $blk{} {})", label, args.to_string())
+            }
         }
     }
 }

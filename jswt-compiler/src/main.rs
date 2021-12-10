@@ -8,6 +8,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::env;
 use std::fs;
+use std::path::Path;
 use std::path::PathBuf;
 use std::process::exit;
 use std::rc::Rc;
@@ -137,7 +138,7 @@ fn main() {
     exit(1);
 }
 
-fn compile_module(input: &PathBuf, output: &PathBuf, include_std: bool) -> Ast {
+fn compile_module(input: &Path, output: &Path, include_std: bool) -> Ast {
     // Main cache of source files that have been read for compilation
     // It may be worth building an abstraction around this to help with resolving paths
     // for imports and preventing issues like duplicate file reads
@@ -145,7 +146,7 @@ fn compile_module(input: &PathBuf, output: &PathBuf, include_std: bool) -> Ast {
 
     // Let binding to prevent the ref being dropped before getting passed to the tokenizer
     let mut tokenizer = Tokenizer::new(source_map.clone());
-    tokenizer.push_source(&input);
+    tokenizer.push_source(input);
 
     if include_std {
         // Sources at the top of the source stack will be resolved first

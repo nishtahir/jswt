@@ -154,7 +154,7 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
                 source,
                 error_span,
                 &format!(
-                    "MismatchedToken: Expected {:?}, but found {:?}",
+                    "MismatchedToken: Expected '{}', but found '{}'",
                     expected, actual
                 ),
             );

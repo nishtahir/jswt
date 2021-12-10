@@ -18,16 +18,7 @@ pub struct CodeGenerator {
 
 #[derive(Debug)]
 struct InstructionScope {
-    target: Option<InstructionScopeTarget>,
     instructions: Vec<Instruction>,
-}
-
-#[derive(Debug)]
-enum InstructionScopeTarget {
-    // Control flow Ifs
-    Then,
-    Else,
-    Loop,
 }
 
 #[derive(Debug, PartialEq)]
@@ -75,6 +66,7 @@ impl CodeGenerator {
         &self.module
     }
 
+    #[cfg(not(test))]
     fn push_import(&mut self, import: Import) -> usize {
         self.module.imports.push(import);
         self.module.imports.len() - 1
@@ -111,16 +103,10 @@ impl CodeGenerator {
     }
 
     /// Adds a new instruction scope context to the stack
-    fn push_instruction_scope(&mut self, target: Option<InstructionScopeTarget>) {
+    fn push_instruction_scope(&mut self) {
         self.scopes.push(InstructionScope {
-            target,
             instructions: vec![],
         });
-    }
-
-    fn set_instruction_scope_target(&mut self, target: Option<InstructionScopeTarget>) {
-        let scope = self.scopes.last_mut().unwrap();
-        scope.target = target;
     }
 
     /// Pops an Instruction scope from the stack
@@ -178,12 +164,12 @@ impl StatementVisitor for CodeGenerator {
         let cond = self.visit_single_expression(&node.condition);
 
         // Handle the consequence instructions
-        self.push_instruction_scope(Some(InstructionScopeTarget::Then));
+        self.push_instruction_scope();
         self.visit_statement_element(&node.consequence);
         let cons = self.pop_instruction_scope().unwrap();
 
         // Handle the alternative instructions
-        self.push_instruction_scope(Some(InstructionScopeTarget::Else));
+        self.push_instruction_scope();
         if let Some(alternative) = node.alternative.borrow() {
             self.visit_statement_element(alternative);
         }
@@ -206,13 +192,13 @@ impl StatementVisitor for CodeGenerator {
         let loop_label = self.label_counter;
         self.label_counter += 1;
 
-        self.push_instruction_scope(Some(InstructionScopeTarget::Loop));
+        self.push_instruction_scope();
 
         // First push the expression result onto the stack
         let cond = self.visit_single_expression(&node.expression);
 
         // Push an if scope for branching
-        self.push_instruction_scope(Some(InstructionScopeTarget::Then));
+        self.push_instruction_scope();
         // Add the statements to the scope
         self.visit_statement_element(&node.statement);
 
@@ -290,7 +276,7 @@ impl StatementVisitor for CodeGenerator {
         let type_idx = self.push_type(ty);
 
         // Push a new Instruction scope to hold emitted instructions
-        self.push_instruction_scope(None);
+        self.push_instruction_scope();
 
         // Resolve annotations
 
@@ -308,7 +294,7 @@ impl StatementVisitor for CodeGenerator {
                     _ => todo!(),
                 },
                 "inline" => {}
-                _ => todo!(),
+                _ => {}
             }
         }
 
@@ -342,11 +328,8 @@ impl StatementVisitor for CodeGenerator {
         self.symbols
             .symbols_in_current_scope()
             .iter()
-            .for_each(|sym| match sym {
-                WastSymbol::Function(_) => {}
-                WastSymbol::Param(_, _) => {}
-                WastSymbol::Global(_, _) => {}
-                WastSymbol::Local(name, ty) => {
+            .for_each(|sym| {
+                if let WastSymbol::Local(name, ty) = sym {
                     instructions.insert(0, Instruction::Local(name, *ty))
                 }
             });
@@ -421,7 +404,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
     }
 
     fn visit_single_expression(&mut self, node: &SingleExpression) -> Instruction {
-        return match node {
+        match node {
             SingleExpression::Additive(exp)
             | SingleExpression::Multiplicative(exp)
             | SingleExpression::Equality(exp)
@@ -432,7 +415,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             SingleExpression::Literal(lit) => self.visit_literal(lit),
             SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
             SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
-        };
+        }
     }
 
     fn visit_unary_expression(&mut self, node: &UnaryExpression) -> Instruction {
@@ -493,6 +476,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             return Instruction::Call(function_name, instructions);
         }
 
+        // Other targets for function calls.
         todo!()
     }
 

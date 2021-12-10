@@ -1,6 +1,5 @@
 mod error;
 mod symbol;
-mod value;
 
 pub use error::SemanticError;
 
@@ -8,7 +7,6 @@ use self::symbol::{Symbol, Type};
 use jswt_ast::*;
 use jswt_common::SymbolTable;
 use std::borrow::Borrow;
-use value::Value;
 
 impl Default for Resolver {
     fn default() -> Self {
@@ -112,7 +110,7 @@ impl StatementVisitor for Resolver {
         }
     }
 
-    fn visit_while_iteration_element(&mut self, node: &WhileIterationElement) {
+    fn visit_while_iteration_element(&mut self, _node: &WhileIterationElement) {
         // Check that exp is boolean
     }
 
@@ -176,7 +174,7 @@ impl StatementVisitor for Resolver {
 }
 
 impl ExpressionVisitor<()> for Resolver {
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> () {
+    fn visit_assignment_expression(&mut self, _node: &BinaryExpression) {
         // We should assert the the element on the left is assignable
     }
 
@@ -199,7 +197,7 @@ impl ExpressionVisitor<()> for Resolver {
         }
     }
 
-    fn visit_unary_expression(&mut self, node: &UnaryExpression) {}
+    fn visit_unary_expression(&mut self, _node: &UnaryExpression) {}
 
     fn visit_binary_expression(&mut self, node: &BinaryExpression) {
         self.visit_single_expression(&node.left);

@@ -4,7 +4,13 @@ mod token;
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::{cell::RefCell, collections::HashMap, fs, path::PathBuf, rc::Rc};
+use std::{
+    cell::RefCell,
+    collections::HashMap,
+    fs,
+    path::{Path, PathBuf},
+    rc::Rc,
+};
 
 pub use errors::TokenizerError;
 pub use source::Source;
@@ -230,7 +236,7 @@ impl Tokenizer {
         tokens
     }
 
-    pub fn push_source(&mut self, path: &PathBuf) {
+    pub fn push_source(&mut self, path: &Path) {
         // Resolve the fully qualified path from relative paths
         // TODO - handle errors
 

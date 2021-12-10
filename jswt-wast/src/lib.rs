@@ -110,7 +110,7 @@ impl Module {
             wat += &global.ty.to_string();
             wat += ")";
 
-            wat += &format!("{}", global.initializer.to_string());
+            wat += &global.initializer.to_string();
             wat += ")"
         });
 
@@ -179,7 +179,7 @@ fn format_wat(source: String) -> String {
         match ch {
             '(' => {
                 if !is_new_line {
-                    result += &"\n";
+                    result += "\n";
                 }
                 if !is_char_esc {
                     result += &"  ".repeat(indent);

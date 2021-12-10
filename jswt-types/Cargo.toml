@@ -1,0 +1,15 @@
+[package]
+name = "jswt-types"
+version = "0.1.0"
+authors = ["Nish Tahir <nishtahir@outlook.com>"]
+edition = "2018"
+
+[lib]
+doctest = false
+
+[dependencies]
+jswt-ast = {path = "../jswt-ast"}
+jswt-common = {path = "../jswt-common"}
+
+[dev-dependencies]
+jswt-assert = {path = "../jswt-assert"}

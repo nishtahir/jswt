@@ -531,6 +531,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "jswt-types"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
+]
+
+[[package]]
 name = "jswt-wast"
 version = "0.1.0"
 dependencies = [

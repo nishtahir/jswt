@@ -10,5 +10,6 @@ members = [
     "jswt-parser",
     "jswt-semantics",
     "jswt-tokenizer",
+    "jswt-types",
     "jswt-wast"
 ]

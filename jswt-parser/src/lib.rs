@@ -234,7 +234,7 @@ impl<'a> Parser<'a> {
         let end = alternative
             .as_ref()
             .map(|alt| alt.span())
-            .unwrap_or(consequence.span());
+            .unwrap_or_else(|| consequence.span());
 
         Ok(IfStatement {
             span: start + end,
