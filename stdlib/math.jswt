@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // Single max utility function
 function max(a: i32, b: i32): i32 {
     if (a > b) {
@@ -12,3 +14,19 @@ function min(a: i32, b: i32): i32 {
     }
     return b;
 }
+
+@inline
+@wast("(i32.lt_u (local.get $a) (local.get $b))")
+function lessUnsigned(a: i32, b: i32): bool { }
+
+@inline
+@wast("(i32.ge_u (local.get $a) (local.get $b))")
+function greaterEqUnsigned(a: i32, b: i32): bool { }
+
+@inline
+@wast("(i32.gt_u (local.get $a) (local.get $b))")
+function greaterUnsigned(a: i32, b: i32): bool { }
+
+@inline
+@wast("(i32.div_u (local.get $a) (local.get $b))")
+function divUnsigned(a: i32, b: i32): bool { }

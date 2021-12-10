@@ -18,8 +18,12 @@ pub fn highlight(source: &str) -> String {
         },
         HighlightRule {
             // built-ins
-            matcher: Regex::new(r"^\b(i32|f32|string)\b").unwrap(),
+            matcher: Regex::new(r"^\b(i32|u32|f32|string|boolean)\b").unwrap(),
             color: Color::Yellow,
+        },
+        HighlightRule {
+            matcher: Regex::new(r"^\d+").unwrap(),
+            color: Color::Magenta,
         },
         HighlightRule {
             // Ident
@@ -34,6 +38,10 @@ pub fn highlight(source: &str) -> String {
         HighlightRule {
             matcher: Regex::new(r"^\d+").unwrap(),
             color: Color::Magenta,
+        },
+        HighlightRule {
+            matcher: Regex::new(r#"^"[^"]*""#).unwrap(),
+            color: Color::Green,
         },
     ];
 

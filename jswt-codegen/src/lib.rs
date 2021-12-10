@@ -279,15 +279,14 @@ impl StatementVisitor for CodeGenerator {
         self.push_instruction_scope();
 
         // Resolve annotations
-
         let mut has_inlined_body = false;
-        if let Some(annotation) = &node.decorators.annotation {
+        for annotation in &node.decorators.annotations {
             match annotation.name.value {
                 // The "wast" annotation allows the developer to emit
                 // WAST instructions directily into the instruction scope
                 // of the function.
                 "wast" => match &annotation.expr {
-                    SingleExpression::Literal(Literal::String(string_lit)) => {
+                    Some(SingleExpression::Literal(Literal::String(string_lit))) => {
                         has_inlined_body = true;
                         self.push_instruction(Instruction::RawWast(string_lit.value));
                     }

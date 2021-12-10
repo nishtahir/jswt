@@ -54,7 +54,7 @@ pub struct FunctionDeclarationElement {
 
 #[derive(Debug, PartialEq)]
 pub struct FunctionDecorators {
-    pub annotation: Option<Annotation>,
+    pub annotations: Vec<Annotation>,
     pub export: bool,
 }
 
@@ -62,7 +62,7 @@ pub struct FunctionDecorators {
 pub struct Annotation {
     pub span: Span,
     pub name: Ident,
-    pub expr: SingleExpression,
+    pub expr: Option<SingleExpression>,
 }
 
 #[derive(Debug, PartialEq)]

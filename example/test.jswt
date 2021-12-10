@@ -1,11 +1,6 @@
 // @ts-nocheck
 
 export function main(): i32 {
-    let ptr = malloc(8);
-    i32Store(ptr, 9999);
-    
-    let newPtr = malloc(16);
-    memcpy(newPtr, ptr, 8);
-
+    let x = [1, 2, 3]
     return -1;
 }

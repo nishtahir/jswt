@@ -15,7 +15,7 @@ Ast {
                             end: 25,
                         },
                         decorators: FunctionDecorators {
-                            annotation: None,
+                            annotations: [],
                             export: false,
                         },
                         ident: Ident {

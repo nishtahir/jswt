@@ -1,20 +1,21 @@
 // @ts-nocheck
 
-// @inline("")
+@inline
 @wast("(return (i32.load (local.get $index)))")
 function i32Load(index: i32): i32 { }
 
-// @inline("")
+@inline
 @wast("(i32.store (local.get $index)(local.get $value))")
 function i32Store(index: i32, value: i32) { }
 
+@inline
 @wast("(i32.store8 (local.get $index)(local.get $value))")
 function i32Store8(index: i32, value: i32) { }
 
+@inline
 @wast("(return (i32.load8_u (local.get $index)))")
 function i32Load8Unsigned(index: i32): i32 { }
 
-
-// @inline("")
+@inline
 @wast("(drop (memory.grow (local.get $pages)))")
 function grow(pages: i32) { }

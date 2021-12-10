@@ -670,9 +670,9 @@ impl<'a> Parser<'a> {
     ///   :  Annotation? 'export'? 'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
     ///   ;
     fn function_declaration(&mut self) -> Result<FunctionDeclarationElement, ParseError> {
-        let mut annotation = None;
-        if self.lookahead_is(TokenType::At) {
-            annotation = Some(self.annotation()?);
+        let mut annotations = vec![];
+        while self.lookahead_is(TokenType::At) {
+            annotations.push(self.annotation()?);
         }
 
         let export_span = maybe_consume!(self, TokenType::Export);
@@ -694,7 +694,7 @@ impl<'a> Parser<'a> {
         let body = self.function_body()?;
 
         let decorators = FunctionDecorators {
-            annotation,
+            annotations,
             export: export_span.is_some(),
         };
         Ok(FunctionDeclarationElement {
@@ -710,9 +710,14 @@ impl<'a> Parser<'a> {
     fn annotation(&mut self) -> Result<Annotation, ParseError> {
         let start = consume!(self, TokenType::At)?;
         let ident = ident!(self);
-        consume!(self, TokenType::LeftParen)?;
-        let expr = self.single_expression()?;
-        let end = consume!(self, TokenType::RightParen)?;
+
+        let mut end = ident.span.to_owned();
+        let mut expr = None;
+        if self.lookahead_is(TokenType::LeftParen) {
+            consume!(self, TokenType::LeftParen)?;
+            expr = Some(self.single_expression()?);
+            end = consume!(self, TokenType::RightParen)?;
+        }
 
         Ok(Annotation {
             span: start + end,
@@ -1045,6 +1050,14 @@ mod test {
     fn test_parse_array_literal() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "[-1, 10, -5, \"test\"];");
+        let actual = Parser::new(&mut tokenizer).parse();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_parse_function_with_multiple_annotations() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "@inline @wast(\"test\") function a() {}");
         let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
