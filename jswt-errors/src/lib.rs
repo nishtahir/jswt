@@ -211,5 +211,5 @@ fn create_header(file: &str, location: &Location, level: Level) -> String {
 }
 
 fn create_codeframe(source: &str, location: NodeLocation, message: &str) -> String {
-    code_frame(&highlight(source), location, message)
+    code_frame(&highlight(source, false), location, message)
 }

@@ -9,7 +9,10 @@ struct HighlightRule {
     color: Color,
 }
 
-pub fn highlight(source: &str) -> String {
+pub fn highlight(source: &str, force: bool) -> String {
+    if force {
+        colored::control::set_override(true)
+    }
     let rules = [
         HighlightRule {
             // Comments
@@ -76,8 +79,8 @@ pub fn highlight(source: &str) -> String {
 
 #[cfg(test)]
 mod test {
-    use jswt_assert::assert_snapshot;
     use super::*;
+    use jswt_assert::assert_snapshot;
 
     #[test]
     fn test_highlight_source() {
@@ -116,7 +119,7 @@ mod test {
         function divUnsigned(a: i32, b: i32): bool { }
         "#;
 
-        let actual = highlight(raw_source);
+        let actual = highlight(raw_source, true);
         assert_snapshot!(actual);
     }
 }
