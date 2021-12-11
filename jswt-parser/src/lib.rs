@@ -757,12 +757,33 @@ impl<'a> Parser<'a> {
     }
 
     /// TypeAnnotation
-    ///   : ':' Ident
+    ///   : ':' PrimaryType
     ///   ;
-    fn type_annotation(&mut self) -> Result<Ident, ParseError> {
+    fn type_annotation(&mut self) -> Result<TypeAnnotation, ParseError> {
         consume!(self, TokenType::Colon)?;
-        let type_param = ident!(self);
-        Ok(type_param)
+        let primary = self.primary_type()?;
+        Ok(TypeAnnotation::Primary(primary))
+    }
+
+    /// PrimaryType
+    ///   : ('i32' | 'u32' | 'boolean' | Ident) ('['']') *
+    ///   ;
+    fn primary_type(&mut self) -> Result<PrimaryTypeAnnotation, ParseError> {
+        let name = ident!(self);
+        let mut kind = match name.value {
+            "i32" => PrimaryTypeAnnotation::Primitive(Primitive::I32),
+            "u32" => PrimaryTypeAnnotation::Primitive(Primitive::U32),
+            "boolean" => PrimaryTypeAnnotation::Primitive(Primitive::Boolean),
+            _ => PrimaryTypeAnnotation::Reference(name),
+        };
+
+        while self.lookahead_is(TokenType::LeftBracket) {
+            consume_unchecked!(self);
+            consume!(self, TokenType::RightBracket)?;
+            kind = PrimaryTypeAnnotation::Array(Box::new(kind));
+        }
+
+        Ok(kind)
     }
 
     ///  FunctionBody
@@ -847,168 +868,210 @@ mod test {
     fn test_function_declaration_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_empty_program() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_function_declaration_statement_with_one_param() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32) { }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_function_declaration_statement_with_two_params() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function name(a: i32, b: f32) { }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_function_declaration_statement_with_export_decorator() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function test() { }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_function_declaration_statement_with_return_value() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(): i32 { }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test(a: i32, b: i32): i32 { }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_empty_block() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{}");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_nested_empty_blocks() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "{ {} }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_function_declaration_statement_with_block_body() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function test() { {} }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_empty_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", ";");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_variable_statement_with_number() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 42;");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_variable_statement_with_string() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = \"Hello World\";");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_return_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "return 99;");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_additive_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 1 + 2;");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_multiplicative_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 * 2;");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_nested_math_expression_has_correct_precedence() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 * 2 + 1 * 0;");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_additive_expression_left_associativity() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let x = 3 + 2 + 1 + 0;");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_expression_statement_parses_function_invocation() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "export function main() { test(); }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_argument_expression_with_expression_parameter() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "test(1 + 2);");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_if_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "if(x == y) { return 0; } else { return 1; }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
@@ -1018,48 +1081,60 @@ mod test {
             "test.1",
             "if(x == y) { return 0; } else if (x > y) { return 1; } else { return -1; }",
         );
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_while_iteration_statement() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "while(x < 99) { println(\"hey taco\"); }");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_arguments_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "print(6);");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_unary_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "-1 * 10 + -5;");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_array_literal() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "[-1, 10, -5, \"test\"];");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_parse_function_with_multiple_annotations() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "@inline @wast(\"test\") function a() {}");
-        let actual = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
@@ -1085,6 +1160,26 @@ mod test {
         function exit(code: i32) { }
         "#,
         );
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn parse_array_type_annotation() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "function exit(code: i32[]): string[] { }");
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn parse_multi_dimensional_array_type_annotation() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "function exit(code: i32[][]): string[][] { }");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

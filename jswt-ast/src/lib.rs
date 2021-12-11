@@ -1,14 +1,14 @@
+mod expression;
 mod ident;
 mod iteration;
 mod literal;
-mod expression;
 mod statement;
 mod visitor;
 
+pub use expression::*;
 pub use ident::Ident;
 pub use iteration::*;
 pub use literal::*;
-pub use expression::*;
 pub use statement::*;
 pub use visitor::*;
 
@@ -48,7 +48,7 @@ pub struct FunctionDeclarationElement {
     pub decorators: FunctionDecorators,
     pub ident: Ident,
     pub params: FormalParameterList,
-    pub returns: Option<Ident>,
+    pub returns: Option<TypeAnnotation>,
     pub body: FunctionBody,
 }
 
@@ -73,7 +73,7 @@ pub struct FormalParameterList {
 #[derive(Debug, PartialEq)]
 pub struct FormalParameterArg {
     pub ident: Ident,
-    pub type_annotation: Ident,
+    pub type_annotation: TypeAnnotation,
 }
 
 #[derive(Debug, PartialEq, Spannable)]
@@ -113,4 +113,23 @@ impl Spannable for AssignableElement {
             AssignableElement::Identifier(ident) => ident.span.to_owned(),
         }
     }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum TypeAnnotation {
+    Primary(PrimaryTypeAnnotation),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum PrimaryTypeAnnotation {
+    Reference(Ident),
+    Primitive(Primitive),
+    Array(Box<PrimaryTypeAnnotation>),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Primitive {
+    I32,
+    U32,
+    Boolean,
 }

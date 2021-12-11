@@ -30,14 +30,11 @@ Ast {
                             parameters: [],
                         },
                         returns: Some(
-                            Ident {
-                                span: Span {
-                                    file: "test.1",
-                                    start: 17,
-                                    end: 20,
-                                },
-                                value: "i32",
-                            },
+                            Primary(
+                                Primitive(
+                                    I32,
+                                ),
+                            ),
                         ),
                         body: FunctionBody {
                             span: Span {

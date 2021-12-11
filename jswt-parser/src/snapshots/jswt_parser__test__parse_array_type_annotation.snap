@@ -12,7 +12,7 @@ Ast {
                         span: Span {
                             file: "test.1",
                             start: 0,
-                            end: 33,
+                            end: 40,
                         },
                         decorators: FunctionDecorators {
                             annotations: [],
@@ -24,7 +24,7 @@ Ast {
                                 start: 9,
                                 end: 13,
                             },
-                            value: "name",
+                            value: "exit",
                         },
                         params: FormalParameterList {
                             parameters: [
@@ -33,46 +33,41 @@ Ast {
                                         span: Span {
                                             file: "test.1",
                                             start: 14,
-                                            end: 15,
+                                            end: 18,
                                         },
-                                        value: "a",
+                                        value: "code",
                                     },
                                     type_annotation: Primary(
-                                        Primitive(
-                                            I32,
-                                        ),
-                                    ),
-                                },
-                                FormalParameterArg {
-                                    ident: Ident {
-                                        span: Span {
-                                            file: "test.1",
-                                            start: 22,
-                                            end: 23,
-                                        },
-                                        value: "b",
-                                    },
-                                    type_annotation: Primary(
-                                        Reference(
-                                            Ident {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    start: 25,
-                                                    end: 28,
-                                                },
-                                                value: "f32",
-                                            },
+                                        Array(
+                                            Primitive(
+                                                I32,
+                                            ),
                                         ),
                                     ),
                                 },
                             ],
                         },
-                        returns: None,
+                        returns: Some(
+                            Primary(
+                                Array(
+                                    Reference(
+                                        Ident {
+                                            span: Span {
+                                                file: "test.1",
+                                                start: 28,
+                                                end: 34,
+                                            },
+                                            value: "string",
+                                        },
+                                    ),
+                                ),
+                            ),
+                        ),
                         body: FunctionBody {
                             span: Span {
                                 file: "test.1",
-                                start: 30,
-                                end: 33,
+                                start: 37,
+                                end: 40,
                             },
                             source_elements: SourceElements {
                                 source_elements: [],

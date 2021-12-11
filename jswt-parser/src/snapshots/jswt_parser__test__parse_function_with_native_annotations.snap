@@ -67,14 +67,11 @@ Ast {
                                         },
                                         value: "value",
                                     },
-                                    type_annotation: Ident {
-                                        span: Span {
-                                            file: "test.1",
-                                            start: 186,
-                                            end: 189,
-                                        },
-                                        value: "i32",
-                                    },
+                                    type_annotation: Primary(
+                                        Primitive(
+                                            I32,
+                                        ),
+                                    ),
                                 },
                             ],
                         },
@@ -151,14 +148,11 @@ Ast {
                                         },
                                         value: "code",
                                     },
-                                    type_annotation: Ident {
-                                        span: Span {
-                                            file: "test.1",
-                                            start: 364,
-                                            end: 367,
-                                        },
-                                        value: "i32",
-                                    },
+                                    type_annotation: Primary(
+                                        Primitive(
+                                            I32,
+                                        ),
+                                    ),
                                 },
                             ],
                         },
