@@ -1,5 +1,8 @@
 // @ts-nocheck
 
+import "./arrays.jswt";
 import "./env.jswt";
 import "./malloc.jswt";
+
+// stdlib components
 import "../stdlib/math.jswt";

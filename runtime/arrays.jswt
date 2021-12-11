@@ -1,0 +1,88 @@
+// @ts-nocheck
+import "./malloc.jswt";
+import "./memory.jswt";
+
+/// Arrays are continuous resizable storage for a sequence of values
+/// struct Array {
+///   i32*:  data,
+///   i32 : length
+///   i32 : elem_size,
+///   i32 : capacity,
+/// }
+
+@inline
+function arraySetData(ptr: i32, data: i32) {
+    i32Store(ptr, data);
+}
+
+@inline
+function arrayGetData(ptr: i32): i32 {
+    return i32Load(ptr);
+}
+
+@inline
+function arraySetLength(ptr: i32, length: i32) {
+    i32Store(ptr + 4, length);
+}
+
+@inline
+function arrayGetLength(ptr: i32): i32 {
+    return i32Load(ptr + 4);
+}
+
+@inline
+function arraySetElementSize(ptr: i32, size: i32) {
+    i32Store(ptr + 8, size);
+}
+
+@inline
+function arrayGetElementSize(ptr: i32): i32 {
+    return i32Load(ptr + 8);
+}
+
+@inline
+function arraySetCapacity(ptr: i32, size: i32) {
+    i32Store(ptr + 12, size);
+}
+
+@inline
+function arrayGetCapacity(ptr: i32): i32 {
+    return i32Load(ptr + 12);
+}
+
+@inline
+function arrayNew(elementSize: i32): i32 {
+    let capacity = 10; // default capacity;
+    let ptr = malloc(16);
+    let data = malloc(capacity * elementSize);
+    arraySetData(ptr, data);
+    arraySetLength(ptr, 0);
+    arraySetElementSize(ptr, elementSize);
+    arraySetCapacity(ptr, capacity);
+    return ptr;
+}
+
+@inline
+function arrayAt(ptr: i32, index: i32): i32 {
+    const data = arrayGetData(ptr);
+    const elementSize = arrayGetElementSize(ptr);
+    let offset = index * elementSize;
+    return offset + data;
+}
+
+@inline
+function arrayPush(ptr: i32): i32 {
+    let data = arrayGetData(ptr);
+    let length = arrayGetLength(ptr);
+    let element_size = arrayGetElementSize(ptr);
+    let capacity = arrayGetCapacity(ptr);
+
+    if (greaterEqUnsigned(length, capacity)) {
+        // TODO - grow the array
+    }
+
+    arraySetLength(ptr, length + 1);
+
+    let offset = length * element_size;
+    return offset + data;
+}

@@ -1061,4 +1061,33 @@ mod test {
         let actual = Parser::new(&mut tokenizer).parse();
         assert_debug_snapshot!(actual);
     }
+
+    #[test]
+    fn test_parse_function_with_native_annotations() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str(
+            "test.1",
+            r#"
+        // @ts-nocheck
+
+        /**
+         * Logs a single i32 value to stdout
+         * @param value value to log
+         */
+        @native("env")
+        function println(value: i32) { }
+        
+        /**
+         * Abort the running program
+         * @param code error code to abort with
+         */
+        @native("env")
+        function exit(code: i32) { }
+        "#,
+        );
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
 }

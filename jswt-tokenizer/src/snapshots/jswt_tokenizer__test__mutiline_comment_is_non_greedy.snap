@@ -1,0 +1,139 @@
+---
+source: jswt-tokenizer/src/lib.rs
+expression: actual
+
+---
+[
+    Token {
+        file: "test.1",
+        lexme: "let",
+        offset: 13,
+        kind: Let,
+    },
+    Token {
+        file: "test.1",
+        lexme: "arr",
+        offset: 17,
+        kind: Identifier,
+    },
+    Token {
+        file: "test.1",
+        lexme: "=",
+        offset: 21,
+        kind: Equal,
+    },
+    Token {
+        file: "test.1",
+        lexme: "[",
+        offset: 23,
+        kind: LeftBracket,
+    },
+    Token {
+        file: "test.1",
+        lexme: "1",
+        offset: 24,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: ",",
+        offset: 25,
+        kind: Comma,
+    },
+    Token {
+        file: "test.1",
+        lexme: "2",
+        offset: 27,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: ",",
+        offset: 28,
+        kind: Comma,
+    },
+    Token {
+        file: "test.1",
+        lexme: "3",
+        offset: 30,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: "]",
+        offset: 31,
+        kind: RightBracket,
+    },
+    Token {
+        file: "test.1",
+        lexme: ";",
+        offset: 32,
+        kind: Semi,
+    },
+    Token {
+        file: "test.1",
+        lexme: "let",
+        offset: 51,
+        kind: Let,
+    },
+    Token {
+        file: "test.1",
+        lexme: "arr",
+        offset: 55,
+        kind: Identifier,
+    },
+    Token {
+        file: "test.1",
+        lexme: "=",
+        offset: 59,
+        kind: Equal,
+    },
+    Token {
+        file: "test.1",
+        lexme: "[",
+        offset: 61,
+        kind: LeftBracket,
+    },
+    Token {
+        file: "test.1",
+        lexme: "1",
+        offset: 62,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: ",",
+        offset: 63,
+        kind: Comma,
+    },
+    Token {
+        file: "test.1",
+        lexme: "2",
+        offset: 65,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: ",",
+        offset: 66,
+        kind: Comma,
+    },
+    Token {
+        file: "test.1",
+        lexme: "3",
+        offset: 68,
+        kind: Number,
+    },
+    Token {
+        file: "test.1",
+        lexme: "]",
+        offset: 69,
+        kind: RightBracket,
+    },
+    Token {
+        file: "test.1",
+        lexme: ";",
+        offset: 70,
+        kind: Semi,
+    },
+]

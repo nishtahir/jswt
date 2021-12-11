@@ -61,15 +61,15 @@ function find(nBytes: i32): i32 {
                 // [hdr|     free         |ftr]
                 // [hdr|alloc|ftr|hdr|free|ftr]
 
-                
+
                 // Write header and allocation bit
                 hdrSetSize(pointer, nBytes);
                 hdrSetFree(pointer, false);
-                
+
                 // Write footer and allocation bit
                 hdrSetSize(pointer + nBytes + 4, nBytes);
                 hdrSetFree(pointer + nBytes + 4, false);
-                
+
                 // Size of the block after allocation
                 let rest = size - nBytes - 8;
 
@@ -106,7 +106,7 @@ function malloc(size: i32): i32 {
 
     const aligned_size = align4(size);
     let pointer = find(aligned_size);
-    if(pointer == 0) {
+    if (pointer == 0) {
         let pages = divUnsigned(aligned_size + 65527, 65528);
         extend(pages);
         return find(aligned_size);
@@ -115,37 +115,45 @@ function malloc(size: i32): i32 {
     return pointer;
 }
 
-function memcpy(dest: i32, src: i32, size: i32): i32 {
+/**
+ * Copy a chunk of memory from the source to the destination
+ * @param dest destination pointer
+ * @param src source pointer
+ * @param bytes number of bytes to copy
+ */
+function memcpy(src: i32, dest: i32, bytes: i32): i32 {
     let offset = 0;
-    while(lessUnsigned(offset, size)) {
+
+    while (lessUnsigned(offset, bytes)) {
         let data = i32Load8Unsigned(src + offset);
         i32Store8(dest + offset, data);
         offset = offset + 1;
     }
 }
 
-// read payload_size from header/footer given pointer to header/footer
-@inline("")
+@inline
 function hdrGetSize(pointer: i32): i32 {
     return i32Load(pointer) & 0xFFFFFFFC;
 }
 
+@inline
 function hdrSetSize(pointer: i32, n: i32) {
     let size = i32Load(pointer) & 0x00000003;
     i32Store(pointer, size | n);
 }
 
-@inline("")
+@inline
 function hdrGetFree(pointer: i32): boolean {
     return i32Load(pointer) & 0x00000001;
 }
 
-@inline("")
+@inline
 function hdrSetFree(pointer: i32, isFree: boolean) {
     let alloc = i32Load(pointer) & 0xFFFFFFFE;
     i32Store(pointer, alloc | isFree);
 }
 
+@inline
 function align4(value: i32): i32 {
     let temp = value + 3;
     return temp & 0xFFFFFFFC;

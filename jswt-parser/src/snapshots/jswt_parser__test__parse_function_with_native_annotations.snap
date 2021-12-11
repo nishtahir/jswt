@@ -1,0 +1,181 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        source_elements: SourceElements {
+            source_elements: [
+                FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        span: Span {
+                            file: "test.1",
+                            start: 162,
+                            end: 194,
+                        },
+                        decorators: FunctionDecorators {
+                            annotations: [
+                                Annotation {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 139,
+                                        end: 153,
+                                    },
+                                    name: Ident {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 140,
+                                            end: 146,
+                                        },
+                                        value: "native",
+                                    },
+                                    expr: Some(
+                                        Literal(
+                                            String(
+                                                StringLiteral {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        start: 147,
+                                                        end: 152,
+                                                    },
+                                                    value: "env",
+                                                },
+                                            ),
+                                        ),
+                                    ),
+                                },
+                            ],
+                            export: false,
+                        },
+                        ident: Ident {
+                            span: Span {
+                                file: "test.1",
+                                start: 171,
+                                end: 178,
+                            },
+                            value: "println",
+                        },
+                        params: FormalParameterList {
+                            parameters: [
+                                FormalParameterArg {
+                                    ident: Ident {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 179,
+                                            end: 184,
+                                        },
+                                        value: "value",
+                                    },
+                                    type_annotation: Ident {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 186,
+                                            end: 189,
+                                        },
+                                        value: "i32",
+                                    },
+                                },
+                            ],
+                        },
+                        returns: None,
+                        body: FunctionBody {
+                            span: Span {
+                                file: "test.1",
+                                start: 191,
+                                end: 194,
+                            },
+                            source_elements: SourceElements {
+                                source_elements: [],
+                            },
+                        },
+                    },
+                ),
+                FunctionDeclaration(
+                    FunctionDeclarationElement {
+                        span: Span {
+                            file: "test.1",
+                            start: 344,
+                            end: 372,
+                        },
+                        decorators: FunctionDecorators {
+                            annotations: [
+                                Annotation {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 321,
+                                        end: 335,
+                                    },
+                                    name: Ident {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 322,
+                                            end: 328,
+                                        },
+                                        value: "native",
+                                    },
+                                    expr: Some(
+                                        Literal(
+                                            String(
+                                                StringLiteral {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        start: 329,
+                                                        end: 334,
+                                                    },
+                                                    value: "env",
+                                                },
+                                            ),
+                                        ),
+                                    ),
+                                },
+                            ],
+                            export: false,
+                        },
+                        ident: Ident {
+                            span: Span {
+                                file: "test.1",
+                                start: 353,
+                                end: 357,
+                            },
+                            value: "exit",
+                        },
+                        params: FormalParameterList {
+                            parameters: [
+                                FormalParameterArg {
+                                    ident: Ident {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 358,
+                                            end: 362,
+                                        },
+                                        value: "code",
+                                    },
+                                    type_annotation: Ident {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 364,
+                                            end: 367,
+                                        },
+                                        value: "i32",
+                                    },
+                                },
+                            ],
+                        },
+                        returns: None,
+                        body: FunctionBody {
+                            span: Span {
+                                file: "test.1",
+                                start: 369,
+                                end: 372,
+                            },
+                            source_elements: SourceElements {
+                                source_elements: [],
+                            },
+                        },
+                    },
+                ),
+            ],
+        },
+    },
+}

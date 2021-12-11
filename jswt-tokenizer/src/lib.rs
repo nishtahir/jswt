@@ -68,7 +68,7 @@ lazy_static! {
         r"^\s+" => DirectiveType::Skip,
         // Skip comments
         //https://docs.rs/regex/latest/regex/#grouping-and-flags
-        r"(?s)^/\*.*\*/" => DirectiveType::Skip,
+        r"(?s)^/\*.*?\*/" => DirectiveType::Skip,
         r"^//[^\n]*" => DirectiveType::Skip
     ];
 
@@ -464,6 +464,14 @@ mod test {
     fn test_tokenize_array() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "let arr = [1, 2, 3];");
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_mutiline_comment_is_non_greedy() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "/* comment */let arr = [1, 2, 3]; /** comment 2 */ let arr = [1, 2, 3];");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }

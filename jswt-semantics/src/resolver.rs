@@ -92,8 +92,10 @@ impl StatementVisitor for Resolver {
             | SingleExpression::Literal(Literal::Boolean(_)) => {
                 // Valid boolean expression
             }
-            SingleExpression::Arguments(_) => todo!(), // TODO type check the function
-            SingleExpression::Identifier(_) => {}      // TODO Type check the symbol
+            SingleExpression::Arguments(_) => {
+                // TODO type check the function
+            }
+            SingleExpression::Identifier(_) => {} // TODO Type check the symbol
             _ => {
                 let error = SemanticError::TypeError {
                     span: node.condition.span(),

@@ -1,6 +1,19 @@
 // @ts-nocheck
 
 export function main(): i32 {
-    println(5);
+    let arr = arrayNew(4);
+    i32Store(arrayPush(arr), 1);
+    i32Store(arrayPush(arr), 2);
+    i32Store(arrayPush(arr), 3);
+    i32Store(arrayPush(arr), 4);
+
+    // let src = arrayAt(arr, 6);
+    // let dest = arrayAt(arr, 0);
+
+    // println(src);
+    // println(dest);
+    // memcpy(src, dest, 4 * 4);
+
+    // let arr = [1, 2, 3, 4];
     return -1;
 }
