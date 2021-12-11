@@ -1,9 +1,9 @@
 ---
 source: jswt-compiler/src/main.rs
-expression: stdout
+expression: redact_paths(stdout)
 
 ---
-error: /Users/nishtahir/Developer/jswt/jswt-compiler/test/variable-not-found.jswt:4:13
+error: [redacted]/jswt/jswt-compiler/test/variable-not-found.jswt:4:13
   2 | 
   3 | export function main(): i32 {
 > 4 |     println(x);

@@ -18,9 +18,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup Cargo Make
       run: cargo install --no-default-features --force cargo-make
-    - name: Build
+    - name: Test Coverage
       run: cargo make coverage
     - name: Upload to Codecov
       uses: codecov/codecov-action@v2
       with:
-        file: ./lcov.info
+        files: lcov.info

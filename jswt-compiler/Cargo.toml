@@ -21,3 +21,4 @@ wasmer = "2.0.0"
 [dev-dependencies]
 assert_cmd = "2.0.2"
 jswt-assert = {path = "../jswt-assert"}
+regex = "1.5.4"

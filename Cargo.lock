@@ -490,6 +490,7 @@ dependencies = [
  "jswt-semantics",
  "jswt-tokenizer",
  "jswt-wast",
+ "regex",
  "wasmer",
 ]
 
