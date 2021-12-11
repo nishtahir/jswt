@@ -44,6 +44,7 @@ Ast {
                                     },
                                 ),
                             ),
+                            type_annotation: None,
                         },
                     ),
                 ),

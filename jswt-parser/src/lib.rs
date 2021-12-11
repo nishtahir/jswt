@@ -321,6 +321,12 @@ impl<'a> Parser<'a> {
     fn variable_statement(&mut self) -> Result<StatementElement, ParseError> {
         let modifier = self.variable_modifier()?;
         let target = self.assignable()?;
+
+        let mut type_annotation = None;
+        if self.lookahead_is(TokenType::Colon) {
+            type_annotation = Some(self.type_annotation()?);
+        }
+
         consume!(self, TokenType::Equal)?;
         let expression = self.single_expression()?;
         let end = consume!(self, TokenType::Semi)?;
@@ -330,6 +336,7 @@ impl<'a> Parser<'a> {
             modifier,
             target,
             expression,
+            type_annotation,
         }
         .into())
     }
@@ -1180,6 +1187,16 @@ mod test {
     fn parse_multi_dimensional_array_type_annotation() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.push_source_str("test.1", "function exit(code: i32[][]): string[][] { }");
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn parse_variable_type_annotation() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", "let x: i32 = 99;");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

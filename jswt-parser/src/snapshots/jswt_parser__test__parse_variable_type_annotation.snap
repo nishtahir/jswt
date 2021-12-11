@@ -13,7 +13,7 @@ Ast {
                             span: Span {
                                 file: "test.1",
                                 start: 0,
-                                end: 22,
+                                end: 16,
                             },
                             modifier: Let(
                                 Span {
@@ -33,18 +33,24 @@ Ast {
                                 },
                             ),
                             expression: Literal(
-                                String(
-                                    StringLiteral {
+                                Number(
+                                    NumberLiteral {
                                         span: Span {
                                             file: "test.1",
-                                            start: 8,
-                                            end: 21,
+                                            start: 13,
+                                            end: 15,
                                         },
-                                        value: "Hello World",
+                                        value: 99,
                                     },
                                 ),
                             ),
-                            type_annotation: None,
+                            type_annotation: Some(
+                                Primary(
+                                    Primitive(
+                                        I32,
+                                    ),
+                                ),
+                            ),
                         },
                     ),
                 ),

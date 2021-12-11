@@ -2,7 +2,7 @@ use jswt_derive::FromEnumVariant;
 
 use crate::{
     iteration::IterationStatement, AssignableElement, SingleExpression, Span, Spannable,
-    StatementList, VariableModifier,
+    StatementList, TypeAnnotation, VariableModifier,
 };
 
 #[derive(Debug, PartialEq, FromEnumVariant)]
@@ -47,6 +47,7 @@ pub struct VariableStatement {
     pub modifier: VariableModifier,
     pub target: AssignableElement,
     pub expression: SingleExpression,
+    pub type_annotation: Option<TypeAnnotation>,
 }
 
 #[derive(Debug, PartialEq)]
