@@ -2,6 +2,8 @@
 
 [![Rust](https://github.com/nishtahir/jswt/actions/workflows/rust.yml/badge.svg)](https://github.com/nishtahir/jswt/actions/workflows/rust.yml)
 
+[![codecov](https://codecov.io/gh/nishtahir/jswt/branch/master/graph/badge.svg?token=VL6CT8HU4U)](https://codecov.io/gh/nishtahir/jswt)
+
 An experiment in compilation targetting WebAssembly.
 
 ## Demo
