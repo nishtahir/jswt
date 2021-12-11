@@ -1,0 +1,12 @@
+// @ts-nocheck
+
+export function main(): i32 {
+    let x = 10;
+    let y = x; 
+    x = -1;
+    
+    assertEqual(x, -1);
+    assertEqual(y, 10);
+    assertEqual(x + y, 9);
+    return 0;
+}

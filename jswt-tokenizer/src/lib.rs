@@ -9,7 +9,7 @@ use std::{
     collections::HashMap,
     fs,
     path::{Path, PathBuf},
-    rc::Rc,
+    rc::Rc, process::exit,
 };
 
 pub use errors::TokenizerError;
@@ -239,6 +239,11 @@ impl Tokenizer {
     pub fn push_source(&mut self, path: &Path) {
         // Resolve the fully qualified path from relative paths
         // TODO - handle errors
+
+        if !path.exists() {
+            println!("No such file '{:?}'", path.to_str());
+            exit(1);
+        }
 
         let path = fs::canonicalize(path).unwrap();
         let qualified_path = path.to_str().unwrap();

@@ -1,3 +1,6 @@
 {
-    "lldb.verboseLogging": true
+    "lldb.verboseLogging": true,
+    "files.associations": {
+        "*.jswt": "typescript"
+    }
 }

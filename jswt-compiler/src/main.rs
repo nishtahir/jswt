@@ -57,6 +57,13 @@ fn main() {
                 .takes_value(false)
                 .help("Do not include the runtime and stdlib"),
         )
+        .arg(
+            Arg::with_name("runtime-path")
+                .long("runtime-path")
+                .required(false)
+                .takes_value(true)
+                .help("Path to runtime sources"),
+        )
         .get_matches();
 
     let input = match matches.value_of("file") {
@@ -71,7 +78,18 @@ fn main() {
         None => input.clone(),
     };
 
-    let ast = compile_module(&input, &output, !matches.is_present("no-std"));
+    let runtime = if matches.is_present("no-std") {
+        // Don't include the runtime even if the path is provided
+        None
+    } else {
+        // If a runtime path isn't provided use the default path
+        matches
+            .value_of("runtime-path")
+            .or_else(|| Some("./runtime/rt.jswt"))
+            .map(|path| PathBuf::from(path))
+    };
+
+    let ast = compile_module(&input, &output, runtime.as_ref());
     let mut code_gen = CodeGenerator::default();
     let module = code_gen.generate_module(&ast);
     // Write generated wasm AST for debugging
@@ -91,7 +109,8 @@ fn main() {
     let import_object = imports! {
         "env" => {
             "println" => Function::new_native(&store, env::println),
-            "exit" => Function::new_native(&store, env::exit)
+            "exit" => Function::new_native(&store, env::exit),
+            "assertEqual" => Function::new_native(&store, env::assert_equal)
         },
     };
     let instance = Instance::new(&module, &import_object).unwrap();
@@ -140,7 +159,7 @@ fn main() {
     exit(1);
 }
 
-fn compile_module(input: &Path, output: &Path, include_std: bool) -> Ast {
+fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast {
     // Main cache of source files that have been read for compilation
     // It may be worth building an abstraction around this to help with resolving paths
     // for imports and preventing issues like duplicate file reads
@@ -150,12 +169,12 @@ fn compile_module(input: &Path, output: &Path, include_std: bool) -> Ast {
     let mut tokenizer = Tokenizer::new(source_map.clone());
     tokenizer.push_source(input);
 
-    if include_std {
+    if let Some(runtime) = runtime {
         // Sources at the top of the source stack will be resolved first
         // This has implications in the parsing and semantic analysis process
         // As errors related to redefinitions and shadowing
         // should point to user defined sources
-        tokenizer.push_source(&PathBuf::from("./runtime/rt.jswt"));
+        tokenizer.push_source(runtime);
     }
 
     // parse tokens and generate AST
@@ -191,4 +210,47 @@ fn compile_module(input: &Path, output: &Path, include_std: bool) -> Ast {
     }
 
     ast
+}
+
+#[cfg(test)]
+mod test {
+    use assert_cmd::prelude::{CommandCargoExt, OutputAssertExt};
+    use std::process::Command;
+
+    #[test]
+    fn test_compile_and_execute_variables_sample() {
+        let mut cmd = Command::cargo_bin("jswt").unwrap();
+        cmd.arg("--runtime-path")
+            .arg("../runtime/rt.jswt")
+            .arg("../example/variables.jswt")
+            .assert()
+            .success();
+    }
+
+    #[test]
+    fn test_compile_and_execute_loops_sample() {
+        let mut cmd = Command::cargo_bin("jswt").unwrap();
+        let assert = cmd
+            .arg("--runtime-path")
+            .arg("../runtime/rt.jswt")
+            .arg("../example/loops.jswt")
+            .assert()
+            .success();
+        let stdout = std::str::from_utf8(&assert.get_output().stdout).unwrap();
+        assert_eq!(stdout, "45\n");
+    }
+
+
+    #[test]
+    fn test_compile_and_execute_arithmetics_sample() {
+        let mut cmd = Command::cargo_bin("jswt").unwrap();
+        let assert = cmd
+            .arg("--runtime-path")
+            .arg("../runtime/rt.jswt")
+            .arg("../example/math.jswt")
+            .assert()
+            .success();
+        let stdout = std::str::from_utf8(&assert.get_output().stdout).unwrap();
+        assert_eq!(stdout, "7\n1\n12\n1\n");
+    }
 }

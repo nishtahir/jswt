@@ -1,0 +1,20 @@
+// @ts-nocheck
+
+export function main(): i32 {
+    let numOne: i32 = 4;
+    let numTwo: i32 = 3;
+
+    let sum = numOne + numTwo;
+    println(sum);
+
+    let diff = numOne - numTwo;
+    println(diff);
+
+    let mult = numOne * numTwo;
+    println(mult);
+
+    let div = numOne / numTwo;
+    println(div);
+
+    return 0;
+}

@@ -1,0 +1,8 @@
+// @ts-nocheck
+
+export function main(): i32 {
+    let arr: i32[] = [1, 2, 3, 4];
+    arr[0] = 99;
+    arr[1] = arr[0];
+    return arr[1];
+}
