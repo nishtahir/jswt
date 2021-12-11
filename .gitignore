@@ -1,4 +1,7 @@
-/target
+**/target
+**/coverage
+*.profraw
+*.info
 
 *.ast
 *.tokens

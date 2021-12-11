@@ -1,19 +1,9 @@
 [tasks.coverage]
-env = { CARGO_INCREMENTAL = 0, RUSTFLAGS = "-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off" }
-run_task = { name = ["test", "grcov"] }
+clear = true
+workspace = false
+toolchain = "nightly"
+script = { file = "${CARGO_MAKE_WORKING_DIRECTORY}/scripts/coverage.sh", absolute_path = true }
 
-[tasks.grcov]
-install_crate = 'grcov'
-command = "grcov"
-args = [
-    "./target/debug/", 
-    "-s", ".", 
-    "-t", "html", 
-    "--llvm", 
-    "--branch", 
-    "--ignore-not-existing",
-    "-o", "./target/debug/coverage/"
-]
 
 [tasks.review]
 workspace = false
