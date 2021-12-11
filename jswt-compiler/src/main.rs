@@ -215,6 +215,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
 #[cfg(test)]
 mod test {
     use assert_cmd::prelude::{CommandCargoExt, OutputAssertExt};
+    use jswt_assert::{assert_str_eq, assert_snapshot};
     use std::process::Command;
 
     #[test]
@@ -237,9 +238,8 @@ mod test {
             .assert()
             .success();
         let stdout = std::str::from_utf8(&assert.get_output().stdout).unwrap();
-        assert_eq!(stdout, "45\n");
+        assert_str_eq!(stdout, "45\n");
     }
-
 
     #[test]
     fn test_compile_and_execute_arithmetics_sample() {
@@ -251,6 +251,19 @@ mod test {
             .assert()
             .success();
         let stdout = std::str::from_utf8(&assert.get_output().stdout).unwrap();
-        assert_eq!(stdout, "7\n1\n12\n1\n");
+        assert_str_eq!(stdout, "7\n1\n12\n1\n");
+    }
+
+    #[test]
+    fn test_variable_not_found_semantic_error() {
+        let mut cmd = Command::cargo_bin("jswt").unwrap();
+        let assert = cmd
+            .arg("--runtime-path")
+            .arg("../runtime/rt.jswt")
+            .arg("./test/variable-not-found.jswt")
+            .assert()
+            .failure();
+        let stdout = std::str::from_utf8(&assert.get_output().stdout).unwrap();
+        assert_snapshot!(stdout);
     }
 }

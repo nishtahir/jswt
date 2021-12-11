@@ -1,0 +1,13 @@
+---
+source: jswt-compiler/src/main.rs
+expression: stdout
+
+---
+error: /Users/nishtahir/Developer/jswt/jswt-compiler/test/variable-not-found.jswt:4:13
+  2 | 
+  3 | export function main(): i32 {
+> 4 |     println(x);
+    |             ^ Variable 'x' was not defined in this scope
+  5 | }
+
+

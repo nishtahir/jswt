@@ -1,0 +1,39 @@
+---
+source: jswt-errors/src/highlighter.rs
+expression: actual
+
+---
+
+        [90m// @ts-nocheck[0m
+
+        [90m// Single max utility function[0m
+        [36mfunction[0m [37mmax[0m([37ma[0m: [33mi32[0m, [37mb[0m: [33mi32[0m): [33mi32[0m {
+            [37mif[0m ([37ma[0m > [37mb[0m) {
+                [36mreturn[0m [37ma[0m;
+            }
+            [36mreturn[0m [37mb[0m;
+        }
+        
+        [36mfunction[0m [37mmin[0m([37ma[0m: [33mi32[0m, [37mb[0m: [33mi32[0m): [33mi32[0m {
+            [37mif[0m ([37ma[0m < [37mb[0m) {
+                [36mreturn[0m [37ma[0m;
+            }
+            [36mreturn[0m [37mb[0m;
+        }
+        
+        @[37minline[0m
+        @[37mwast[0m([32m"(i32.lt_u (local.get $a) (local.get $b))"[0m)
+        [36mfunction[0m [37mlessUnsigned[0m([37ma[0m: [33mi32[0m, [37mb[0m: [33mi32[0m): [37mbool[0m { }
+        
+        @[37minline[0m
+        @[37mwast[0m([32m"(i32.ge_u (local.get $a) (local.get $b))"[0m)
+        [36mfunction[0m [37mgreaterEqUnsigned[0m([37ma[0m: [33mi32[0m, [37mb[0m: [33mi32[0m): [37mbool[0m { }
+        
+        @[37minline[0m
+        @[37mwast[0m([32m"(i32.gt_u (local.get $a) (local.get $b))"[0m)
+        [36mfunction[0m [37mgreaterUnsigned[0m([37ma[0m: [33mi32[0m, [37mb[0m: [33mi32[0m): [37mbool[0m { }
+        
+        @[37minline[0m
+        @[37mwast[0m([32m"(i32.div_u (local.get $a) (local.get $b))"[0m)
+        [36mfunction[0m [37mdivUnsigned[0m([37ma[0m: [33mi32[0m, [37mb[0m: [33mi32[0m): [37mbool[0m { }
+        

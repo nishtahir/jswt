@@ -12,6 +12,12 @@ struct HighlightRule {
 pub fn highlight(source: &str) -> String {
     let rules = [
         HighlightRule {
+            // Comments
+            matcher: Regex::new(r"^((//[^\n]*)|((?s)^/\*.*?\*/))").unwrap(),
+            // Gray
+            color: Color::BrightBlack,
+        },
+        HighlightRule {
             // Keywords
             matcher: Regex::new(r"^(\bexport|import|function|let|const|return)\b").unwrap(),
             color: Color::Cyan,
@@ -66,4 +72,51 @@ pub fn highlight(source: &str) -> String {
     }
 
     highlighted_source.to_owned()
+}
+
+#[cfg(test)]
+mod test {
+    use jswt_assert::assert_snapshot;
+    use super::*;
+
+    #[test]
+    fn test_highlight_source() {
+        let raw_source = r#"
+        // @ts-nocheck
+
+        // Single max utility function
+        function max(a: i32, b: i32): i32 {
+            if (a > b) {
+                return a;
+            }
+            return b;
+        }
+        
+        function min(a: i32, b: i32): i32 {
+            if (a < b) {
+                return a;
+            }
+            return b;
+        }
+        
+        @inline
+        @wast("(i32.lt_u (local.get $a) (local.get $b))")
+        function lessUnsigned(a: i32, b: i32): bool { }
+        
+        @inline
+        @wast("(i32.ge_u (local.get $a) (local.get $b))")
+        function greaterEqUnsigned(a: i32, b: i32): bool { }
+        
+        @inline
+        @wast("(i32.gt_u (local.get $a) (local.get $b))")
+        function greaterUnsigned(a: i32, b: i32): bool { }
+        
+        @inline
+        @wast("(i32.div_u (local.get $a) (local.get $b))")
+        function divUnsigned(a: i32, b: i32): bool { }
+        "#;
+
+        let actual = highlight(raw_source);
+        assert_snapshot!(actual);
+    }
 }
