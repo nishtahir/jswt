@@ -262,7 +262,7 @@ mod test {
     #[test]
     fn test_duplicate_variable_declaration_generates_error() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "let x = 0; let x = 1;");
+        tokenizer.enqueue_source_str("test.1", "let x = 0; let x = 1;");
         let ast = Parser::new(&mut tokenizer).parse();
         let mut resolver = Resolver::default();
         resolver.resolve(&ast);
@@ -278,7 +278,7 @@ mod test {
     #[test]
     fn test_variable_not_defined_generates_error() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "function test() { return x; }");
+        tokenizer.enqueue_source_str("test.1", "function test() { return x; }");
         let ast = Parser::new(&mut tokenizer).parse();
         let mut resolver = Resolver::default();
         resolver.resolve(&ast);

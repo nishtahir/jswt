@@ -9,7 +9,8 @@ use std::{
     collections::HashMap,
     fs,
     path::{Path, PathBuf},
-    rc::Rc, process::exit,
+    process::exit,
+    rc::Rc,
 };
 
 pub use errors::TokenizerError;
@@ -131,7 +132,10 @@ lazy_static! {
 
 pub struct Tokenizer {
     source_map: Rc<RefCell<HashMap<String, &'static str>>>,
-    source_stack: Vec<Rc<RefCell<Source>>>,
+    /// We're using a vec here as a queue of sources
+    /// to be tokenized. the current source being parsed should be
+    /// at the end of the Vec to be popped once it's completely tokenized
+    sources: Vec<Rc<RefCell<Source>>>,
     errors: Vec<TokenizerError>,
 }
 
@@ -145,7 +149,7 @@ impl Tokenizer {
     pub fn new(source_map: Rc<RefCell<HashMap<String, &'static str>>>) -> Self {
         Self {
             source_map,
-            source_stack: vec![],
+            sources: vec![],
             errors: vec![],
         }
     }
@@ -160,14 +164,14 @@ impl Tokenizer {
             return None;
         }
 
-        let source = self.source_stack.last().unwrap().clone();
+        let source = self.sources.last().unwrap().clone();
         let source = source.borrow();
         let offset = source.cursor();
 
         // If we've reached the end of a source file. Drop it from
         // our tokenization stack
         if !source.has_more_content() {
-            self.pop_source();
+            self.dequeue_source();
             return self.next_token();
         }
 
@@ -255,23 +259,24 @@ impl Tokenizer {
         // We're intentionally leaking this to make lifetime management easier
         // since we plan to pass references to the original sources in place of copying it
         let content = Box::leak(fs::read_to_string(&path).unwrap().into_boxed_str());
-        self.push_source_str(qualified_path, content)
+        self.enqueue_source_str(qualified_path, content)
     }
 
-    pub fn push_source_str(&mut self, path: &str, content: &'static str) {
+    /// Add a source to the queue to be parsed
+    pub fn enqueue_source_str(&mut self, path: &str, content: &'static str) {
         self.source_map
             .borrow_mut()
             .insert(path.to_owned(), content);
         let source = Source::new(path.to_string(), content);
-        self.source_stack.push(Rc::new(RefCell::new(source)));
+        self.sources.insert(0, Rc::new(RefCell::new(source)));
     }
 
-    fn pop_source(&mut self) {
-        self.source_stack.pop();
+    fn dequeue_source(&mut self) {
+        self.sources.pop();
     }
 
     fn has_more_sources(&self) -> bool {
-        !self.source_stack.is_empty()
+        !self.sources.is_empty()
     }
 }
 
@@ -284,7 +289,7 @@ mod test {
     #[test]
     fn test_tokenize_number() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "42");
+        tokenizer.enqueue_source_str("test.1", "42");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -292,7 +297,7 @@ mod test {
     #[test]
     fn test_tokenize_numbers_with_whitespace() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "   4  2   ");
+        tokenizer.enqueue_source_str("test.1", "   4  2   ");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -300,7 +305,7 @@ mod test {
     #[test]
     fn test_tokenize_string() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "\"Hello World\"");
+        tokenizer.enqueue_source_str("test.1", "\"Hello World\"");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -308,7 +313,7 @@ mod test {
     #[test]
     fn test_tokenize_braces() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "{}");
+        tokenizer.enqueue_source_str("test.1", "{}");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -316,7 +321,7 @@ mod test {
     #[test]
     fn test_tokenize_parens() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "()");
+        tokenizer.enqueue_source_str("test.1", "()");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -324,7 +329,7 @@ mod test {
     #[test]
     fn test_tokenize_comma() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", ",");
+        tokenizer.enqueue_source_str("test.1", ",");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -332,7 +337,7 @@ mod test {
     #[test]
     fn test_tokenize_less_than() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "<");
+        tokenizer.enqueue_source_str("test.1", "<");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -340,7 +345,7 @@ mod test {
     #[test]
     fn test_tokenize_less_than_equal() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "<=");
+        tokenizer.enqueue_source_str("test.1", "<=");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -348,7 +353,7 @@ mod test {
     #[test]
     fn test_tokenize_greater_than() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", ">");
+        tokenizer.enqueue_source_str("test.1", ">");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -356,7 +361,7 @@ mod test {
     #[test]
     fn test_tokenize_greater_than_equal() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", ">=");
+        tokenizer.enqueue_source_str("test.1", ">=");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -364,7 +369,7 @@ mod test {
     #[test]
     fn test_tokenize_equal() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "=");
+        tokenizer.enqueue_source_str("test.1", "=");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -372,7 +377,7 @@ mod test {
     #[test]
     fn test_tokenize_semi_colon() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", ";");
+        tokenizer.enqueue_source_str("test.1", ";");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -380,7 +385,7 @@ mod test {
     #[test]
     fn test_whitespace_generates_no_tokens() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "  ");
+        tokenizer.enqueue_source_str("test.1", "  ");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -388,7 +393,7 @@ mod test {
     #[test]
     fn test_tokenize_identifiers() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "user identifier");
+        tokenizer.enqueue_source_str("test.1", "user identifier");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -396,7 +401,7 @@ mod test {
     #[test]
     fn test_tokenize_alphanumeric_identifiers() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "i32");
+        tokenizer.enqueue_source_str("test.1", "i32");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -404,7 +409,7 @@ mod test {
     #[test]
     fn test_tokenize_keywords() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "let false true return function");
+        tokenizer.enqueue_source_str("test.1", "let false true return function");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -412,7 +417,7 @@ mod test {
     #[test]
     fn test_tokenize_let_assignment() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "let a = 99");
+        tokenizer.enqueue_source_str("test.1", "let a = 99");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -420,7 +425,7 @@ mod test {
     #[test]
     fn test_tokenize_annotation() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "@test(\"(local.get 0)\")");
+        tokenizer.enqueue_source_str("test.1", "@test(\"(local.get 0)\")");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -428,7 +433,7 @@ mod test {
     #[test]
     fn test_tokenize_if_statement() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "if(x == y) { return 0; } else { return 1; }");
+        tokenizer.enqueue_source_str("test.1", "if(x == y) { return 0; } else { return 1; }");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -436,7 +441,7 @@ mod test {
     #[test]
     fn test_tokenize_if_else_if_statement() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "if(x == y) { return 0; } else { return 1; }");
+        tokenizer.enqueue_source_str("test.1", "if(x == y) { return 0; } else { return 1; }");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -444,7 +449,7 @@ mod test {
     #[test]
     fn test_tokenize_while_loop() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "while(x == 99) { print(\"test\"); }");
+        tokenizer.enqueue_source_str("test.1", "while(x == 99) { print(\"test\"); }");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -452,7 +457,7 @@ mod test {
     #[test]
     fn test_tokenize_hexadecimal_number() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "0xABCD01234");
+        tokenizer.enqueue_source_str("test.1", "0xABCD01234");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -460,7 +465,7 @@ mod test {
     #[test]
     fn test_tokenize_comments() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "/* content more \n content */");
+        tokenizer.enqueue_source_str("test.1", "/* content more \n content */");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -468,7 +473,7 @@ mod test {
     #[test]
     fn test_tokenize_array() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "let arr = [1, 2, 3];");
+        tokenizer.enqueue_source_str("test.1", "let arr = [1, 2, 3];");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }
@@ -476,7 +481,10 @@ mod test {
     #[test]
     fn test_mutiline_comment_is_non_greedy() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "/* comment */let arr = [1, 2, 3]; /** comment 2 */ let arr = [1, 2, 3];");
+        tokenizer.enqueue_source_str(
+            "test.1",
+            "/* comment */let arr = [1, 2, 3]; /** comment 2 */ let arr = [1, 2, 3];",
+        );
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }

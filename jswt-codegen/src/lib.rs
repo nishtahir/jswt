@@ -530,7 +530,7 @@ mod test {
     #[test]
     fn test_empty_ast_generates_empty_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "");
+        tokenizer.enqueue_source_str("test.1", "");
         let ast = Parser::new(&mut tokenizer).parse();
 
         let mut generator = CodeGenerator::default();
@@ -541,7 +541,7 @@ mod test {
     #[test]
     fn test_ast_with_empty_function_generates_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "function test() {}");
+        tokenizer.enqueue_source_str("test.1", "function test() {}");
         let ast = Parser::new(&mut tokenizer).parse();
         let mut generator = CodeGenerator::default();
         let actual = generator.generate_module(&ast);
@@ -551,7 +551,7 @@ mod test {
     #[test]
     fn test_ast_with_empty_function_with_params_generates_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "function test(a: i32) {}");
+        tokenizer.enqueue_source_str("test.1", "function test(a: i32) {}");
         let ast = Parser::new(&mut tokenizer).parse();
 
         let mut generator = CodeGenerator::default();
@@ -561,7 +561,7 @@ mod test {
     #[test]
     fn test_ast_with_empty_function_with_params_and_return_value_generates_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "function test(a: i32): i32 {}");
+        tokenizer.enqueue_source_str("test.1", "function test(a: i32): i32 {}");
         let ast = Parser::new(&mut tokenizer).parse();
 
         let mut generator = CodeGenerator::default();
@@ -572,7 +572,7 @@ mod test {
     #[test]
     fn test_ast_with_function_containing_return_expression_generates_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", "function test() { return 1 + 2; }");
+        tokenizer.enqueue_source_str("test.1", "function test() { return 1 + 2; }");
         let mut parser = Parser::new(&mut tokenizer);
         let ast = parser.parse();
 
@@ -584,7 +584,7 @@ mod test {
     #[test]
     fn test_array_literals_and_array_index_assignment() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.push_source_str("test.1", r"
+        tokenizer.enqueue_source_str("test.1", r"
             function test() { 
                 let x = [1, 2, 3, 4, 5];
                 x[0] = 99;

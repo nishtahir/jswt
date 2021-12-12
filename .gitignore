@@ -3,11 +3,11 @@
 *.profraw
 *.info
 
-*.ast
-*.tokens
-*.wast
-*.wasm
-*.mem
+**/*.ast
+**/*.tokens
+**/*.wast
+**/*.wasm
+**/*.mem
 
 # Don't ignore test resources
 !**/test/*.ast
