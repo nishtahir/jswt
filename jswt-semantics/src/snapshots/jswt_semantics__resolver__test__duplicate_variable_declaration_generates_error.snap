@@ -1,0 +1,15 @@
+---
+source: jswt-semantics/src/resolver.rs
+expression: resolver.errors
+
+---
+[
+    VariableAlreadyDefined {
+        name: "x",
+        span: Span {
+            file: "test.1",
+            start: 15,
+            end: 16,
+        },
+    },
+]

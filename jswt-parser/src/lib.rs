@@ -58,7 +58,11 @@ macro_rules! ident {
             panic!("Mismatched token type {:?}", token);
         }
 
-        let span = Span::new(&token.file, token.offset, token.offset + token.lexme.len());
+        let span = Span::new(
+            token.file.clone(),
+            token.offset,
+            token.offset + token.lexme.len(),
+        );
         let ident = Ident::new(token.lexme, span);
         // Advance lookahead
         $self.lookahead = $self.tokenizer.next_token();
@@ -356,7 +360,7 @@ impl<'a> Parser<'a> {
                     expected: vec![TokenType::Let, TokenType::Const],
                     actual: lookahead.kind,
                     span: Span::new(
-                        &lookahead.file,
+                        lookahead.file.clone(),
                         lookahead.offset,
                         lookahead.offset + lookahead.lexme.len(),
                     ),
@@ -846,7 +850,11 @@ impl<'a> Parser<'a> {
     /// It's assumed that all relevant checks have been done first
     fn lookahead_span(&self) -> Span {
         let token = self.lookahead.as_ref().unwrap();
-        Span::new(&token.file, token.offset, token.offset + token.lexme.len())
+        Span::new(
+            token.file.clone(),
+            token.offset,
+            token.offset + token.lexme.len(),
+        )
     }
 
     /// Bail out of the current parse context

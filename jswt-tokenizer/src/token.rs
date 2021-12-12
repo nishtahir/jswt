@@ -1,17 +1,22 @@
-use std::{fmt::Display, usize};
+use std::{borrow::Cow, fmt::Display, usize};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Token {
-    pub file: String,
+    pub file: Cow<'static, str>,
     pub lexme: &'static str,
     pub offset: usize,
     pub kind: TokenType,
 }
 
 impl Token {
-    pub fn new(file: &str, lexme: &'static str, kind: TokenType, offset: usize) -> Self {
+    pub fn new(
+        file: Cow<'static, str>,
+        lexme: &'static str,
+        kind: TokenType,
+        offset: usize,
+    ) -> Self {
         Token {
-            file: file.to_owned(),
+            file,
             lexme,
             offset,
             kind,

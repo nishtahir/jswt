@@ -20,7 +20,7 @@ use crate::{
 pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, &'static str>) {
     match error {
         SemanticError::VariableNotDefined { name, span } => {
-            let file = &span.file;
+            let file = &span.file.to_string();
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
@@ -35,7 +35,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             println!("{}\n{}\n", header, frame);
         }
         SemanticError::VariableAlreadyDefined { name, span } => {
-            let file = &span.file;
+            let file = &span.file.to_string();
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
@@ -50,7 +50,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             println!("{}\n{}\n", header, frame);
         }
         SemanticError::FunctionAlreadyDefined { name, span } => {
-            let file = &span.file;
+            let file = &span.file.to_string();
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
@@ -65,7 +65,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             println!("{}\n{}\n", header, frame);
         }
         SemanticError::NotAFunctionError { span, name_span } => {
-            let file = &span.file;
+            let file = &span.file.to_string();
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
@@ -84,7 +84,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             offending_token,
             expected,
         } => {
-            let file = &span.file;
+            let file = &span.file.to_string();
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
@@ -103,7 +103,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             println!("{}\n{}\n", header, frame);
         }
         SemanticError::FunctionNotDefined { span, name_span } => {
-            let file = &span.file;
+            let file = &span.file.to_string();
             let source = source_map[file];
             let start = location_from_offset(source, name_span.start);
             let end = location_from_offset(source, name_span.end);
@@ -158,7 +158,7 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
             actual,
             span,
         } => {
-            let file = &span.file;
+            let file = &span.file.to_string();
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);
@@ -181,7 +181,7 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
             actual,
             span,
         } => {
-            let file = &span.file;
+            let file = &span.file.to_string();
             let source = source_map[file];
             let start = location_from_offset(source, span.start);
             let end = location_from_offset(source, span.end);

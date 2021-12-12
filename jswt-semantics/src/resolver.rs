@@ -255,7 +255,7 @@ impl ExpressionVisitor<()> for Resolver {
 mod test {
 
     use super::*;
-    use jswt_assert::assert_eq;
+    use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
     use jswt_tokenizer::Tokenizer;
 
@@ -267,12 +267,7 @@ mod test {
         let mut resolver = Resolver::default();
         resolver.resolve(&ast);
 
-        let expected = vec![SemanticError::VariableAlreadyDefined {
-            name: "x",
-            span: Span::new("test.1", 15, 16),
-        }];
-
-        assert_eq!(expected, resolver.errors);
+        assert_debug_snapshot!(resolver.errors);
     }
 
     #[test]
@@ -283,11 +278,6 @@ mod test {
         let mut resolver = Resolver::default();
         resolver.resolve(&ast);
 
-        let expected = vec![SemanticError::VariableNotDefined {
-            name: "x",
-            span: Span::new("test.1", 25, 26),
-        }];
-
-        assert_eq!(expected, resolver.errors);
+        assert_debug_snapshot!(resolver.errors);
     }
 }

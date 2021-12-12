@@ -187,7 +187,7 @@ impl Tokenizer {
 
                         // Construct path relative to the import file directory
                         // as opposed to using pwd as the root path for imports
-                        let source_path = PathBuf::from(&source.name);
+                        let source_path = PathBuf::from(source.name.to_string());
                         let source_dir = source_path.parent().unwrap();
                         let relative_source_path = PathBuf::from(format!(
                             "{}/{}",
@@ -213,14 +213,14 @@ impl Tokenizer {
                 let match_text = res.as_str();
                 // Advance cursor based on match
                 source.advance_cursor(match_text.len());
-                let token = Token::new(&source.name, match_text, rule.token_type, offset);
+                let token = Token::new(source.name.clone().into(), match_text, rule.token_type, offset);
                 return Some(token);
             }
         }
 
         // We want to report the error after the fact so note it down for now
         let err = TokenizerError::UnreconizedToken {
-            file: source.name.to_owned(),
+            file: source.name.clone().into(),
             offset,
             token: &rest[0..1],
         };
@@ -267,7 +267,7 @@ impl Tokenizer {
         self.source_map
             .borrow_mut()
             .insert(path.to_owned(), content);
-        let source = Source::new(path.to_string(), content);
+        let source = Source::new(path.to_owned().into(), content);
         self.sources.insert(0, Rc::new(RefCell::new(source)));
     }
 

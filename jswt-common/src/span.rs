@@ -1,12 +1,21 @@
-use std::ops::{Add, Sub};
+use std::{
+    borrow::Cow,
+    ops::{Add, Sub},
+};
 
 /// Descriptor for a span of text that can be located
 /// in a Source file.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Span {
-    pub file: String,
+    pub file: Cow<'static, str>,
     pub start: usize,
     pub end: usize,
+}
+
+impl Span {
+    pub fn new(file: Cow<'static, str>, start: usize, end: usize) -> Self {
+        Span { file, start, end }
+    }
 }
 
 /// Generic descriptor of a resource that has a [Span]
@@ -38,16 +47,6 @@ impl Sub<Span> for Span {
             file: self.file,
             start: self.start,
             end: rhs.start,
-        }
-    }
-}
-
-impl Span {
-    pub fn new(file: &str, start: usize, end: usize) -> Self {
-        Span {
-            file: file.to_owned(),
-            start,
-            end,
         }
     }
 }
