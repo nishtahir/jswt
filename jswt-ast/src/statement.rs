@@ -5,7 +5,7 @@ use crate::{
     StatementList, TypeAnnotation, VariableModifier,
 };
 
-#[derive(Debug, PartialEq, FromEnumVariant)]
+#[derive(Debug, PartialEq, FromEnumVariant, Spannable)]
 pub enum StatementElement {
     Block(BlockStatement),
     Empty(EmptyStatement),
@@ -16,7 +16,7 @@ pub enum StatementElement {
     Expression(ExpressionStatement),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct BlockStatement {
     pub span: Span,
     pub statements: StatementList,
@@ -35,13 +35,13 @@ pub struct IfStatement {
     pub alternative: Option<Box<StatementElement>>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct ReturnStatement {
     pub span: Span,
     pub expression: SingleExpression,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct VariableStatement {
     pub span: Span,
     pub modifier: VariableModifier,
@@ -50,22 +50,8 @@ pub struct VariableStatement {
     pub type_annotation: Option<TypeAnnotation>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub struct ExpressionStatement {
     pub span: Span,
     pub expression: SingleExpression,
-}
-
-impl Spannable for StatementElement {
-    fn span(&self) -> Span {
-        match self {
-            StatementElement::Block(stmt) => stmt.span.to_owned(),
-            StatementElement::Empty(stmt) => stmt.span.to_owned(),
-            StatementElement::If(stmt) => stmt.span.to_owned(),
-            StatementElement::Return(stmt) => stmt.span.to_owned(),
-            StatementElement::Variable(stmt) => stmt.span.to_owned(),
-            StatementElement::Expression(stmt) => stmt.span.to_owned(),
-            StatementElement::Iteration(stmt) => stmt.span(),
-        }
-    }
 }

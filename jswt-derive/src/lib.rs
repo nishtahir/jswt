@@ -16,7 +16,22 @@ pub fn span(input: TokenStream) -> TokenStream {
                 }
             }
         }
-        syn::Data::Enum(_) => unimplemented!(),
+        // This is currently a low effort macro for generating  Spannable implementation for enums
+        // It assumes that every variant of the enum also implements Spannable
+        syn::Data::Enum(DataEnum { variants, .. }) => {
+            let variant_ident = variants.into_iter().map(|v| v.ident);
+            quote! {
+                impl jswt_common::Spannable for #ident {
+                    fn span(&self) -> Span {
+                        match self {
+                            #(
+                                #ident::#variant_ident(variant) => variant.span(),
+                            )*
+                        }
+                    }
+                }
+            }
+        }
         syn::Data::Union(_) => unimplemented!(),
     };
     tokens.into()
@@ -28,8 +43,10 @@ pub fn enum_variant(input: TokenStream) -> TokenStream {
     let DeriveInput { ident, data, .. } = parse_macro_input!(input);
     let tokens = match data {
         syn::Data::Struct(_) => unimplemented!(),
-        syn::Data::Enum(DataEnum { variants, .. }) => {
-            variants.into_iter().filter(|v| v.fields.len() == 1).map(|v| {
+        syn::Data::Enum(DataEnum { variants, .. }) => variants
+            .into_iter()
+            .filter(|v| v.fields.len() == 1)
+            .map(|v| {
                 let field = v.fields.next().unwrap().iter();
                 let var = &v.ident;
                 quote! {
@@ -41,8 +58,7 @@ pub fn enum_variant(input: TokenStream) -> TokenStream {
                         }
                     )*
                 }
-            })
-        }
+            }),
         syn::Data::Union(_) => unimplemented!(),
     };
 
