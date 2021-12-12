@@ -1,18 +1,18 @@
 use core::hash::Hash;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[derive(Debug)]
-pub struct SymbolTable<K: Eq + Hash, V> {
-    table: Vec<HashMap<K, V>>,
+pub struct SymbolTable<K: Eq + Hash + Ord, V> {
+    table: Vec<BTreeMap<K, V>>,
 }
 
-impl<K: Eq + Hash, V> SymbolTable<K, V> {
-    pub fn new(table: Vec<HashMap<K, V>>) -> Self {
+impl<K: Eq + Hash + Ord, V> SymbolTable<K, V> {
+    pub fn new(table: Vec<BTreeMap<K, V>>) -> Self {
         Self { table }
     }
 
     pub fn push_scope(&mut self) {
-        self.table.push(HashMap::new());
+        self.table.push(BTreeMap::new());
     }
 
     pub fn pop_scope(&mut self) {

@@ -1,7 +1,7 @@
 use crate::error::SemanticError;
 use crate::symbol::{Symbol, Type};
 use std::borrow::Borrow;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use jswt_ast::*;
 use jswt_common::SymbolTable;
@@ -9,7 +9,7 @@ use jswt_common::SymbolTable;
 impl Default for Resolver {
     fn default() -> Self {
         Self {
-            symbols: SymbolTable::new(vec![HashMap::new()]),
+            symbols: SymbolTable::new(vec![BTreeMap::new()]),
             errors: Default::default(),
         }
     }
@@ -248,8 +248,7 @@ impl ExpressionVisitor<()> for Resolver {
         // No-op
     }
 
-    fn visit_member_index(&mut self, _: &MemberIndexExpression) {
-    }
+    fn visit_member_index(&mut self, _: &MemberIndexExpression) {}
 }
 
 #[cfg(test)]
