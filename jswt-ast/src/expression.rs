@@ -8,6 +8,7 @@ use crate::Literal;
 pub enum SingleExpression {
     Unary(UnaryExpression),
     Assignment(BinaryExpression),
+    MemberIndex(MemberIndexExpression),
     Arguments(ArgumentsExpression),
     Multiplicative(BinaryExpression),
     Bitwise(BinaryExpression),
@@ -31,6 +32,7 @@ impl Spannable for SingleExpression {
             SingleExpression::Relational(exp) => exp.span(),
             SingleExpression::Assignment(exp) => exp.span(),
             SingleExpression::Unary(exp) => exp.span(),
+            SingleExpression::MemberIndex(exp) => exp.span(),
         }
     }
 }
@@ -47,6 +49,14 @@ pub struct ArgumentsList {
     pub span: Span,
     pub arguments: Vec<SingleExpression>,
 }
+
+#[derive(Debug, PartialEq, Spannable)]
+pub struct MemberIndexExpression {
+    pub span: Span,
+    pub target: Box<SingleExpression>,
+    pub index: Box<SingleExpression>,
+}
+
 
 #[derive(Debug, PartialEq, Spannable)]
 pub struct UnaryExpression {

@@ -85,8 +85,8 @@ fn main() {
         // If a runtime path isn't provided use the default path
         matches
             .value_of("runtime-path")
-            .or_else(|| Some("./runtime/rt.jswt"))
-            .map(|path| PathBuf::from(path))
+            .or(Some("./runtime/rt.jswt"))
+            .map(PathBuf::from)
     };
 
     let ast = compile_module(&input, &output, runtime.as_ref());

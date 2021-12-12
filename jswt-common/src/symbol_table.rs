@@ -58,8 +58,8 @@ impl<K: Eq + Hash, V> SymbolTable<K, V> {
 
     /// Returns all the symbols available in
     /// the current local scope
-    pub fn symbols_in_current_scope(&self) -> Vec<&V> {
-        self.table.last().unwrap().values().collect()
+    pub fn symbols_in_current_scope(&self) -> Vec<(&K, &V)> {
+        self.table.last().unwrap().iter().collect()
     }
 }
 

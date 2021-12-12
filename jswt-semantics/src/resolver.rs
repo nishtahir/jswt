@@ -187,6 +187,7 @@ impl ExpressionVisitor<()> for Resolver {
             SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
             SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
             SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
+            SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
         }
     }
 
@@ -245,6 +246,9 @@ impl ExpressionVisitor<()> for Resolver {
 
     fn visit_literal(&mut self, _: &Literal) {
         // No-op
+    }
+
+    fn visit_member_index(&mut self, _: &MemberIndexExpression) {
     }
 }
 

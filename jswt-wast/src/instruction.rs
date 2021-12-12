@@ -1,14 +1,14 @@
-use std::fmt::Display;
+use std::{borrow::Cow, fmt::Display};
 
 use crate::ValueType;
 
 #[derive(Debug, PartialEq)]
 pub enum Instruction {
-    Local(&'static str, ValueType),
-    LocalGet(&'static str),
-    LocalSet(&'static str, Box<Instruction>),
-    GlobalSet(&'static str, Box<Instruction>),
-    GlobalGet(&'static str),
+    Local(Cow<'static, str>, ValueType),
+    LocalGet(Cow<'static, str>),
+    LocalSet(Cow<'static, str>, Box<Instruction>),
+    GlobalSet(Cow<'static, str>, Box<Instruction>),
+    GlobalGet(Cow<'static, str>),
     I32Const(i32),
     I32Add(Box<Instruction>, Box<Instruction>),
     I32Sub(Box<Instruction>, Box<Instruction>),
@@ -23,21 +23,26 @@ pub enum Instruction {
     I32Ge(Box<Instruction>, Box<Instruction>),
     I32Lt(Box<Instruction>, Box<Instruction>),
     I32Le(Box<Instruction>, Box<Instruction>),
+    I32Store(Box<Instruction>, Box<Instruction>),
+    I32Load(Box<Instruction>),
     Block(usize, Vec<Instruction>),
     Return(Box<Instruction>),
     If(Box<Instruction>, Vec<Instruction>, Vec<Instruction>),
-    Call(&'static str, Vec<Instruction>),
+    Call(Cow<'static, str>, Vec<Instruction>),
     Loop(usize, Vec<Instruction>),
     BrLoop(usize),
     BrBlock(usize),
     Noop,
-    // A meta instruction not part of the wasm specification but
-    // an instruction to the code generator to inline raw instructions
-    // exactly as they are provided.
-    // Warning: No checks are performed on the input before they are inlined
-    RawWast(&'static str),
-    // Synthetic return intended to exit the function with the
-    // '$return' value set
+    // Meta instructions. These do not conform to the wasm spec but
+    // are used to assist in code generation;
+
+    // Inline raw instructions.exactly as they are provided.
+    // Warning: No checks are performed on the input before they are inlined.
+    RawWast(Cow<'static, str>),
+    // Represents an instructure used to initialize a complext data structure.
+    Complex(Vec<Instruction>),
+    // Synthetic return intended to exit the function
+    // with the '$return' value set.
     SynthReturn,
 }
 
@@ -83,10 +88,10 @@ impl From<&Instruction> for String {
             Instruction::RawWast(text) => text.to_string(),
             Instruction::LocalGet(name) => format!("(local.get ${})", name),
             Instruction::LocalSet(name, args) => {
-                format!("(local.set ${} {})", name, args.to_string())
+                format!("(local.set ${} {})", name, args)
             }
             Instruction::GlobalSet(name, args) => {
-                format!("(global.set ${} {})", name, args.to_string())
+                format!("(global.set ${} {})", name, args)
             }
             Instruction::Local(name, ty) => format!("(local ${} {})", name, ty),
             Instruction::If(cond, cons, alt) => {
@@ -114,6 +119,9 @@ impl From<&Instruction> for String {
             Instruction::Block(label, args) => {
                 format!("(block $blk{} {})", label, args.to_string())
             }
+            Instruction::Complex(args) => args.to_string(),
+            Instruction::I32Store(loc, value) => format!("(i32.store {} {})", *loc, *value),
+            Instruction::I32Load(_) => todo!(),
         }
     }
 }

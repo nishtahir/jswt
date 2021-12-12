@@ -1,6 +1,8 @@
 mod instruction;
 mod value_type;
 
+use std::borrow::Cow;
+
 pub use instruction::Instruction;
 pub use value_type::ValueType;
 
@@ -26,7 +28,7 @@ pub struct FunctionType {
 
 #[derive(Debug, PartialEq)]
 pub struct GlobalType {
-    pub name: &'static str,
+    pub name: Cow<'static, str>,
     pub ty: ValueType,
     pub mutable: bool,
     pub initializer: Instruction,

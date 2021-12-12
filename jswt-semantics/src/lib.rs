@@ -15,11 +15,11 @@ pub struct SemanticAnalyzer;
 impl SemanticAnalyzer {
     pub fn analyze(ast: &Ast) -> Vec<SemanticError> {
         let mut global_resolver = GlobalResolver::default();
-        global_resolver.resolve(&ast);
+        global_resolver.resolve(ast);
 
         let global_symbols = global_resolver.symbols;
         let mut resolver = Resolver::new(global_symbols);
-        resolver.resolve(&ast);
+        resolver.resolve(ast);
 
         let mut errors = vec![];
         errors.append(&mut global_resolver.errors);

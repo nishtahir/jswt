@@ -389,11 +389,9 @@ impl<'a> Parser<'a> {
         .into())
     }
 
-    /// In increasing order of precedence. Meaning lower should have
-    /// higher precedence
-    ///
     /// SingleExpression
     ///   : SingleExpression '=' SingleExpression
+    ///   | SingleExpression '[' SingleExpression ']'
     ///   | SingleExpression '|' SingleExpression
     ///   | SingleExpression '&' SingleExpression
     ///   | SingleExpression ('==' | '!=') SingleExpression
@@ -417,9 +415,28 @@ impl<'a> Parser<'a> {
     //    ;
     binary_expression!(
         assignment_expression,
-        next: bitwise_or_expression,
+        next: member_index_expression,
         [exp => Assignment, op => Assign, token => Equal]
     );
+
+    /// MemberIndexExpression
+    ///   : BitwiseOrExpression '[' BitwiseOrExpression ']'
+    ///   ;
+    fn member_index_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        let target = self.bitwise_or_expression()?;
+        if self.lookahead_is(TokenType::LeftBracket) {
+            consume_unchecked!(self);
+
+            let index = self.bitwise_or_expression()?;
+            let end = consume!(self, TokenType::RightBracket)?;
+            return Ok(SingleExpression::MemberIndex(MemberIndexExpression {
+                span: target.span() + end,
+                target: Box::new(target),
+                index: Box::new(index),
+            }));
+        }
+        Ok(target)
+    }
 
     //  BitwiseOrExpression
     //    : BitwiseAndExpression '|' BitwiseAndExpression

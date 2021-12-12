@@ -1,7 +1,9 @@
+mod symbols;
+
 use std::borrow::Borrow;
+use symbols::{WastSymbol, WastSymbolTable};
 
 use jswt_ast::*;
-use jswt_common::SymbolTable;
 use jswt_wast::*;
 
 #[derive(Debug)]
@@ -12,7 +14,7 @@ pub struct CodeGenerator {
     /// should push a new scope to the stack and pop the scope before pushing their own
     /// instruction to the stack
     scopes: Vec<InstructionScope>,
-    symbols: SymbolTable<&'static str, WastSymbol>,
+    symbols: WastSymbolTable,
     label_counter: usize,
 }
 
@@ -21,20 +23,12 @@ struct InstructionScope {
     instructions: Vec<Instruction>,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum WastSymbol {
-    Function(&'static str),
-    Param(&'static str, ValueType),
-    Local(&'static str, ValueType),
-    Global(&'static str, ValueType),
-}
-
 impl Default for CodeGenerator {
     fn default() -> Self {
         Self {
             module: Default::default(),
             scopes: Default::default(),
-            symbols: SymbolTable::new(vec![]),
+            symbols: WastSymbolTable::new(),
             label_counter: 0,
         }
     }
@@ -240,12 +234,14 @@ impl StatementVisitor for CodeGenerator {
         // Push the scope for the function body
         self.symbols.push_scope();
         let mut type_params = vec![];
-        // Push Symbols for Params
-        for (_, arg) in node.params.parameters.iter().enumerate() {
-            let name = arg.ident.value;
+        // Push Symbols for Params. We need this in case the scope
+        // needs to declare synthetic local variables
+        for (index, arg) in node.params.parameters.iter().enumerate() {
             // Add to symbol table
-            self.symbols
-                .define(arg.ident.value, WastSymbol::Param(name, ValueType::I32));
+            self.symbols.define(
+                arg.ident.value.into(),
+                WastSymbol::Param(index, ValueType::I32),
+            );
             // Todo, convert to ValueType
             type_params.push((arg.ident.value, ValueType::I32))
         }
@@ -272,7 +268,7 @@ impl StatementVisitor for CodeGenerator {
                 "wast" => match &annotation.expr {
                     Some(SingleExpression::Literal(Literal::String(string_lit))) => {
                         has_inlined_body = true;
-                        self.push_instruction(Instruction::RawWast(string_lit.value));
+                        self.push_instruction(Instruction::RawWast(string_lit.value.into()));
                     }
                     _ => todo!(),
                 },
@@ -308,7 +304,7 @@ impl StatementVisitor for CodeGenerator {
             // We're using a keyword here to prevent users from accidentally shadowing the value
             if node.returns.is_some() {
                 self.symbols
-                    .define("return", WastSymbol::Local("return", ValueType::I32));
+                    .define("return".into(), WastSymbol::Local(ValueType::I32));
 
                 // We're pushing the synthetic return to the end of the function
                 instructions.push(Instruction::SynthReturn);
@@ -320,14 +316,11 @@ impl StatementVisitor for CodeGenerator {
         }
 
         // Push our locals to the instructions
-        self.symbols
-            .symbols_in_current_scope()
-            .iter()
-            .for_each(|sym| {
-                if let WastSymbol::Local(name, ty) = sym {
-                    instructions.insert(0, Instruction::Local(name, *ty))
-                }
-            });
+        for (name, sym) in self.symbols.symbols_in_current_scope() {
+            if let WastSymbol::Local(ty) = sym {
+                instructions.insert(0, Instruction::Local(name.clone(), *ty))
+            }
+        }
 
         if !is_predefined_function {
             let function = Function {
@@ -357,20 +350,24 @@ impl StatementVisitor for CodeGenerator {
 }
 impl ExpressionVisitor<Instruction> for CodeGenerator {
     fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> Instruction {
-        let exp = self.visit_single_expression(node.right.borrow());
+        let rhs = self.visit_single_expression(node.right.borrow());
 
         match node.left.borrow() {
             SingleExpression::Identifier(ident_exp) => {
                 let name = ident_exp.ident.value;
                 // figure out the scope of the variable
-                let isr = if self.symbols.lookup_global(&name).is_some() {
+                let isr = if self.symbols.lookup_global(name.into()).is_some() {
                     Instruction::GlobalSet
                 } else {
                     Instruction::LocalSet
                 };
-                isr(name, Box::new(exp))
+                isr(name.into(), Box::new(rhs))
             }
-            _ => todo!(),
+            SingleExpression::MemberIndex(exp) => {
+                let index_ptr = self.visit_member_index(exp);
+                Instruction::I32Store(Box::new(index_ptr), Box::new(rhs))
+            }
+            _ => unimplemented!(),
         }
     }
 
@@ -382,16 +379,16 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             AssignableElement::Identifier(ident) => {
                 let name = ident.value;
                 // Check if this element has been defined
-                if self.symbols.lookup(&name).is_none() {
+                if self.symbols.lookup(name.into()).is_none() {
                     if self.symbols.depth() == 1 {
                         self.symbols
-                            .define(name, WastSymbol::Global(name, ValueType::I32));
-                        return Instruction::GlobalSet(name, Box::new(Instruction::Noop));
+                            .define(name.into(), WastSymbol::Global(ValueType::I32));
+                        return Instruction::GlobalSet(name.into(), Box::new(Instruction::Noop));
                     } else {
                         self.symbols
-                            .define(name, WastSymbol::Local(name, ValueType::I32));
+                            .define(name.into(), WastSymbol::Local(ValueType::I32));
 
-                        return Instruction::LocalSet(name, Box::new(Instruction::Noop));
+                        return Instruction::LocalSet(name.into(), Box::new(Instruction::Noop));
                     }
                 }
                 unreachable!()
@@ -411,6 +408,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             SingleExpression::Literal(lit) => self.visit_literal(lit),
             SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
             SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
+            SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
         }
     }
 
@@ -451,25 +449,24 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Instruction {
         let target = node.ident.value;
-        if self.symbols.lookup_current(&target).is_some() {
-            Instruction::LocalGet(target)
+        if self.symbols.lookup_current(target.into()).is_some() {
+            Instruction::LocalGet(target.into())
         } else {
-            Instruction::GlobalGet(target)
+            Instruction::GlobalGet(target.into())
         }
     }
 
     fn visit_argument_expression(&mut self, node: &ArgumentsExpression) -> Instruction {
         if let SingleExpression::Identifier(ident_exp) = node.ident.borrow() {
-            // Push a new instruction scope for the
-            // function call
-            let function_name = ident_exp.ident.value;
+            // Push a new instruction scope for the function call
+            let instructions = node
+                .arguments
+                .arguments
+                .iter()
+                .map(|exp| self.visit_single_expression(exp))
+                .collect();
 
-            let mut instructions = vec![];
-            for exp in node.arguments.arguments.iter() {
-                instructions.push(self.visit_single_expression(exp));
-            }
-
-            return Instruction::Call(function_name, instructions);
+            return Instruction::Call(ident_exp.ident.value.into(), instructions);
         }
 
         // Other targets for function calls.
@@ -486,15 +483,47 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
                 true => Instruction::I32Const(1),
                 false => Instruction::I32Const(0),
             },
-            Literal::Array(_) => todo!(),
+            Literal::Array(lit) => {
+                // Synthetic variable to hold the array pointer
+                let array_pointer = self.symbols.define_synthetic_local(ValueType::I32);
+                let mut instructions = vec![Instruction::LocalSet(
+                    array_pointer.clone(),
+                    Box::new(Instruction::Call(
+                        "arrayNew".into(),
+                        vec![Instruction::I32Const(4)], // Size of i32 in bytes
+                    )),
+                )];
+
+                for element in &lit.elements {
+                    // instructions.push(Instruction::I32Store());
+                    let value = self.visit_single_expression(element);
+                    instructions.push(Instruction::I32Store(
+                        Box::new(Instruction::Call(
+                            "arrayPush".into(),
+                            vec![Instruction::LocalGet(array_pointer.clone())], // Size of i32 in bytes
+                        )),
+                        Box::new(value),
+                    ));
+                }
+
+                // Return the array pointer as the result of the expression
+                instructions.push(Instruction::LocalGet(array_pointer.clone()));
+                Instruction::Complex(instructions)
+            }
         }
+    }
+
+    fn visit_member_index(&mut self, node: &MemberIndexExpression) -> Instruction {
+        let container = self.visit_single_expression(&node.target);
+        let index = self.visit_single_expression(&node.index);
+        Instruction::Call("arrayAt".into(), vec![container, index])
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use jswt_assert::*;
+    use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
     use jswt_tokenizer::Tokenizer;
 
@@ -547,6 +576,26 @@ mod test {
         let mut parser = Parser::new(&mut tokenizer);
         let ast = parser.parse();
 
+        let mut generator = CodeGenerator::default();
+        let actual = generator.generate_module(&ast);
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_array_literals_and_array_index_assignment() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.push_source_str("test.1", r"
+            function test() { 
+                let x = [1, 2, 3, 4, 5];
+                x[0] = 99;
+            }
+        ");
+        let mut parser = Parser::new(&mut tokenizer);
+        let ast = parser.parse();
+        let errors = parser.errors();
+
+        assert_eq!(errors.0.len(), 0);
+        assert_eq!(errors.1.len(), 0);
         let mut generator = CodeGenerator::default();
         let actual = generator.generate_module(&ast);
         assert_debug_snapshot!(actual);

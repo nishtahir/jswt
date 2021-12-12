@@ -105,7 +105,7 @@ pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String
                 let rg = Regex::new(r"\d").unwrap();
                 let mut marker_line = format!(
                     "\n {} {}{}",
-                    rg.replace_all(&gutter, " ").to_string(),
+                    rg.replace_all(&gutter, " "),
                     marker_spacing,
                     "^".repeat(number_of_markers)
                 );
@@ -128,7 +128,7 @@ pub fn location_from_offset(source: &str, offset: usize) -> Location {
     let mut location = Location { line: 1, col: 1 };
     if offset > 0 {
         let mut remaining = offset;
-        for ch in source.chars().into_iter() {
+        for ch in source.chars() {
             if ch == '\n' {
                 location.line += 1;
                 location.col = 1;
