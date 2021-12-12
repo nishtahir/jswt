@@ -256,6 +256,19 @@ mod test {
     }
 
     #[test]
+    fn test_compile_and_execute_arrays_sample() {
+        let mut cmd = Command::cargo_bin("jswt").unwrap();
+        let assert = cmd
+            .arg("--runtime-path")
+            .arg("../runtime/rt.jswt")
+            .arg("../example/arrays.jswt")
+            .assert()
+            .success();
+        let stdout = std::str::from_utf8(&assert.get_output().stdout).unwrap();
+        assert_str_eq!(stdout, "99\n2\n3\n4\n");
+    }
+
+    #[test]
     fn test_variable_not_found_semantic_error() {
         let mut cmd = Command::cargo_bin("jswt").unwrap();
         let assert = cmd
