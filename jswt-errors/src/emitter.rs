@@ -35,7 +35,13 @@ impl<'a> ErrorEmitter<'a> {
             };
             let code_frame = create_codeframe(source, &location, message);
             let header = create_header(file, &location.start, &level);
-            println!("{}\n{}\n", header, code_frame);
+            println!("{}\n{}", header, code_frame);
+            if let Some(hint) = hint {
+                let text = format!("Hint: {}", &hint).bold();
+                println!("{}", text);
+            }
+            // Blank line for better output
+            println!("\n");
         }
     }
 }

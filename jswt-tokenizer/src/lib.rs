@@ -120,8 +120,9 @@ lazy_static! {
         r"^\]"=> TokenType::RightBracket,
 
         // Multi character sequences
-        r"^0[xX][0-9a-fA-F]+" => TokenType::HexNumber,
-        r"^\d+" => TokenType::Number,
+        r"^0[xX][0-9a-fA-F]+" => TokenType::HexInteger,
+        r"^\d+\.\d+" => TokenType::Float,
+        r"^\d+" => TokenType::Integer,
         r"^[_$a-zA-Z][_$a-zA-Z0-9]*" => TokenType::Identifier,
         r#"^"[^"]*""# => TokenType::String,
 
@@ -213,7 +214,12 @@ impl Tokenizer {
                 let match_text = res.as_str();
                 // Advance cursor based on match
                 source.advance_cursor(match_text.len());
-                let token = Token::new(source.name.clone().into(), match_text, rule.token_type, offset);
+                let token = Token::new(
+                    source.name.clone().into(),
+                    match_text,
+                    rule.token_type,
+                    offset,
+                );
                 return Some(token);
             }
         }

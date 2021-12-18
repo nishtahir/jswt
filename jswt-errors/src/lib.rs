@@ -2,7 +2,6 @@ mod codeframe;
 mod emitter;
 mod highlighter;
 
-use colored::*;
 use emitter::ErrorEmitter;
 use std::{borrow::Cow, collections::HashMap};
 
@@ -100,7 +99,7 @@ pub fn print_tokenizer_error(error: &TokenizerError, source_map: &HashMap<String
             level: Level::Error,
             span: Span::new(file.clone().into(), *offset, *offset + 1),
             message: format!("SyntaxError: Unrecognized token '{}'.", token).into(),
-            hint: None,
+            hint: Some("Remove this token".into()),
         },
         TokenizerError::UnexpectedEof => todo!(),
     };

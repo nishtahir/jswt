@@ -185,15 +185,14 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     fs::write(output.with_extension("ast"), format!("{:#?}", ast)).unwrap();
 
     let mut has_errors = false;
-    let parser_errors = parser.errors();
 
     // Report errors
-    for error in parser_errors.1 {
+    for error in parser.tokenizer_errors() {
         has_errors = true;
         print_tokenizer_error(&error, &source_map.clone().borrow());
     }
 
-    for error in parser_errors.0 {
+    for error in parser.parse_errors() {
         has_errors = true;
         print_parser_error(&error, &source_map.clone().borrow());
     }

@@ -528,7 +528,7 @@ impl<'a> Parser<'a> {
             }));
         }
 
-        if self.lookahead_is(TokenType::Bang) {
+        if self.lookahead_is(TokenType::Not) {
             let op = consume_unchecked!(self);
             let expr = self.unary_expression()?;
             return Ok(SingleExpression::Unary(UnaryExpression {
@@ -653,10 +653,10 @@ impl<'a> Parser<'a> {
                 }
                 .into()
             }
-            Some(TokenType::Number) => {
+            Some(TokenType::Integer) => {
                 let inner = self.lookahead.as_ref().unwrap().lexme;
                 let span = consume_unchecked!(self);
-                NumberLiteral {
+                IntegerLiteral {
                     span,
                     // Should be safe to unwrap since
                     // the tokenizer matched this
@@ -664,14 +664,23 @@ impl<'a> Parser<'a> {
                 }
                 .into()
             }
-            Some(TokenType::HexNumber) => {
+            Some(TokenType::HexInteger) => {
                 let inner = self.lookahead.as_ref().unwrap().lexme;
                 let without_prefix = inner.trim_start_matches("0x");
                 let span = consume_unchecked!(self);
-                NumberLiteral {
+                IntegerLiteral {
                     span,
                     // Allow integer overflows in this specific instance
                     value: u32::from_str_radix(without_prefix, 16).unwrap() as i32,
+                }
+                .into()
+            }
+            Some(TokenType::Float) => {
+                let inner = self.lookahead.as_ref().unwrap().lexme;
+                let span = consume_unchecked!(self);
+                FloatingPointLiteral {
+                    span,
+                    value: inner.parse::<f32>().unwrap(),
                 }
                 .into()
             }
@@ -680,7 +689,9 @@ impl<'a> Parser<'a> {
                 return Err(ParseError::NoViableAlternative {
                     expected: vec![
                         TokenType::Identifier,
-                        TokenType::Number,
+                        TokenType::Integer,
+                        TokenType::HexInteger,
+                        TokenType::Float,
                         TokenType::String,
                         TokenType::True,
                         TokenType::False,
@@ -885,9 +896,14 @@ impl<'a> Parser<'a> {
         }
     }
 
+    /// Get a reference to the tokenizer's errors.
+    pub fn tokenizer_errors(&self) -> Vec<TokenizerError> {
+        self.tokenizer.errors()
+    }
+
     /// Get a reference to the parser's errors.
-    pub fn errors(&self) -> (Vec<ParseError>, Vec<TokenizerError>) {
-        (self.errors.clone(), self.tokenizer.errors())
+    pub fn parse_errors(&self) -> Vec<ParseError> {
+        self.errors.clone()
     }
 }
 

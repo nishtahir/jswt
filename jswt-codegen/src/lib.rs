@@ -476,7 +476,8 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
     fn visit_literal(&mut self, node: &Literal) -> Instruction {
         match node {
             Literal::String(_) => todo!(),
-            Literal::Number(lit) => Instruction::I32Const(lit.value),
+            Literal::Integer(lit) => Instruction::I32Const(lit.value),
+            Literal::Float(_) => todo!(),
             Literal::Boolean(lit) => match lit.value {
                 // Boolean values in WebAssembly are represented as values of type i32. In a boolean context,
                 // such as a br_if condition, any non-zero value is interpreted as true and 0 is interpreted as false.
@@ -584,18 +585,19 @@ mod test {
     #[test]
     fn test_array_literals_and_array_index_assignment() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", r"
+        tokenizer.enqueue_source_str(
+            "test.1",
+            r"
             function test() { 
                 let x = [1, 2, 3, 4, 5];
                 x[0] = 99;
             }
-        ");
+        ",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let ast = parser.parse();
-        let errors = parser.errors();
-
-        assert_eq!(errors.0.len(), 0);
-        assert_eq!(errors.1.len(), 0);
+        assert_eq!(parser.parse_errors().len(), 0);
+        assert_eq!(parser.tokenizer_errors().len(), 0);
         let mut generator = CodeGenerator::default();
         let actual = generator.generate_module(&ast);
         assert_debug_snapshot!(actual);
