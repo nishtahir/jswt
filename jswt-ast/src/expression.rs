@@ -1,10 +1,10 @@
-pub use jswt_common::{Span, Spannable};
+use jswt_common::Span;
 use jswt_derive::Spannable;
 
 pub use crate::ident::Ident;
 use crate::Literal;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable)]
 pub enum SingleExpression {
     Unary(UnaryExpression),
     Assignment(BinaryExpression),
@@ -17,24 +17,6 @@ pub enum SingleExpression {
     Relational(BinaryExpression),
     Identifier(IdentifierExpression),
     Literal(Literal),
-}
-
-impl Spannable for SingleExpression {
-    fn span(&self) -> Span {
-        match self {
-            SingleExpression::Multiplicative(exp) => exp.span(),
-            SingleExpression::Additive(exp) => exp.span(),
-            SingleExpression::Literal(exp) => exp.span(),
-            SingleExpression::Identifier(exp) => exp.span(),
-            SingleExpression::Arguments(exp) => exp.span(),
-            SingleExpression::Equality(exp) => exp.span(),
-            SingleExpression::Bitwise(exp) => exp.span(),
-            SingleExpression::Relational(exp) => exp.span(),
-            SingleExpression::Assignment(exp) => exp.span(),
-            SingleExpression::Unary(exp) => exp.span(),
-            SingleExpression::MemberIndex(exp) => exp.span(),
-        }
-    }
 }
 
 #[derive(Debug, PartialEq, Spannable)]
@@ -56,7 +38,6 @@ pub struct MemberIndexExpression {
     pub target: Box<SingleExpression>,
     pub index: Box<SingleExpression>,
 }
-
 
 #[derive(Debug, PartialEq, Spannable)]
 pub struct UnaryExpression {
