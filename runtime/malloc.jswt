@@ -36,7 +36,8 @@ function extend(pages: i32) {
     hdrSetSize(footer, nBytes - 8);
     hdrSetFree(footer, true);
 
-    if (hdrGetFree(prevFooter) != false) {
+    
+    if (hdrGetFree(prevFooter) != 0 /* false */) {
         let prevSize = hdrGetSize(prevFooter);
         let prevHdr = prevFooter - prevSize - 4;
         hdrSetSize(prevHdr, prevSize + nBytes);
@@ -143,12 +144,12 @@ function hdrSetSize(pointer: i32, n: i32) {
 }
 
 @inline
-function hdrGetFree(pointer: i32): boolean {
+function hdrGetFree(pointer: i32): i32 {
     return i32Load(pointer) & 0x00000001;
 }
 
 @inline
-function hdrSetFree(pointer: i32, isFree: boolean) {
+function hdrSetFree(pointer: i32, isFree: i32) {
     let alloc = i32Load(pointer) & 0xFFFFFFFE;
     i32Store(pointer, alloc | isFree);
 }

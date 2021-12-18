@@ -1,4 +1,4 @@
-use jswt_ast::Span;
+use jswt_common::Span;
 use jswt_tokenizer::TokenType;
 
 #[derive(Debug, Clone)]

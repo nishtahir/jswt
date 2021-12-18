@@ -26,6 +26,6 @@ expression: actual
         file: "test.1",
         lexme: "99",
         offset: 8,
-        kind: Number,
+        kind: Integer,
     },
 ]

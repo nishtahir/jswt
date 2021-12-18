@@ -2,7 +2,8 @@ mod errors;
 use std::vec;
 
 pub use errors::ParseError;
-use jswt_ast::*;
+use jswt_ast::high_level::*;
+use jswt_common::Type;
 use jswt_tokenizer::*;
 
 /// Returns true if a token matching the given token type
@@ -81,6 +82,7 @@ macro_rules! binary_expression {
                             let op_span = consume_unchecked!(self);
                             let right = self.$next()?;
                             left = SingleExpression::$exp(BinaryExpression {
+                                ty: Type::Unknown,
                                 span: left.span() + right.span(),
                                 left: Box::new(left),
                                 op: BinaryOperator::$op(op_span),
@@ -434,6 +436,7 @@ impl<'a> Parser<'a> {
             let index = self.bitwise_or_expression()?;
             let end = consume!(self, TokenType::RightBracket)?;
             return Ok(SingleExpression::MemberIndex(MemberIndexExpression {
+                ty: Type::Unknown,
                 span: target.span() + end,
                 target: Box::new(target),
                 index: Box::new(index),
@@ -512,6 +515,7 @@ impl<'a> Parser<'a> {
             let op = consume_unchecked!(self);
             let expr = self.unary_expression()?;
             return Ok(SingleExpression::Unary(UnaryExpression {
+                ty: Type::Unknown,
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Plus(op),
                 expr: Box::new(expr),
@@ -522,16 +526,18 @@ impl<'a> Parser<'a> {
             let op = consume_unchecked!(self);
             let expr = self.unary_expression()?;
             return Ok(SingleExpression::Unary(UnaryExpression {
+                ty: Type::Unknown,
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Minus(op),
                 expr: Box::new(expr),
             }));
         }
 
-        if self.lookahead_is(TokenType::Bang) {
+        if self.lookahead_is(TokenType::Not) {
             let op = consume_unchecked!(self);
             let expr = self.unary_expression()?;
             return Ok(SingleExpression::Unary(UnaryExpression {
+                ty: Type::Unknown,
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Not(op),
                 expr: Box::new(expr),
@@ -551,6 +557,7 @@ impl<'a> Parser<'a> {
         if self.lookahead_is(TokenType::LeftParen) {
             let args = self.argument_list()?;
             return Ok(SingleExpression::Arguments(ArgumentsExpression {
+                ty: Type::Unknown,
                 span: left.span() + args.span(),
                 ident: Box::new(left),
                 arguments: args,
@@ -592,6 +599,7 @@ impl<'a> Parser<'a> {
             return Ok(SingleExpression::Identifier(IdentifierExpression {
                 span: ident.span.to_owned(),
                 ident,
+                ty: Type::Unknown,
             }));
         }
         // If we can't find an ident, continue by
@@ -620,6 +628,7 @@ impl<'a> Parser<'a> {
             let end = consume!(self, TokenType::RightBracket)?;
 
             return Ok(SingleExpression::Literal(Literal::Array(ArrayLiteral {
+                ty: Type::array(Type::unknown()),
                 span: start + end,
                 elements,
             })));
@@ -637,11 +646,21 @@ impl<'a> Parser<'a> {
         let literal: Literal = match self.lookahead_type() {
             Some(TokenType::True) => {
                 let span = consume_unchecked!(self);
-                BooleanLiteral { span, value: true }.into()
+                BooleanLiteral {
+                    span,
+                    value: true,
+                    ty: Type::boolean(),
+                }
+                .into()
             }
             Some(TokenType::False) => {
                 let span = consume_unchecked!(self);
-                BooleanLiteral { span, value: false }.into()
+                BooleanLiteral {
+                    span,
+                    value: false,
+                    ty: Type::boolean(),
+                }
+                .into()
             }
             Some(TokenType::String) => {
                 let value = self.lookahead.as_ref().unwrap().lexme;
@@ -650,28 +669,41 @@ impl<'a> Parser<'a> {
                     span,
                     // Drop quoute characters from value
                     value: &value[1..value.len() - 1],
+                    ty: Type::string(),
                 }
                 .into()
             }
-            Some(TokenType::Number) => {
+            Some(TokenType::Integer) => {
                 let inner = self.lookahead.as_ref().unwrap().lexme;
                 let span = consume_unchecked!(self);
-                NumberLiteral {
+                IntegerLiteral {
                     span,
                     // Should be safe to unwrap since
                     // the tokenizer matched this
                     value: inner.parse().unwrap(),
+                    ty: Type::i32(),
                 }
                 .into()
             }
-            Some(TokenType::HexNumber) => {
+            Some(TokenType::HexInteger) => {
                 let inner = self.lookahead.as_ref().unwrap().lexme;
                 let without_prefix = inner.trim_start_matches("0x");
                 let span = consume_unchecked!(self);
-                NumberLiteral {
+                IntegerLiteral {
                     span,
                     // Allow integer overflows in this specific instance
                     value: u32::from_str_radix(without_prefix, 16).unwrap() as i32,
+                    ty: Type::i32(),
+                }
+                .into()
+            }
+            Some(TokenType::Float) => {
+                let inner = self.lookahead.as_ref().unwrap().lexme;
+                let span = consume_unchecked!(self);
+                FloatingPointLiteral {
+                    span,
+                    value: inner.parse::<f32>().unwrap(),
+                    ty: Type::f32(),
                 }
                 .into()
             }
@@ -680,7 +712,9 @@ impl<'a> Parser<'a> {
                 return Err(ParseError::NoViableAlternative {
                     expected: vec![
                         TokenType::Identifier,
-                        TokenType::Number,
+                        TokenType::Integer,
+                        TokenType::Float,
+                        TokenType::HexInteger,
                         TokenType::String,
                         TokenType::True,
                         TokenType::False,
@@ -801,6 +835,7 @@ impl<'a> Parser<'a> {
         let mut kind = match name.value {
             "i32" => PrimaryTypeAnnotation::Primitive(Primitive::I32),
             "u32" => PrimaryTypeAnnotation::Primitive(Primitive::U32),
+            "f32" => PrimaryTypeAnnotation::Primitive(Primitive::F32),
             "boolean" => PrimaryTypeAnnotation::Primitive(Primitive::Boolean),
             _ => PrimaryTypeAnnotation::Reference(name),
         };
@@ -885,9 +920,14 @@ impl<'a> Parser<'a> {
         }
     }
 
+    /// Get a reference to the tokenizer's errors.
+    pub fn tokenizer_errors(&self) -> Vec<TokenizerError> {
+        self.tokenizer.errors()
+    }
+
     /// Get a reference to the parser's errors.
-    pub fn errors(&self) -> (Vec<ParseError>, Vec<TokenizerError>) {
-        (self.errors.clone(), self.tokenizer.errors())
+    pub fn parse_errors(&self) -> Vec<ParseError> {
+        self.errors.clone()
     }
 }
 

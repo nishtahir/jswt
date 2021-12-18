@@ -25,6 +25,8 @@ pub enum Instruction {
     I32Le(Box<Instruction>, Box<Instruction>),
     I32Store(Box<Instruction>, Box<Instruction>),
     I32Load(Box<Instruction>),
+    F32Const(f32),
+    F32Add(Box<Instruction>, Box<Instruction>),
     Block(usize, Vec<Instruction>),
     Return(Box<Instruction>),
     If(Box<Instruction>, Vec<Instruction>, Vec<Instruction>),
@@ -78,6 +80,9 @@ impl From<&Instruction> for String {
             Instruction::I32And(lhs, rhs) => format!("(i32.and {} {})", *lhs, *rhs),
             Instruction::I32Or(lhs, rhs) => format!("(i32.or {} {})", *lhs, *rhs),
             Instruction::I32Xor(lhs, rhs) => format!("(i32.xor {} {})", *lhs, *rhs),
+            Instruction::F32Const(value) => format!("(f32.const {})", value),
+            Instruction::F32Add(lhs, rhs) => format!("(f32.add {} {})", *lhs, *rhs),
+
             Instruction::Return(instruction) => {
                 // Set the synthetic value and break into the function block scope
                 format!("(local.set $return {}) (br $blk0)", *instruction)
@@ -121,7 +126,7 @@ impl From<&Instruction> for String {
             }
             Instruction::Complex(args) => args.to_string(),
             Instruction::I32Store(loc, value) => format!("(i32.store {} {})", *loc, *value),
-            Instruction::I32Load(_) => todo!(),
+            Instruction::I32Load(loc) => format!("(i32.load {})", *loc),
         }
     }
 }

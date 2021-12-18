@@ -4,7 +4,8 @@ mod env;
 extern crate clap;
 
 use clap::Arg;
-use jswt_ast::Ast;
+use jswt_ast::high_level::Ast;
+use jswt_common::SemanticSymbolTable;
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -89,8 +90,8 @@ fn main() {
             .map(PathBuf::from)
     };
 
-    let ast = compile_module(&input, &output, runtime.as_ref());
-    let mut code_gen = CodeGenerator::default();
+    let (ast, symbols) = compile_module(&input, &output, runtime.as_ref());
+    let mut code_gen = CodeGenerator::new(symbols);
     let module = code_gen.generate_module(&ast);
     // Write generated wasm AST for debugging
     let wast = module.as_wat(matches.is_present("minified"));
@@ -159,7 +160,11 @@ fn main() {
     exit(1);
 }
 
-fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast {
+fn compile_module(
+    input: &Path,
+    output: &Path,
+    runtime: Option<&PathBuf>,
+) -> (Ast, SemanticSymbolTable) {
     // Main cache of source files that have been read for compilation
     // It may be worth building an abstraction around this to help with resolving paths
     // for imports and preventing issues like duplicate file reads
@@ -179,28 +184,27 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
 
     // parse tokens and generate AST
     let mut parser = Parser::new(&mut tokenizer);
-    let ast = parser.parse();
+    let mut ast = parser.parse();
 
     // Write AST for debugging
     fs::write(output.with_extension("ast"), format!("{:#?}", ast)).unwrap();
 
     let mut has_errors = false;
-    let parser_errors = parser.errors();
 
     // Report errors
-    for error in parser_errors.1 {
+    for error in parser.tokenizer_errors() {
         has_errors = true;
         print_tokenizer_error(&error, &source_map.clone().borrow());
     }
 
-    for error in parser_errors.0 {
+    for error in parser.parse_errors() {
         has_errors = true;
         print_parser_error(&error, &source_map.clone().borrow());
     }
 
     // Semantic analytis pass
-    let semantic_errors = SemanticAnalyzer::analyze(&ast);
-    for error in semantic_errors {
+    let semantic_data = SemanticAnalyzer::analyze(&mut ast);
+    for error in semantic_data.errors {
         has_errors = true;
         print_semantic_error(&error, &source_map.borrow())
     }
@@ -209,7 +213,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         exit(1);
     }
 
-    ast
+    (ast, semantic_data.symbols)
 }
 
 #[cfg(test)]

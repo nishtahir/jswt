@@ -1,10 +1,10 @@
-pub use jswt_common::{Span, Spannable};
-use jswt_derive::Spannable;
+use jswt_common::{Span, Type};
+use jswt_derive::{Spannable, Typeable};
 
-pub use crate::ident::Ident;
-use crate::Literal;
+pub use crate::common::Ident;
+use crate::high_level::Literal;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Spannable, Typeable)]
 pub enum SingleExpression {
     Unary(UnaryExpression),
     Assignment(BinaryExpression),
@@ -19,26 +19,9 @@ pub enum SingleExpression {
     Literal(Literal),
 }
 
-impl Spannable for SingleExpression {
-    fn span(&self) -> Span {
-        match self {
-            SingleExpression::Multiplicative(exp) => exp.span(),
-            SingleExpression::Additive(exp) => exp.span(),
-            SingleExpression::Literal(exp) => exp.span(),
-            SingleExpression::Identifier(exp) => exp.span(),
-            SingleExpression::Arguments(exp) => exp.span(),
-            SingleExpression::Equality(exp) => exp.span(),
-            SingleExpression::Bitwise(exp) => exp.span(),
-            SingleExpression::Relational(exp) => exp.span(),
-            SingleExpression::Assignment(exp) => exp.span(),
-            SingleExpression::Unary(exp) => exp.span(),
-            SingleExpression::MemberIndex(exp) => exp.span(),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Typeable)]
 pub struct ArgumentsExpression {
+    pub ty: Type,
     pub span: Span,
     pub ident: Box<SingleExpression>,
     pub arguments: ArgumentsList,
@@ -50,33 +33,36 @@ pub struct ArgumentsList {
     pub arguments: Vec<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Typeable)]
 pub struct MemberIndexExpression {
+    pub ty: Type,
     pub span: Span,
     pub target: Box<SingleExpression>,
     pub index: Box<SingleExpression>,
 }
 
-
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Typeable)]
 pub struct UnaryExpression {
+    pub ty: Type,
     pub span: Span,
     pub op: UnaryOperator,
     pub expr: Box<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Typeable)]
 pub struct BinaryExpression {
+    pub ty: Type,
     pub span: Span,
     pub left: Box<SingleExpression>,
     pub op: BinaryOperator,
     pub right: Box<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Typeable)]
 pub struct IdentifierExpression {
     pub span: Span,
     pub ident: Ident,
+    pub ty: Type,
 }
 
 #[derive(Debug, PartialEq)]
@@ -86,7 +72,7 @@ pub enum UnaryOperator {
     Not(Span),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum BinaryOperator {
     Plus(Span),
     Minus(Span),

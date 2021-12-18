@@ -34,14 +34,18 @@ Ast {
                             ),
                             expression: Multiplicative(
                                 BinaryExpression {
+                                    ty: Unknown,
                                     span: Span {
                                         file: "test.1",
                                         start: 8,
                                         end: 13,
                                     },
                                     left: Literal(
-                                        Number(
-                                            NumberLiteral {
+                                        Integer(
+                                            IntegerLiteral {
+                                                ty: Primitive(
+                                                    I32,
+                                                ),
                                                 span: Span {
                                                     file: "test.1",
                                                     start: 8,
@@ -59,8 +63,11 @@ Ast {
                                         },
                                     ),
                                     right: Literal(
-                                        Number(
-                                            NumberLiteral {
+                                        Integer(
+                                            IntegerLiteral {
+                                                ty: Primitive(
+                                                    I32,
+                                                ),
                                                 span: Span {
                                                     file: "test.1",
                                                     start: 12,

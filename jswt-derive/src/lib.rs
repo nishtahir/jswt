@@ -3,6 +3,41 @@ use quote::{__private::ext::RepToTokensExt, quote};
 use syn::{parse_macro_input, DataEnum, DeriveInput};
 
 /// Derive for generating spannable impls for structs
+#[proc_macro_derive(Typeable)]
+pub fn ty(input: TokenStream) -> TokenStream {
+    let DeriveInput { ident, data, .. } = parse_macro_input!(input);
+    let tokens = match data {
+        syn::Data::Struct(_) => {
+            quote! {
+                impl jswt_common::Typeable for #ident {
+                    fn defined_type(&self) -> Type {
+                        self.ty.to_owned()
+                    }
+                }
+            }
+        }
+        // This is currently a low effort macro for generating  Spannable implementation for enums
+        // It assumes that every variant of the enum also implements Spannable
+        syn::Data::Enum(DataEnum { variants, .. }) => {
+            let variant_ident = variants.into_iter().map(|v| v.ident);
+            quote! {
+                impl jswt_common::Typeable for #ident {
+                    fn defined_type(&self) -> Type {
+                        match self {
+                            #(
+                                #ident::#variant_ident(variant) => variant.defined_type(),
+                            )*
+                        }
+                    }
+                }
+            }
+        }
+        syn::Data::Union(_) => unimplemented!(),
+    };
+    tokens.into()
+}
+
+/// Derive for generating spannable impls for structs
 #[proc_macro_derive(Spannable)]
 pub fn span(input: TokenStream) -> TokenStream {
     let DeriveInput { ident, data, .. } = parse_macro_input!(input);

@@ -74,7 +74,7 @@ function arrayAt(ptr: i32, index: i32): i32 {
 function arrayPush(ptr: i32): i32 {
     let data = arrayGetData(ptr);
     let length = arrayGetLength(ptr);
-    let element_size = arrayGetElementSize(ptr);
+    let elementSize = arrayGetElementSize(ptr);
     let capacity = arrayGetCapacity(ptr);
 
     if (greaterEqUnsigned(length, capacity)) {
@@ -83,6 +83,6 @@ function arrayPush(ptr: i32): i32 {
 
     arraySetLength(ptr, length + 1);
 
-    let offset = length * element_size;
+    let offset = length * elementSize;
     return offset + data;
 }

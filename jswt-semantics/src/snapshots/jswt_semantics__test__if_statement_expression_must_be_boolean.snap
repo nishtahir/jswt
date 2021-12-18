@@ -1,0 +1,20 @@
+---
+source: jswt-semantics/src/lib.rs
+expression: errors
+
+---
+[
+    TypeAssignmentError {
+        span: Span {
+            file: "test.1",
+            start: 55,
+            end: 61,
+        },
+        lhs: Primitive(
+            Boolean,
+        ),
+        rhs: Primitive(
+            I32,
+        ),
+    },
+]

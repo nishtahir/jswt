@@ -1,6 +1,6 @@
 ---
-source: jswt-semantics/src/resolver.rs
-expression: resolver.errors
+source: jswt-semantics/src/lib.rs
+expression: errors
 
 ---
 [
@@ -8,8 +8,8 @@ expression: resolver.errors
         name: "x",
         span: Span {
             file: "test.1",
-            start: 15,
-            end: 16,
+            start: 33,
+            end: 34,
         },
     },
 ]

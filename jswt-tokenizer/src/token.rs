@@ -59,8 +59,9 @@ pub enum TokenType {
     // Literal
     Identifier,
     String,
-    Number,
-    HexNumber,
+    Integer,
+    Float,
+    HexInteger,
 
     // Keywords
     True,
@@ -122,10 +123,11 @@ impl Display for TokenType {
             TokenType::While => f.write_str("while"),
             // Non punctuation. We shouldn't be trying
             // to serialize these
-            TokenType::Identifier => todo!(),
-            TokenType::String => todo!(),
-            TokenType::Number => todo!(),
-            TokenType::HexNumber => todo!(),
+            TokenType::Identifier => f.write_str("identifier"),
+            TokenType::String => f.write_str("string"),
+            TokenType::Integer => f.write_str("integer"),
+            TokenType::Float => f.write_str("float"),
+            TokenType::HexInteger => f.write_str("hex literal"),
             TokenType::WhiteSpace => todo!(),
             TokenType::Comment => todo!(),
         }

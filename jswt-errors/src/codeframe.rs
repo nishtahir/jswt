@@ -2,14 +2,14 @@ use regex::Regex;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
-pub struct Location {
+pub struct LineCol {
     pub line: i32,
     pub col: i32,
 }
 
-pub struct NodeLocation {
-    pub start: Location,
-    pub end: Location,
+pub struct Location {
+    pub start: LineCol,
+    pub end: LineCol,
 }
 
 struct MarkerLines {
@@ -18,7 +18,7 @@ struct MarkerLines {
     markers: HashMap<usize, (i32, i32)>,
 }
 
-fn marker_lines(source: &[&str], location: NodeLocation) -> MarkerLines {
+fn marker_lines(source: &[&str], location: &Location) -> MarkerLines {
     let lines_above = 2;
     let lines_below = 3;
 
@@ -79,7 +79,7 @@ fn marker_lines(source: &[&str], location: NodeLocation) -> MarkerLines {
 ///   3 | }
 ///
 /// TODO: Port over floating message support
-pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String {
+pub fn code_frame(source: &str, location: &Location, message: &str) -> String {
     let lines = source.split('\n').collect::<Vec<&str>>();
     let MarkerLines {
         start,
@@ -124,8 +124,8 @@ pub fn code_frame(source: &str, location: NodeLocation, message: &str) -> String
 }
 
 /// Derive a Location from a given offset
-pub fn location_from_offset(source: &str, offset: usize) -> Location {
-    let mut location = Location { line: 1, col: 1 };
+pub fn location_from_offset(source: &str, offset: usize) -> LineCol {
+    let mut location = LineCol { line: 1, col: 1 };
     if offset > 0 {
         let mut remaining = offset;
         for ch in source.chars() {
@@ -157,12 +157,12 @@ mod test {
         let raw_source = "function a(b, c) {\n  return b + c;\n}";
         let lines: Vec<&str> = raw_source.split("\n").collect();
 
-        let err_location = NodeLocation {
-            start: Location { line: 1, col: 1 },
-            end: Location { line: 3, col: 1 },
+        let err_location = Location {
+            start: LineCol { line: 1, col: 1 },
+            end: LineCol { line: 3, col: 1 },
         };
 
-        let marker_lines = marker_lines(&lines, err_location);
+        let marker_lines = marker_lines(&lines, &err_location);
         assert_eq!(marker_lines.start, 0);
         assert_eq!(marker_lines.end, 3);
 
@@ -179,15 +179,15 @@ mod test {
         let raw_source = "function a(b, c) {\n  return b + c;\n}";
 
         let actual = location_from_offset(raw_source, 10);
-        let expected = Location { line: 1, col: 11 };
+        let expected = LineCol { line: 1, col: 11 };
         assert_eq!(expected, actual);
 
         let actual = location_from_offset(raw_source, 21);
-        let expected = Location { line: 2, col: 3 };
+        let expected = LineCol { line: 2, col: 3 };
         assert_eq!(expected, actual);
 
         let actual = location_from_offset(raw_source, 36);
-        let expected = Location { line: 3, col: 2 };
+        let expected = LineCol { line: 3, col: 2 };
         assert_eq!(expected, actual);
     }
 
@@ -196,7 +196,7 @@ mod test {
         let raw_source = "function a(b, c) {\n  return b + c;\n}";
 
         let actual = location_from_offset(raw_source, 100);
-        let expected = Location { line: 3, col: 2 };
+        let expected = LineCol { line: 3, col: 2 };
         assert_eq!(expected, actual);
     }
 
@@ -205,19 +205,19 @@ mod test {
         let raw_source = "function a(b, c) {\n  return b + c;\n}";
 
         let actual = location_from_offset(raw_source, 0);
-        let expected = Location { line: 1, col: 1 };
+        let expected = LineCol { line: 1, col: 1 };
         assert_eq!(expected, actual);
     }
 
     #[test]
     fn test_code_frame() {
-        let err_location = NodeLocation {
-            start: Location { line: 2, col: 3 },
-            end: Location { line: 2, col: 16 },
+        let err_location = Location {
+            start: LineCol { line: 2, col: 3 },
+            end: LineCol { line: 2, col: 16 },
         };
 
         let raw_source = "function a(b, c) {\n  return b + c;\n}";
-        let actual = code_frame(raw_source, err_location, "test message");
+        let actual = code_frame(raw_source, &err_location, "test message");
         assert_debug_snapshot!(actual);
     }
 }

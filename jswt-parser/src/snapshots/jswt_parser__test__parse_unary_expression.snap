@@ -17,6 +17,7 @@ Ast {
                             },
                             expression: Additive(
                                 BinaryExpression {
+                                    ty: Unknown,
                                     span: Span {
                                         file: "test.1",
                                         start: 0,
@@ -24,6 +25,7 @@ Ast {
                                     },
                                     left: Multiplicative(
                                         BinaryExpression {
+                                            ty: Unknown,
                                             span: Span {
                                                 file: "test.1",
                                                 start: 0,
@@ -31,6 +33,7 @@ Ast {
                                             },
                                             left: Unary(
                                                 UnaryExpression {
+                                                    ty: Unknown,
                                                     span: Span {
                                                         file: "test.1",
                                                         start: 0,
@@ -44,8 +47,11 @@ Ast {
                                                         },
                                                     ),
                                                     expr: Literal(
-                                                        Number(
-                                                            NumberLiteral {
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                ty: Primitive(
+                                                                    I32,
+                                                                ),
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 1,
@@ -65,8 +71,11 @@ Ast {
                                                 },
                                             ),
                                             right: Literal(
-                                                Number(
-                                                    NumberLiteral {
+                                                Integer(
+                                                    IntegerLiteral {
+                                                        ty: Primitive(
+                                                            I32,
+                                                        ),
                                                         span: Span {
                                                             file: "test.1",
                                                             start: 5,
@@ -87,6 +96,7 @@ Ast {
                                     ),
                                     right: Unary(
                                         UnaryExpression {
+                                            ty: Unknown,
                                             span: Span {
                                                 file: "test.1",
                                                 start: 10,
@@ -100,8 +110,11 @@ Ast {
                                                 },
                                             ),
                                             expr: Literal(
-                                                Number(
-                                                    NumberLiteral {
+                                                Integer(
+                                                    IntegerLiteral {
+                                                        ty: Primitive(
+                                                            I32,
+                                                        ),
                                                         span: Span {
                                                             file: "test.1",
                                                             start: 11,

@@ -34,6 +34,7 @@ Ast {
                             ),
                             expression: Additive(
                                 BinaryExpression {
+                                    ty: Unknown,
                                     span: Span {
                                         file: "test.1",
                                         start: 8,
@@ -41,14 +42,18 @@ Ast {
                                     },
                                     left: Multiplicative(
                                         BinaryExpression {
+                                            ty: Unknown,
                                             span: Span {
                                                 file: "test.1",
                                                 start: 8,
                                                 end: 13,
                                             },
                                             left: Literal(
-                                                Number(
-                                                    NumberLiteral {
+                                                Integer(
+                                                    IntegerLiteral {
+                                                        ty: Primitive(
+                                                            I32,
+                                                        ),
                                                         span: Span {
                                                             file: "test.1",
                                                             start: 8,
@@ -66,8 +71,11 @@ Ast {
                                                 },
                                             ),
                                             right: Literal(
-                                                Number(
-                                                    NumberLiteral {
+                                                Integer(
+                                                    IntegerLiteral {
+                                                        ty: Primitive(
+                                                            I32,
+                                                        ),
                                                         span: Span {
                                                             file: "test.1",
                                                             start: 12,
@@ -88,14 +96,18 @@ Ast {
                                     ),
                                     right: Multiplicative(
                                         BinaryExpression {
+                                            ty: Unknown,
                                             span: Span {
                                                 file: "test.1",
                                                 start: 16,
                                                 end: 21,
                                             },
                                             left: Literal(
-                                                Number(
-                                                    NumberLiteral {
+                                                Integer(
+                                                    IntegerLiteral {
+                                                        ty: Primitive(
+                                                            I32,
+                                                        ),
                                                         span: Span {
                                                             file: "test.1",
                                                             start: 16,
@@ -113,8 +125,11 @@ Ast {
                                                 },
                                             ),
                                             right: Literal(
-                                                Number(
-                                                    NumberLiteral {
+                                                Integer(
+                                                    IntegerLiteral {
+                                                        ty: Primitive(
+                                                            I32,
+                                                        ),
                                                         span: Span {
                                                             file: "test.1",
                                                             start: 20,

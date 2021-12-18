@@ -1,0 +1,24 @@
+---
+source: jswt-semantics/src/lib.rs
+expression: errors
+
+---
+[
+    VariableNotDefined {
+        name: "x",
+        span: Span {
+            file: "test.1",
+            start: 25,
+            end: 26,
+        },
+    },
+    TypeMismatchError {
+        span: Span {
+            file: "test.1",
+            start: 25,
+            end: 26,
+        },
+        expected: Void,
+        actual: Unknown,
+    },
+]

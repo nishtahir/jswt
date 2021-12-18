@@ -1,6 +1,7 @@
-use jswt_ast::Span;
+use jswt_ast::high_level::BinaryOperator;
+use jswt_common::{Span, Type};
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 pub enum SemanticError {
     VariableNotDefined {
         name: &'static str,
@@ -22,9 +23,25 @@ pub enum SemanticError {
         span: Span,
         name_span: Span,
     },
-    TypeError {
+    TypeMismatchError {
         span: Span,
-        offending_token: Span,
-        expected: &'static str,
+        expected: Type,
+        actual: Type,
+    },
+    TypeParameterError {
+        span: Span,
+        parameter: Type,
+        argument: Type,
+    },
+    TypeBinaryOperationError {
+        span: Span,
+        op: BinaryOperator,
+        lhs: Type,
+        rhs: Type,
+    },
+    TypeAssignmentError {
+        span: Span,
+        lhs: Type,
+        rhs: Type,
     },
 }

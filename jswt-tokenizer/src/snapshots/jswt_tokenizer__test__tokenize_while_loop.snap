@@ -32,7 +32,7 @@ expression: actual
         file: "test.1",
         lexme: "99",
         offset: 11,
-        kind: Number,
+        kind: Integer,
     },
     Token {
         file: "test.1",

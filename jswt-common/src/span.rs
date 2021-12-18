@@ -5,7 +5,7 @@ use std::{
 
 /// Descriptor for a span of text that can be located
 /// in a Source file.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Eq, PartialOrd, Ord)]
 pub struct Span {
     pub file: Cow<'static, str>,
     pub start: usize,

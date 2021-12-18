@@ -8,6 +8,6 @@ expression: actual
         file: "test.1",
         lexme: "42",
         offset: 0,
-        kind: Number,
+        kind: Integer,
     },
 ]

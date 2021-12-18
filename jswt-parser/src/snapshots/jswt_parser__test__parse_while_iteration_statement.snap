@@ -18,6 +18,7 @@ Ast {
                                 },
                                 expression: Relational(
                                     BinaryExpression {
+                                        ty: Unknown,
                                         span: Span {
                                             file: "test.1",
                                             start: 6,
@@ -38,6 +39,7 @@ Ast {
                                                     },
                                                     value: "x",
                                                 },
+                                                ty: Unknown,
                                             },
                                         ),
                                         op: Less(
@@ -48,8 +50,11 @@ Ast {
                                             },
                                         ),
                                         right: Literal(
-                                            Number(
-                                                NumberLiteral {
+                                            Integer(
+                                                IntegerLiteral {
+                                                    ty: Primitive(
+                                                        I32,
+                                                    ),
                                                     span: Span {
                                                         file: "test.1",
                                                         start: 10,
@@ -79,6 +84,7 @@ Ast {
                                                         },
                                                         expression: Arguments(
                                                             ArgumentsExpression {
+                                                                ty: Unknown,
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 16,
@@ -99,6 +105,7 @@ Ast {
                                                                             },
                                                                             value: "println",
                                                                         },
+                                                                        ty: Unknown,
                                                                     },
                                                                 ),
                                                                 arguments: ArgumentsList {
@@ -111,6 +118,7 @@ Ast {
                                                                         Literal(
                                                                             String(
                                                                                 StringLiteral {
+                                                                                    ty: String,
                                                                                     span: Span {
                                                                                         file: "test.1",
                                                                                         start: 24,

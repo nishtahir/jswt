@@ -161,8 +161,8 @@ impl Module {
             wat += &format!("(param ${} i32)", name);
         }
 
-        if ty.ret.is_some() {
-            wat += "(result i32)";
+        if let Some(ty) = ty.ret {
+            wat += &format!("(result {})", ty);
         }
 
         wat

@@ -1,9 +1,9 @@
-use jswt_common::{Span, Spannable};
+use jswt_common::Span;
 use jswt_derive::{FromEnumVariant, Spannable};
 
-use crate::{SingleExpression, StatementElement};
+use crate::high_level::*;
 
-#[derive(Debug, PartialEq, FromEnumVariant)]
+#[derive(Debug, PartialEq, FromEnumVariant, Spannable)]
 pub enum IterationStatement {
     While(WhileIterationElement),
 }
@@ -13,10 +13,4 @@ pub struct WhileIterationElement {
     pub span: Span,
     pub expression: SingleExpression,
     pub statement: Box<StatementElement>,
-}
-
-impl Spannable for IterationStatement {
-    fn span(&self) -> Span {
-        todo!()
-    }
 }

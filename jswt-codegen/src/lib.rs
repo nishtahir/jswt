@@ -3,8 +3,14 @@ mod symbols;
 use std::borrow::Borrow;
 use symbols::{WastSymbol, WastSymbolTable};
 
-use jswt_ast::*;
+use jswt_ast::high_level::*;
+use jswt_common::{PrimitiveType, SemanticSymbolTable, Type};
 use jswt_wast::*;
+
+#[derive(Debug)]
+struct InstructionScope {
+    instructions: Vec<Instruction>,
+}
 
 #[derive(Debug)]
 pub struct CodeGenerator {
@@ -14,27 +20,31 @@ pub struct CodeGenerator {
     /// should push a new scope to the stack and pop the scope before pushing their own
     /// instruction to the stack
     scopes: Vec<InstructionScope>,
-    symbols: WastSymbolTable,
+    semantic_symbols: SemanticSymbolTable,
+    wast_symbols: WastSymbolTable,
     label_counter: usize,
-}
-
-#[derive(Debug)]
-struct InstructionScope {
-    instructions: Vec<Instruction>,
 }
 
 impl Default for CodeGenerator {
     fn default() -> Self {
         Self {
+            wast_symbols: WastSymbolTable::new(),
             module: Default::default(),
             scopes: Default::default(),
-            symbols: WastSymbolTable::new(),
-            label_counter: 0,
+            semantic_symbols: Default::default(),
+            label_counter: Default::default(),
         }
     }
 }
 
 impl CodeGenerator {
+    pub fn new(semantic_symbols: SemanticSymbolTable) -> Self {
+        Self {
+            semantic_symbols,
+            ..Default::default()
+        }
+    }
+
     pub fn generate_module(&mut self, ast: &Ast) -> &Module {
         // TODO - we should be accepting builtins externally from the env
         // This is a stop gap so tests don't break
@@ -93,11 +103,15 @@ impl CodeGenerator {
 impl StatementVisitor for CodeGenerator {
     fn visit_program(&mut self, node: &Program) {
         // Push global scope
-        self.symbols.push_scope();
+        self.semantic_symbols.push_global_scope();
+        self.wast_symbols.push_scope();
+
         self.visit_source_elements(&node.source_elements);
+
         // Pop global scope from stack
-        debug_assert!(self.symbols.depth() == 1);
-        self.symbols.pop_scope();
+        debug_assert_eq!(self.semantic_symbols.depth(), 1);
+        self.semantic_symbols.pop_scope();
+        self.wast_symbols.pop_scope();
     }
 
     fn visit_source_elements(&mut self, node: &SourceElements) {
@@ -232,24 +246,34 @@ impl StatementVisitor for CodeGenerator {
         let function_name = node.ident.value;
 
         // Push the scope for the function body
-        self.symbols.push_scope();
+        // Should already exist on the symbol table
+        self.semantic_symbols.push_scope(node.span(), None);
+        self.wast_symbols.push_scope();
+
         let mut type_params = vec![];
         // Push Symbols for Params. We need this in case the scope
         // needs to declare synthetic local variables
         for (index, arg) in node.params.parameters.iter().enumerate() {
             // Add to symbol table
-            self.symbols.define(
-                arg.ident.value.into(),
-                WastSymbol::Param(index, ValueType::I32),
-            );
-            // Todo, convert to ValueType
-            type_params.push((arg.ident.value, ValueType::I32))
+            let sym = self
+                .semantic_symbols
+                .lookup(arg.ident.value.into())
+                .unwrap();
+            let ty = ValueType::from(sym.ty.clone());
+
+            type_params.push((arg.ident.value, ty));
+            // Add to wast symbol table
+            self.wast_symbols
+                .define(arg.ident.value.into(), WastSymbol::Param(index, ty));
         }
 
         // Resolve return Value
+        let scope = self.semantic_symbols.get_scope(node.span()).unwrap();
+        let return_type = scope.returns.clone().map(ValueType::from);
+
         let ty = FunctionType {
             params: type_params,
-            ret: node.returns.as_ref().map(|_| ValueType::I32),
+            ret: return_type.clone(),
         };
         // Add type definition to type index
         let type_idx = self.push_type(ty);
@@ -302,9 +326,9 @@ impl StatementVisitor for CodeGenerator {
             // Add synthetic return value
             // This is to make dealing with branching returns easier to manage
             // We're using a keyword here to prevent users from accidentally shadowing the value
-            if node.returns.is_some() {
-                self.symbols
-                    .define("return".into(), WastSymbol::Local(ValueType::I32));
+            if let Some(return_type) = return_type {
+                self.wast_symbols
+                    .define("return".into(), WastSymbol::Local(return_type));
 
                 // We're pushing the synthetic return to the end of the function
                 instructions.push(Instruction::SynthReturn);
@@ -316,7 +340,7 @@ impl StatementVisitor for CodeGenerator {
         }
 
         // Push our locals to the instructions
-        for (name, sym) in self.symbols.symbols_in_current_scope() {
+        for (name, sym) in self.wast_symbols.symbols_in_current_scope() {
             if let WastSymbol::Local(ty) = sym {
                 instructions.insert(0, Instruction::Local(name.clone(), *ty))
             }
@@ -341,7 +365,8 @@ impl StatementVisitor for CodeGenerator {
         }
 
         // Pop the current function scope from the symbol table
-        self.symbols.pop_scope();
+        self.wast_symbols.pop_scope();
+        self.semantic_symbols.pop_scope();
     }
 
     fn visit_function_body(&mut self, node: &FunctionBody) {
@@ -356,7 +381,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             SingleExpression::Identifier(ident_exp) => {
                 let name = ident_exp.ident.value;
                 // figure out the scope of the variable
-                let isr = if self.symbols.lookup_global(name.into()).is_some() {
+                let isr = if self.wast_symbols.lookup_global(name.into()).is_some() {
                     Instruction::GlobalSet
                 } else {
                     Instruction::LocalSet
@@ -379,15 +404,20 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             AssignableElement::Identifier(ident) => {
                 let name = ident.value;
                 // Check if this element has been defined
-                if self.symbols.lookup(name.into()).is_none() {
-                    if self.symbols.depth() == 1 {
-                        self.symbols
-                            .define(name.into(), WastSymbol::Global(ValueType::I32));
+                if self.wast_symbols.lookup(name.into()).is_none() {
+                    if self.wast_symbols.depth() == 1 {
+                        let sym = self.semantic_symbols.lookup(name.into()).unwrap();
+                        self.wast_symbols.define(
+                            name.into(),
+                            WastSymbol::Global(ValueType::from(sym.ty.clone())),
+                        );
                         return Instruction::GlobalSet(name.into(), Box::new(Instruction::Noop));
                     } else {
-                        self.symbols
-                            .define(name.into(), WastSymbol::Local(ValueType::I32));
-
+                        let sym = self.semantic_symbols.lookup(name.into()).unwrap();
+                        self.wast_symbols.define(
+                            name.into(),
+                            WastSymbol::Local(ValueType::from(sym.ty.clone())),
+                        );
                         return Instruction::LocalSet(name.into(), Box::new(Instruction::Noop));
                     }
                 }
@@ -428,28 +458,86 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
     fn visit_binary_expression(&mut self, node: &BinaryExpression) -> Instruction {
         let lhs = self.visit_single_expression(&node.left);
         let rhs = self.visit_single_expression(&node.right);
+        
+        use jswt_common::Typeable;
+        let lhs_type = &node.left.defined_type();
+        match lhs_type {
+            Type::Primitive(p) => match p {
+                PrimitiveType::I32 => match node.op {
+                    BinaryOperator::Plus(_) => Instruction::I32Add(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::Minus(_) => Instruction::I32Sub(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::Mult(_) => Instruction::I32Mul(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::Equal(_) => Instruction::I32Eq(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::NotEqual(_) => {
+                        Instruction::I32Neq(Box::new(lhs), Box::new(rhs))
+                    }
+                    BinaryOperator::Div(_) => Instruction::I32Div(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::And(_) => Instruction::I32And(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::Or(_) => Instruction::I32Or(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::Greater(_) => Instruction::I32Gt(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::GreaterEqual(_) => {
+                        Instruction::I32Ge(Box::new(lhs), Box::new(rhs))
+                    }
+                    BinaryOperator::Less(_) => Instruction::I32Lt(Box::new(lhs), Box::new(rhs)),
+                    BinaryOperator::LessEqual(_) => {
+                        Instruction::I32Le(Box::new(lhs), Box::new(rhs))
+                    }
+                    BinaryOperator::Assign(_) => todo!(),
+                },
+                PrimitiveType::U32 => todo!(),
+                PrimitiveType::F32 => match node.op {
+                    BinaryOperator::Plus(_) => Instruction::F32Add(Box::new(lhs), Box::new(rhs)),
+                    _ => todo!()
+                    // BinaryOperator::Minus(_) => Instruction::I32Sub(Box::new(lhs), Box::new(rhs)),
+                    // BinaryOperator::Mult(_) => Instruction::I32Mul(Box::new(lhs), Box::new(rhs)),
+                    // BinaryOperator::Equal(_) => Instruction::I32Eq(Box::new(lhs), Box::new(rhs)),
+                    // BinaryOperator::NotEqual(_) => {
+                    //     Instruction::I32Neq(Box::new(lhs), Box::new(rhs))
+                    // }
+                    // BinaryOperator::Div(_) => Instruction::I32Div(Box::new(lhs), Box::new(rhs)),
+                    // BinaryOperator::And(_) => Instruction::I32And(Box::new(lhs), Box::new(rhs)),
+                    // BinaryOperator::Or(_) => Instruction::I32Or(Box::new(lhs), Box::new(rhs)),
+                    // BinaryOperator::Greater(_) => Instruction::I32Gt(Box::new(lhs), Box::new(rhs)),
+                    // BinaryOperator::GreaterEqual(_) => {
+                    //     Instruction::I32Ge(Box::new(lhs), Box::new(rhs))
+                    // }
+                    // BinaryOperator::Less(_) => Instruction::I32Lt(Box::new(lhs), Box::new(rhs)),
+                    // BinaryOperator::LessEqual(_) => {
+                    //     Instruction::I32Le(Box::new(lhs), Box::new(rhs))
+                    // }
+                    // BinaryOperator::Assign(_) => todo!(),
+                },
+                PrimitiveType::Boolean => todo!(),
+            },
+            Type::Array(_) => todo!(),
+            Type::String => todo!(),
+            Type::Object => todo!(),
+            Type::Function(_, _) => todo!(),
+            Type::Void => todo!(),
+            Type::Unknown => todo!(),
+        }
 
         // TODO - type check before pushing op
-        match node.op {
-            BinaryOperator::Plus(_) => Instruction::I32Add(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::Minus(_) => Instruction::I32Sub(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::Mult(_) => Instruction::I32Mul(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::Equal(_) => Instruction::I32Eq(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::NotEqual(_) => Instruction::I32Neq(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::Div(_) => Instruction::I32Div(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::And(_) => Instruction::I32And(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::Or(_) => Instruction::I32Or(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::Greater(_) => Instruction::I32Gt(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::GreaterEqual(_) => Instruction::I32Ge(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::Less(_) => Instruction::I32Lt(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::LessEqual(_) => Instruction::I32Le(Box::new(lhs), Box::new(rhs)),
-            BinaryOperator::Assign(_) => todo!(),
-        }
+        // match node.op {
+        //     BinaryOperator::Plus(_) => Instruction::I32Add(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::Minus(_) => Instruction::I32Sub(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::Mult(_) => Instruction::I32Mul(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::Equal(_) => Instruction::I32Eq(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::NotEqual(_) => Instruction::I32Neq(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::Div(_) => Instruction::I32Div(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::And(_) => Instruction::I32And(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::Or(_) => Instruction::I32Or(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::Greater(_) => Instruction::I32Gt(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::GreaterEqual(_) => Instruction::I32Ge(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::Less(_) => Instruction::I32Lt(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::LessEqual(_) => Instruction::I32Le(Box::new(lhs), Box::new(rhs)),
+        //     BinaryOperator::Assign(_) => todo!(),
+        // }
     }
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Instruction {
         let target = node.ident.value;
-        if self.symbols.lookup_current(target.into()).is_some() {
+        if self.wast_symbols.lookup_current(target.into()).is_some() {
             Instruction::LocalGet(target.into())
         } else {
             Instruction::GlobalGet(target.into())
@@ -476,7 +564,8 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
     fn visit_literal(&mut self, node: &Literal) -> Instruction {
         match node {
             Literal::String(_) => todo!(),
-            Literal::Number(lit) => Instruction::I32Const(lit.value),
+            Literal::Integer(lit) => Instruction::I32Const(lit.value),
+            Literal::Float(lit) => Instruction::F32Const(lit.value),
             Literal::Boolean(lit) => match lit.value {
                 // Boolean values in WebAssembly are represented as values of type i32. In a boolean context,
                 // such as a br_if condition, any non-zero value is interpreted as true and 0 is interpreted as false.
@@ -485,7 +574,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             },
             Literal::Array(lit) => {
                 // Synthetic variable to hold the array pointer
-                let array_pointer = self.symbols.define_synthetic_local(ValueType::I32);
+                let array_pointer = self.wast_symbols.define_synthetic_local(ValueType::I32);
                 let mut instructions = vec![Instruction::LocalSet(
                     array_pointer.clone(),
                     Box::new(Instruction::Call(
@@ -584,18 +673,20 @@ mod test {
     #[test]
     fn test_array_literals_and_array_index_assignment() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", r"
+        tokenizer.enqueue_source_str(
+            "test.1",
+            r"
             function test() { 
                 let x = [1, 2, 3, 4, 5];
                 x[0] = 99;
             }
-        ");
+        ",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let ast = parser.parse();
-        let errors = parser.errors();
 
-        assert_eq!(errors.0.len(), 0);
-        assert_eq!(errors.1.len(), 0);
+        assert_eq!(parser.tokenizer_errors().len(), 0);
+        assert_eq!(parser.parse_errors().len(), 0);
         let mut generator = CodeGenerator::default();
         let actual = generator.generate_module(&ast);
         assert_debug_snapshot!(actual);

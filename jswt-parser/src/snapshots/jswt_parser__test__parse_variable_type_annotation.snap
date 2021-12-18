@@ -33,8 +33,11 @@ Ast {
                                 },
                             ),
                             expression: Literal(
-                                Number(
-                                    NumberLiteral {
+                                Integer(
+                                    IntegerLiteral {
+                                        ty: Primitive(
+                                            I32,
+                                        ),
                                         span: Span {
                                             file: "test.1",
                                             start: 13,

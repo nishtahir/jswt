@@ -35,6 +35,7 @@ Ast {
                             expression: Literal(
                                 String(
                                     StringLiteral {
+                                        ty: String,
                                         span: Span {
                                             file: "test.1",
                                             start: 8,

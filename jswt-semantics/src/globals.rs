@@ -1,17 +1,18 @@
-use jswt_ast::*;
-use jswt_common::SymbolTable;
+use jswt_ast::high_level::*;
+use jswt_common::{SemanticSymbolTable, Symbol, Type};
 
-use crate::{SemanticError, Symbol, Type};
+use crate::convert::Convert;
+use crate::error::SemanticError;
 
 pub struct GlobalResolver {
-    pub symbols: SymbolTable<&'static str, Symbol>,
+    pub symbols: SemanticSymbolTable,
     pub errors: Vec<SemanticError>,
 }
 
 impl Default for GlobalResolver {
     fn default() -> Self {
         Self {
-            symbols: SymbolTable::new(vec![]),
+            symbols: SemanticSymbolTable::default(),
             errors: vec![],
         }
     }
@@ -25,8 +26,7 @@ impl GlobalResolver {
 
 impl StatementVisitor for GlobalResolver {
     fn visit_program(&mut self, node: &Program) {
-        // Push the global scope
-        self.symbols.push_scope();
+        self.symbols.push_global_scope();
         self.visit_source_elements(&node.source_elements);
         // Don't pop it because the symbol table here is going to be
         // used in the next resolution pass
@@ -101,14 +101,32 @@ impl StatementVisitor for GlobalResolver {
         // add to global symbol table
         let ident = &node.ident;
         let name = ident.value;
-        if self.symbols.lookup_current(&name).is_some() {
+        if self.symbols.lookup_current(&name.into()).is_some() {
             let error = SemanticError::FunctionAlreadyDefined {
                 name,
                 span: ident.span.to_owned(),
             };
             self.errors.push(error);
         }
-        self.symbols.define(name, Symbol::new(Type::Function, name));
+
+        // Determine return type
+        let returns = node
+            .returns
+            .as_ref()
+            .map(Type::convert)
+            .unwrap_or(Type::Void);
+
+        let parameters = node
+            .params
+            .parameters
+            .iter()
+            .map(|param| Type::convert(&param.type_annotation))
+            .collect();
+
+        self.symbols.define(
+            name.into(),
+            Symbol::new(Type::Function(parameters, Box::new(returns)), name),
+        );
     }
 
     fn visit_function_body(&mut self, _: &FunctionBody) {

@@ -1,11 +1,62 @@
 use std::fmt::Display;
 
+use jswt_derive::FromEnumVariant;
+
+#[derive(Debug, Clone, PartialEq, FromEnumVariant)]
 pub enum Type {
     Primitive(PrimitiveType),
+    Array(Box<Type>),
+    String,
     Object,
+    Function,
+    Void,
+    Unknown,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+impl Display for Type {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let value = match self {
+            Type::Primitive(p) => p.to_string(),
+            Type::Array(_) => todo!(),
+            Type::String => "string".to_owned(),
+            Type::Object => "object".to_owned(),
+            Type::Function => "function".to_owned(),
+            Type::Void => "void".to_owned(),
+            Type::Unknown => "?".to_owned(),
+        };
+        f.write_str(&value)
+    }
+}
+
+impl Type {
+    /// Returns `true` if the type is [`Function`].
+    ///
+    /// [`Function`]: Type::Function
+    pub fn is_function(&self) -> bool {
+        matches!(self, Self::Function)
+    }
+
+    pub fn is_integer(&self) -> bool {
+        matches!(
+            self,
+            Self::Primitive(PrimitiveType::I32) | Self::Primitive(PrimitiveType::U32)
+        )
+    }
+
+    pub fn is_boolean(&self) -> bool {
+        matches!(self, Self::Primitive(PrimitiveType::Boolean))
+    }
+
+    pub fn boolean() -> Self {
+        Self::Primitive(PrimitiveType::Boolean)
+    }
+
+    pub fn i32() -> Self {
+        Self::Primitive(PrimitiveType::I32)
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum PrimitiveType {
     I32,
     U32,

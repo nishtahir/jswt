@@ -8,10 +8,11 @@ edition = "2018"
 doctest = false
 
 [dependencies]
+colored = "2.0.0"
+jswt-common = {path = "../jswt-common"}
 jswt-parser = {path = "../jswt-parser"}
 jswt-semantics = {path = "../jswt-semantics"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
-colored = "2.0.0"
 regex = "1.5.4"
 
 [dev-dependencies]

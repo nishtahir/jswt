@@ -17,6 +17,7 @@ Ast {
                             },
                             condition: Equality(
                                 BinaryExpression {
+                                    ty: Unknown,
                                     span: Span {
                                         file: "test.1",
                                         start: 3,
@@ -37,6 +38,7 @@ Ast {
                                                 },
                                                 value: "x",
                                             },
+                                            ty: Unknown,
                                         },
                                     ),
                                     op: Equal(
@@ -61,6 +63,7 @@ Ast {
                                                 },
                                                 value: "y",
                                             },
+                                            ty: Unknown,
                                         },
                                     ),
                                 },
@@ -82,8 +85,11 @@ Ast {
                                                         end: 22,
                                                     },
                                                     expression: Literal(
-                                                        Number(
-                                                            NumberLiteral {
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                ty: Primitive(
+                                                                    I32,
+                                                                ),
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 20,
@@ -117,8 +123,11 @@ Ast {
                                                             end: 41,
                                                         },
                                                         expression: Literal(
-                                                            Number(
-                                                                NumberLiteral {
+                                                            Integer(
+                                                                IntegerLiteral {
+                                                                    ty: Primitive(
+                                                                        I32,
+                                                                    ),
                                                                     span: Span {
                                                                         file: "test.1",
                                                                         start: 39,
