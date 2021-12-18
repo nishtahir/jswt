@@ -39,8 +39,8 @@ Ast {
                                                         },
                                                     ),
                                                     expr: Literal(
-                                                        Number(
-                                                            NumberLiteral {
+                                                        Integer(
+                                                            IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 2,
@@ -53,8 +53,8 @@ Ast {
                                                 },
                                             ),
                                             Literal(
-                                                Number(
-                                                    NumberLiteral {
+                                                Integer(
+                                                    IntegerLiteral {
                                                         span: Span {
                                                             file: "test.1",
                                                             start: 5,
@@ -79,8 +79,8 @@ Ast {
                                                         },
                                                     ),
                                                     expr: Literal(
-                                                        Number(
-                                                            NumberLiteral {
+                                                        Integer(
+                                                            IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 10,

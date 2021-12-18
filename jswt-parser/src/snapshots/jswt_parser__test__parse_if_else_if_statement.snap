@@ -82,8 +82,8 @@ Ast {
                                                         end: 22,
                                                     },
                                                     expression: Literal(
-                                                        Number(
-                                                            NumberLiteral {
+                                                        Integer(
+                                                            IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 20,
@@ -174,8 +174,8 @@ Ast {
                                                                     end: 52,
                                                                 },
                                                                 expression: Literal(
-                                                                    Number(
-                                                                        NumberLiteral {
+                                                                    Integer(
+                                                                        IntegerLiteral {
                                                                             span: Span {
                                                                                 file: "test.1",
                                                                                 start: 50,
@@ -223,8 +223,8 @@ Ast {
                                                                                 },
                                                                             ),
                                                                             expr: Literal(
-                                                                                Number(
-                                                                                    NumberLiteral {
+                                                                                Integer(
+                                                                                    IntegerLiteral {
                                                                                         span: Span {
                                                                                             file: "test.1",
                                                                                             start: 70,

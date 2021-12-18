@@ -32,7 +32,7 @@ expression: actual
         file: "test.1",
         lexme: "1",
         offset: 11,
-        kind: Number,
+        kind: Integer,
     },
     Token {
         file: "test.1",
@@ -44,7 +44,7 @@ expression: actual
         file: "test.1",
         lexme: "2",
         offset: 14,
-        kind: Number,
+        kind: Integer,
     },
     Token {
         file: "test.1",
@@ -56,7 +56,7 @@ expression: actual
         file: "test.1",
         lexme: "3",
         offset: 17,
-        kind: Number,
+        kind: Integer,
     },
     Token {
         file: "test.1",

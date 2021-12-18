@@ -8,12 +8,12 @@ expression: actual
         file: "test.1",
         lexme: "4",
         offset: 3,
-        kind: Number,
+        kind: Integer,
     },
     Token {
         file: "test.1",
         lexme: "2",
         offset: 6,
-        kind: Number,
+        kind: Integer,
     },
 ]

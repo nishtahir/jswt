@@ -82,8 +82,8 @@ Ast {
                                                         end: 22,
                                                     },
                                                     expression: Literal(
-                                                        Number(
-                                                            NumberLiteral {
+                                                        Integer(
+                                                            IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 20,
@@ -117,8 +117,8 @@ Ast {
                                                             end: 41,
                                                         },
                                                         expression: Literal(
-                                                            Number(
-                                                                NumberLiteral {
+                                                            Integer(
+                                                                IntegerLiteral {
                                                                     span: Span {
                                                                         file: "test.1",
                                                                         start: 39,

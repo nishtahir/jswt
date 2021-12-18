@@ -8,6 +8,6 @@ expression: actual
         file: "test.1",
         lexme: "0xABCD01234",
         offset: 0,
-        kind: HexNumber,
+        kind: HexInteger,
     },
 ]

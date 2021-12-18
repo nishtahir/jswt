@@ -54,8 +54,8 @@ Ast {
                                                         end: 10,
                                                     },
                                                     left: Literal(
-                                                        Number(
-                                                            NumberLiteral {
+                                                        Integer(
+                                                            IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 5,
@@ -73,8 +73,8 @@ Ast {
                                                         },
                                                     ),
                                                     right: Literal(
-                                                        Number(
-                                                            NumberLiteral {
+                                                        Integer(
+                                                            IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     start: 9,

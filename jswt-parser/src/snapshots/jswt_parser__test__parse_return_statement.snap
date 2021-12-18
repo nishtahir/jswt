@@ -16,8 +16,8 @@ Ast {
                                 end: 10,
                             },
                             expression: Literal(
-                                Number(
-                                    NumberLiteral {
+                                Integer(
+                                    IntegerLiteral {
                                         span: Span {
                                             file: "test.1",
                                             start: 7,
