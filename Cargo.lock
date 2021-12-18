@@ -542,6 +542,7 @@ version = "0.1.0"
 dependencies = [
  "colored",
  "jswt-assert",
+ "jswt-common",
  "jswt-parser",
  "jswt-semantics",
  "jswt-tokenizer",
