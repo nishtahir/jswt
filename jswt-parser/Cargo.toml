@@ -11,6 +11,7 @@ doctest = false
 jswt-ast = {path = "../jswt-ast"}
 jswt-common = {path = "../jswt-common"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
+jswt-types = {path="../jswt-types"}
 
 [dev-dependencies]
 jswt-assert = {path = "../jswt-assert"}

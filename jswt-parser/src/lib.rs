@@ -3,7 +3,9 @@ use std::vec;
 
 pub use errors::ParseError;
 use jswt_ast::*;
+use jswt_common::{Span, Spannable};
 use jswt_tokenizer::*;
+use jswt_types::{ObjectType, PrimitiveType, Type};
 
 /// Returns true if a token matching the given token type
 /// was consumed.
@@ -796,33 +798,31 @@ impl<'a> Parser<'a> {
     }
 
     /// TypeAnnotation
-    ///   : ':' PrimaryType
+    ///   : ':' (PrimitiveType | ObjectType)
     ///   ;
     fn type_annotation(&mut self) -> Result<TypeAnnotation, ParseError> {
         consume!(self, TokenType::Colon)?;
-        let primary = self.primary_type()?;
-        Ok(TypeAnnotation::Primary(primary))
-    }
-
-    /// PrimaryType
-    ///   : ('i32' | 'u32' | 'boolean' | Ident) ('['']') *
-    ///   ;
-    fn primary_type(&mut self) -> Result<PrimaryTypeAnnotation, ParseError> {
         let name = ident!(self);
-        let mut kind = match name.value {
-            "i32" => PrimaryTypeAnnotation::Primitive(Primitive::I32),
-            "u32" => PrimaryTypeAnnotation::Primitive(Primitive::U32),
-            "boolean" => PrimaryTypeAnnotation::Primitive(Primitive::Boolean),
-            _ => PrimaryTypeAnnotation::Reference(name),
+        let mut ty = match name.value {
+            "i32" => Type::Primitive(PrimitiveType::I32),
+            "f32" => Type::Primitive(PrimitiveType::F32),
+            "u32" => Type::Primitive(PrimitiveType::U32),
+            "boolean" => Type::Primitive(PrimitiveType::Boolean),
+            "string" => Type::Object(ObjectType::String),
+            _ => Type::Object(ObjectType::Reference(name.value.into())),
         };
 
+        let start = name.span();
+        let mut end = name.span();
         while self.lookahead_is(TokenType::LeftBracket) {
             consume_unchecked!(self);
-            consume!(self, TokenType::RightBracket)?;
-            kind = PrimaryTypeAnnotation::Array(Box::new(kind));
+            end = consume!(self, TokenType::RightBracket)?;
+            ty = Type::Object(ObjectType::Array(Box::new(ty)))
         }
-
-        Ok(kind)
+        Ok(TypeAnnotation {
+            ty,
+            span: start + end,
+        })
     }
 
     ///  FunctionBody

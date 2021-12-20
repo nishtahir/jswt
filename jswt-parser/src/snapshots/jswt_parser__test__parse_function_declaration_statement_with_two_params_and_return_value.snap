@@ -37,11 +37,16 @@ Ast {
                                         },
                                         value: "a",
                                     },
-                                    type_annotation: Primary(
-                                        Primitive(
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 17,
+                                            end: 20,
+                                        },
+                                        ty: Primitive(
                                             I32,
                                         ),
-                                    ),
+                                    },
                                 },
                                 FormalParameterArg {
                                     ident: Ident {
@@ -52,20 +57,30 @@ Ast {
                                         },
                                         value: "b",
                                     },
-                                    type_annotation: Primary(
-                                        Primitive(
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 25,
+                                            end: 28,
+                                        },
+                                        ty: Primitive(
                                             I32,
                                         ),
-                                    ),
+                                    },
                                 },
                             ],
                         },
                         returns: Some(
-                            Primary(
-                                Primitive(
+                            TypeAnnotation {
+                                span: Span {
+                                    file: "test.1",
+                                    start: 31,
+                                    end: 34,
+                                },
+                                ty: Primitive(
                                     I32,
                                 ),
-                            ),
+                            },
                         ),
                         body: FunctionBody {
                             span: Span {

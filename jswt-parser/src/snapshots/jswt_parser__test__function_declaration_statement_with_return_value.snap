@@ -30,11 +30,16 @@ Ast {
                             parameters: [],
                         },
                         returns: Some(
-                            Primary(
-                                Primitive(
+                            TypeAnnotation {
+                                span: Span {
+                                    file: "test.1",
+                                    start: 17,
+                                    end: 20,
+                                },
+                                ty: Primitive(
                                     I32,
                                 ),
-                            ),
+                            },
                         ),
                         body: FunctionBody {
                             span: Span {

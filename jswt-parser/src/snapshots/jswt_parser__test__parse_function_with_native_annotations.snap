@@ -67,11 +67,16 @@ Ast {
                                         },
                                         value: "value",
                                     },
-                                    type_annotation: Primary(
-                                        Primitive(
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 186,
+                                            end: 189,
+                                        },
+                                        ty: Primitive(
                                             I32,
                                         ),
-                                    ),
+                                    },
                                 },
                             ],
                         },
@@ -148,11 +153,16 @@ Ast {
                                         },
                                         value: "code",
                                     },
-                                    type_annotation: Primary(
-                                        Primitive(
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 364,
+                                            end: 367,
+                                        },
+                                        ty: Primitive(
                                             I32,
                                         ),
-                                    ),
+                                    },
                                 },
                             ],
                         },

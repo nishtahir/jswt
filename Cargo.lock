@@ -508,6 +508,7 @@ version = "0.1.0"
 dependencies = [
  "jswt-common",
  "jswt-derive",
+ "jswt-types",
 ]
 
 [[package]]
@@ -557,6 +558,7 @@ dependencies = [
  "jswt-ast",
  "jswt-common",
  "jswt-tokenizer",
+ "jswt-types",
 ]
 
 [[package]]
@@ -584,7 +586,6 @@ name = "jswt-types"
 version = "0.1.0"
 dependencies = [
  "jswt-assert",
- "jswt-ast",
  "jswt-common",
 ]
 

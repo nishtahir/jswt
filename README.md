@@ -7,37 +7,8 @@
         <img src="https://codecov.io/gh/nishtahir/jswt/branch/master/graph/badge.svg?token=VL6CT8HU4U" /></a>
 </p>
 </div>
-## Demo
 
-```
-// foo.jswt
-
-let globalVar = 0;
-
-// Inline Wast support with named params
-@wast("(global.set $globalVar (local.get $a))")
-function setGlobalVar(a: i32) {}
-```
-
-```
-import "./foo.jswt"
-
-// main.jswt
-export function main(): i32 {
-    let a = 123;
-    if (a == 123) {
-        setGlobalVar(123);
-    } else {
-        println(99);
-    }
-
-    println(globalVar)
-}
-```
-
-```
-jswt ./main.jswt
-```
+A JavaScript/TypeScript like language that compiles to web assembly.
 
 ## CLI
 

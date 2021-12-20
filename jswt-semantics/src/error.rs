@@ -1,4 +1,4 @@
-use jswt_ast::Span;
+use jswt_common::Span;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum SemanticError {

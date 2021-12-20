@@ -37,11 +37,16 @@ Ast {
                                         },
                                         value: "a",
                                     },
-                                    type_annotation: Primary(
-                                        Primitive(
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 17,
+                                            end: 20,
+                                        },
+                                        ty: Primitive(
                                             I32,
                                         ),
-                                    ),
+                                    },
                                 },
                                 FormalParameterArg {
                                     ident: Ident {
@@ -52,18 +57,16 @@ Ast {
                                         },
                                         value: "b",
                                     },
-                                    type_annotation: Primary(
-                                        Reference(
-                                            Ident {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    start: 25,
-                                                    end: 28,
-                                                },
-                                                value: "f32",
-                                            },
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 25,
+                                            end: 28,
+                                        },
+                                        ty: Primitive(
+                                            F32,
                                         ),
-                                    ),
+                                    },
                                 },
                             ],
                         },

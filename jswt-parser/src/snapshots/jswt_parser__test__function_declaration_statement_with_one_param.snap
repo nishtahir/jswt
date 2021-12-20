@@ -37,11 +37,16 @@ Ast {
                                         },
                                         value: "a",
                                     },
-                                    type_annotation: Primary(
-                                        Primitive(
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 17,
+                                            end: 20,
+                                        },
+                                        ty: Primitive(
                                             I32,
                                         ),
-                                    ),
+                                    },
                                 },
                             ],
                         },

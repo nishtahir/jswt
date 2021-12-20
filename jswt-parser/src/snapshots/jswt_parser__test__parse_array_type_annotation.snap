@@ -37,31 +37,38 @@ Ast {
                                         },
                                         value: "code",
                                     },
-                                    type_annotation: Primary(
-                                        Array(
-                                            Primitive(
-                                                I32,
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 20,
+                                            end: 25,
+                                        },
+                                        ty: Object(
+                                            Array(
+                                                Primitive(
+                                                    I32,
+                                                ),
                                             ),
                                         ),
-                                    ),
+                                    },
                                 },
                             ],
                         },
                         returns: Some(
-                            Primary(
-                                Array(
-                                    Reference(
-                                        Ident {
-                                            span: Span {
-                                                file: "test.1",
-                                                start: 28,
-                                                end: 34,
-                                            },
-                                            value: "string",
-                                        },
+                            TypeAnnotation {
+                                span: Span {
+                                    file: "test.1",
+                                    start: 28,
+                                    end: 36,
+                                },
+                                ty: Object(
+                                    Array(
+                                        Object(
+                                            String,
+                                        ),
                                     ),
                                 ),
-                            ),
+                            },
                         ),
                         body: FunctionBody {
                             span: Span {

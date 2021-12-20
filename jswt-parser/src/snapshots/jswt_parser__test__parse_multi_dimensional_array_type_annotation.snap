@@ -37,35 +37,46 @@ Ast {
                                         },
                                         value: "code",
                                     },
-                                    type_annotation: Primary(
-                                        Array(
+                                    type_annotation: TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            start: 20,
+                                            end: 27,
+                                        },
+                                        ty: Object(
                                             Array(
-                                                Primitive(
-                                                    I32,
+                                                Object(
+                                                    Array(
+                                                        Primitive(
+                                                            I32,
+                                                        ),
+                                                    ),
                                                 ),
                                             ),
                                         ),
-                                    ),
+                                    },
                                 },
                             ],
                         },
                         returns: Some(
-                            Primary(
-                                Array(
+                            TypeAnnotation {
+                                span: Span {
+                                    file: "test.1",
+                                    start: 30,
+                                    end: 40,
+                                },
+                                ty: Object(
                                     Array(
-                                        Reference(
-                                            Ident {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    start: 30,
-                                                    end: 36,
-                                                },
-                                                value: "string",
-                                            },
+                                        Object(
+                                            Array(
+                                                Object(
+                                                    String,
+                                                ),
+                                            ),
                                         ),
                                     ),
                                 ),
-                            ),
+                            },
                         ),
                         body: FunctionBody {
                             span: Span {

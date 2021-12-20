@@ -1,8 +1,18 @@
-use std::fmt::Display;
+use std::{borrow::Cow, fmt::Display};
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Type {
     Primitive(PrimitiveType),
-    Object,
+    Object(ObjectType),
+    Void,
+    Unknown,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum ObjectType {
+    Array(Box<Type>),
+    String,
+    Reference(Cow<'static, str>),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -11,8 +21,6 @@ pub enum PrimitiveType {
     U32,
     F32,
     Boolean,
-    Unit,
-    Void,
 }
 
 impl Display for PrimitiveType {
@@ -22,8 +30,6 @@ impl Display for PrimitiveType {
             PrimitiveType::U32 => f.write_str("u32"),
             PrimitiveType::F32 => f.write_str("f32"),
             PrimitiveType::Boolean => f.write_str("boolean"),
-            PrimitiveType::Unit => f.write_str("unit"),
-            PrimitiveType::Void => f.write_str("void"),
         }
     }
 }

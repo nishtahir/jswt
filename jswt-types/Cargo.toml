@@ -8,7 +8,6 @@ edition = "2018"
 doctest = false
 
 [dependencies]
-jswt-ast = {path = "../jswt-ast"}
 jswt-common = {path = "../jswt-common"}
 
 [dev-dependencies]

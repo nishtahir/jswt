@@ -1,8 +1,8 @@
 use jswt_derive::FromEnumVariant;
 
 use crate::{
-    iteration::IterationStatement, AssignableElement, SingleExpression, Span, Spannable,
-    StatementList, TypeAnnotation, VariableModifier,
+    iteration::IterationStatement, variable::VariableModifier, AssignableElement, SingleExpression,
+    Span, Spannable, StatementList, TypeAnnotation,
 };
 
 #[derive(Debug, PartialEq, FromEnumVariant, Spannable)]

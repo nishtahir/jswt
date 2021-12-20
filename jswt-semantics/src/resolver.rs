@@ -4,7 +4,7 @@ use std::borrow::Borrow;
 use std::collections::BTreeMap;
 
 use jswt_ast::*;
-use jswt_common::SymbolTable;
+use jswt_common::{Spannable, SymbolTable};
 
 impl Default for Resolver {
     fn default() -> Self {

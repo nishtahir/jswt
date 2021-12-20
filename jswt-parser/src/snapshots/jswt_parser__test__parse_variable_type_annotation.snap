@@ -45,11 +45,16 @@ Ast {
                                 ),
                             ),
                             type_annotation: Some(
-                                Primary(
-                                    Primitive(
+                                TypeAnnotation {
+                                    span: Span {
+                                        file: "test.1",
+                                        start: 7,
+                                        end: 10,
+                                    },
+                                    ty: Primitive(
                                         I32,
                                     ),
-                                ),
+                                },
                             ),
                         },
                     ),

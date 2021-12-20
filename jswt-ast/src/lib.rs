@@ -3,6 +3,8 @@ mod ident;
 mod iteration;
 mod literal;
 mod statement;
+mod types;
+mod variable;
 mod visitor;
 
 pub use expression::*;
@@ -10,9 +12,11 @@ pub use ident::Ident;
 pub use iteration::*;
 pub use literal::*;
 pub use statement::*;
+pub use types::*;
+pub use variable::*;
 pub use visitor::*;
 
-pub use jswt_common::{Span, Spannable};
+use jswt_common::{Span, Spannable};
 use jswt_derive::{FromEnumVariant, Spannable};
 
 #[derive(Debug)]
@@ -87,21 +91,6 @@ pub struct StatementList {
     pub statements: Vec<StatementElement>,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum VariableModifier {
-    Let(Span),
-    Const(Span),
-}
-
-impl Spannable for VariableModifier {
-    fn span(&self) -> Span {
-        match self {
-            VariableModifier::Let(span) => span.to_owned(),
-            VariableModifier::Const(span) => span.to_owned(),
-        }
-    }
-}
-
 #[derive(Debug, PartialEq, FromEnumVariant)]
 pub enum AssignableElement {
     Identifier(Ident),
@@ -113,23 +102,4 @@ impl Spannable for AssignableElement {
             AssignableElement::Identifier(ident) => ident.span.to_owned(),
         }
     }
-}
-
-#[derive(Debug, PartialEq)]
-pub enum TypeAnnotation {
-    Primary(PrimaryTypeAnnotation),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum PrimaryTypeAnnotation {
-    Reference(Ident),
-    Primitive(Primitive),
-    Array(Box<PrimaryTypeAnnotation>),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Primitive {
-    I32,
-    U32,
-    Boolean,
 }
