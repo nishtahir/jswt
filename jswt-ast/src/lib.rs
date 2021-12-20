@@ -8,7 +8,7 @@ mod variable;
 mod visitor;
 
 pub use expression::*;
-pub use ident::Ident;
+pub use ident::*;
 pub use iteration::*;
 pub use literal::*;
 pub use statement::*;
@@ -50,7 +50,7 @@ pub enum SourceElement {
 pub struct FunctionDeclarationElement {
     pub span: Span,
     pub decorators: FunctionDecorators,
-    pub ident: Ident,
+    pub ident: Identifier,
     pub params: FormalParameterList,
     pub returns: Option<TypeAnnotation>,
     pub body: FunctionBody,
@@ -65,7 +65,7 @@ pub struct FunctionDecorators {
 #[derive(Debug, PartialEq, Spannable)]
 pub struct Annotation {
     pub span: Span,
-    pub name: Ident,
+    pub name: Identifier,
     pub expr: Option<SingleExpression>,
 }
 
@@ -76,7 +76,7 @@ pub struct FormalParameterList {
 
 #[derive(Debug, PartialEq)]
 pub struct FormalParameterArg {
-    pub ident: Ident,
+    pub ident: Identifier,
     pub type_annotation: TypeAnnotation,
 }
 
@@ -93,7 +93,7 @@ pub struct StatementList {
 
 #[derive(Debug, PartialEq, FromEnumVariant)]
 pub enum AssignableElement {
-    Identifier(Ident),
+    Identifier(Identifier),
 }
 
 impl Spannable for AssignableElement {

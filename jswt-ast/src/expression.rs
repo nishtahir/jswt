@@ -1,4 +1,4 @@
-use crate::{ident::Ident, Literal};
+use crate::{ident::Identifier, Literal};
 
 use jswt_common::Span;
 use jswt_derive::Spannable;
@@ -56,7 +56,7 @@ pub struct BinaryExpression {
 #[derive(Debug, PartialEq, Spannable)]
 pub struct IdentifierExpression {
     pub span: Span,
-    pub ident: Ident,
+    pub ident: Identifier,
 }
 
 #[derive(Debug, PartialEq)]

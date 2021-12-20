@@ -29,7 +29,7 @@ Ast {
                                                 start: 0,
                                                 end: 5,
                                             },
-                                            ident: Ident {
+                                            ident: Identifier {
                                                 span: Span {
                                                     file: "test.1",
                                                     start: 0,

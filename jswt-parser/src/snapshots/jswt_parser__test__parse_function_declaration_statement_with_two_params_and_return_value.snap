@@ -18,7 +18,7 @@ Ast {
                             annotations: [],
                             export: false,
                         },
-                        ident: Ident {
+                        ident: Identifier {
                             span: Span {
                                 file: "test.1",
                                 start: 9,
@@ -29,7 +29,7 @@ Ast {
                         params: FormalParameterList {
                             parameters: [
                                 FormalParameterArg {
-                                    ident: Ident {
+                                    ident: Identifier {
                                         span: Span {
                                             file: "test.1",
                                             start: 14,
@@ -49,7 +49,7 @@ Ast {
                                     },
                                 },
                                 FormalParameterArg {
-                                    ident: Ident {
+                                    ident: Identifier {
                                         span: Span {
                                             file: "test.1",
                                             start: 22,

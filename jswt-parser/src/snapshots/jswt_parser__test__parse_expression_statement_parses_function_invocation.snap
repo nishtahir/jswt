@@ -18,7 +18,7 @@ Ast {
                             annotations: [],
                             export: true,
                         },
-                        ident: Ident {
+                        ident: Identifier {
                             span: Span {
                                 file: "test.1",
                                 start: 16,
@@ -60,7 +60,7 @@ Ast {
                                                                     start: 25,
                                                                     end: 29,
                                                                 },
-                                                                ident: Ident {
+                                                                ident: Identifier {
                                                                     span: Span {
                                                                         file: "test.1",
                                                                         start: 25,

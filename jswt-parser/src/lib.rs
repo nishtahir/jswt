@@ -1,10 +1,11 @@
 mod errors;
-use std::vec;
 
 pub use errors::ParseError;
+use std::vec;
+
 use jswt_ast::*;
 use jswt_common::{Span, Spannable};
-use jswt_tokenizer::*;
+use jswt_tokenizer::{Token, TokenType, Tokenizer, TokenizerError};
 use jswt_types::{ObjectType, PrimitiveType, Type};
 
 /// Returns true if a token matching the given token type
@@ -57,7 +58,11 @@ macro_rules! ident {
     ($self:ident) => {{
         let token = $self.lookahead.as_ref().expect("unexpected end of input");
         if token.kind != TokenType::Identifier {
-            panic!("Mismatched token type {:?}", token);
+            return Err(ParseError::MismatchedToken {
+                expected: TokenType::Identifier,
+                actual: token.kind,
+                span: $self.lookahead_span(),
+            });
         }
 
         let span = Span::new(
@@ -65,10 +70,10 @@ macro_rules! ident {
             token.offset,
             token.offset + token.lexme.len(),
         );
-        let ident = Ident::new(token.lexme, span);
+        let ident = Identifier::new(token.lexme.into(), span);
         // Advance lookahead
         $self.lookahead = $self.tokenizer.next_token();
-        ident
+        Ok::<Identifier, ParseError>(ident)
     }};
 }
 
@@ -378,7 +383,7 @@ impl<'a> Parser<'a> {
     ///   : Ident
     ///   ;
     fn assignable(&mut self) -> Result<AssignableElement, ParseError> {
-        Ok(AssignableElement::Identifier(ident!(self)))
+        Ok(AssignableElement::Identifier(ident!(self)?))
     }
 
     /// ExpressionStatement
@@ -590,7 +595,7 @@ impl<'a> Parser<'a> {
     ///   ;
     fn identifier_expression(&mut self) -> Result<SingleExpression, ParseError> {
         if self.lookahead_is(TokenType::Identifier) {
-            let ident = ident!(self);
+            let ident = ident!(self)?;
             return Ok(SingleExpression::Identifier(IdentifierExpression {
                 span: ident.span.to_owned(),
                 ident,
@@ -720,7 +725,7 @@ impl<'a> Parser<'a> {
         let function_span = consume!(self, TokenType::Function)?;
         let start_span = export_span.to_owned().unwrap_or(function_span);
 
-        let ident = ident!(self);
+        let ident = ident!(self)?;
 
         consume!(self, TokenType::LeftParen)?;
         let params = self.formal_parameter_list()?;
@@ -750,7 +755,7 @@ impl<'a> Parser<'a> {
 
     fn annotation(&mut self) -> Result<Annotation, ParseError> {
         let start = consume!(self, TokenType::At)?;
-        let ident = ident!(self);
+        let ident = ident!(self)?;
 
         let mut end = ident.span.to_owned();
         let mut expr = None;
@@ -789,7 +794,7 @@ impl<'a> Parser<'a> {
     ///   :  Ident TypeAnnotation
     ///   ;
     fn formal_parameter_arg(&mut self) -> Result<FormalParameterArg, ParseError> {
-        let ident = ident!(self);
+        let ident = ident!(self)?;
         let type_annotation = self.type_annotation()?;
         Ok(FormalParameterArg {
             ident,
@@ -802,7 +807,7 @@ impl<'a> Parser<'a> {
     ///   ;
     fn type_annotation(&mut self) -> Result<TypeAnnotation, ParseError> {
         consume!(self, TokenType::Colon)?;
-        let name = ident!(self);
+        let name = ident!(self)?;
         let mut ty = match name.value {
             "i32" => Type::Primitive(PrimitiveType::I32),
             "f32" => Type::Primitive(PrimitiveType::F32),

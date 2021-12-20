@@ -22,7 +22,7 @@ Ast {
                                         start: 139,
                                         end: 153,
                                     },
-                                    name: Ident {
+                                    name: Identifier {
                                         span: Span {
                                             file: "test.1",
                                             start: 140,
@@ -48,7 +48,7 @@ Ast {
                             ],
                             export: false,
                         },
-                        ident: Ident {
+                        ident: Identifier {
                             span: Span {
                                 file: "test.1",
                                 start: 171,
@@ -59,7 +59,7 @@ Ast {
                         params: FormalParameterList {
                             parameters: [
                                 FormalParameterArg {
-                                    ident: Ident {
+                                    ident: Identifier {
                                         span: Span {
                                             file: "test.1",
                                             start: 179,
@@ -108,7 +108,7 @@ Ast {
                                         start: 321,
                                         end: 335,
                                     },
-                                    name: Ident {
+                                    name: Identifier {
                                         span: Span {
                                             file: "test.1",
                                             start: 322,
@@ -134,7 +134,7 @@ Ast {
                             ],
                             export: false,
                         },
-                        ident: Ident {
+                        ident: Identifier {
                             span: Span {
                                 file: "test.1",
                                 start: 353,
@@ -145,7 +145,7 @@ Ast {
                         params: FormalParameterList {
                             parameters: [
                                 FormalParameterArg {
-                                    ident: Ident {
+                                    ident: Identifier {
                                         span: Span {
                                             file: "test.1",
                                             start: 358,

@@ -29,7 +29,7 @@ Ast {
                                                 start: 3,
                                                 end: 4,
                                             },
-                                            ident: Ident {
+                                            ident: Identifier {
                                                 span: Span {
                                                     file: "test.1",
                                                     start: 3,
@@ -53,7 +53,7 @@ Ast {
                                                 start: 8,
                                                 end: 9,
                                             },
-                                            ident: Ident {
+                                            ident: Identifier {
                                                 span: Span {
                                                     file: "test.1",
                                                     start: 8,
@@ -121,7 +121,7 @@ Ast {
                                                             start: 34,
                                                             end: 35,
                                                         },
-                                                        ident: Ident {
+                                                        ident: Identifier {
                                                             span: Span {
                                                                 file: "test.1",
                                                                 start: 34,
@@ -145,7 +145,7 @@ Ast {
                                                             start: 38,
                                                             end: 39,
                                                         },
-                                                        ident: Ident {
+                                                        ident: Identifier {
                                                             span: Span {
                                                                 file: "test.1",
                                                                 start: 38,

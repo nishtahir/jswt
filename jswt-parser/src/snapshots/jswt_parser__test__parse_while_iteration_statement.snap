@@ -30,7 +30,7 @@ Ast {
                                                     start: 6,
                                                     end: 7,
                                                 },
-                                                ident: Ident {
+                                                ident: Identifier {
                                                     span: Span {
                                                         file: "test.1",
                                                         start: 6,
@@ -91,7 +91,7 @@ Ast {
                                                                             start: 16,
                                                                             end: 23,
                                                                         },
-                                                                        ident: Ident {
+                                                                        ident: Identifier {
                                                                             span: Span {
                                                                                 file: "test.1",
                                                                                 start: 16,

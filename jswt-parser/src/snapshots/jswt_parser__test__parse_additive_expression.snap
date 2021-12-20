@@ -23,7 +23,7 @@ Ast {
                                 },
                             ),
                             target: Identifier(
-                                Ident {
+                                Identifier {
                                     span: Span {
                                         file: "test.1",
                                         start: 4,
