@@ -1,11 +1,12 @@
-# JSWT
-
-[![Rust](https://github.com/nishtahir/jswt/actions/workflows/rust.yml/badge.svg)](https://github.com/nishtahir/jswt/actions/workflows/rust.yml)
-
-[![codecov](https://codecov.io/gh/nishtahir/jswt/branch/master/graph/badge.svg?token=VL6CT8HU4U)](https://codecov.io/gh/nishtahir/jswt)
-
-An experiment in compilation targetting WebAssembly.
-
+<div>
+<h1 align="center">JSWT</h1>
+<p align="center">
+    <a href="https://github.com/nishtahir/jswt/actions/workflows/rust.yml" alt="Build">
+        <img src="https://github.com/nishtahir/jswt/actions/workflows/rust.yml/badge.svg" /></a>
+    <a href="https://codecov.io/gh/nishtahir/jswt" alt="Coverage">
+        <img src="https://codecov.io/gh/nishtahir/jswt/branch/master/graph/badge.svg?token=VL6CT8HU4U" /></a>
+</p>
+</div>
 ## Demo
 
 ```
@@ -38,20 +39,27 @@ export function main(): i32 {
 jswt ./main.jswt
 ```
 
-## Usage
+## CLI
 
 ```
 USAGE:
-    jswt [FLAGS] <source>
+    jswt [FLAGS] [OPTIONS] <file>
 
 FLAGS:
-    -h, --help       Prints help information
-        --log-mem    Log the memory layout after execution
-    -V, --version    Prints version information
+    -h, --help        Prints help information
+        --log-mem     Log the memory layout after execution
+        --minified    Minify WAST output
+        --no-std      Do not include the runtime and stdlib
+    -V, --version     Prints version information
+
+OPTIONS:
+    -o <output>                          Write output to file
+        --runtime-path <runtime-path>    Path to runtime sources
 
 ARGS:
-    <source>    Input file to begin compiling
+    <file>    Input file to begin compiling
 ```
+
 ## Resources
 
 * [Official Web Assembly Specification](https://webassembly.github.io/spec/core/)
