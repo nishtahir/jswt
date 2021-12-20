@@ -2,7 +2,6 @@ use regex::Regex;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
-
 pub struct LineCol {
     pub line: i32,
     pub col: i32,
@@ -80,7 +79,6 @@ fn marker_lines(source: &[&str], location: &Location) -> MarkerLines {
 ///   3 | }
 ///
 /// TODO: Port over floating message support
-
 pub fn code_frame(source: &str, location: &Location, message: &str) -> String {
     let lines = source.split('\n').collect::<Vec<&str>>();
     let MarkerLines {
@@ -144,7 +142,6 @@ pub fn location_from_offset(source: &str, offset: usize) -> LineCol {
             }
         }
     }
-
     location
 }
 

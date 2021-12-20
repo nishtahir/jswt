@@ -215,7 +215,7 @@ impl Tokenizer {
                 // Advance cursor based on match
                 source.advance_cursor(match_text.len());
                 let token = Token::new(
-                    source.name.clone().into(),
+                    source.name.clone(),
                     match_text,
                     rule.token_type,
                     offset,

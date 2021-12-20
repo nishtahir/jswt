@@ -34,7 +34,7 @@ impl<'a> ErrorEmitter<'a> {
                 start: location_from_offset(source, span.start),
             };
             let code_frame = create_codeframe(source, &location, message);
-            let header = create_header(file, &location.start, &level);
+            let header = create_header(file, &location.start, level);
             println!("{}\n{}", header, code_frame);
             if let Some(hint) = hint {
                 let text = format!("Hint: {}", &hint).bold();

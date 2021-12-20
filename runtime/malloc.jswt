@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import "./memory.jswt";
-import "../stdlib/math.jswt";
+import "../stdlib/math.jswt"; 
 
 let maxAddr = 65536;
 let isInit = false;
