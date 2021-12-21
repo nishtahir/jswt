@@ -6,6 +6,7 @@ expression: actual
 [
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "42",
         offset: 0,
         kind: Integer,

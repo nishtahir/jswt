@@ -138,6 +138,11 @@ pub struct Tokenizer {
     /// at the end of the Vec to be popped once it's completely tokenized
     sources: Vec<Rc<RefCell<Source>>>,
     errors: Vec<TokenizerError>,
+    // Root directory to compute relative paths from
+    // This will be used together with the give module prefix
+    // To compute a module name for the source file
+    sources_root: Option<PathBuf>,
+    module_prefix: Option<String>,
 }
 
 impl<'a> Default for Tokenizer {
@@ -152,6 +157,8 @@ impl Tokenizer {
             source_map,
             sources: vec![],
             errors: vec![],
+            sources_root: None,
+            module_prefix: None,
         }
     }
 
@@ -188,7 +195,7 @@ impl Tokenizer {
 
                         // Construct path relative to the import file directory
                         // as opposed to using pwd as the root path for imports
-                        let source_path = PathBuf::from(source.name.to_string());
+                        let source_path = PathBuf::from(source.path.to_string());
                         let source_dir = source_path.parent().unwrap();
                         let relative_source_path = PathBuf::from(format!(
                             "{}/{}",
@@ -196,8 +203,8 @@ impl Tokenizer {
                             import_path
                         ));
 
-                        // Push the source where we found the import to the stack
-                        self.push_source(&relative_source_path);
+                        // Push the source where we found the import to the queue
+                        self.enqueue_source(&relative_source_path);
                     }
                     DirectiveType::Skip => {}
                 }
@@ -215,7 +222,8 @@ impl Tokenizer {
                 // Advance cursor based on match
                 source.advance_cursor(match_text.len());
                 let token = Token::new(
-                    source.name.clone(),
+                    source.path.clone(),
+                    source.module.clone(),
                     match_text,
                     rule.token_type,
                     offset,
@@ -226,7 +234,7 @@ impl Tokenizer {
 
         // We want to report the error after the fact so note it down for now
         let err = TokenizerError::UnreconizedToken {
-            file: source.name.clone().into(),
+            file: source.path.clone().into(),
             offset,
             token: &rest[0..1],
         };
@@ -246,10 +254,9 @@ impl Tokenizer {
         tokens
     }
 
-    pub fn push_source(&mut self, path: &Path) {
+    pub fn enqueue_source(&mut self, path: &Path) {
         // Resolve the fully qualified path from relative paths
         // TODO - handle errors
-
         if !path.exists() {
             println!("No such file '{:?}'", path.to_str());
             exit(1);
@@ -261,7 +268,6 @@ impl Tokenizer {
             // we already have this source don't reimport
             return;
         }
-
         // We're intentionally leaking this to make lifetime management easier
         // since we plan to pass references to the original sources in place of copying it
         let content = Box::leak(fs::read_to_string(&path).unwrap().into_boxed_str());
@@ -273,8 +279,37 @@ impl Tokenizer {
         self.source_map
             .borrow_mut()
             .insert(path.to_owned(), content);
-        let source = Source::new(path.to_owned().into(), content);
+
+        // Compute the module name based on the given source roots
+        // and module prefix or use defaults
+        let default_source_root = &std::env::current_dir().unwrap();
+        let default_module_prefix = "module";
+        let sources_root = self.sources_root.as_ref().unwrap_or(default_source_root);
+        let module_prefix = self
+            .module_prefix
+            .as_ref()
+            .map(String::as_str)
+            .unwrap_or(default_module_prefix);
+
+        let relative_diff = pathdiff::diff_paths(path, sources_root);
+        let module_name = if let Some(diff) = relative_diff {
+            format!("{}/{}", module_prefix, diff.to_str().unwrap())
+        } else {
+            // We couldn't figure out a module name for this
+            // So just use the path
+            format!("{}/{}", module_prefix, path)
+        };
+
+        let source = Source::new(path.to_owned().into(), module_name.into(), content);
         self.sources.insert(0, Rc::new(RefCell::new(source)));
+    }
+
+    pub fn set_sources_root(&mut self, path: Option<&PathBuf>) {
+        self.sources_root = path.map(PathBuf::clone)
+    }
+
+    pub fn set_module_prefix(&mut self, prefix: Option<String>) {
+        self.module_prefix = prefix;
     }
 
     fn dequeue_source(&mut self) {

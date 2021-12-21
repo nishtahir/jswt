@@ -1,20 +1,32 @@
 use crate::*;
 
 macro_rules! statement_visitor {
-    ( $($fname:ident: $node:tt),*) => {
+    ($($fname:ident: $node:tt),*) => {
         pub trait StatementVisitor {
             $(
                 fn $fname(&mut self, node: &$node);
+            )*
+        }
+
+        pub trait MutStatementVisitor {
+            $(
+                fn $fname(&mut self, node: &mut $node);
             )*
         }
     };
 }
 
 macro_rules! expression_visitor {
-    ( $($fname:ident: $node:tt),*) => {
+    ($($fname:ident: $node:tt),*) => {
         pub trait ExpressionVisitor<T> {
             $(
                 fn $fname(&mut self, node: &$node)-> T;
+            )*
+        }
+
+        pub trait MutExpressionVisitor<T> {
+            $(
+                fn $fname(&mut self, node: &mut $node)-> T;
             )*
         }
     };

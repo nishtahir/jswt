@@ -86,7 +86,8 @@ fn main() {
         matches
             .value_of("runtime-path")
             .or(Some("./runtime/rt.jswt"))
-            .map(PathBuf::from)
+            .map(fs::canonicalize)
+            .map(Result::unwrap)
     };
 
     let ast = compile_module(&input, &output, runtime.as_ref());
@@ -167,17 +168,22 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
 
     // Let binding to prevent the ref being dropped before getting passed to the tokenizer
     let mut tokenizer = Tokenizer::new(source_map.clone());
-    tokenizer.push_source(input);
+    // Sources root for user defined sources is the current directory 
+    // from where the compiler is being invoked.
+    tokenizer.set_sources_root(Some(&std::env::current_dir().unwrap()));
+    tokenizer.set_module_prefix(Some("module".to_string()));
+    tokenizer.enqueue_source(input);
 
     if let Some(runtime) = runtime {
         // Sources at the top of the source stack will be resolved first
         // This has implications in the parsing and semantic analysis process
         // As errors related to redefinitions and shadowing
         // should point to user defined sources
-        tokenizer.push_source(runtime);
+        tokenizer.set_sources_root(runtime.parent().map(Path::to_path_buf).as_ref());
+        tokenizer.set_module_prefix(Some("runtime".to_string()));
+        tokenizer.enqueue_source(runtime);
     }
 
-    // parse tokens and generate AST
     let mut parser = Parser::new(&mut tokenizer);
     let ast = parser.parse();
 

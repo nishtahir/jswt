@@ -11,6 +11,7 @@ Ast {
                     FunctionDeclarationElement {
                         span: Span {
                             file: "test.1",
+                            module: "module/test.1",
                             start: 0,
                             end: 19,
                         },
@@ -21,6 +22,7 @@ Ast {
                         ident: Identifier {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 9,
                                 end: 13,
                             },
@@ -33,6 +35,7 @@ Ast {
                         body: FunctionBody {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 16,
                                 end: 19,
                             },

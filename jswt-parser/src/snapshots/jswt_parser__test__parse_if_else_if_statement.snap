@@ -12,6 +12,7 @@ Ast {
                         IfStatement {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 0,
                                 end: 74,
                             },
@@ -19,6 +20,7 @@ Ast {
                                 BinaryExpression {
                                     span: Span {
                                         file: "test.1",
+                                        module: "module/test.1",
                                         start: 3,
                                         end: 9,
                                     },
@@ -26,12 +28,14 @@ Ast {
                                         IdentifierExpression {
                                             span: Span {
                                                 file: "test.1",
+                                                module: "module/test.1",
                                                 start: 3,
                                                 end: 4,
                                             },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test.1",
+                                                    module: "module/test.1",
                                                     start: 3,
                                                     end: 4,
                                                 },
@@ -42,6 +46,7 @@ Ast {
                                     op: Equal(
                                         Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 5,
                                             end: 7,
                                         },
@@ -50,12 +55,14 @@ Ast {
                                         IdentifierExpression {
                                             span: Span {
                                                 file: "test.1",
+                                                module: "module/test.1",
                                                 start: 8,
                                                 end: 9,
                                             },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test.1",
+                                                    module: "module/test.1",
                                                     start: 8,
                                                     end: 9,
                                                 },
@@ -69,6 +76,7 @@ Ast {
                                 BlockStatement {
                                     span: Span {
                                         file: "test.1",
+                                        module: "module/test.1",
                                         start: 11,
                                         end: 24,
                                     },
@@ -78,6 +86,7 @@ Ast {
                                                 ReturnStatement {
                                                     span: Span {
                                                         file: "test.1",
+                                                        module: "module/test.1",
                                                         start: 13,
                                                         end: 22,
                                                     },
@@ -86,6 +95,7 @@ Ast {
                                                             IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
+                                                                    module: "module/test.1",
                                                                     start: 20,
                                                                     end: 21,
                                                                 },
@@ -104,6 +114,7 @@ Ast {
                                     IfStatement {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 30,
                                             end: 74,
                                         },
@@ -111,6 +122,7 @@ Ast {
                                             BinaryExpression {
                                                 span: Span {
                                                     file: "test.1",
+                                                    module: "module/test.1",
                                                     start: 34,
                                                     end: 39,
                                                 },
@@ -118,12 +130,14 @@ Ast {
                                                     IdentifierExpression {
                                                         span: Span {
                                                             file: "test.1",
+                                                            module: "module/test.1",
                                                             start: 34,
                                                             end: 35,
                                                         },
                                                         ident: Identifier {
                                                             span: Span {
                                                                 file: "test.1",
+                                                                module: "module/test.1",
                                                                 start: 34,
                                                                 end: 35,
                                                             },
@@ -134,6 +148,7 @@ Ast {
                                                 op: Greater(
                                                     Span {
                                                         file: "test.1",
+                                                        module: "module/test.1",
                                                         start: 36,
                                                         end: 37,
                                                     },
@@ -142,12 +157,14 @@ Ast {
                                                     IdentifierExpression {
                                                         span: Span {
                                                             file: "test.1",
+                                                            module: "module/test.1",
                                                             start: 38,
                                                             end: 39,
                                                         },
                                                         ident: Identifier {
                                                             span: Span {
                                                                 file: "test.1",
+                                                                module: "module/test.1",
                                                                 start: 38,
                                                                 end: 39,
                                                             },
@@ -161,6 +178,7 @@ Ast {
                                             BlockStatement {
                                                 span: Span {
                                                     file: "test.1",
+                                                    module: "module/test.1",
                                                     start: 41,
                                                     end: 54,
                                                 },
@@ -170,6 +188,7 @@ Ast {
                                                             ReturnStatement {
                                                                 span: Span {
                                                                     file: "test.1",
+                                                                    module: "module/test.1",
                                                                     start: 43,
                                                                     end: 52,
                                                                 },
@@ -178,6 +197,7 @@ Ast {
                                                                         IntegerLiteral {
                                                                             span: Span {
                                                                                 file: "test.1",
+                                                                                module: "module/test.1",
                                                                                 start: 50,
                                                                                 end: 51,
                                                                             },
@@ -196,6 +216,7 @@ Ast {
                                                 BlockStatement {
                                                     span: Span {
                                                         file: "test.1",
+                                                        module: "module/test.1",
                                                         start: 60,
                                                         end: 74,
                                                     },
@@ -205,6 +226,7 @@ Ast {
                                                                 ReturnStatement {
                                                                     span: Span {
                                                                         file: "test.1",
+                                                                        module: "module/test.1",
                                                                         start: 62,
                                                                         end: 72,
                                                                     },
@@ -212,12 +234,14 @@ Ast {
                                                                         UnaryExpression {
                                                                             span: Span {
                                                                                 file: "test.1",
+                                                                                module: "module/test.1",
                                                                                 start: 69,
                                                                                 end: 71,
                                                                             },
                                                                             op: Minus(
                                                                                 Span {
                                                                                     file: "test.1",
+                                                                                    module: "module/test.1",
                                                                                     start: 69,
                                                                                     end: 70,
                                                                                 },
@@ -227,6 +251,7 @@ Ast {
                                                                                     IntegerLiteral {
                                                                                         span: Span {
                                                                                             file: "test.1",
+                                                                                            module: "module/test.1",
                                                                                             start: 70,
                                                                                             end: 71,
                                                                                         },

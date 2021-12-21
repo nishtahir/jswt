@@ -9,6 +9,7 @@ doctest = false
 
 [dependencies]
 lazy_static ="1.4.0"
+pathdiff = "0.2.1"
 regex = "1.5.4"
 
 [dev-dependencies]

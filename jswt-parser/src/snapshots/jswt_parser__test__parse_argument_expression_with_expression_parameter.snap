@@ -12,6 +12,7 @@ Ast {
                         ExpressionStatement {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 0,
                                 end: 12,
                             },
@@ -19,6 +20,7 @@ Ast {
                                 ArgumentsExpression {
                                     span: Span {
                                         file: "test.1",
+                                        module: "module/test.1",
                                         start: 0,
                                         end: 11,
                                     },
@@ -26,12 +28,14 @@ Ast {
                                         IdentifierExpression {
                                             span: Span {
                                                 file: "test.1",
+                                                module: "module/test.1",
                                                 start: 0,
                                                 end: 4,
                                             },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test.1",
+                                                    module: "module/test.1",
                                                     start: 0,
                                                     end: 4,
                                                 },
@@ -42,6 +46,7 @@ Ast {
                                     arguments: ArgumentsList {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 4,
                                             end: 11,
                                         },
@@ -50,6 +55,7 @@ Ast {
                                                 BinaryExpression {
                                                     span: Span {
                                                         file: "test.1",
+                                                        module: "module/test.1",
                                                         start: 5,
                                                         end: 10,
                                                     },
@@ -58,6 +64,7 @@ Ast {
                                                             IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
+                                                                    module: "module/test.1",
                                                                     start: 5,
                                                                     end: 6,
                                                                 },
@@ -68,6 +75,7 @@ Ast {
                                                     op: Plus(
                                                         Span {
                                                             file: "test.1",
+                                                            module: "module/test.1",
                                                             start: 7,
                                                             end: 8,
                                                         },
@@ -77,6 +85,7 @@ Ast {
                                                             IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
+                                                                    module: "module/test.1",
                                                                     start: 9,
                                                                     end: 10,
                                                                 },

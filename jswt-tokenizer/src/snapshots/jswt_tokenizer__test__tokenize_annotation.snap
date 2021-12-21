@@ -6,30 +6,35 @@ expression: actual
 [
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "@",
         offset: 0,
         kind: At,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "test",
         offset: 1,
         kind: Identifier,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "(",
         offset: 5,
         kind: LeftParen,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "\"(local.get 0)\"",
         offset: 6,
         kind: String,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: ")",
         offset: 21,
         kind: RightParen,

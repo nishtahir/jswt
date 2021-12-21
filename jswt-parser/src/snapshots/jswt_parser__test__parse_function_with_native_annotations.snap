@@ -11,6 +11,7 @@ Ast {
                     FunctionDeclarationElement {
                         span: Span {
                             file: "test.1",
+                            module: "module/test.1",
                             start: 162,
                             end: 194,
                         },
@@ -19,12 +20,14 @@ Ast {
                                 Annotation {
                                     span: Span {
                                         file: "test.1",
+                                        module: "module/test.1",
                                         start: 139,
                                         end: 153,
                                     },
                                     name: Identifier {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 140,
                                             end: 146,
                                         },
@@ -36,6 +39,7 @@ Ast {
                                                 StringLiteral {
                                                     span: Span {
                                                         file: "test.1",
+                                                        module: "module/test.1",
                                                         start: 147,
                                                         end: 152,
                                                     },
@@ -51,6 +55,7 @@ Ast {
                         ident: Identifier {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 171,
                                 end: 178,
                             },
@@ -62,6 +67,7 @@ Ast {
                                     ident: Identifier {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 179,
                                             end: 184,
                                         },
@@ -70,6 +76,7 @@ Ast {
                                     type_annotation: TypeAnnotation {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 186,
                                             end: 189,
                                         },
@@ -84,6 +91,7 @@ Ast {
                         body: FunctionBody {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 191,
                                 end: 194,
                             },
@@ -97,6 +105,7 @@ Ast {
                     FunctionDeclarationElement {
                         span: Span {
                             file: "test.1",
+                            module: "module/test.1",
                             start: 344,
                             end: 372,
                         },
@@ -105,12 +114,14 @@ Ast {
                                 Annotation {
                                     span: Span {
                                         file: "test.1",
+                                        module: "module/test.1",
                                         start: 321,
                                         end: 335,
                                     },
                                     name: Identifier {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 322,
                                             end: 328,
                                         },
@@ -122,6 +133,7 @@ Ast {
                                                 StringLiteral {
                                                     span: Span {
                                                         file: "test.1",
+                                                        module: "module/test.1",
                                                         start: 329,
                                                         end: 334,
                                                     },
@@ -137,6 +149,7 @@ Ast {
                         ident: Identifier {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 353,
                                 end: 357,
                             },
@@ -148,6 +161,7 @@ Ast {
                                     ident: Identifier {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 358,
                                             end: 362,
                                         },
@@ -156,6 +170,7 @@ Ast {
                                     type_annotation: TypeAnnotation {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 364,
                                             end: 367,
                                         },
@@ -170,6 +185,7 @@ Ast {
                         body: FunctionBody {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 369,
                                 end: 372,
                             },

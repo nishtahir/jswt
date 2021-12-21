@@ -8,13 +8,24 @@ use std::{
 #[derive(Debug, PartialEq, Clone)]
 pub struct Span {
     pub file: Cow<'static, str>,
+    pub module: Cow<'static, str>,
     pub start: usize,
     pub end: usize,
 }
 
 impl Span {
-    pub fn new(file: Cow<'static, str>, start: usize, end: usize) -> Self {
-        Span { file, start, end }
+    pub fn new(
+        file: Cow<'static, str>,
+        module: Cow<'static, str>,
+        start: usize,
+        end: usize,
+    ) -> Self {
+        Span {
+            file,
+            module,
+            start,
+            end,
+        }
     }
 }
 
@@ -32,6 +43,7 @@ impl Add<Span> for Span {
     fn add(self, rhs: Span) -> Span {
         Span {
             file: self.file,
+            module: self.module,
             start: self.start,
             end: rhs.end,
         }
@@ -45,6 +57,7 @@ impl Sub<Span> for Span {
     fn sub(self, rhs: Span) -> Span {
         Span {
             file: self.file,
+            module: self.module,
             start: self.start,
             end: rhs.start,
         }

@@ -97,7 +97,7 @@ pub fn print_tokenizer_error(error: &TokenizerError, source_map: &HashMap<String
             offset,
         } => DiagnosticMessage {
             level: Level::Error,
-            span: Span::new(file.clone().into(), *offset, *offset + 1),
+            span: Span::new(file.clone().into(),file.clone().into(), *offset, *offset + 1),
             message: format!("SyntaxError: Unrecognized token '{}'.", token).into(),
             hint: Some("Remove this token".into()),
         },

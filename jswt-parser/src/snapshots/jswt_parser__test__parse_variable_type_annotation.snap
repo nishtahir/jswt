@@ -12,12 +12,14 @@ Ast {
                         VariableStatement {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 0,
                                 end: 16,
                             },
                             modifier: Let(
                                 Span {
                                     file: "test.1",
+                                    module: "module/test.1",
                                     start: 0,
                                     end: 3,
                                 },
@@ -26,6 +28,7 @@ Ast {
                                 Identifier {
                                     span: Span {
                                         file: "test.1",
+                                        module: "module/test.1",
                                         start: 4,
                                         end: 5,
                                     },
@@ -37,6 +40,7 @@ Ast {
                                     IntegerLiteral {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 13,
                                             end: 15,
                                         },
@@ -48,6 +52,7 @@ Ast {
                                 TypeAnnotation {
                                     span: Span {
                                         file: "test.1",
+                                        module: "module/test.1",
                                         start: 7,
                                         end: 10,
                                     },

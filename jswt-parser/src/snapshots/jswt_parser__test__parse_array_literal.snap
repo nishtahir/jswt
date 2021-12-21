@@ -12,6 +12,7 @@ Ast {
                         ExpressionStatement {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 0,
                                 end: 21,
                             },
@@ -20,6 +21,7 @@ Ast {
                                     ArrayLiteral {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 0,
                                             end: 20,
                                         },
@@ -28,12 +30,14 @@ Ast {
                                                 UnaryExpression {
                                                     span: Span {
                                                         file: "test.1",
+                                                        module: "module/test.1",
                                                         start: 1,
                                                         end: 3,
                                                     },
                                                     op: Minus(
                                                         Span {
                                                             file: "test.1",
+                                                            module: "module/test.1",
                                                             start: 1,
                                                             end: 2,
                                                         },
@@ -43,6 +47,7 @@ Ast {
                                                             IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
+                                                                    module: "module/test.1",
                                                                     start: 2,
                                                                     end: 3,
                                                                 },
@@ -57,6 +62,7 @@ Ast {
                                                     IntegerLiteral {
                                                         span: Span {
                                                             file: "test.1",
+                                                            module: "module/test.1",
                                                             start: 5,
                                                             end: 7,
                                                         },
@@ -68,12 +74,14 @@ Ast {
                                                 UnaryExpression {
                                                     span: Span {
                                                         file: "test.1",
+                                                        module: "module/test.1",
                                                         start: 9,
                                                         end: 11,
                                                     },
                                                     op: Minus(
                                                         Span {
                                                             file: "test.1",
+                                                            module: "module/test.1",
                                                             start: 9,
                                                             end: 10,
                                                         },
@@ -83,6 +91,7 @@ Ast {
                                                             IntegerLiteral {
                                                                 span: Span {
                                                                     file: "test.1",
+                                                                    module: "module/test.1",
                                                                     start: 10,
                                                                     end: 11,
                                                                 },
@@ -97,6 +106,7 @@ Ast {
                                                     StringLiteral {
                                                         span: Span {
                                                             file: "test.1",
+                                                            module: "module/test.1",
                                                             start: 13,
                                                             end: 19,
                                                         },

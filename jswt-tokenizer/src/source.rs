@@ -2,16 +2,18 @@ use std::{borrow::Cow, cell::Cell};
 
 /// Representation of a tokenizable consumable source
 pub struct Source {
-    pub name: Cow<'static, str>,
+    pub path: Cow<'static, str>,
+    pub module: Cow<'static, str>,
     pub content: &'static str,
     cursor: Cell<usize>,
 }
 
 impl Source {
     /// Creates a new source with a cursor at the begining of the file
-    pub fn new(name: Cow<'static, str>, content: &'static str) -> Self {
+    pub fn new(path: Cow<'static, str>, module: Cow<'static, str>, content: &'static str) -> Self {
         Self {
-            name,
+            path,
+            module,
             content,
             cursor: Cell::new(0),
         }

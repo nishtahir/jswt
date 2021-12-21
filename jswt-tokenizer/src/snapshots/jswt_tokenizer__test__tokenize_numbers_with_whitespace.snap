@@ -6,12 +6,14 @@ expression: actual
 [
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "4",
         offset: 3,
         kind: Integer,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "2",
         offset: 6,
         kind: Integer,

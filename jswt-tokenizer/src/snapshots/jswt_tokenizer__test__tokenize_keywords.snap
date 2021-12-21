@@ -6,30 +6,35 @@ expression: actual
 [
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "let",
         offset: 0,
         kind: Let,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "false",
         offset: 4,
         kind: False,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "true",
         offset: 10,
         kind: True,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "return",
         offset: 15,
         kind: Return,
     },
     Token {
         file: "test.1",
+        module: "module/test.1",
         lexme: "function",
         offset: 22,
         kind: Function,

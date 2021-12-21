@@ -67,6 +67,7 @@ macro_rules! ident {
 
         let span = Span::new(
             token.file.clone(),
+            token.module.clone(),
             token.offset,
             token.offset + token.lexme.len(),
         );
@@ -368,6 +369,7 @@ impl<'a> Parser<'a> {
                     actual: lookahead.kind,
                     span: Span::new(
                         lookahead.file.clone(),
+                        lookahead.module.clone(),
                         lookahead.offset,
                         lookahead.offset + lookahead.lexme.len(),
                     ),
@@ -868,6 +870,7 @@ impl<'a> Parser<'a> {
         let token = self.lookahead.as_ref().unwrap();
         Span::new(
             token.file.clone(),
+            token.module.clone(),
             token.offset,
             token.offset + token.lexme.len(),
         )

@@ -3,6 +3,7 @@ use std::{borrow::Cow, fmt::Display, usize};
 #[derive(Debug, PartialEq, Clone)]
 pub struct Token {
     pub file: Cow<'static, str>,
+    pub module: Cow<'static, str>,
     pub lexme: &'static str,
     pub offset: usize,
     pub kind: TokenType,
@@ -11,12 +12,14 @@ pub struct Token {
 impl Token {
     pub fn new(
         file: Cow<'static, str>,
+        module: Cow<'static, str>,
         lexme: &'static str,
         kind: TokenType,
         offset: usize,
     ) -> Self {
         Token {
             file,
+            module,
             lexme,
             offset,
             kind,

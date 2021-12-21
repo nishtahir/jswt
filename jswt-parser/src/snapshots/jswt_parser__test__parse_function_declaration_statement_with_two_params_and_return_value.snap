@@ -11,6 +11,7 @@ Ast {
                     FunctionDeclarationElement {
                         span: Span {
                             file: "test.1",
+                            module: "module/test.1",
                             start: 0,
                             end: 38,
                         },
@@ -21,6 +22,7 @@ Ast {
                         ident: Identifier {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 9,
                                 end: 13,
                             },
@@ -32,6 +34,7 @@ Ast {
                                     ident: Identifier {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 14,
                                             end: 15,
                                         },
@@ -40,6 +43,7 @@ Ast {
                                     type_annotation: TypeAnnotation {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 17,
                                             end: 20,
                                         },
@@ -52,6 +56,7 @@ Ast {
                                     ident: Identifier {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 22,
                                             end: 23,
                                         },
@@ -60,6 +65,7 @@ Ast {
                                     type_annotation: TypeAnnotation {
                                         span: Span {
                                             file: "test.1",
+                                            module: "module/test.1",
                                             start: 25,
                                             end: 28,
                                         },
@@ -74,6 +80,7 @@ Ast {
                             TypeAnnotation {
                                 span: Span {
                                     file: "test.1",
+                                    module: "module/test.1",
                                     start: 31,
                                     end: 34,
                                 },
@@ -85,6 +92,7 @@ Ast {
                         body: FunctionBody {
                             span: Span {
                                 file: "test.1",
+                                module: "module/test.1",
                                 start: 35,
                                 end: 38,
                             },
