@@ -191,7 +191,9 @@ impl ExpressionVisitor<()> for Resolver {
         }
     }
 
-    fn visit_unary_expression(&mut self, _node: &UnaryExpression) {}
+    fn visit_unary_expression(&mut self, _node: &UnaryExpression) {
+        // TODO - Type check values
+    }
 
     fn visit_binary_expression(&mut self, node: &BinaryExpression) {
         self.visit_single_expression(&node.left);

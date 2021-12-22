@@ -502,24 +502,48 @@ impl<'a> Parser<'a> {
     );
 
     // MultiplicativeExpression
-    //    : IdentifierExpression ('*' | '/' | '%') IdentifierExpression
+    //    : PostfixUnaryExpression ('*' | '/' | '%') PostfixUnaryExpression
     //    ;
     binary_expression!(
         multipicative_expression,
-        next: unary_expression,
+        next: postfix_unary_expression,
         [exp => Multiplicative, op => Mult, token => Star],
         [exp => Multiplicative, op => Div, token => Slash]
     );
 
-    /// UnaryExpression
+    // PostfixUnaryExpression
+    //    : PrefixUnaryExpression ('++' | '--')
+    //    ;
+    fn postfix_unary_expression(&mut self) -> Result<SingleExpression, ParseError> {
+        let expr = self.prefix_unary_expression()?;
+        if self.lookahead_is(TokenType::PlusPlus) {
+            let op = consume_unchecked!(self);
+            return Ok(SingleExpression::Unary(UnaryExpression {
+                span: op.to_owned() + expr.span(),
+                op: UnaryOperator::PostIncrement(op),
+                expr: Box::new(expr),
+            }));
+        }
+        if self.lookahead_is(TokenType::MinusMinus) {
+            let op = consume_unchecked!(self);
+            return Ok(SingleExpression::Unary(UnaryExpression {
+                span: op.to_owned() + expr.span(),
+                op: UnaryOperator::PostDecrement(op),
+                expr: Box::new(expr),
+            }));
+        }
+        Ok(expr)
+    }
+
+    /// PrefixUnaryExpression
     ///   : '+' ArgumentsExpression
     ///   | '-' ArgumentsExpression
     ///   | '!' ArgumentsExpression
     ///   ;
-    fn unary_expression(&mut self) -> Result<SingleExpression, ParseError> {
+    fn prefix_unary_expression(&mut self) -> Result<SingleExpression, ParseError> {
         if self.lookahead_is(TokenType::Plus) {
             let op = consume_unchecked!(self);
-            let expr = self.unary_expression()?;
+            let expr = self.arguments_expression()?;
             return Ok(SingleExpression::Unary(UnaryExpression {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Plus(op),
@@ -529,7 +553,7 @@ impl<'a> Parser<'a> {
 
         if self.lookahead_is(TokenType::Minus) {
             let op = consume_unchecked!(self);
-            let expr = self.unary_expression()?;
+            let expr = self.arguments_expression()?;
             return Ok(SingleExpression::Unary(UnaryExpression {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Minus(op),
@@ -539,7 +563,7 @@ impl<'a> Parser<'a> {
 
         if self.lookahead_is(TokenType::Not) {
             let op = consume_unchecked!(self);
-            let expr = self.unary_expression()?;
+            let expr = self.arguments_expression()?;
             return Ok(SingleExpression::Unary(UnaryExpression {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Not(op),
@@ -1246,6 +1270,16 @@ mod test {
     fn parse_variable_type_annotation() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str("test.1", "let x: i32 = 99;");
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn parse_postfix_unary_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str("test.1", "let x: i32 = 99--; let y = i++;");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

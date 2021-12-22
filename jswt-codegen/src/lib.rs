@@ -422,6 +422,18 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             UnaryOperator::Not(_) => {
                 Instruction::I32Xor(Box::new(exp), Box::new(Instruction::I32Const(-1)))
             }
+            UnaryOperator::PostIncrement(_) => {
+                // This is actually incorrect. This is the behavior
+                // of a prefix increment. We should be evaulating this into
+                // 2 instructions. The assingment of the original value and the increment
+                Instruction::I32Add(Box::new(exp), Box::new(Instruction::I32Const(1)))
+            }
+            UnaryOperator::PostDecrement(_) => {
+                // This is actually incorrect. This is the behavior
+                // of a prefix increment. We should be evaulating this into
+                // 2 instructions. The assingment of the original value and the decrement
+                Instruction::I32Sub(Box::new(exp), Box::new(Instruction::I32Const(1)))
+            }
         }
     }
 

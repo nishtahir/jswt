@@ -42,7 +42,6 @@ pub fn span(input: TokenStream) -> TokenStream {
 pub fn enum_variant(input: TokenStream) -> TokenStream {
     let DeriveInput { ident, data, .. } = parse_macro_input!(input);
     let tokens = match data {
-        syn::Data::Struct(_) => unimplemented!(),
         syn::Data::Enum(DataEnum { variants, .. }) => variants
             .into_iter()
             .filter(|v| v.fields.len() == 1)
@@ -59,6 +58,8 @@ pub fn enum_variant(input: TokenStream) -> TokenStream {
                     )*
                 }
             }),
+        // Unsupported variants for now
+        syn::Data::Struct(_) => unimplemented!(),
         syn::Data::Union(_) => unimplemented!(),
     };
 

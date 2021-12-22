@@ -64,6 +64,8 @@ pub enum UnaryOperator {
     Plus(Span),
     Minus(Span),
     Not(Span),
+    PostIncrement(Span),
+    PostDecrement(Span),
 }
 
 #[derive(Debug, PartialEq)]

@@ -92,6 +92,10 @@ lazy_static! {
         r"^\bwhile\b" => TokenType::While,
 
         // Multi character alternatives
+        r"^\+\+" => TokenType::PlusPlus,
+        r"^\-\-" => TokenType::MinusMinus,
+        r"^\+" => TokenType::Plus,
+        r"^\-" => TokenType::Minus,
         r"^<=" => TokenType::LessEqual,
         r"^<" => TokenType::Less,
         r"^>=" => TokenType::GreaterEqual,
@@ -106,8 +110,6 @@ lazy_static! {
         r"^\~" => TokenType::Not,
         r"^\*" => TokenType::Star,
         r"^/" => TokenType::Slash,
-        r"^\+" => TokenType::Plus,
-        r"^\-" => TokenType::Minus,
         r"^@" => TokenType::At,
         r"^," => TokenType::Comma,
         r"^:" => TokenType::Colon,
@@ -525,6 +527,17 @@ mod test {
         tokenizer.enqueue_source_str(
             "test.1",
             "/* comment */let arr = [1, 2, 3]; /** comment 2 */ let arr = [1, 2, 3];",
+        );
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_tokenize_plus_plus_and_minus_minus() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test.1",
+            "x++; y--",
         );
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
