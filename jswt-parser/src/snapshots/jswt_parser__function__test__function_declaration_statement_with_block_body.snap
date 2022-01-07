@@ -1,0 +1,71 @@
+---
+source: jswt-parser/src/function.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 0,
+                                    end: 22,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: FunctionBody {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 16,
+                                        end: 22,
+                                    },
+                                    source_elements: SourceElements {
+                                        source_elements: [
+                                            Statement(
+                                                Block(
+                                                    BlockStatement {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 18,
+                                                            end: 20,
+                                                        },
+                                                        statements: StatementList {
+                                                            statements: [],
+                                                        },
+                                                    },
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

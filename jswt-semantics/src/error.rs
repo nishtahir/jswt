@@ -1,17 +1,19 @@
+use std::borrow::Cow;
+
 use jswt_common::Span;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum SemanticError {
     VariableNotDefined {
-        name: &'static str,
+        name: Cow<'static, str>,
         span: Span,
     },
     VariableAlreadyDefined {
-        name: &'static str,
+        name: Cow<'static, str>,
         span: Span,
     },
     FunctionAlreadyDefined {
-        name: &'static str,
+        name: Cow<'static, str>,
         span: Span,
     },
     FunctionNotDefined {

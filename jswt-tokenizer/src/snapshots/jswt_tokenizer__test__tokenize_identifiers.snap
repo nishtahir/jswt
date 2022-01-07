@@ -18,4 +18,11 @@ expression: actual
         offset: 5,
         kind: Identifier,
     },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 15,
+        kind: Eof,
+    },
 ]

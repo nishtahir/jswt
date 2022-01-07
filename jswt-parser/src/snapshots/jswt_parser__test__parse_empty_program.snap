@@ -5,8 +5,12 @@ expression: actual
 ---
 Ast {
     program: Program {
-        source_elements: SourceElements {
-            source_elements: [],
-        },
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [],
+                },
+            },
+        ],
     },
 }

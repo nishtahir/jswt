@@ -5,90 +5,94 @@ expression: actual
 ---
 Ast {
     program: Program {
-        source_elements: SourceElements {
-            source_elements: [
-                FunctionDeclaration(
-                    FunctionDeclarationElement {
-                        span: Span {
-                            file: "test.1",
-                            module: "module/test.1",
-                            start: 0,
-                            end: 40,
-                        },
-                        decorators: FunctionDecorators {
-                            annotations: [],
-                            export: false,
-                        },
-                        ident: Identifier {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 9,
-                                end: 13,
-                            },
-                            value: "exit",
-                        },
-                        params: FormalParameterList {
-                            parameters: [
-                                FormalParameterArg {
-                                    ident: Identifier {
-                                        span: Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
-                                            start: 14,
-                                            end: 18,
-                                        },
-                                        value: "code",
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 0,
+                                    end: 40,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 9,
+                                        end: 13,
                                     },
-                                    type_annotation: TypeAnnotation {
+                                    value: "exit",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [
+                                        FormalParameterArg {
+                                            ident: Identifier {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 14,
+                                                    end: 18,
+                                                },
+                                                value: "code",
+                                            },
+                                            type_annotation: TypeAnnotation {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 20,
+                                                    end: 25,
+                                                },
+                                                ty: Object(
+                                                    Array(
+                                                        Primitive(
+                                                            I32,
+                                                        ),
+                                                    ),
+                                                ),
+                                            },
+                                        },
+                                    ],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
                                         span: Span {
                                             file: "test.1",
                                             module: "module/test.1",
-                                            start: 20,
-                                            end: 25,
+                                            start: 28,
+                                            end: 36,
                                         },
                                         ty: Object(
                                             Array(
-                                                Primitive(
-                                                    I32,
+                                                Object(
+                                                    String,
                                                 ),
                                             ),
                                         ),
                                     },
-                                },
-                            ],
-                        },
-                        returns: Some(
-                            TypeAnnotation {
-                                span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
-                                    start: 28,
-                                    end: 36,
-                                },
-                                ty: Object(
-                                    Array(
-                                        Object(
-                                            String,
-                                        ),
-                                    ),
                                 ),
+                                body: FunctionBody {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 37,
+                                        end: 40,
+                                    },
+                                    source_elements: SourceElements {
+                                        source_elements: [],
+                                    },
+                                },
                             },
                         ),
-                        body: FunctionBody {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 37,
-                                end: 40,
-                            },
-                            source_elements: SourceElements {
-                                source_elements: [],
-                            },
-                        },
-                    },
-                ),
-            ],
-        },
+                    ],
+                },
+            },
+        ],
     },
 }

@@ -94,10 +94,16 @@ impl StatementVisitor for CodeGenerator {
     fn visit_program(&mut self, node: &Program) {
         // Push global scope
         self.symbols.push_scope();
-        self.visit_source_elements(&node.source_elements);
+        for file in &node.files {
+            self.visit_file(file)
+        }
         // Pop global scope from stack
         debug_assert!(self.symbols.depth() == 1);
         self.symbols.pop_scope();
+    }
+
+    fn visit_file(&mut self, node: &File) {
+        self.visit_source_elements(&node.source_elements);
     }
 
     fn visit_source_elements(&mut self, node: &SourceElements) {
@@ -108,10 +114,9 @@ impl StatementVisitor for CodeGenerator {
 
     fn visit_source_element(&mut self, node: &SourceElement) {
         match node {
-            SourceElement::FunctionDeclaration(function) => {
-                self.visit_function_declaration(function)
-            }
-            SourceElement::Statement(statement) => self.visit_statement_element(statement),
+            SourceElement::FunctionDeclaration(elem) => self.visit_function_declaration(elem),
+            SourceElement::ClassDeclaration(elem) => self.visit_class_declaration(elem),
+            SourceElement::Statement(elem) => self.visit_statement_element(elem),
         }
     }
 
@@ -229,7 +234,7 @@ impl StatementVisitor for CodeGenerator {
     }
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
-        let function_name = node.ident.value;
+        let function_name = node.ident.value.clone();
 
         // Push the scope for the function body
         self.symbols.push_scope();
@@ -239,11 +244,11 @@ impl StatementVisitor for CodeGenerator {
         for (index, arg) in node.params.parameters.iter().enumerate() {
             // Add to symbol table
             self.symbols.define(
-                arg.ident.value.into(),
+                arg.ident.value.clone(),
                 WastSymbol::Param(index, ValueType::I32),
             );
             // Todo, convert to ValueType
-            type_params.push((arg.ident.value, ValueType::I32))
+            type_params.push((arg.ident.value.clone(), ValueType::I32))
         }
 
         // Resolve return Value
@@ -261,7 +266,7 @@ impl StatementVisitor for CodeGenerator {
         let mut has_inlined_body = false;
         let mut is_predefined_function = false;
         for annotation in &node.decorators.annotations {
-            match annotation.name.value {
+            match annotation.name.value.as_ref() {
                 // The "wast" annotation allows the developer to emit
                 // WAST instructions directily into the instruction scope
                 // of the function.
@@ -273,13 +278,13 @@ impl StatementVisitor for CodeGenerator {
                     _ => todo!(),
                 },
                 "native" => match &annotation.expr {
-                    Some(SingleExpression::Literal(Literal::String(string_lit))) => {
+                    Some(SingleExpression::Literal(Literal::String(lit))) => {
                         has_inlined_body = true;
                         is_predefined_function = true;
                         self.push_import(Import::Function(FunctionImport {
-                            name: function_name,
+                            name: function_name.clone(),
                             type_idx,
-                            module: string_lit.value,
+                            module: lit.value.into(),
                         }));
                     }
                     _ => todo!(),
@@ -304,7 +309,7 @@ impl StatementVisitor for CodeGenerator {
             // We're using a keyword here to prevent users from accidentally shadowing the value
             if node.returns.is_some() {
                 self.symbols
-                    .define("return".into(), WastSymbol::Local(ValueType::I32));
+                    .define("return", WastSymbol::Local(ValueType::I32));
 
                 // We're pushing the synthetic return to the end of the function
                 instructions.push(Instruction::SynthReturn);
@@ -324,7 +329,7 @@ impl StatementVisitor for CodeGenerator {
 
         if !is_predefined_function {
             let function = Function {
-                name: function_name,
+                name: function_name.clone(),
                 type_idx,
                 instructions,
             };
@@ -334,7 +339,7 @@ impl StatementVisitor for CodeGenerator {
             if node.decorators.export {
                 let desc = FunctionExport {
                     function_idx,
-                    name: function_name,
+                    name: function_name.clone(),
                 };
                 self.push_export(Export::Function(desc));
             }
@@ -342,6 +347,10 @@ impl StatementVisitor for CodeGenerator {
 
         // Pop the current function scope from the symbol table
         self.symbols.pop_scope();
+    }
+
+    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
+        // No-op
     }
 
     fn visit_function_body(&mut self, node: &FunctionBody) {
@@ -354,14 +363,14 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
 
         match node.left.borrow() {
             SingleExpression::Identifier(ident_exp) => {
-                let name = ident_exp.ident.value;
+                let name = &ident_exp.ident.value;
                 // figure out the scope of the variable
-                let isr = if self.symbols.lookup_global(name.into()).is_some() {
+                let isr = if self.symbols.lookup_global(name.clone()).is_some() {
                     Instruction::GlobalSet
                 } else {
                     Instruction::LocalSet
                 };
-                isr(name.into(), Box::new(rhs))
+                isr(name.clone(), Box::new(rhs))
             }
             SingleExpression::MemberIndex(exp) => {
                 let index_ptr = self.visit_member_index(exp);
@@ -377,18 +386,18 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
         // the current instruction scope
         match elem {
             AssignableElement::Identifier(ident) => {
-                let name = ident.value;
+                let name = &ident.value;
                 // Check if this element has been defined
-                if self.symbols.lookup(name.into()).is_none() {
+                if self.symbols.lookup(name.clone()).is_none() {
                     if self.symbols.depth() == 1 {
                         self.symbols
-                            .define(name.into(), WastSymbol::Global(ValueType::I32));
-                        return Instruction::GlobalSet(name.into(), Box::new(Instruction::Noop));
+                            .define(name.clone(), WastSymbol::Global(ValueType::I32));
+                        return Instruction::GlobalSet(name.clone(), Box::new(Instruction::Noop));
                     } else {
                         self.symbols
-                            .define(name.into(), WastSymbol::Local(ValueType::I32));
+                            .define(name.clone(), WastSymbol::Local(ValueType::I32));
 
-                        return Instruction::LocalSet(name.into(), Box::new(Instruction::Noop));
+                        return Instruction::LocalSet(name.clone(), Box::new(Instruction::Noop));
                     }
                 }
                 unreachable!()
@@ -460,11 +469,11 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
     }
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Instruction {
-        let target = node.ident.value;
-        if self.symbols.lookup_current(target.into()).is_some() {
-            Instruction::LocalGet(target.into())
+        let target = &node.ident.value;
+        if self.symbols.lookup_current(target.clone()).is_some() {
+            Instruction::LocalGet(target.clone())
         } else {
-            Instruction::GlobalGet(target.into())
+            Instruction::GlobalGet(target.clone())
         }
     }
 
@@ -478,7 +487,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
                 .map(|exp| self.visit_single_expression(exp))
                 .collect();
 
-            return Instruction::Call(ident_exp.ident.value.into(), instructions);
+            return Instruction::Call(ident_exp.ident.value.clone(), instructions);
         }
 
         // Other targets for function calls.

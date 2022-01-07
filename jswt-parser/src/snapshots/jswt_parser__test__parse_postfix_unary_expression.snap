@@ -5,153 +5,157 @@ expression: actual
 ---
 Ast {
     program: Program {
-        source_elements: SourceElements {
-            source_elements: [
-                Statement(
-                    Variable(
-                        VariableStatement {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 0,
-                                end: 18,
-                            },
-                            modifier: Let(
-                                Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
-                                    start: 0,
-                                    end: 3,
-                                },
-                            ),
-                            target: Identifier(
-                                Identifier {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        Statement(
+                            Variable(
+                                VariableStatement {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 4,
-                                        end: 5,
+                                        start: 0,
+                                        end: 18,
                                     },
-                                    value: "x",
-                                },
-                            ),
-                            expression: Unary(
-                                UnaryExpression {
-                                    span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
-                                        start: 15,
-                                        end: 15,
-                                    },
-                                    op: PostDecrement(
+                                    modifier: Let(
                                         Span {
                                             file: "test.1",
                                             module: "module/test.1",
-                                            start: 15,
-                                            end: 17,
+                                            start: 0,
+                                            end: 3,
                                         },
                                     ),
-                                    expr: Literal(
-                                        Integer(
-                                            IntegerLiteral {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
-                                                    start: 13,
-                                                    end: 15,
-                                                },
-                                                value: 99,
-                                            },
-                                        ),
-                                    ),
-                                },
-                            ),
-                            type_annotation: Some(
-                                TypeAnnotation {
-                                    span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
-                                        start: 7,
-                                        end: 10,
-                                    },
-                                    ty: Primitive(
-                                        I32,
-                                    ),
-                                },
-                            ),
-                        },
-                    ),
-                ),
-                Statement(
-                    Variable(
-                        VariableStatement {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 19,
-                                end: 31,
-                            },
-                            modifier: Let(
-                                Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
-                                    start: 19,
-                                    end: 22,
-                                },
-                            ),
-                            target: Identifier(
-                                Identifier {
-                                    span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
-                                        start: 23,
-                                        end: 24,
-                                    },
-                                    value: "y",
-                                },
-                            ),
-                            expression: Unary(
-                                UnaryExpression {
-                                    span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
-                                        start: 28,
-                                        end: 28,
-                                    },
-                                    op: PostIncrement(
-                                        Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
-                                            start: 28,
-                                            end: 30,
-                                        },
-                                    ),
-                                    expr: Identifier(
-                                        IdentifierExpression {
+                                    target: Identifier(
+                                        Identifier {
                                             span: Span {
                                                 file: "test.1",
                                                 module: "module/test.1",
-                                                start: 27,
-                                                end: 28,
+                                                start: 4,
+                                                end: 5,
                                             },
-                                            ident: Identifier {
-                                                span: Span {
+                                            value: "x",
+                                        },
+                                    ),
+                                    expression: Unary(
+                                        UnaryExpression {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 15,
+                                                end: 15,
+                                            },
+                                            op: PostDecrement(
+                                                Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 27,
-                                                    end: 28,
+                                                    start: 15,
+                                                    end: 17,
                                                 },
-                                                value: "i",
+                                            ),
+                                            expr: Literal(
+                                                Integer(
+                                                    IntegerLiteral {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 13,
+                                                            end: 15,
+                                                        },
+                                                        value: 99,
+                                                    },
+                                                ),
+                                            ),
+                                        },
+                                    ),
+                                    type_annotation: Some(
+                                        TypeAnnotation {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 7,
+                                                end: 10,
                                             },
+                                            ty: Primitive(
+                                                I32,
+                                            ),
                                         },
                                     ),
                                 },
                             ),
-                            type_annotation: None,
-                        },
-                    ),
-                ),
-            ],
-        },
+                        ),
+                        Statement(
+                            Variable(
+                                VariableStatement {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 19,
+                                        end: 31,
+                                    },
+                                    modifier: Let(
+                                        Span {
+                                            file: "test.1",
+                                            module: "module/test.1",
+                                            start: 19,
+                                            end: 22,
+                                        },
+                                    ),
+                                    target: Identifier(
+                                        Identifier {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 23,
+                                                end: 24,
+                                            },
+                                            value: "y",
+                                        },
+                                    ),
+                                    expression: Unary(
+                                        UnaryExpression {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 28,
+                                                end: 28,
+                                            },
+                                            op: PostIncrement(
+                                                Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 28,
+                                                    end: 30,
+                                                },
+                                            ),
+                                            expr: Identifier(
+                                                IdentifierExpression {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 27,
+                                                        end: 28,
+                                                    },
+                                                    ident: Identifier {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 27,
+                                                            end: 28,
+                                                        },
+                                                        value: "i",
+                                                    },
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                    type_annotation: None,
+                                },
+                            ),
+                        ),
+                    ],
+                },
+            },
+        ],
     },
 }

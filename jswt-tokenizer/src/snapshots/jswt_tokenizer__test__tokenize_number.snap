@@ -11,4 +11,11 @@ expression: actual
         offset: 0,
         kind: Integer,
     },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 2,
+        kind: Eof,
+    },
 ]

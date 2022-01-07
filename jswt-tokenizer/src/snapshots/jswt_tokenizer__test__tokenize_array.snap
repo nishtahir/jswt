@@ -81,4 +81,11 @@ expression: actual
         offset: 19,
         kind: Semi,
     },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 20,
+        kind: Eof,
+    },
 ]

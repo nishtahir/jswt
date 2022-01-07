@@ -1,27 +1,27 @@
-use crate::error::SemanticError;
-use crate::symbol::{Symbol, Type};
+use crate::symbol::Symbol;
+use crate::{error::SemanticError, symbols::SymbolTable};
 use std::borrow::Borrow;
-use std::collections::BTreeMap;
 
 use jswt_ast::*;
-use jswt_common::{Spannable, SymbolTable};
+use jswt_common::Spannable;
+use jswt_types::Type;
 
 impl Default for Resolver {
     fn default() -> Self {
         Self {
-            symbols: SymbolTable::new(vec![BTreeMap::new()]),
+            symbols: SymbolTable::default(),
             errors: Default::default(),
         }
     }
 }
 
 pub struct Resolver {
-    pub symbols: SymbolTable<&'static str, Symbol>,
+    pub symbols: SymbolTable,
     pub errors: Vec<SemanticError>,
 }
 
 impl Resolver {
-    pub fn new(symbols: SymbolTable<&'static str, Symbol>) -> Self {
+    pub fn new(symbols: SymbolTable) -> Self {
         Self {
             symbols,
             errors: Default::default(),
@@ -35,11 +35,11 @@ impl Resolver {
 
 impl StatementVisitor for Resolver {
     fn visit_program(&mut self, node: &Program) {
-        // We expect that the symbol table has the
-        // global scope on it
-        debug_assert!(self.symbols.depth() == 1);
+        self.symbols.push_global_scope();
 
-        self.visit_source_elements(&node.source_elements);
+        for file in &node.files {
+            self.visit_file(file)
+        }
 
         // Local scopes should have popped whatever scopes they created
         debug_assert!(self.symbols.depth() == 1);
@@ -54,10 +54,9 @@ impl StatementVisitor for Resolver {
 
     fn visit_source_element(&mut self, node: &SourceElement) {
         match node {
-            SourceElement::FunctionDeclaration(function) => {
-                self.visit_function_declaration(function)
-            }
-            SourceElement::Statement(statement) => self.visit_statement_element(statement),
+            SourceElement::FunctionDeclaration(elem) => self.visit_function_declaration(elem),
+            SourceElement::Statement(elem) => self.visit_statement_element(elem),
+            SourceElement::ClassDeclaration(elem) => self.visit_class_declaration(elem),
         }
     }
 
@@ -74,7 +73,7 @@ impl StatementVisitor for Resolver {
     }
 
     fn visit_block_statement(&mut self, node: &BlockStatement) {
-        self.symbols.push_scope();
+        self.symbols.push_scope(node.span(), None);
         self.visit_statement_list(&node.statements);
         // TODO - before we pop the scope, determine if
         // there are any types we could not resolve
@@ -123,17 +122,18 @@ impl StatementVisitor for Resolver {
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
         let name = match &node.target {
-            AssignableElement::Identifier(ident) => ident.value,
+            AssignableElement::Identifier(ident) => &ident.value,
         };
         self.visit_single_expression(&node.expression);
         if self.symbols.lookup_current(&name).is_some() {
             let error = SemanticError::VariableAlreadyDefined {
-                name,
+                name: name.clone(),
                 span: node.target.span(),
             };
             self.errors.push(error);
         }
-        self.symbols.define(name, Symbol::new(Type::Unknown, name));
+        self.symbols
+            .define(name.clone(), Symbol::new(Type::Unknown, name.clone()));
     }
 
     fn visit_expression_statement(&mut self, node: &ExpressionStatement) {
@@ -148,13 +148,16 @@ impl StatementVisitor for Resolver {
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
         // Push a new local scope for the function body
-        self.symbols.push_scope();
+        self.symbols
+            .push_scope(node.span(), node.returns.as_ref().map(|t| t.ty.clone()));
         // Add function parameters as variables in scope
         node.params.parameters.iter().for_each(|param| {
             // Resolve Type from Type Annotation
-            let param_name = param.ident.value;
-            self.symbols
-                .define(param_name, Symbol::new(Type::Unknown, param_name));
+            let param_name = &param.ident.value;
+            self.symbols.define(
+                param_name.clone(),
+                Symbol::new(param.type_annotation.ty.clone(), param_name.clone()),
+            );
         });
 
         self.visit_function_body(&node.body);
@@ -163,6 +166,13 @@ impl StatementVisitor for Resolver {
 
     fn visit_function_body(&mut self, node: &FunctionBody) {
         self.visit_source_elements(&node.source_elements);
+    }
+
+    fn visit_file(&mut self, node: &File) {
+        self.visit_source_elements(&node.source_elements);
+    }
+
+    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
     }
 }
 
@@ -202,10 +212,10 @@ impl ExpressionVisitor<()> for Resolver {
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
         let ident = &node.ident;
-        let name = ident.value;
-        if self.symbols.lookup(&name).is_none() {
+        let name = &ident.value;
+        if self.symbols.lookup(name.clone()).is_none() {
             let error = SemanticError::VariableNotDefined {
-                name,
+                name: name.clone(),
                 span: ident.span.to_owned(),
             };
             self.errors.push(error);
@@ -217,10 +227,10 @@ impl ExpressionVisitor<()> for Resolver {
         match expression {
             // Function calls but be followed by an identifier for now
             SingleExpression::Identifier(exp) => {
-                let name = exp.ident.value;
+                let name = &exp.ident.value;
 
-                if let Some(sym) = self.symbols.lookup(&name) {
-                    if !sym.ty.is_function() {
+                if let Some(sym) = self.symbols.lookup(name.clone()) {
+                    if !matches!(sym.ty, Type::Function(..)) {
                         self.errors.push(SemanticError::NotAFunctionError {
                             span: node.span(),
                             name_span: exp.span(),

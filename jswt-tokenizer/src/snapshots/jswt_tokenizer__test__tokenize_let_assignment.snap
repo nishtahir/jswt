@@ -32,4 +32,11 @@ expression: actual
         offset: 8,
         kind: Integer,
     },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 10,
+        kind: Eof,
+    },
 ]

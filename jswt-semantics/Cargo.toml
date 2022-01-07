@@ -10,8 +10,10 @@ doctest = false
 [dependencies]
 jswt-ast = {path = "../jswt-ast"}
 jswt-common = {path = "../jswt-common"}
+jswt-derive = {path = "../jswt-derive"}
 jswt-parser = {path = "../jswt-parser"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
+jswt-types = {path = "../jswt-types"}
 
 [dev-dependencies]
 jswt-assert = {path = "../jswt-assert"}

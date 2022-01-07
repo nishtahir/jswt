@@ -1,3 +1,11 @@
-export function test() {
-    println(3 * 10);
+// @ts-nocheck
+
+class Taco {
+    
+}
+
+export function main(): i32 {
+    println(3++);
+
+    return 0;
 }

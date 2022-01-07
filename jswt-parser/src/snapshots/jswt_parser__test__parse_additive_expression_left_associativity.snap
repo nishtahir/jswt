@@ -5,51 +5,45 @@ expression: actual
 ---
 Ast {
     program: Program {
-        source_elements: SourceElements {
-            source_elements: [
-                Statement(
-                    Variable(
-                        VariableStatement {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 0,
-                                end: 22,
-                            },
-                            modifier: Let(
-                                Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
-                                    start: 0,
-                                    end: 3,
-                                },
-                            ),
-                            target: Identifier(
-                                Identifier {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        Statement(
+                            Variable(
+                                VariableStatement {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 4,
-                                        end: 5,
+                                        start: 0,
+                                        end: 22,
                                     },
-                                    value: "x",
-                                },
-                            ),
-                            expression: Additive(
-                                BinaryExpression {
-                                    span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
-                                        start: 8,
-                                        end: 21,
-                                    },
-                                    left: Additive(
+                                    modifier: Let(
+                                        Span {
+                                            file: "test.1",
+                                            module: "module/test.1",
+                                            start: 0,
+                                            end: 3,
+                                        },
+                                    ),
+                                    target: Identifier(
+                                        Identifier {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 4,
+                                                end: 5,
+                                            },
+                                            value: "x",
+                                        },
+                                    ),
+                                    expression: Additive(
                                         BinaryExpression {
                                             span: Span {
                                                 file: "test.1",
                                                 module: "module/test.1",
                                                 start: 8,
-                                                end: 17,
+                                                end: 21,
                                             },
                                             left: Additive(
                                                 BinaryExpression {
@@ -57,27 +51,58 @@ Ast {
                                                         file: "test.1",
                                                         module: "module/test.1",
                                                         start: 8,
-                                                        end: 13,
+                                                        end: 17,
                                                     },
-                                                    left: Literal(
-                                                        Integer(
-                                                            IntegerLiteral {
-                                                                span: Span {
+                                                    left: Additive(
+                                                        BinaryExpression {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 8,
+                                                                end: 13,
+                                                            },
+                                                            left: Literal(
+                                                                Integer(
+                                                                    IntegerLiteral {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 8,
+                                                                            end: 9,
+                                                                        },
+                                                                        value: 3,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            op: Plus(
+                                                                Span {
                                                                     file: "test.1",
                                                                     module: "module/test.1",
-                                                                    start: 8,
-                                                                    end: 9,
+                                                                    start: 10,
+                                                                    end: 11,
                                                                 },
-                                                                value: 3,
-                                                            },
-                                                        ),
+                                                            ),
+                                                            right: Literal(
+                                                                Integer(
+                                                                    IntegerLiteral {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 12,
+                                                                            end: 13,
+                                                                        },
+                                                                        value: 2,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                        },
                                                     ),
                                                     op: Plus(
                                                         Span {
                                                             file: "test.1",
                                                             module: "module/test.1",
-                                                            start: 10,
-                                                            end: 11,
+                                                            start: 14,
+                                                            end: 15,
                                                         },
                                                     ),
                                                     right: Literal(
@@ -86,10 +111,10 @@ Ast {
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     module: "module/test.1",
-                                                                    start: 12,
-                                                                    end: 13,
+                                                                    start: 16,
+                                                                    end: 17,
                                                                 },
-                                                                value: 2,
+                                                                value: 1,
                                                             },
                                                         ),
                                                     ),
@@ -99,8 +124,8 @@ Ast {
                                                 Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 14,
-                                                    end: 15,
+                                                    start: 18,
+                                                    end: 19,
                                                 },
                                             ),
                                             right: Literal(
@@ -109,43 +134,22 @@ Ast {
                                                         span: Span {
                                                             file: "test.1",
                                                             module: "module/test.1",
-                                                            start: 16,
-                                                            end: 17,
+                                                            start: 20,
+                                                            end: 21,
                                                         },
-                                                        value: 1,
+                                                        value: 0,
                                                     },
                                                 ),
                                             ),
                                         },
                                     ),
-                                    op: Plus(
-                                        Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
-                                            start: 18,
-                                            end: 19,
-                                        },
-                                    ),
-                                    right: Literal(
-                                        Integer(
-                                            IntegerLiteral {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
-                                                    start: 20,
-                                                    end: 21,
-                                                },
-                                                value: 0,
-                                            },
-                                        ),
-                                    ),
+                                    type_annotation: None,
                                 },
                             ),
-                            type_annotation: None,
-                        },
-                    ),
-                ),
-            ],
-        },
+                        ),
+                    ],
+                },
+            },
+        ],
     },
 }

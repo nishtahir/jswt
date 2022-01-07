@@ -5,123 +5,127 @@ expression: actual
 ---
 Ast {
     program: Program {
-        source_elements: SourceElements {
-            source_elements: [
-                Statement(
-                    Expression(
-                        ExpressionStatement {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 0,
-                                end: 21,
-                            },
-                            expression: Literal(
-                                Array(
-                                    ArrayLiteral {
-                                        span: Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
-                                            start: 0,
-                                            end: 20,
-                                        },
-                                        elements: [
-                                            Unary(
-                                                UnaryExpression {
-                                                    span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
-                                                        start: 1,
-                                                        end: 3,
-                                                    },
-                                                    op: Minus(
-                                                        Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
-                                                            start: 1,
-                                                            end: 2,
-                                                        },
-                                                    ),
-                                                    expr: Literal(
-                                                        Integer(
-                                                            IntegerLiteral {
-                                                                span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
-                                                                    start: 2,
-                                                                    end: 3,
-                                                                },
-                                                                value: 1,
-                                                            },
-                                                        ),
-                                                    ),
-                                                },
-                                            ),
-                                            Literal(
-                                                Integer(
-                                                    IntegerLiteral {
-                                                        span: Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
-                                                            start: 5,
-                                                            end: 7,
-                                                        },
-                                                        value: 10,
-                                                    },
-                                                ),
-                                            ),
-                                            Unary(
-                                                UnaryExpression {
-                                                    span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
-                                                        start: 9,
-                                                        end: 11,
-                                                    },
-                                                    op: Minus(
-                                                        Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
-                                                            start: 9,
-                                                            end: 10,
-                                                        },
-                                                    ),
-                                                    expr: Literal(
-                                                        Integer(
-                                                            IntegerLiteral {
-                                                                span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
-                                                                    start: 10,
-                                                                    end: 11,
-                                                                },
-                                                                value: 5,
-                                                            },
-                                                        ),
-                                                    ),
-                                                },
-                                            ),
-                                            Literal(
-                                                String(
-                                                    StringLiteral {
-                                                        span: Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
-                                                            start: 13,
-                                                            end: 19,
-                                                        },
-                                                        value: "test",
-                                                    },
-                                                ),
-                                            ),
-                                        ],
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        Statement(
+                            Expression(
+                                ExpressionStatement {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 0,
+                                        end: 21,
                                     },
-                                ),
+                                    expression: Literal(
+                                        Array(
+                                            ArrayLiteral {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 0,
+                                                    end: 20,
+                                                },
+                                                elements: [
+                                                    Unary(
+                                                        UnaryExpression {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 1,
+                                                                end: 3,
+                                                            },
+                                                            op: Minus(
+                                                                Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 1,
+                                                                    end: 2,
+                                                                },
+                                                            ),
+                                                            expr: Literal(
+                                                                Integer(
+                                                                    IntegerLiteral {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 2,
+                                                                            end: 3,
+                                                                        },
+                                                                        value: 1,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                        },
+                                                    ),
+                                                    Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 5,
+                                                                    end: 7,
+                                                                },
+                                                                value: 10,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    Unary(
+                                                        UnaryExpression {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 9,
+                                                                end: 11,
+                                                            },
+                                                            op: Minus(
+                                                                Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 9,
+                                                                    end: 10,
+                                                                },
+                                                            ),
+                                                            expr: Literal(
+                                                                Integer(
+                                                                    IntegerLiteral {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 10,
+                                                                            end: 11,
+                                                                        },
+                                                                        value: 5,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                        },
+                                                    ),
+                                                    Literal(
+                                                        String(
+                                                            StringLiteral {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 13,
+                                                                    end: 19,
+                                                                },
+                                                                value: "test",
+                                                            },
+                                                        ),
+                                                    ),
+                                                ],
+                                            },
+                                        ),
+                                    ),
+                                },
                             ),
-                        },
-                    ),
-                ),
-            ],
-        },
+                        ),
+                    ],
+                },
+            },
+        ],
     },
 }

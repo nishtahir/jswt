@@ -45,8 +45,8 @@ impl WastSymbolTable {
         self.inner.depth()
     }
 
-    pub fn define(&mut self, name: Cow<'static, str>, symbol: WastSymbol) {
-        self.inner.define(name, symbol);
+    pub fn define<T: Into<Cow<'static, str>>>(&mut self, name: T, symbol: WastSymbol) {
+        self.inner.define(name.into(), symbol);
     }
 
     pub fn define_synthetic_local(&mut self, ty: ValueType) -> Cow<'static, str> {
@@ -59,16 +59,16 @@ impl WastSymbolTable {
         label
     }
 
-    pub fn lookup(&self, name: Cow<'static, str>) -> Option<&WastSymbol> {
-        self.inner.lookup(&name)
+    pub fn lookup<T: Into<Cow<'static, str>>>(&self, name: T) -> Option<&WastSymbol> {
+        self.inner.lookup(&name.into())
     }
 
-    pub fn lookup_current(&self, name: Cow<'static, str>) -> Option<&WastSymbol> {
-        self.inner.lookup_current(&name)
+    pub fn lookup_current<T: Into<Cow<'static, str>>>(&self, name: T) -> Option<&WastSymbol> {
+        self.inner.lookup_current(&name.into())
     }
 
-    pub fn lookup_global(&self, name: Cow<'static, str>) -> Option<&WastSymbol> {
-        self.inner.lookup_global(&name)
+    pub fn lookup_global<T: Into<Cow<'static, str>>>(&self, name: T) -> Option<&WastSymbol> {
+        self.inner.lookup_global(&name.into())
     }
 
     pub fn symbols_in_current_scope(&self) -> Vec<(&Cow<'static, str>, &WastSymbol)> {

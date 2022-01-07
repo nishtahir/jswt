@@ -39,4 +39,11 @@ expression: actual
         offset: 22,
         kind: Function,
     },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 30,
+        kind: Eof,
+    },
 ]

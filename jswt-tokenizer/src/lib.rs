@@ -90,6 +90,7 @@ lazy_static! {
         r"^\blet\b" => TokenType::Let,
         r"^\bconst\b" => TokenType::Const,
         r"^\bwhile\b" => TokenType::While,
+        r"^\bclass\b" => TokenType::Class,
 
         // Multi character alternatives
         r"^\+\+" => TokenType::PlusPlus,
@@ -182,7 +183,13 @@ impl Tokenizer {
         // our tokenization stack
         if !source.has_more_content() {
             self.dequeue_source();
-            return self.next_token();
+            return Some(Token::new(
+                source.path.clone(),
+                source.module.clone(),
+                "",
+                TokenType::Eof,
+                offset,
+            ));
         }
 
         let rest = source.content_from_cursor();
@@ -535,10 +542,7 @@ mod test {
     #[test]
     fn test_tokenize_plus_plus_and_minus_minus() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str(
-            "test.1",
-            "x++; y--",
-        );
+        tokenizer.enqueue_source_str("test.1", "x++; y--");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }

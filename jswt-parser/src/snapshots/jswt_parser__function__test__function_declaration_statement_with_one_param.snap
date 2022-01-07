@@ -1,0 +1,78 @@
+---
+source: jswt-parser/src/function.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 0,
+                                    end: 25,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "name",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [
+                                        FormalParameterArg {
+                                            ident: Identifier {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 14,
+                                                    end: 15,
+                                                },
+                                                value: "a",
+                                            },
+                                            type_annotation: TypeAnnotation {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 17,
+                                                    end: 20,
+                                                },
+                                                ty: Primitive(
+                                                    I32,
+                                                ),
+                                            },
+                                        },
+                                    ],
+                                },
+                                returns: None,
+                                body: FunctionBody {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 22,
+                                        end: 25,
+                                    },
+                                    source_elements: SourceElements {
+                                        source_elements: [],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

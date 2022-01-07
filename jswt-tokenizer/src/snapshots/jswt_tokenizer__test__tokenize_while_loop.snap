@@ -95,4 +95,11 @@ expression: actual
         offset: 32,
         kind: RightBrace,
     },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 33,
+        kind: Eof,
+    },
 ]

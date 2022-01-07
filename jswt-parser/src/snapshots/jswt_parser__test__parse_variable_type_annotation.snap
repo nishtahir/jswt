@@ -5,66 +5,70 @@ expression: actual
 ---
 Ast {
     program: Program {
-        source_elements: SourceElements {
-            source_elements: [
-                Statement(
-                    Variable(
-                        VariableStatement {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 0,
-                                end: 16,
-                            },
-                            modifier: Let(
-                                Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
-                                    start: 0,
-                                    end: 3,
-                                },
-                            ),
-                            target: Identifier(
-                                Identifier {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        Statement(
+                            Variable(
+                                VariableStatement {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 4,
-                                        end: 5,
+                                        start: 0,
+                                        end: 16,
                                     },
-                                    value: "x",
-                                },
-                            ),
-                            expression: Literal(
-                                Integer(
-                                    IntegerLiteral {
-                                        span: Span {
+                                    modifier: Let(
+                                        Span {
                                             file: "test.1",
                                             module: "module/test.1",
-                                            start: 13,
-                                            end: 15,
+                                            start: 0,
+                                            end: 3,
                                         },
-                                        value: 99,
-                                    },
-                                ),
-                            ),
-                            type_annotation: Some(
-                                TypeAnnotation {
-                                    span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
-                                        start: 7,
-                                        end: 10,
-                                    },
-                                    ty: Primitive(
-                                        I32,
+                                    ),
+                                    target: Identifier(
+                                        Identifier {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 4,
+                                                end: 5,
+                                            },
+                                            value: "x",
+                                        },
+                                    ),
+                                    expression: Literal(
+                                        Integer(
+                                            IntegerLiteral {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 13,
+                                                    end: 15,
+                                                },
+                                                value: 99,
+                                            },
+                                        ),
+                                    ),
+                                    type_annotation: Some(
+                                        TypeAnnotation {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 7,
+                                                end: 10,
+                                            },
+                                            ty: Primitive(
+                                                I32,
+                                            ),
+                                        },
                                     ),
                                 },
                             ),
-                        },
-                    ),
-                ),
-            ],
-        },
+                        ),
+                    ],
+                },
+            },
+        ],
     },
 }

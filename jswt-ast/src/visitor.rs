@@ -34,6 +34,7 @@ macro_rules! expression_visitor {
 
 statement_visitor![
     visit_program: Program,
+    visit_file: File,
     visit_source_elements: SourceElements,
     visit_source_element: SourceElement,
     visit_statement_element: StatementElement,
@@ -47,6 +48,7 @@ statement_visitor![
     visit_expression_statement: ExpressionStatement,
     visit_statement_list: StatementList,
     visit_function_declaration: FunctionDeclarationElement,
+    visit_class_declaration: ClassDeclarationElement,
     visit_function_body: FunctionBody
 ];
 

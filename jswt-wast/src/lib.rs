@@ -22,7 +22,7 @@ pub struct Module {
 
 #[derive(Debug, PartialEq)]
 pub struct FunctionType {
-    pub params: Vec<(&'static str, ValueType)>,
+    pub params: Vec<(Cow<'static, str>, ValueType)>,
     pub ret: Option<ValueType>,
 }
 
@@ -36,7 +36,7 @@ pub struct GlobalType {
 
 #[derive(Debug, Default, PartialEq)]
 pub struct Function {
-    pub name: &'static str,
+    pub name: Cow<'static, str>,
     pub type_idx: usize,
     pub instructions: Vec<Instruction>,
 }
@@ -63,8 +63,8 @@ impl Import {
 #[derive(Debug, PartialEq)]
 pub struct FunctionImport {
     pub type_idx: usize,
-    pub name: &'static str,
-    pub module: &'static str,
+    pub name: Cow<'static, str>,
+    pub module: Cow<'static, str>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -86,7 +86,7 @@ impl Export {
 #[derive(Debug, Default, PartialEq)]
 pub struct FunctionExport {
     pub function_idx: usize,
-    pub name: &'static str,
+    pub name: Cow<'static, str>,
 }
 
 impl Module {
@@ -99,7 +99,7 @@ impl Module {
             .iter()
             .filter_map(|e| e.as_function())
             .for_each(|e| {
-                let signature = self.type_signature(e.type_idx, e.name);
+                let signature = self.type_signature(e.type_idx, e.name.as_ref());
                 wat += &format!("(import \"{}\" \"{}\" ({}))", e.module, e.name, signature);
             });
 
@@ -122,7 +122,7 @@ impl Module {
 
         for function in self.functions.iter() {
             wat += "(";
-            wat += &self.type_signature(function.type_idx, function.name);
+            wat += &self.type_signature(function.type_idx, function.name.as_ref());
             for isr in &function.instructions {
                 wat += &String::from(isr);
             }
@@ -227,7 +227,7 @@ mod test {
                 ret: None,
             }],
             functions: vec![Function {
-                name: "test",
+                name: "test".into(),
                 type_idx: 0,
                 instructions: vec![Instruction::Return(Box::new(Instruction::I32Add(
                     Box::new(Instruction::I32Const(1)),

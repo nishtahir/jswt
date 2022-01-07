@@ -168,7 +168,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
 
     // Let binding to prevent the ref being dropped before getting passed to the tokenizer
     let mut tokenizer = Tokenizer::new(source_map.clone());
-    // Sources root for user defined sources is the current directory 
+    // Sources root for user defined sources is the current directory
     // from where the compiler is being invoked.
     tokenizer.set_sources_root(Some(&std::env::current_dir().unwrap()));
     tokenizer.set_module_prefix(Some("module".to_string()));
@@ -185,7 +185,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     }
 
     let mut parser = Parser::new(&mut tokenizer);
-    let ast = parser.parse();
+    let mut ast = parser.parse();
 
     // Write AST for debugging
     fs::write(output.with_extension("ast"), format!("{:#?}", ast)).unwrap();
@@ -204,7 +204,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     }
 
     // Semantic analytis pass
-    let semantic_errors = SemanticAnalyzer::analyze(&ast);
+    let semantic_errors = SemanticAnalyzer::analyze(&mut ast);
     for error in semantic_errors {
         has_errors = true;
         print_semantic_error(&error, &source_map.borrow())

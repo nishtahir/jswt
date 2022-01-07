@@ -80,10 +80,12 @@ pub enum TokenType {
     Let,
     Const,
     While,
+    Class,
 
     // Other
     WhiteSpace,
     Comment,
+    Eof,
 }
 
 impl Display for TokenType {
@@ -128,6 +130,7 @@ impl Display for TokenType {
             TokenType::Let => f.write_str("let"),
             TokenType::Const => f.write_str("const"),
             TokenType::While => f.write_str("while"),
+            TokenType::Class => f.write_str("class"),
             TokenType::Identifier => f.write_str("identifier"),
             TokenType::String => f.write_str("string"),
             TokenType::Integer => f.write_str("integer"),
@@ -137,6 +140,7 @@ impl Display for TokenType {
             // to serialize these
             TokenType::WhiteSpace => todo!(),
             TokenType::Comment => todo!(),
+            TokenType::Eof => todo!(),
         }
     }
 }

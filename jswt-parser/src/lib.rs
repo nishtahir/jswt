@@ -1,4 +1,6 @@
+mod class;
 mod errors;
+mod function;
 
 pub use errors::ParseError;
 use std::vec;
@@ -8,8 +10,11 @@ use jswt_common::{Span, Spannable};
 use jswt_tokenizer::{Token, TokenType, Tokenizer, TokenizerError};
 use jswt_types::{ObjectType, PrimitiveType, Type};
 
+type ParseResult<T> = Result<T, ParseError>;
+
 /// Returns true if a token matching the given token type
 /// was consumed.
+#[macro_export]
 macro_rules! maybe_consume {
     ($self:ident, $token:expr) => {{
         if $self.lookahead_is($token) {
@@ -23,6 +28,7 @@ macro_rules! maybe_consume {
 /// Advances the tokenizer to the next token. This assumes
 /// that the caller has done their due dilligence of checking that
 /// the current lookahead token is what was expected
+#[macro_export]
 macro_rules! consume_unchecked {
     ($self:ident) => {{
         let span = $self.lookahead_span();
@@ -33,6 +39,7 @@ macro_rules! consume_unchecked {
 
 /// Checks that the current lookahead tokentype is the same type
 /// as the given token then advances the tokenizer to the next token
+#[macro_export]
 macro_rules! consume {
     ($self:ident, $token:expr) => {{
         // TODO - this should generate a parse error, not panic
@@ -51,6 +58,7 @@ macro_rules! consume {
     }};
 }
 
+#[macro_export]
 macro_rules! ident {
     // This macro takes an argument of designator `ident` and
     // creates a function named `$func_name`.
@@ -80,7 +88,7 @@ macro_rules! ident {
 
 macro_rules! binary_expression {
     ($name:ident, next: $next:ident, $([exp => $exp:ident, op => $op:ident, token => $token:ident]),*) => {
-        fn $name(&mut self) -> Result<SingleExpression, ParseError> {
+        fn $name(&mut self) -> ParseResult<SingleExpression>{
             let mut left = self.$next()?;
             while let Some(token) = self.lookahead_type() {
                 match token {
@@ -130,13 +138,24 @@ impl<'a> Parser<'a> {
     /// Entry point of the program
     ///
     /// Program
-    ///   :  SourceElements? Eof
+    ///   :  File*
     ///   ;
     fn program(&mut self) -> Program {
-        Program {
-            // Read until the end of the file
-            source_elements: self.source_elements(None),
+        let mut files = vec![];
+        while self.lookahead.is_some() {
+            files.push(self.file());
         }
+        Program { files }
+    }
+
+    /// File
+    ///   : SourceElements? Eof
+    ///   ;
+    fn file(&mut self) -> File {
+        let source_elements = self.source_elements(Some(TokenType::Eof));
+        // Eat the EOF token
+        consume_unchecked!(self);
+        File { source_elements }
     }
 
     /// SourceElements
@@ -164,19 +183,22 @@ impl<'a> Parser<'a> {
                 ),
             };
         }
+
         SourceElements { source_elements }
     }
 
     /// SourceElement
     ///   :  FunctionDeclaration
+    ///   |  ClassDeclaration
     ///   |  Statement
     ///   ;
-    fn source_element(&mut self) -> Result<SourceElement, ParseError> {
+    fn source_element(&mut self) -> ParseResult<SourceElement> {
         let elem = match self.lookahead_type() {
             // Need to check for optional function decorators
             Some(TokenType::Function) | Some(TokenType::Export) | Some(TokenType::At) => {
                 self.function_declaration()?.into()
             }
+            Some(TokenType::Class) => self.class_declaration()?.into(),
             _ => self.statement()?.into(),
         };
         Ok(elem)
@@ -191,7 +213,7 @@ impl<'a> Parser<'a> {
     ///   |  VariableStatement
     ///   |  ExpressionStatement
     ///   ;
-    fn statement(&mut self) -> Result<StatementElement, ParseError> {
+    fn statement(&mut self) -> ParseResult<StatementElement> {
         let elem = match self.lookahead_type() {
             Some(TokenType::LeftBrace) => self.block()?,
             Some(TokenType::Semi) => self.empty_statement()?,
@@ -207,7 +229,7 @@ impl<'a> Parser<'a> {
     /// Block
     ///   :  '{' statementList? '}'
     ///   ;
-    fn block(&mut self) -> Result<StatementElement, ParseError> {
+    fn block(&mut self) -> ParseResult<StatementElement> {
         let start = consume!(self, TokenType::LeftBrace)?;
         let statements = self.statement_list(Some(TokenType::RightBrace))?;
         let end = consume!(self, TokenType::RightBrace)?;
@@ -221,7 +243,7 @@ impl<'a> Parser<'a> {
     /// EmptyStatement
     ///   : ';'
     ///   ;
-    fn empty_statement(&mut self) -> Result<StatementElement, ParseError> {
+    fn empty_statement(&mut self) -> ParseResult<StatementElement> {
         let span = consume!(self, TokenType::Semi)?;
         Ok(EmptyStatement { span }.into())
     }
@@ -230,7 +252,7 @@ impl<'a> Parser<'a> {
     ///   : 'if' '(' SingleExpression ')' Statement 'else' Statement
     ///   | 'if' '(' SingleExpression ')' Satement
     ///   ;
-    fn if_statement(&mut self) -> Result<StatementElement, ParseError> {
+    fn if_statement(&mut self) -> ParseResult<StatementElement> {
         let start = consume!(self, TokenType::If)?;
         consume!(self, TokenType::LeftParen)?;
         let condition = self.single_expression()?;
@@ -260,7 +282,7 @@ impl<'a> Parser<'a> {
     /// IterationStatement
     ///   :  WhileStatement
     ///   ;
-    fn iteration_statement(&mut self) -> Result<StatementElement, ParseError> {
+    fn iteration_statement(&mut self) -> ParseResult<StatementElement> {
         let elem = match self.lookahead_type() {
             Some(TokenType::While) => self.while_statement()?,
             _ => todo!(),
@@ -272,7 +294,7 @@ impl<'a> Parser<'a> {
     /// WhileStatement
     ///   : 'while' '(' SingleExpression ')' Statement
     ///   ;
-    fn while_statement(&mut self) -> Result<IterationStatement, ParseError> {
+    fn while_statement(&mut self) -> ParseResult<IterationStatement> {
         let start = consume!(self, TokenType::While)?;
         consume!(self, TokenType::LeftParen)?;
         let expression = self.single_expression()?;
@@ -290,7 +312,7 @@ impl<'a> Parser<'a> {
     /// ReturnStatement
     ///   : 'return' SingleExpression ';'
     ///   ;
-    fn return_statement(&mut self) -> Result<StatementElement, ParseError> {
+    fn return_statement(&mut self) -> ParseResult<StatementElement> {
         let start = consume!(self, TokenType::Return)?;
         let expression = self.single_expression()?;
         let end = consume!(self, TokenType::Semi)?;
@@ -306,7 +328,7 @@ impl<'a> Parser<'a> {
     ///   :  Statement
     ///   |  StatementList Statement
     ///   ;
-    fn statement_list(&mut self, terminal: Option<TokenType>) -> Result<StatementList, ParseError> {
+    fn statement_list(&mut self, terminal: Option<TokenType>) -> ParseResult<StatementList> {
         let mut statements = vec![];
         while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
             match self.statement() {
@@ -330,7 +352,7 @@ impl<'a> Parser<'a> {
     /// VariableStatement
     ///   :  VariableModifier Assignable ('=' singleExpression)? ';'
     ///   ;
-    fn variable_statement(&mut self) -> Result<StatementElement, ParseError> {
+    fn variable_statement(&mut self) -> ParseResult<StatementElement> {
         let modifier = self.variable_modifier()?;
         let target = self.assignable()?;
 
@@ -357,7 +379,7 @@ impl<'a> Parser<'a> {
     ///   : 'let'
     ///   | 'const'
     ///   ;
-    fn variable_modifier(&mut self) -> Result<VariableModifier, ParseError> {
+    fn variable_modifier(&mut self) -> ParseResult<VariableModifier> {
         let modifier = match self.lookahead_type().unwrap() {
             TokenType::Let => VariableModifier::Let,
             TokenType::Const => VariableModifier::Const,
@@ -384,14 +406,14 @@ impl<'a> Parser<'a> {
     /// Assignable
     ///   : Ident
     ///   ;
-    fn assignable(&mut self) -> Result<AssignableElement, ParseError> {
+    fn assignable(&mut self) -> ParseResult<AssignableElement> {
         Ok(AssignableElement::Identifier(ident!(self)?))
     }
 
     /// ExpressionStatement
     ///   : SingleExpression ';'
     ///   ;
-    fn expression_statement(&mut self) -> Result<StatementElement, ParseError> {
+    fn expression_statement(&mut self) -> ParseResult<StatementElement> {
         let expression = self.single_expression()?;
         let end = consume!(self, TokenType::Semi)?;
 
@@ -419,7 +441,7 @@ impl<'a> Parser<'a> {
     ///   | ArrayLiteral
     ///   | Literal
     ///   ;
-    fn single_expression(&mut self) -> Result<SingleExpression, ParseError> {
+    fn single_expression(&mut self) -> ParseResult<SingleExpression> {
         self.assignment_expression()
     }
 
@@ -435,7 +457,7 @@ impl<'a> Parser<'a> {
     /// MemberIndexExpression
     ///   : BitwiseOrExpression '[' BitwiseOrExpression ']'
     ///   ;
-    fn member_index_expression(&mut self) -> Result<SingleExpression, ParseError> {
+    fn member_index_expression(&mut self) -> ParseResult<SingleExpression> {
         let target = self.bitwise_or_expression()?;
         if self.lookahead_is(TokenType::LeftBracket) {
             consume_unchecked!(self);
@@ -514,7 +536,7 @@ impl<'a> Parser<'a> {
     // PostfixUnaryExpression
     //    : PrefixUnaryExpression ('++' | '--')
     //    ;
-    fn postfix_unary_expression(&mut self) -> Result<SingleExpression, ParseError> {
+    fn postfix_unary_expression(&mut self) -> ParseResult<SingleExpression> {
         let expr = self.prefix_unary_expression()?;
         if self.lookahead_is(TokenType::PlusPlus) {
             let op = consume_unchecked!(self);
@@ -540,7 +562,7 @@ impl<'a> Parser<'a> {
     ///   | '-' ArgumentsExpression
     ///   | '!' ArgumentsExpression
     ///   ;
-    fn prefix_unary_expression(&mut self) -> Result<SingleExpression, ParseError> {
+    fn prefix_unary_expression(&mut self) -> ParseResult<SingleExpression> {
         if self.lookahead_is(TokenType::Plus) {
             let op = consume_unchecked!(self);
             let expr = self.arguments_expression()?;
@@ -578,7 +600,7 @@ impl<'a> Parser<'a> {
     ///   :  IdentifierExpression ArgumentList
     ///   ;
     ///
-    fn arguments_expression(&mut self) -> Result<SingleExpression, ParseError> {
+    fn arguments_expression(&mut self) -> ParseResult<SingleExpression> {
         // Eventually descend to ident
         let left = self.identifier_expression()?;
         if self.lookahead_is(TokenType::LeftParen) {
@@ -596,7 +618,7 @@ impl<'a> Parser<'a> {
     /// ArgumentList
     ///   :  '(' SingleExpression (',' SingleExpression)* ')'
     ///   ;
-    fn argument_list(&mut self) -> Result<ArgumentsList, ParseError> {
+    fn argument_list(&mut self) -> ParseResult<ArgumentsList> {
         let mut arguments = vec![];
         let start = consume!(self, TokenType::LeftParen)?;
         while !self.lookahead_is(TokenType::RightParen) {
@@ -619,7 +641,7 @@ impl<'a> Parser<'a> {
     /// IdentifierExpression
     ///   : Identifier
     ///   ;
-    fn identifier_expression(&mut self) -> Result<SingleExpression, ParseError> {
+    fn identifier_expression(&mut self) -> ParseResult<SingleExpression> {
         if self.lookahead_is(TokenType::Identifier) {
             let ident = ident!(self)?;
             return Ok(SingleExpression::Identifier(IdentifierExpression {
@@ -635,7 +657,7 @@ impl<'a> Parser<'a> {
     /// ArrayLiteral
     ///   :  '[' (SingleExpression ,)* ']'
     ///   ;
-    fn array_literal_expression(&mut self) -> Result<SingleExpression, ParseError> {
+    fn array_literal_expression(&mut self) -> ParseResult<SingleExpression> {
         if self.lookahead_is(TokenType::LeftBracket) {
             let start = consume_unchecked!(self);
 
@@ -666,7 +688,7 @@ impl<'a> Parser<'a> {
     ///   | number
     ///   | string
     ///   ;
-    fn literal(&mut self) -> Result<SingleExpression, ParseError> {
+    fn literal(&mut self) -> ParseResult<SingleExpression> {
         let literal: Literal = match self.lookahead_type() {
             Some(TokenType::True) => {
                 let span = consume_unchecked!(self);
@@ -738,109 +760,19 @@ impl<'a> Parser<'a> {
         Ok(SingleExpression::Literal(literal))
     }
 
-    /// FunctionDeclaration
-    ///   :  Annotation? 'export'? 'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
-    ///   ;
-    fn function_declaration(&mut self) -> Result<FunctionDeclarationElement, ParseError> {
-        let mut annotations = vec![];
-        while self.lookahead_is(TokenType::At) {
-            annotations.push(self.annotation()?);
-        }
-
-        let export_span = maybe_consume!(self, TokenType::Export);
-        let function_span = consume!(self, TokenType::Function)?;
-        let start_span = export_span.to_owned().unwrap_or(function_span);
-
-        let ident = ident!(self)?;
-
-        consume!(self, TokenType::LeftParen)?;
-        let params = self.formal_parameter_list()?;
-        consume!(self, TokenType::RightParen)?;
-
-        //Parse return value
-        let mut returns = None;
-        if self.lookahead_is(TokenType::Colon) {
-            returns = Some(self.type_annotation()?);
-        }
-
-        let body = self.function_body()?;
-
-        let decorators = FunctionDecorators {
-            annotations,
-            export: export_span.is_some(),
-        };
-        Ok(FunctionDeclarationElement {
-            span: start_span + body.span(),
-            decorators,
-            ident,
-            params,
-            returns,
-            body,
-        })
-    }
-
-    fn annotation(&mut self) -> Result<Annotation, ParseError> {
-        let start = consume!(self, TokenType::At)?;
-        let ident = ident!(self)?;
-
-        let mut end = ident.span.to_owned();
-        let mut expr = None;
-        if self.lookahead_is(TokenType::LeftParen) {
-            consume!(self, TokenType::LeftParen)?;
-            expr = Some(self.single_expression()?);
-            end = consume!(self, TokenType::RightParen)?;
-        }
-
-        Ok(Annotation {
-            span: start + end,
-            name: ident,
-            expr,
-        })
-    }
-
-    /// FormalParameterList
-    ///   :  FormalParameterArg
-    ///   |  FormalParameterArg , FormalParameterArg
-    ///   ;
-    fn formal_parameter_list(&mut self) -> Result<FormalParameterList, ParseError> {
-        let mut parameters = vec![];
-        if !self.lookahead_is(TokenType::RightParen) {
-            loop {
-                parameters.push(self.formal_parameter_arg()?);
-                if !self.lookahead_is(TokenType::Comma) {
-                    break;
-                }
-                consume_unchecked!(self);
-            }
-        }
-        Ok(FormalParameterList { parameters })
-    }
-
-    /// FormalParameterArg
-    ///   :  Ident TypeAnnotation
-    ///   ;
-    fn formal_parameter_arg(&mut self) -> Result<FormalParameterArg, ParseError> {
-        let ident = ident!(self)?;
-        let type_annotation = self.type_annotation()?;
-        Ok(FormalParameterArg {
-            ident,
-            type_annotation,
-        })
-    }
-
     /// TypeAnnotation
     ///   : ':' (PrimitiveType | ObjectType)
     ///   ;
-    fn type_annotation(&mut self) -> Result<TypeAnnotation, ParseError> {
+    fn type_annotation(&mut self) -> ParseResult<TypeAnnotation> {
         consume!(self, TokenType::Colon)?;
         let name = ident!(self)?;
-        let mut ty = match name.value {
+        let mut ty = match name.value.as_ref() {
             "i32" => Type::Primitive(PrimitiveType::I32),
             "f32" => Type::Primitive(PrimitiveType::F32),
             "u32" => Type::Primitive(PrimitiveType::U32),
             "boolean" => Type::Primitive(PrimitiveType::Boolean),
             "string" => Type::Object(ObjectType::String),
-            _ => Type::Object(ObjectType::Reference(name.value.into())),
+            _ => Type::Object(ObjectType::Reference(name.value.clone())),
         };
 
         let start = name.span();
@@ -856,17 +788,22 @@ impl<'a> Parser<'a> {
         })
     }
 
-    ///  FunctionBody
-    ///    :  '{' SourceElements? '}'
-    ///    ;
-    fn function_body(&mut self) -> Result<FunctionBody, ParseError> {
-        let start = consume!(self, TokenType::LeftBrace)?;
-        // Read until we find a closing brace
-        let source_elements = self.source_elements(Some(TokenType::RightBrace));
-        let end = consume!(self, TokenType::RightBrace)?;
-        Ok(FunctionBody {
+    fn annotation(&mut self) -> ParseResult<Annotation> {
+        let start = consume!(self, TokenType::At)?;
+        let ident = ident!(self)?;
+
+        let mut end = ident.span.to_owned();
+        let mut expr = None;
+        if self.lookahead_is(TokenType::LeftParen) {
+            consume!(self, TokenType::LeftParen)?;
+            expr = Some(self.single_expression()?);
+            end = consume!(self, TokenType::RightParen)?;
+        }
+
+        Ok(Annotation {
             span: start + end,
-            source_elements,
+            name: ident,
+            expr,
         })
     }
 
@@ -945,69 +882,9 @@ mod test {
     use jswt_assert::assert_debug_snapshot;
 
     #[test]
-    fn test_function_declaration_statement() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "function test() { }");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
     fn test_parse_empty_program() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str("test.1", "");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
-    fn test_function_declaration_statement_with_one_param() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "function name(a: i32) { }");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
-    fn test_function_declaration_statement_with_two_params() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "function name(a: i32, b: f32) { }");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
-    fn test_function_declaration_statement_with_export_decorator() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "export function test() { }");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
-    fn test_function_declaration_statement_with_return_value() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "function test(): i32 { }");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
-    fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "function test(a: i32, b: i32): i32 { }");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1028,16 +905,6 @@ mod test {
     fn test_parse_nested_empty_blocks() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str("test.1", "{ {} }");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
-    fn test_function_declaration_statement_with_block_body() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "function test() { {} }");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1201,45 +1068,6 @@ mod test {
     fn test_parse_array_literal() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str("test.1", "[-1, 10, -5, \"test\"];");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
-    fn test_parse_function_with_multiple_annotations() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "@inline @wast(\"test\") function a() {}");
-        let mut parser = Parser::new(&mut tokenizer);
-        let actual = parser.parse();
-        assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
-    }
-
-    #[test]
-    fn test_parse_function_with_native_annotations() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str(
-            "test.1",
-            r#"
-        // @ts-nocheck
-
-        /**
-         * Logs a single i32 value to stdout
-         * @param value value to log
-         */
-        @native("env")
-        function println(value: i32) { }
-        
-        /**
-         * Abort the running program
-         * @param code error code to abort with
-         */
-        @native("env")
-        function exit(code: i32) { }
-        "#,
-        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

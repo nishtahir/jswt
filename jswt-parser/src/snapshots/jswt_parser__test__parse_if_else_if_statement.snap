@@ -5,276 +5,280 @@ expression: actual
 ---
 Ast {
     program: Program {
-        source_elements: SourceElements {
-            source_elements: [
-                Statement(
-                    If(
-                        IfStatement {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 0,
-                                end: 74,
-                            },
-                            condition: Equality(
-                                BinaryExpression {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        Statement(
+                            If(
+                                IfStatement {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 3,
-                                        end: 9,
+                                        start: 0,
+                                        end: 74,
                                     },
-                                    left: Identifier(
-                                        IdentifierExpression {
+                                    condition: Equality(
+                                        BinaryExpression {
                                             span: Span {
                                                 file: "test.1",
                                                 module: "module/test.1",
                                                 start: 3,
-                                                end: 4,
-                                            },
-                                            ident: Identifier {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
-                                                    start: 3,
-                                                    end: 4,
-                                                },
-                                                value: "x",
-                                            },
-                                        },
-                                    ),
-                                    op: Equal(
-                                        Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
-                                            start: 5,
-                                            end: 7,
-                                        },
-                                    ),
-                                    right: Identifier(
-                                        IdentifierExpression {
-                                            span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
-                                                start: 8,
                                                 end: 9,
                                             },
-                                            ident: Identifier {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
-                                                    start: 8,
-                                                    end: 9,
-                                                },
-                                                value: "y",
-                                            },
-                                        },
-                                    ),
-                                },
-                            ),
-                            consequence: Block(
-                                BlockStatement {
-                                    span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
-                                        start: 11,
-                                        end: 24,
-                                    },
-                                    statements: StatementList {
-                                        statements: [
-                                            Return(
-                                                ReturnStatement {
+                                            left: Identifier(
+                                                IdentifierExpression {
                                                     span: Span {
                                                         file: "test.1",
                                                         module: "module/test.1",
-                                                        start: 13,
-                                                        end: 22,
+                                                        start: 3,
+                                                        end: 4,
                                                     },
-                                                    expression: Literal(
-                                                        Integer(
-                                                            IntegerLiteral {
-                                                                span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
-                                                                    start: 20,
-                                                                    end: 21,
-                                                                },
-                                                                value: 0,
-                                                            },
-                                                        ),
-                                                    ),
+                                                    ident: Identifier {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 3,
+                                                            end: 4,
+                                                        },
+                                                        value: "x",
+                                                    },
                                                 },
                                             ),
-                                        ],
-                                    },
-                                },
-                            ),
-                            alternative: Some(
-                                If(
-                                    IfStatement {
-                                        span: Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
-                                            start: 30,
-                                            end: 74,
+                                            op: Equal(
+                                                Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 5,
+                                                    end: 7,
+                                                },
+                                            ),
+                                            right: Identifier(
+                                                IdentifierExpression {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 8,
+                                                        end: 9,
+                                                    },
+                                                    ident: Identifier {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 8,
+                                                            end: 9,
+                                                        },
+                                                        value: "y",
+                                                    },
+                                                },
+                                            ),
                                         },
-                                        condition: Relational(
-                                            BinaryExpression {
+                                    ),
+                                    consequence: Block(
+                                        BlockStatement {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 11,
+                                                end: 24,
+                                            },
+                                            statements: StatementList {
+                                                statements: [
+                                                    Return(
+                                                        ReturnStatement {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 13,
+                                                                end: 22,
+                                                            },
+                                                            expression: Literal(
+                                                                Integer(
+                                                                    IntegerLiteral {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 20,
+                                                                            end: 21,
+                                                                        },
+                                                                        value: 0,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                        },
+                                    ),
+                                    alternative: Some(
+                                        If(
+                                            IfStatement {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 34,
-                                                    end: 39,
+                                                    start: 30,
+                                                    end: 74,
                                                 },
-                                                left: Identifier(
-                                                    IdentifierExpression {
+                                                condition: Relational(
+                                                    BinaryExpression {
                                                         span: Span {
                                                             file: "test.1",
                                                             module: "module/test.1",
                                                             start: 34,
-                                                            end: 35,
-                                                        },
-                                                        ident: Identifier {
-                                                            span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
-                                                                start: 34,
-                                                                end: 35,
-                                                            },
-                                                            value: "x",
-                                                        },
-                                                    },
-                                                ),
-                                                op: Greater(
-                                                    Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
-                                                        start: 36,
-                                                        end: 37,
-                                                    },
-                                                ),
-                                                right: Identifier(
-                                                    IdentifierExpression {
-                                                        span: Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
-                                                            start: 38,
                                                             end: 39,
                                                         },
-                                                        ident: Identifier {
-                                                            span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
-                                                                start: 38,
-                                                                end: 39,
-                                                            },
-                                                            value: "y",
-                                                        },
-                                                    },
-                                                ),
-                                            },
-                                        ),
-                                        consequence: Block(
-                                            BlockStatement {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
-                                                    start: 41,
-                                                    end: 54,
-                                                },
-                                                statements: StatementList {
-                                                    statements: [
-                                                        Return(
-                                                            ReturnStatement {
+                                                        left: Identifier(
+                                                            IdentifierExpression {
                                                                 span: Span {
                                                                     file: "test.1",
                                                                     module: "module/test.1",
-                                                                    start: 43,
-                                                                    end: 52,
+                                                                    start: 34,
+                                                                    end: 35,
                                                                 },
-                                                                expression: Literal(
-                                                                    Integer(
-                                                                        IntegerLiteral {
-                                                                            span: Span {
-                                                                                file: "test.1",
-                                                                                module: "module/test.1",
-                                                                                start: 50,
-                                                                                end: 51,
-                                                                            },
-                                                                            value: 1,
-                                                                        },
-                                                                    ),
-                                                                ),
-                                                            },
-                                                        ),
-                                                    ],
-                                                },
-                                            },
-                                        ),
-                                        alternative: Some(
-                                            Block(
-                                                BlockStatement {
-                                                    span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
-                                                        start: 60,
-                                                        end: 74,
-                                                    },
-                                                    statements: StatementList {
-                                                        statements: [
-                                                            Return(
-                                                                ReturnStatement {
+                                                                ident: Identifier {
                                                                     span: Span {
                                                                         file: "test.1",
                                                                         module: "module/test.1",
-                                                                        start: 62,
-                                                                        end: 72,
+                                                                        start: 34,
+                                                                        end: 35,
                                                                     },
-                                                                    expression: Unary(
-                                                                        UnaryExpression {
+                                                                    value: "x",
+                                                                },
+                                                            },
+                                                        ),
+                                                        op: Greater(
+                                                            Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 36,
+                                                                end: 37,
+                                                            },
+                                                        ),
+                                                        right: Identifier(
+                                                            IdentifierExpression {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 38,
+                                                                    end: 39,
+                                                                },
+                                                                ident: Identifier {
+                                                                    span: Span {
+                                                                        file: "test.1",
+                                                                        module: "module/test.1",
+                                                                        start: 38,
+                                                                        end: 39,
+                                                                    },
+                                                                    value: "y",
+                                                                },
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                                consequence: Block(
+                                                    BlockStatement {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 41,
+                                                            end: 54,
+                                                        },
+                                                        statements: StatementList {
+                                                            statements: [
+                                                                Return(
+                                                                    ReturnStatement {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 43,
+                                                                            end: 52,
+                                                                        },
+                                                                        expression: Literal(
+                                                                            Integer(
+                                                                                IntegerLiteral {
+                                                                                    span: Span {
+                                                                                        file: "test.1",
+                                                                                        module: "module/test.1",
+                                                                                        start: 50,
+                                                                                        end: 51,
+                                                                                    },
+                                                                                    value: 1,
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            ],
+                                                        },
+                                                    },
+                                                ),
+                                                alternative: Some(
+                                                    Block(
+                                                        BlockStatement {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 60,
+                                                                end: 74,
+                                                            },
+                                                            statements: StatementList {
+                                                                statements: [
+                                                                    Return(
+                                                                        ReturnStatement {
                                                                             span: Span {
                                                                                 file: "test.1",
                                                                                 module: "module/test.1",
-                                                                                start: 69,
-                                                                                end: 71,
+                                                                                start: 62,
+                                                                                end: 72,
                                                                             },
-                                                                            op: Minus(
-                                                                                Span {
-                                                                                    file: "test.1",
-                                                                                    module: "module/test.1",
-                                                                                    start: 69,
-                                                                                    end: 70,
-                                                                                },
-                                                                            ),
-                                                                            expr: Literal(
-                                                                                Integer(
-                                                                                    IntegerLiteral {
-                                                                                        span: Span {
+                                                                            expression: Unary(
+                                                                                UnaryExpression {
+                                                                                    span: Span {
+                                                                                        file: "test.1",
+                                                                                        module: "module/test.1",
+                                                                                        start: 69,
+                                                                                        end: 71,
+                                                                                    },
+                                                                                    op: Minus(
+                                                                                        Span {
                                                                                             file: "test.1",
                                                                                             module: "module/test.1",
-                                                                                            start: 70,
-                                                                                            end: 71,
+                                                                                            start: 69,
+                                                                                            end: 70,
                                                                                         },
-                                                                                        value: 1,
-                                                                                    },
-                                                                                ),
+                                                                                    ),
+                                                                                    expr: Literal(
+                                                                                        Integer(
+                                                                                            IntegerLiteral {
+                                                                                                span: Span {
+                                                                                                    file: "test.1",
+                                                                                                    module: "module/test.1",
+                                                                                                    start: 70,
+                                                                                                    end: 71,
+                                                                                                },
+                                                                                                value: 1,
+                                                                                            },
+                                                                                        ),
+                                                                                    ),
+                                                                                },
                                                                             ),
                                                                         },
                                                                     ),
-                                                                },
-                                                            ),
-                                                        ],
-                                                    },
-                                                },
-                                            ),
+                                                                ],
+                                                            },
+                                                        },
+                                                    ),
+                                                ),
+                                            },
                                         ),
-                                    },
-                                ),
+                                    ),
+                                },
                             ),
-                        },
-                    ),
-                ),
-            ],
-        },
+                        ),
+                    ],
+                },
+            },
+        ],
     },
 }

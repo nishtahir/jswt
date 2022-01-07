@@ -11,4 +11,11 @@ expression: actual
         offset: 0,
         kind: HexInteger,
     },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 11,
+        kind: Eof,
+    },
 ]

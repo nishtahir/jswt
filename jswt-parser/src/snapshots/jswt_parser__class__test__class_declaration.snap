@@ -1,0 +1,36 @@
+---
+source: jswt-parser/src/class.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        ClassDeclaration(
+                            ClassDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 0,
+                                    end: 11,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 6,
+                                        end: 7,
+                                    },
+                                    value: "A",
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

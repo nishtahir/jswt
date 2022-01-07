@@ -568,8 +568,10 @@ dependencies = [
  "jswt-assert",
  "jswt-ast",
  "jswt-common",
+ "jswt-derive",
  "jswt-parser",
  "jswt-tokenizer",
+ "jswt-types",
 ]
 
 [[package]]

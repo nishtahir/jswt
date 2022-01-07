@@ -39,4 +39,11 @@ expression: actual
         offset: 21,
         kind: RightParen,
     },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 22,
+        kind: Eof,
+    },
 ]

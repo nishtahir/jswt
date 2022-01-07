@@ -1,19 +1,27 @@
+mod bindings;
+mod desugaring;
 mod error;
 mod globals;
 mod resolver;
 mod symbol;
+mod symbols;
 
-use jswt_ast::Ast;
-
+use desugaring::AstDesugaring;
 pub use error::*;
 use globals::*;
 use resolver::*;
 pub use symbol::*;
 
+use jswt_ast::Ast;
+
 pub struct SemanticAnalyzer;
 
 impl SemanticAnalyzer {
-    pub fn analyze(ast: &Ast) -> Vec<SemanticError> {
+    pub fn analyze(ast: &mut Ast) -> Vec<SemanticError> {
+        // Desugaring pass
+        let mut desugaring = AstDesugaring::default();
+        desugaring.desugar(ast);
+
         let mut global_resolver = GlobalResolver::default();
         global_resolver.resolve(ast);
 

@@ -5,104 +5,108 @@ expression: actual
 ---
 Ast {
     program: Program {
-        source_elements: SourceElements {
-            source_elements: [
-                Statement(
-                    Expression(
-                        ExpressionStatement {
-                            span: Span {
-                                file: "test.1",
-                                module: "module/test.1",
-                                start: 0,
-                                end: 12,
-                            },
-                            expression: Arguments(
-                                ArgumentsExpression {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        Statement(
+                            Expression(
+                                ExpressionStatement {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
                                         start: 0,
-                                        end: 11,
+                                        end: 12,
                                     },
-                                    ident: Identifier(
-                                        IdentifierExpression {
+                                    expression: Arguments(
+                                        ArgumentsExpression {
                                             span: Span {
                                                 file: "test.1",
                                                 module: "module/test.1",
                                                 start: 0,
-                                                end: 4,
+                                                end: 11,
                                             },
-                                            ident: Identifier {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
-                                                    start: 0,
-                                                    end: 4,
-                                                },
-                                                value: "test",
-                                            },
-                                        },
-                                    ),
-                                    arguments: ArgumentsList {
-                                        span: Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
-                                            start: 4,
-                                            end: 11,
-                                        },
-                                        arguments: [
-                                            Additive(
-                                                BinaryExpression {
+                                            ident: Identifier(
+                                                IdentifierExpression {
                                                     span: Span {
                                                         file: "test.1",
                                                         module: "module/test.1",
-                                                        start: 5,
-                                                        end: 10,
+                                                        start: 0,
+                                                        end: 4,
                                                     },
-                                                    left: Literal(
-                                                        Integer(
-                                                            IntegerLiteral {
-                                                                span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
-                                                                    start: 5,
-                                                                    end: 6,
-                                                                },
-                                                                value: 1,
-                                                            },
-                                                        ),
-                                                    ),
-                                                    op: Plus(
-                                                        Span {
+                                                    ident: Identifier {
+                                                        span: Span {
                                                             file: "test.1",
                                                             module: "module/test.1",
-                                                            start: 7,
-                                                            end: 8,
+                                                            start: 0,
+                                                            end: 4,
                                                         },
-                                                    ),
-                                                    right: Literal(
-                                                        Integer(
-                                                            IntegerLiteral {
-                                                                span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
-                                                                    start: 9,
-                                                                    end: 10,
-                                                                },
-                                                                value: 2,
-                                                            },
-                                                        ),
-                                                    ),
+                                                        value: "test",
+                                                    },
                                                 },
                                             ),
-                                        ],
-                                    },
+                                            arguments: ArgumentsList {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 4,
+                                                    end: 11,
+                                                },
+                                                arguments: [
+                                                    Additive(
+                                                        BinaryExpression {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 5,
+                                                                end: 10,
+                                                            },
+                                                            left: Literal(
+                                                                Integer(
+                                                                    IntegerLiteral {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 5,
+                                                                            end: 6,
+                                                                        },
+                                                                        value: 1,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            op: Plus(
+                                                                Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 7,
+                                                                    end: 8,
+                                                                },
+                                                            ),
+                                                            right: Literal(
+                                                                Integer(
+                                                                    IntegerLiteral {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 9,
+                                                                            end: 10,
+                                                                        },
+                                                                        value: 2,
+                                                                    },
+                                                                ),
+                                                            ),
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                        },
+                                    ),
                                 },
                             ),
-                        },
-                    ),
-                ),
-            ],
-        },
+                        ),
+                    ],
+                },
+            },
+        ],
     },
 }

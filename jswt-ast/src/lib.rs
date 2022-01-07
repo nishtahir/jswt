@@ -32,6 +32,11 @@ impl Ast {
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
+    pub files: Vec<File>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct File {
     pub source_elements: SourceElements,
 }
 
@@ -43,7 +48,14 @@ pub struct SourceElements {
 #[derive(Debug, PartialEq, FromEnumVariant)]
 pub enum SourceElement {
     FunctionDeclaration(FunctionDeclarationElement),
+    ClassDeclaration(ClassDeclarationElement),
     Statement(StatementElement),
+}
+
+#[derive(Debug, PartialEq, Spannable)]
+pub struct ClassDeclarationElement {
+    pub span: Span,
+    pub ident: Identifier,
 }
 
 #[derive(Debug, PartialEq, Spannable)]
@@ -91,15 +103,7 @@ pub struct StatementList {
     pub statements: Vec<StatementElement>,
 }
 
-#[derive(Debug, PartialEq, FromEnumVariant)]
+#[derive(Debug, PartialEq, FromEnumVariant, Spannable)]
 pub enum AssignableElement {
     Identifier(Identifier),
-}
-
-impl Spannable for AssignableElement {
-    fn span(&self) -> Span {
-        match self {
-            AssignableElement::Identifier(ident) => ident.span.to_owned(),
-        }
-    }
 }

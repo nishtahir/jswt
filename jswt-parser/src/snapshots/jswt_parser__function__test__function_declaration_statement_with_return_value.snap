@@ -1,0 +1,67 @@
+---
+source: jswt-parser/src/function.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 0,
+                                    end: 24,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            module: "module/test.1",
+                                            start: 17,
+                                            end: 20,
+                                        },
+                                        ty: Primitive(
+                                            I32,
+                                        ),
+                                    },
+                                ),
+                                body: FunctionBody {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 21,
+                                        end: 24,
+                                    },
+                                    source_elements: SourceElements {
+                                        source_elements: [],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}
