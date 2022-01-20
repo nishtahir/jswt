@@ -1,35 +1,41 @@
-use std::borrow::Cow;
+use crate::bindings::{BindingsTable, ClassBinding};
 
 use jswt_ast::*;
 use jswt_common::Spannable;
 use jswt_types::{PrimitiveType, Type};
 
-use crate::symbols::ClassBinding;
-
-#[derive(Debug, Default)]
-pub(crate) struct ClassDesugaring {
-    binding: ClassBinding,
-    class_context: Option<Cow<'static, str>>,
+#[derive(Debug)]
+pub(crate) struct ClassDesugaring<'a> {
+    bindings: &'a BindingsTable,
+    binding_context: Option<&'a ClassBinding>,
 }
 
-impl ClassDesugaring {
+impl<'a> ClassDesugaring<'a> {
+    pub(crate) fn new(bindings: &'a BindingsTable) -> Self {
+        Self {
+            bindings,
+            binding_context: None,
+        }
+    }
+
     pub(crate) fn enter_class_declaration(&mut self, node: &ClassDeclarationElement) {
         let name = node.ident.value.clone();
-        self.class_context = Some(name);
+        self.binding_context = self.bindings.lookup(&name).and_then(|b| b.as_class());
     }
 
     pub(crate) fn exit_class_declaration(&mut self) {
-        self.class_context = None;
+        self.binding_context = None;
     }
 
     pub(crate) fn enter_class_method(&self, node: &ClassMethodElement) -> SourceElement {
         let name = &node.ident.value;
+        let class_name = self.binding_context.as_ref().unwrap().name.clone();
 
         // Generate synthetic function name
         // The function name is the ClassName#methodName
         let ident = Identifier {
             span: node.ident.span(),
-            value: format!("{}#{}", self.class_context.as_ref().unwrap(), name).into(),
+            value: format!("{}#{}", class_name, name).into(),
         };
 
         // Generate function parameters
@@ -63,6 +69,7 @@ impl ClassDesugaring {
     }
 
     pub(crate) fn enter_class_constructor(&self, node: &ClassConstructorElement) -> SourceElement {
+        let class_name = self.binding_context.as_ref().unwrap().name.clone();
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
             decorators: FunctionDecorators {
@@ -71,7 +78,7 @@ impl ClassDesugaring {
             },
             ident: Identifier {
                 span: node.span(),
-                value: format!("{}#constructor", self.class_context.as_ref().unwrap()).into(),
+                value: format!("{}#constructor", class_name).into(),
             },
             params: node.params.clone(),
             // Class constructors always return a pointer

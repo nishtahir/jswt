@@ -38,13 +38,6 @@ pub struct FunctionBinding {
 
 #[derive(Debug, Default, PartialEq)]
 pub struct ClassBinding {
-    fields: Vec<Field>,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Field {
-    pub index: usize,
-    pub size: usize,
 }
 
 #[derive(Debug, Default)]

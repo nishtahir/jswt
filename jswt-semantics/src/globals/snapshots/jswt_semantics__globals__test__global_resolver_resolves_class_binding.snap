@@ -43,6 +43,7 @@ GlobalResolver {
             table: {
                 "Array": Class(
                     ClassBinding {
+                        name: "Array",
                         fields: [
                             Field {
                                 name: "a",

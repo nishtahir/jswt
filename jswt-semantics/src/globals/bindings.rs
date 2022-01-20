@@ -21,8 +21,11 @@ impl<'a> GlobalBindingsResolver<'a> {
         }
     }
 
-    pub fn enter_class_declaration(&mut self, _: &ClassDeclarationElement) {
-        let binding = ClassBinding::default();
+    pub fn enter_class_declaration(&mut self, node: &ClassDeclarationElement) {
+        let binding = ClassBinding {
+            name: node.ident.value.clone(),
+            fields: vec![],
+        };
         self.stack.push(binding);
     }
 

@@ -5,19 +5,27 @@ use class_desugaring::*;
 use jswt_ast::*;
 use jswt_common::Spannable;
 
-#[derive(Debug, Default)]
-pub struct AstDesugaring {
-    class: ClassDesugaring,
+use crate::bindings::BindingsTable;
+
+#[derive(Debug)]
+pub struct AstDesugaring<'a> {
+    class: ClassDesugaring<'a>,
 }
 
-impl AstDesugaring {
+impl<'a> AstDesugaring<'a> {
+    pub fn new(bindings: &'a BindingsTable) -> Self {
+        Self {
+            class: ClassDesugaring::new(&bindings),
+        }
+    }
+
     pub fn desugar(&mut self, ast: &mut Ast) {
         let program = self.program(&ast.program);
         ast.program = program;
     }
 }
 
-impl AstDesugaring {
+impl<'a> AstDesugaring<'a> {
     fn program(&mut self, program: &Program) -> Program {
         let mut files = vec![];
         for file in &program.files {
@@ -143,55 +151,5 @@ impl AstDesugaring {
 
     fn class_method_declaration(&self, node: &ClassMethodElement) -> SourceElement {
         self.class.enter_class_method(node)
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use jswt_assert::assert_debug_snapshot;
-    use jswt_parser::Parser;
-    use jswt_tokenizer::Tokenizer;
-
-    #[test]
-    fn test_class_declaration_desugars_into_functions() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str(
-            "test.1",
-            r"
-            class Array {
-                constructor(len: i32, capacity: i32) {
-
-                }
-            }
-        ",
-        );
-        let mut ast = Parser::new(&mut tokenizer).parse();
-        let mut desugering = AstDesugaring::default();
-        desugering.desugar(&mut ast);
-        assert_debug_snapshot!(ast);
-    }
-
-    #[test]
-    fn test_class_declaration_desugars_new_expression() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str(
-            "test.1",
-            r"
-            class Array {
-                constructor(len: i32, capacity: i32) {
-
-                }
-            }
-
-            function main() {
-                let x = new Array(1, 2);
-            }
-        ",
-        );
-        let mut ast = Parser::new(&mut tokenizer).parse();
-        let mut desugering = AstDesugaring::default();
-        desugering.desugar(&mut ast);
-        assert_debug_snapshot!(ast);
     }
 }

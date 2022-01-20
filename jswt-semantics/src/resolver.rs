@@ -270,11 +270,9 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
 
     fn visit_this_expression(&mut self, _node: &ThisExpression) {}
 
-    fn visit_literal(&mut self, _: &Literal) {
-        // No-op
-    }
+    fn visit_literal(&mut self, _: &Literal) {}
 
     fn visit_member_dot(&mut self, _node: &MemberDotExpression) {}
 
-    fn visit_new(&mut self, node: &NewExpression) {}
+    fn visit_new(&mut self, _node: &NewExpression) {}
 }

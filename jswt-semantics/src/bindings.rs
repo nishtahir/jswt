@@ -6,8 +6,19 @@ pub enum Binding {
     Class(ClassBinding),
 }
 
+impl Binding {
+    pub fn as_class(&self) -> Option<&ClassBinding> {
+        if let Self::Class(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct ClassBinding {
+    pub name: Cow<'static, str>,
     pub fields: Vec<Field>,
 }
 
