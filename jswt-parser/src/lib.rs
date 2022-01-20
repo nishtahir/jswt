@@ -215,13 +215,13 @@ impl<'a> Parser<'a> {
     ///   ;
     fn statement(&mut self) -> ParseResult<StatementElement> {
         let elem = match self.lookahead_type() {
-            Some(TokenType::LeftBrace) => self.block()?,
-            Some(TokenType::Semi) => self.empty_statement()?,
-            Some(TokenType::If) => self.if_statement()?,
-            Some(TokenType::While) => self.iteration_statement()?,
-            Some(TokenType::Return) => self.return_statement()?,
-            Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?,
-            _ => self.expression_statement()?,
+            Some(TokenType::LeftBrace) => self.block()?.into(),
+            Some(TokenType::Semi) => self.empty_statement()?.into(),
+            Some(TokenType::If) => self.if_statement()?.into(),
+            Some(TokenType::While) => self.iteration_statement()?.into(),
+            Some(TokenType::Return) => self.return_statement()?.into(),
+            Some(TokenType::Let) | Some(TokenType::Const) => self.variable_statement()?.into(),
+            _ => self.expression_statement()?.into(),
         };
         Ok(elem)
     }
@@ -229,30 +229,29 @@ impl<'a> Parser<'a> {
     /// Block
     ///   :  '{' statementList? '}'
     ///   ;
-    fn block(&mut self) -> ParseResult<StatementElement> {
+    fn block(&mut self) -> ParseResult<BlockStatement> {
         let start = consume!(self, TokenType::LeftBrace)?;
         let statements = self.statement_list(Some(TokenType::RightBrace))?;
         let end = consume!(self, TokenType::RightBrace)?;
         Ok(BlockStatement {
             span: start + end,
             statements,
-        }
-        .into())
+        })
     }
 
     /// EmptyStatement
     ///   : ';'
     ///   ;
-    fn empty_statement(&mut self) -> ParseResult<StatementElement> {
+    fn empty_statement(&mut self) -> ParseResult<EmptyStatement> {
         let span = consume!(self, TokenType::Semi)?;
-        Ok(EmptyStatement { span }.into())
+        Ok(EmptyStatement { span })
     }
 
     /// IfStatement
     ///   : 'if' '(' SingleExpression ')' Statement 'else' Statement
     ///   | 'if' '(' SingleExpression ')' Satement
     ///   ;
-    fn if_statement(&mut self) -> ParseResult<StatementElement> {
+    fn if_statement(&mut self) -> ParseResult<IfStatement> {
         let start = consume!(self, TokenType::If)?;
         consume!(self, TokenType::LeftParen)?;
         let condition = self.single_expression()?;
@@ -275,20 +274,19 @@ impl<'a> Parser<'a> {
             condition,
             consequence,
             alternative,
-        }
-        .into())
+        })
     }
 
     /// IterationStatement
     ///   :  WhileStatement
     ///   ;
-    fn iteration_statement(&mut self) -> ParseResult<StatementElement> {
+    fn iteration_statement(&mut self) -> ParseResult<IterationStatement> {
         let elem = match self.lookahead_type() {
             Some(TokenType::While) => self.while_statement()?,
             _ => todo!(),
         };
 
-        Ok(elem.into())
+        Ok(elem)
     }
 
     /// WhileStatement
@@ -312,7 +310,7 @@ impl<'a> Parser<'a> {
     /// ReturnStatement
     ///   : 'return' SingleExpression ';'
     ///   ;
-    fn return_statement(&mut self) -> ParseResult<StatementElement> {
+    fn return_statement(&mut self) -> ParseResult<ReturnStatement> {
         let start = consume!(self, TokenType::Return)?;
         let expression = self.single_expression()?;
         let end = consume!(self, TokenType::Semi)?;
@@ -320,8 +318,7 @@ impl<'a> Parser<'a> {
         Ok(ReturnStatement {
             span: start + end,
             expression,
-        }
-        .into())
+        })
     }
 
     /// StatementList
@@ -352,7 +349,7 @@ impl<'a> Parser<'a> {
     /// VariableStatement
     ///   :  VariableModifier Assignable ('=' singleExpression)? ';'
     ///   ;
-    fn variable_statement(&mut self) -> ParseResult<StatementElement> {
+    fn variable_statement(&mut self) -> ParseResult<VariableStatement> {
         let modifier = self.variable_modifier()?;
         let target = self.assignable()?;
 
@@ -413,15 +410,14 @@ impl<'a> Parser<'a> {
     /// ExpressionStatement
     ///   : SingleExpression ';'
     ///   ;
-    fn expression_statement(&mut self) -> ParseResult<StatementElement> {
+    fn expression_statement(&mut self) -> ParseResult<ExpressionStatement> {
         let expression = self.single_expression()?;
         let end = consume!(self, TokenType::Semi)?;
 
         Ok(ExpressionStatement {
             span: expression.span() + end,
             expression,
-        }
-        .into())
+        })
     }
 
     /// SingleExpression
@@ -804,6 +800,36 @@ impl<'a> Parser<'a> {
             span: start + end,
             name: ident,
             expr,
+        })
+    }
+
+    /// FormalParameterList
+    ///   :  FormalParameterArg
+    ///   |  FormalParameterArg , FormalParameterArg
+    ///   ;
+    fn formal_parameter_list(&mut self) -> ParseResult<FormalParameterList> {
+        let mut parameters = vec![];
+        if !self.lookahead_is(TokenType::RightParen) {
+            loop {
+                parameters.push(self.formal_parameter_arg()?);
+                if !self.lookahead_is(TokenType::Comma) {
+                    break;
+                }
+                consume_unchecked!(self);
+            }
+        }
+        Ok(FormalParameterList { parameters })
+    }
+
+    /// FormalParameterArg
+    ///   :  Ident TypeAnnotation
+    ///   ;
+    fn formal_parameter_arg(&mut self) -> ParseResult<FormalParameterArg> {
+        let ident = ident!(self)?;
+        let type_annotation = self.type_annotation()?;
+        Ok(FormalParameterArg {
+            ident,
+            type_annotation,
         })
     }
 

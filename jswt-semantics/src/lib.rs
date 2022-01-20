@@ -3,35 +3,37 @@ mod desugaring;
 mod error;
 mod globals;
 mod resolver;
-mod symbol;
 mod symbols;
 
+use bindings::BindingsTable;
 use desugaring::AstDesugaring;
 pub use error::*;
 use globals::*;
 use resolver::*;
-pub use symbol::*;
 
 use jswt_ast::Ast;
+use symbols::SymbolTable;
 
 pub struct SemanticAnalyzer;
 
 impl SemanticAnalyzer {
     pub fn analyze(ast: &mut Ast) -> Vec<SemanticError> {
-        // Desugaring pass
+        let mut symbol_table = SymbolTable::default();
+        let mut bindings_table = BindingsTable::default();
+        let mut errors = vec![];
+
         let mut desugaring = AstDesugaring::default();
         desugaring.desugar(ast);
 
-        let mut global_resolver = GlobalResolver::default();
-        global_resolver.resolve(ast);
+        // This is the first semantic pass
+        // let mut global_resolver = GlobalResolver::new(&mut symbol_table, &mut bindings_table);
+        // global_resolver.resolve(ast);
+        // errors.append(&mut global_resolver.errors());
 
-        let global_symbols = global_resolver.symbols;
-        let mut resolver = Resolver::new(global_symbols);
-        resolver.resolve(ast);
-
-        let mut errors = vec![];
-        errors.append(&mut global_resolver.errors);
-        errors.append(&mut resolver.errors);
+        // // This is the second semantic pass
+        // let mut resolver = Resolver::new(&mut symbol_table, &mut bindings_table);
+        // resolver.resolve(ast);
+        // errors.append(&mut resolver.errors);
 
         errors
     }

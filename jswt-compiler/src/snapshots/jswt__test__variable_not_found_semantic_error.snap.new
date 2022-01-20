@@ -1,0 +1,6 @@
+---
+source: jswt-compiler/src/main.rs
+expression: redact_paths(stdout)
+
+---
+

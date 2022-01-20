@@ -1,0 +1,98 @@
+---
+source: jswt-tokenizer/src/lib.rs
+expression: actual
+
+---
+[
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "class",
+        offset: 0,
+        kind: Class,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "A",
+        offset: 6,
+        kind: Identifier,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "{",
+        offset: 8,
+        kind: LeftBrace,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "constructor",
+        offset: 10,
+        kind: Constructor,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "(",
+        offset: 21,
+        kind: LeftParen,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "b",
+        offset: 22,
+        kind: Identifier,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: ":",
+        offset: 23,
+        kind: Colon,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "i32",
+        offset: 25,
+        kind: Identifier,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: ")",
+        offset: 28,
+        kind: RightParen,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "{",
+        offset: 30,
+        kind: LeftBrace,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "}",
+        offset: 31,
+        kind: RightBrace,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "}",
+        offset: 33,
+        kind: RightBrace,
+    },
+    Token {
+        file: "test.1",
+        module: "module/test.1",
+        lexme: "",
+        offset: 34,
+        kind: Eof,
+    },
+]

@@ -132,6 +132,7 @@ impl Module {
         // Generate Export Definitions
         // export built in memory
         wat += "(export \"memory\" (memory $0))";
+        
         // Export functions
         // (export "addTwo" (func $addTwo))
         self.exports

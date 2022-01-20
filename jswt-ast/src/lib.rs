@@ -56,6 +56,35 @@ pub enum SourceElement {
 pub struct ClassDeclarationElement {
     pub span: Span,
     pub ident: Identifier,
+    pub body: ClassBody,
+}
+
+#[derive(Debug, PartialEq, Spannable)]
+pub struct ClassBody {
+    pub span: Span,
+    pub class_elements: Vec<ClassElement>,
+}
+
+#[derive(Debug, PartialEq, Spannable, FromEnumVariant)]
+pub enum ClassElement {
+    Constructor(ClassConstructorElement),
+    Method(ClassMethodElement),
+}
+
+#[derive(Debug, PartialEq, Spannable)]
+pub struct ClassConstructorElement {
+    pub span: Span,
+    pub params: FormalParameterList,
+}
+
+#[derive(Debug, PartialEq, Spannable)]
+pub struct ClassMethodElement {
+    pub span: Span,
+    pub annotations: Vec<Annotation>,
+    pub ident: Identifier,
+    pub params: FormalParameterList,
+    pub returns: Option<TypeAnnotation>,
+    pub body: BlockStatement,
 }
 
 #[derive(Debug, PartialEq, Spannable)]
@@ -81,12 +110,12 @@ pub struct Annotation {
     pub expr: Option<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FormalParameterList {
     pub parameters: Vec<FormalParameterArg>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FormalParameterArg {
     pub ident: Identifier,
     pub type_annotation: TypeAnnotation,

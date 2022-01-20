@@ -1,0 +1,104 @@
+---
+source: jswt-parser/src/class.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        ClassDeclaration(
+                            ClassDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 0,
+                                    end: 29,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 6,
+                                        end: 7,
+                                    },
+                                    value: "A",
+                                },
+                                body: ClassBody {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 8,
+                                        end: 29,
+                                    },
+                                    class_elements: [
+                                        Method(
+                                            ClassMethodElement {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 10,
+                                                    end: 27,
+                                                },
+                                                annotations: [],
+                                                ident: Identifier {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 10,
+                                                        end: 15,
+                                                    },
+                                                    value: "hello",
+                                                },
+                                                params: FormalParameterList {
+                                                    parameters: [
+                                                        FormalParameterArg {
+                                                            ident: Identifier {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 16,
+                                                                    end: 17,
+                                                                },
+                                                                value: "a",
+                                                            },
+                                                            type_annotation: TypeAnnotation {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 19,
+                                                                    end: 22,
+                                                                },
+                                                                ty: Primitive(
+                                                                    I32,
+                                                                ),
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                                returns: None,
+                                                body: BlockStatement {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 24,
+                                                        end: 27,
+                                                    },
+                                                    statements: StatementList {
+                                                        statements: [],
+                                                    },
+                                                },
+                                            },
+                                        ),
+                                    ],
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

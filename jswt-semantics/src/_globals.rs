@@ -2,15 +2,13 @@ use jswt_ast::*;
 use jswt_types::{FunctionType, Type};
 
 use crate::{
-    bindings::{BindingsTable, ClassBinding},
-    symbols::SymbolTable,
-    SemanticError, Symbol,
+    symbols::{FunctionBinding, Symbol, SymbolTable, ClassBinding},
+    SemanticError,
 };
 
 #[derive(Debug)]
 pub struct GlobalResolver {
     pub symbols: SymbolTable,
-    pub bindings: BindingsTable,
     pub errors: Vec<SemanticError>,
 }
 
@@ -18,7 +16,6 @@ impl Default for GlobalResolver {
     fn default() -> Self {
         Self {
             symbols: SymbolTable::default(),
-            bindings: BindingsTable::default(),
             errors: vec![],
         }
     }
@@ -136,22 +133,14 @@ impl StatementVisitor for GlobalResolver {
             self.errors.push(error);
         }
 
-        self.symbols.define(
-            name.clone(),
-            Symbol::new(
-                Type::Function(FunctionType {
-                    params,
-                    returns: Box::new(returns),
-                }),
-                name.clone(),
-            ),
-        );
+        self.symbols
+            .define(name.clone(), FunctionBinding { params, returns });
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
         // Define a new type binding
         let name = &node.ident.value;
-        self.bindings.define(name.clone(), ClassBinding {})
+        self.symbols.define(name.clone(), ClassBinding {})
 
         // TODO
         // push a new scope in the symbol table

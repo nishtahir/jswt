@@ -81,6 +81,7 @@ pub enum TokenType {
     Const,
     While,
     Class,
+    Constructor,
 
     // Other
     WhiteSpace,
@@ -131,6 +132,7 @@ impl Display for TokenType {
             TokenType::Const => f.write_str("const"),
             TokenType::While => f.write_str("while"),
             TokenType::Class => f.write_str("class"),
+            TokenType::Constructor => f.write_str("constructor"),
             TokenType::Identifier => f.write_str("identifier"),
             TokenType::String => f.write_str("string"),
             TokenType::Integer => f.write_str("integer"),

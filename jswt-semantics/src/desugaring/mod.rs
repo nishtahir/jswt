@@ -1,7 +1,12 @@
+mod class_desugaring;
+
+use self::class_desugaring::ClassDesugaring;
 use jswt_ast::*;
 
-#[derive(Default)]
-pub struct AstDesugaring {}
+#[derive(Debug, Default)]
+pub struct AstDesugaring {
+    class: ClassDesugaring,
+}
 
 impl AstDesugaring {
     pub fn desugar(&mut self, ast: &mut Ast) {
@@ -9,7 +14,7 @@ impl AstDesugaring {
     }
 }
 
-impl MutStatementVisitor for AstDesugaring {
+impl MutProgramVisitor<()> for AstDesugaring {
     fn visit_program(&mut self, node: &mut Program) {
         for file in &mut node.files {
             self.visit_file(file)
@@ -21,19 +26,26 @@ impl MutStatementVisitor for AstDesugaring {
     }
 
     fn visit_source_elements(&mut self, node: &mut SourceElements) {
+        self.class.enter_source_elements(node);
         for element in &mut node.source_elements {
             self.visit_source_element(element);
         }
+        self.class.exit_source_elements(node);
     }
 
     fn visit_source_element(&mut self, node: &mut SourceElement) {
         match node {
             SourceElement::FunctionDeclaration(elem) => self.visit_function_declaration(elem),
-            SourceElement::ClassDeclaration(elem) => self.visit_class_declaration(elem),
+            SourceElement::ClassDeclaration(elem) => {
+                self.visit_class_declaration(elem);
+            }
+
             SourceElement::Statement(elem) => self.visit_statement_element(elem),
         }
     }
+}
 
+impl MutStatementVisitor<()> for AstDesugaring {
     fn visit_statement_element(&mut self, node: &mut StatementElement) {
         match node {
             StatementElement::Block(stmt) => self.visit_block_statement(stmt),
@@ -91,12 +103,27 @@ impl MutStatementVisitor for AstDesugaring {
         // ident.value = format!("{}/{}", node.span.module, ident.value).into();
     }
 
+    fn visit_function_body(&mut self, node: &mut FunctionBody) {}
+
     fn visit_class_declaration(&mut self, node: &mut ClassDeclarationElement) {
-        // No-op
+        self.class.enter_class_declaration(node);
+        self.visit_class_body(&mut node.body);
+        self.class.exit_class_declaration();
     }
 
-    fn visit_function_body(&mut self, node: &mut FunctionBody) {
-        // No-op
+    fn visit_class_body(&mut self, node: &mut ClassBody) -> () {
+        for element in &mut node.class_elements {
+            match element {
+                ClassElement::Constructor(elem) => self.visit_class_constructor_declaration(elem),
+                ClassElement::Method(elem) => self.visit_class_method_declaration(elem),
+            }
+        }
+    }
+
+    fn visit_class_constructor_declaration(&mut self, node: &mut ClassConstructorElement) -> () {}
+
+    fn visit_class_method_declaration(&mut self, node: &mut ClassMethodElement) -> () {
+        self.class.enter_class_method_declaration(node);
     }
 }
 

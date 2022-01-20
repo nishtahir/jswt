@@ -91,6 +91,7 @@ lazy_static! {
         r"^\bconst\b" => TokenType::Const,
         r"^\bwhile\b" => TokenType::While,
         r"^\bclass\b" => TokenType::Class,
+        r"^\bconstructor\b" => TokenType::Constructor,
 
         // Multi character alternatives
         r"^\+\+" => TokenType::PlusPlus,
@@ -543,6 +544,14 @@ mod test {
     fn test_tokenize_plus_plus_and_minus_minus() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str("test.1", "x++; y--");
+        let actual = tokenizer.tokenize();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_tokenize_class_declaration() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str("test.1", "class A { constructor(b: i32) {} }");
         let actual = tokenizer.tokenize();
         assert_debug_snapshot!(actual);
     }

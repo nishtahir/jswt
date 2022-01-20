@@ -47,40 +47,10 @@ impl<'a> Parser<'a> {
         })
     }
 
-    /// FormalParameterList
-    ///   :  FormalParameterArg
-    ///   |  FormalParameterArg , FormalParameterArg
-    ///   ;
-    fn formal_parameter_list(&mut self) -> ParseResult<FormalParameterList> {
-        let mut parameters = vec![];
-        if !self.lookahead_is(TokenType::RightParen) {
-            loop {
-                parameters.push(self.formal_parameter_arg()?);
-                if !self.lookahead_is(TokenType::Comma) {
-                    break;
-                }
-                consume_unchecked!(self);
-            }
-        }
-        Ok(FormalParameterList { parameters })
-    }
-
-    /// FormalParameterArg
-    ///   :  Ident TypeAnnotation
-    ///   ;
-    fn formal_parameter_arg(&mut self) -> ParseResult<FormalParameterArg> {
-        let ident = ident!(self)?;
-        let type_annotation = self.type_annotation()?;
-        Ok(FormalParameterArg {
-            ident,
-            type_annotation,
-        })
-    }
-
     ///  FunctionBody
     ///    :  '{' SourceElements? '}'
     ///    ;
-    fn function_body(&mut self) -> ParseResult<FunctionBody> {
+    pub(crate) fn function_body(&mut self) -> ParseResult<FunctionBody> {
         let start = consume!(self, TokenType::LeftBrace)?;
         // Read until we find a closing brace
         let source_elements = self.source_elements(Some(TokenType::RightBrace));

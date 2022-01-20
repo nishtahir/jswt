@@ -15,7 +15,7 @@ Ast {
                                     file: "test.1",
                                     module: "module/test.1",
                                     start: 0,
-                                    end: 11,
+                                    end: 35,
                                 },
                                 ident: Identifier {
                                     span: Span {
@@ -25,6 +25,50 @@ Ast {
                                         end: 7,
                                     },
                                     value: "A",
+                                },
+                                body: ClassBody {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 8,
+                                        end: 35,
+                                    },
+                                    constructor: Some(
+                                        ClassConstructor {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 10,
+                                                end: 33,
+                                            },
+                                            params: FormalParameterList {
+                                                parameters: [
+                                                    FormalParameterArg {
+                                                        ident: Identifier {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 22,
+                                                                end: 23,
+                                                            },
+                                                            value: "a",
+                                                        },
+                                                        type_annotation: TypeAnnotation {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 25,
+                                                                end: 28,
+                                                            },
+                                                            ty: Primitive(
+                                                                I32,
+                                                            ),
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    ),
                                 },
                             },
                         ),

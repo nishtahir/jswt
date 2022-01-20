@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use jswt_common::Span;
 use jswt_derive::Spannable;
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct Identifier {
     pub span: Span,
     pub value: Cow<'static, str>,

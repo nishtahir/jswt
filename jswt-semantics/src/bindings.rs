@@ -8,9 +8,7 @@ pub enum Binding {
 
 #[derive(Debug)]
 
-pub struct ClassBinding {
-    
-}
+pub struct ClassBinding {}
 
 // A binding represents an arbitrary type definition
 // these are expected to lib between semantic phases
@@ -25,7 +23,7 @@ impl BindingsTable {
         self.table.get(key.into())
     }
 
-    pub fn define<T: Into<Cow<'static, str>>, U: Into<Binding>>(&mut self, key: T, ty: U) {
-        self.table.insert(key.into(), ty.into());
+    pub fn define<T: Into<Cow<'static, str>>, U: Into<Binding>>(&mut self, key: T, binding: U) {
+        self.table.insert(key.into(), binding.into());
     }
 }

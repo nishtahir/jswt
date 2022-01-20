@@ -1,11 +1,12 @@
 // @ts-nocheck
 
 class Taco {
-    
+    test() {
+
+    }
 }
 
 export function main(): i32 {
-    println(3++);
-
+    println(3);
     return 0;
 }
