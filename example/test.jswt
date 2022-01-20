@@ -1,7 +1,10 @@
 // @ts-nocheck
-class Taco {
-    test(a: i32, b: i32) {
+class Array {
+    constructor(length: i32, capacity: i32) {
+    }
 
+    setData(data: i32) {
+        i32Store(ptr, data);
     }
 }
 

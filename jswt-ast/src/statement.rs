@@ -5,7 +5,7 @@ use crate::{
     Span, Spannable, StatementList, TypeAnnotation,
 };
 
-#[derive(Debug, PartialEq, FromEnumVariant, Spannable)]
+#[derive(Debug, PartialEq, FromEnumVariant, Spannable, Clone)]
 pub enum StatementElement {
     Block(BlockStatement),
     Empty(EmptyStatement),
@@ -16,18 +16,18 @@ pub enum StatementElement {
     Expression(ExpressionStatement),
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct BlockStatement {
     pub span: Span,
     pub statements: StatementList,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct EmptyStatement {
     pub span: Span,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct IfStatement {
     pub span: Span,
     pub condition: SingleExpression,
@@ -35,13 +35,13 @@ pub struct IfStatement {
     pub alternative: Option<Box<StatementElement>>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ReturnStatement {
     pub span: Span,
     pub expression: SingleExpression,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct VariableStatement {
     pub span: Span,
     pub modifier: VariableModifier,
@@ -50,7 +50,7 @@ pub struct VariableStatement {
     pub type_annotation: Option<TypeAnnotation>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ExpressionStatement {
     pub span: Span,
     pub expression: SingleExpression,

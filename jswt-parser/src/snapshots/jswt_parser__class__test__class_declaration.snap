@@ -33,42 +33,44 @@ Ast {
                                         start: 8,
                                         end: 35,
                                     },
-                                    constructor: Some(
-                                        ClassConstructor {
-                                            span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
-                                                start: 10,
-                                                end: 33,
-                                            },
-                                            params: FormalParameterList {
-                                                parameters: [
-                                                    FormalParameterArg {
-                                                        ident: Identifier {
-                                                            span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
-                                                                start: 22,
-                                                                end: 23,
+                                    class_elements: [
+                                        Constructor(
+                                            ClassConstructorElement {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 10,
+                                                    end: 33,
+                                                },
+                                                params: FormalParameterList {
+                                                    parameters: [
+                                                        FormalParameterArg {
+                                                            ident: Identifier {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 22,
+                                                                    end: 23,
+                                                                },
+                                                                value: "a",
                                                             },
-                                                            value: "a",
-                                                        },
-                                                        type_annotation: TypeAnnotation {
-                                                            span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
-                                                                start: 25,
-                                                                end: 28,
+                                                            type_annotation: TypeAnnotation {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 25,
+                                                                    end: 28,
+                                                                },
+                                                                ty: Primitive(
+                                                                    I32,
+                                                                ),
                                                             },
-                                                            ty: Primitive(
-                                                                I32,
-                                                            ),
                                                         },
-                                                    },
-                                                ],
+                                                    ],
+                                                },
                                             },
-                                        },
-                                    ),
+                                        ),
+                                    ],
                                 },
                             },
                         ),

@@ -4,42 +4,8 @@ use jswt_common::Span;
 use jswt_derive::FromEnumVariant;
 use jswt_types::Type;
 
-#[derive(Debug, FromEnumVariant)]
-pub enum Scope {
-    Global(GlobalScope),
-    Function(FunctionScope),
-    Block(BlockScope),
-    Class(ClassScope),
-}
-
-impl Scope {
-    pub fn as_global(&self) -> Option<&GlobalScope> {
-        if let Self::Global(v) = self {
-            Some(v)
-        } else {
-            None
-        }
-    }
-}
-
 #[derive(Debug, Default)]
-pub struct GlobalScope {
-    pub symbols: BTreeMap<Cow<'static, str>, Symbol>,
-}
-
-#[derive(Debug, Default)]
-pub struct FunctionScope {
-    pub symbols: BTreeMap<Cow<'static, str>, Symbol>,
-    pub returns: Option<Type>,
-}
-
-#[derive(Debug, Default)]
-pub struct BlockScope {
-    pub symbols: BTreeMap<Cow<'static, str>, Symbol>,
-}
-
-#[derive(Debug, Default)]
-pub struct ClassScope {
+pub struct Scope {
     pub symbols: BTreeMap<Cow<'static, str>, Symbol>,
 }
 
@@ -88,18 +54,16 @@ impl SymbolTable {
         // their own spans. We're inserting a synthetic one for now
         // just to make this work
         let global_span = Span::new("program".into(), "root".into(), 0, 0);
-        self.push_scope(global_span, Some(GlobalScope::default()));
+        self.push_scope(global_span);
     }
 
     // Pushing a scope adds it to the scope stack
     // and defines a new key in our global symbol map
-    pub fn push_scope<T: Into<Scope>>(&mut self, key: Span, default: Option<T>) {
+    pub fn push_scope(&mut self, key: Span) {
         self.scopes.push(key.clone());
-        if let Some(default) = default {
-            self.table
-                .entry(key.clone())
-                .or_insert_with(|| default.into());
-        }
+        self.table
+            .entry(key.clone())
+            .or_insert_with(|| Scope::default());
     }
 
     // Poping a scope removes it from the scope stack
@@ -120,23 +84,9 @@ impl SymbolTable {
     pub fn define<T: Into<Cow<'static, str>>, U: Into<Symbol>>(&mut self, name: T, symbol: U) {
         debug_assert!(self.scopes.len() > 0);
         let key = self.scopes.last().unwrap();
-        let symbols = match self.table.get_mut(key).unwrap() {
-            Scope::Global(s) => &mut s.symbols,
-            Scope::Function(s) => &mut s.symbols,
-            Scope::Block(s) => &mut s.symbols,
-            Scope::Class(s) => &mut s.symbols,
-        };
-        symbols.insert(name.into(), symbol.into());
+        let scope = self.table.get_mut(key).unwrap();
+        scope.symbols.insert(name.into(), symbol.into());
     }
-
-    // pub fn update_type(&mut self, name: &Cow<'static, str>, ty: Type) {
-    //     debug_assert!(self.scopes.len() > 0);
-    //     let key = self.scopes.last().unwrap();
-    //     let scope = self.table.get_mut(key).unwrap();
-    //     if let Some(symbol) = scope.symbols.get_mut(name) {
-    //         symbol.ty = ty;
-    //     }
-    // }
 
     /// Lookup a Symbol based on symbols in the current active scope
     /// as well as scopes lower in the stack
@@ -147,14 +97,8 @@ impl SymbolTable {
         let name = &name.into();
         for idx in (0..self.scopes.len()).rev() {
             let key = &self.scopes[idx];
-            if let Some(symbols) = self.table.get(key) {
-                let symbols = match symbols {
-                    Scope::Global(s) => &s.symbols,
-                    Scope::Function(s) => &s.symbols,
-                    Scope::Block(s) => &s.symbols,
-                    Scope::Class(s) => &s.symbols,
-                };
-                if let Some(sym) = symbols.get(name) {
+            if let Some(scope) = self.table.get(key) {
+                if let Some(sym) = scope.symbols.get(name) {
                     return Some(sym);
                 }
             }
@@ -167,13 +111,9 @@ impl SymbolTable {
     pub fn lookup_current(&mut self, name: &str) -> Option<&Symbol> {
         debug_assert!(self.scopes.len() > 0);
         let key = &self.scopes.last().unwrap();
-        let symbols = match self.table.get_mut(key).unwrap() {
-            Scope::Global(s) => &s.symbols,
-            Scope::Function(s) => &s.symbols,
-            Scope::Block(s) => &s.symbols,
-            Scope::Class(s) => &s.symbols,
-        };
-        symbols.get(name)
+        self.table
+            .get_mut(key)
+            .and_then(|scope| scope.symbols.get(name))
     }
 
     /// Look for the symbol in the global scope on
@@ -183,7 +123,6 @@ impl SymbolTable {
         let key = &self.scopes.first().unwrap();
         self.table
             .get_mut(key)
-            .and_then(|s| s.as_global())
             .and_then(|scope| scope.symbols.get(name))
     }
 

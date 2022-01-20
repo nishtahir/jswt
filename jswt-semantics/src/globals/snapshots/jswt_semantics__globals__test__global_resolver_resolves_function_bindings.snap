@@ -1,0 +1,58 @@
+---
+source: jswt-semantics/src/globals/mod.rs
+expression: resolver
+
+---
+GlobalResolver {
+    symbols: GlobalSymbolsResolver {
+        symbols: SymbolTable {
+            scopes: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "test": Function(
+                            FunctionBinding {
+                                params: [
+                                    Primitive(
+                                        I32,
+                                    ),
+                                    Primitive(
+                                        I32,
+                                    ),
+                                ],
+                                returns: Void,
+                            },
+                        ),
+                        "test2": Function(
+                            FunctionBinding {
+                                params: [],
+                                returns: Object(
+                                    Reference(
+                                        "Array",
+                                    ),
+                                ),
+                            },
+                        ),
+                    },
+                },
+            },
+        },
+        errors: [],
+    },
+    bindings: GlobalBindingsResolver {
+        stack: [],
+        bindings: BindingsTable {
+            table: {
+                "Array": Class(
+                    ClassBinding,
+                ),
+            },
+        },
+        errors: [],
+    },
+}

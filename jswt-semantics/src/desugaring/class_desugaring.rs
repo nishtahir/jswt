@@ -2,15 +2,15 @@ use std::borrow::Cow;
 
 use jswt_ast::*;
 use jswt_common::Spannable;
+use jswt_types::{PrimitiveType, Type};
 
 #[derive(Debug, Default)]
 pub(crate) struct ClassDesugaring {
     class_context: Option<Cow<'static, str>>,
-    source_elements: Vec<SourceElement>,
 }
 
 impl ClassDesugaring {
-    pub(crate) fn enter_class_declaration(&mut self, node: &mut ClassDeclarationElement) {
+    pub(crate) fn enter_class_declaration(&mut self, node: &ClassDeclarationElement) {
         let name = node.ident.value.clone();
         self.class_context = Some(name);
     }
@@ -19,9 +19,9 @@ impl ClassDesugaring {
         self.class_context = None;
     }
 
-    pub(crate) fn enter_class_method_declaration(&mut self, node: &mut ClassMethodElement) {
+    pub(crate) fn enter_class_method(&self, node: &ClassMethodElement) -> SourceElement {
         let name = &node.ident.value;
-        let elem = SourceElement::FunctionDeclaration(FunctionDeclarationElement {
+        SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
             decorators: FunctionDecorators {
                 annotations: vec![],
@@ -39,15 +39,31 @@ impl ClassDesugaring {
                     source_elements: vec![],
                 },
             },
-        });
-        self.source_elements.push(elem);
+        })
     }
 
-    pub(crate) fn enter_source_elements(&mut self, node: &mut SourceElements) {
-        // self.source_elements = ;
-    }
-
-    pub(crate) fn exit_source_elements(&mut self, node: &mut SourceElements) {
-        node.source_elements.append(&mut self.source_elements);
+    pub(crate) fn enter_class_constructor(&self, node: &ClassConstructorElement) -> SourceElement {
+        SourceElement::FunctionDeclaration(FunctionDeclarationElement {
+            span: node.span(),
+            decorators: FunctionDecorators {
+                annotations: vec![],
+                export: false,
+            },
+            ident: Identifier {
+                span: node.span(),
+                value: format!("{}#constructor", self.class_context.as_ref().unwrap()).into(),
+            },
+            params: node.params.clone(),
+            returns: Some(TypeAnnotation {
+                span: node.span(),
+                ty: Type::Primitive(PrimitiveType::I32),
+            }),
+            body: FunctionBody {
+                span: node.span(),
+                source_elements: SourceElements {
+                    source_elements: vec![],
+                },
+            },
+        })
     }
 }

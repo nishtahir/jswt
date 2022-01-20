@@ -1,12 +1,11 @@
-use std::vec;
-
-use jswt_ast::*;
-use jswt_types::Type;
-
 use crate::{
     symbols::{FunctionBinding, SymbolTable},
     SemanticError,
 };
+use std::vec;
+
+use jswt_ast::*;
+use jswt_types::Type;
 
 #[derive(Debug)]
 pub(crate) struct GlobalSymbolsResolver<'a> {

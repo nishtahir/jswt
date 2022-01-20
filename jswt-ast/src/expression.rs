@@ -3,7 +3,7 @@ use crate::{ident::Identifier, Literal};
 use jswt_common::Span;
 use jswt_derive::Spannable;
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub enum SingleExpression {
     Unary(UnaryExpression),
     Assignment(BinaryExpression),
@@ -18,34 +18,34 @@ pub enum SingleExpression {
     Literal(Literal),
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ArgumentsExpression {
     pub span: Span,
     pub ident: Box<SingleExpression>,
     pub arguments: ArgumentsList,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ArgumentsList {
     pub span: Span,
     pub arguments: Vec<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct MemberIndexExpression {
     pub span: Span,
     pub target: Box<SingleExpression>,
     pub index: Box<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct UnaryExpression {
     pub span: Span,
     pub op: UnaryOperator,
     pub expr: Box<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct BinaryExpression {
     pub span: Span,
     pub left: Box<SingleExpression>,
@@ -53,13 +53,13 @@ pub struct BinaryExpression {
     pub right: Box<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct IdentifierExpression {
     pub span: Span,
     pub ident: Identifier,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum UnaryOperator {
     Plus(Span),
     Minus(Span),
@@ -68,7 +68,7 @@ pub enum UnaryOperator {
     PostDecrement(Span),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum BinaryOperator {
     Plus(Span),
     Minus(Span),

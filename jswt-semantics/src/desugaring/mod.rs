@@ -1,7 +1,8 @@
 mod class_desugaring;
 
-use self::class_desugaring::ClassDesugaring;
+use class_desugaring::*;
 use jswt_ast::*;
+use jswt_common::Spannable;
 
 #[derive(Debug, Default)]
 pub struct AstDesugaring {
@@ -10,120 +11,85 @@ pub struct AstDesugaring {
 
 impl AstDesugaring {
     pub fn desugar(&mut self, ast: &mut Ast) {
-        self.visit_program(&mut ast.program);
+        let program = self.program(&ast.program);
+        ast.program = program;
     }
 }
 
-impl MutProgramVisitor<()> for AstDesugaring {
-    fn visit_program(&mut self, node: &mut Program) {
-        for file in &mut node.files {
-            self.visit_file(file)
+impl AstDesugaring {
+    fn program(&mut self, program: &Program) -> Program {
+        let mut files = vec![];
+        for file in &program.files {
+            files.push(self.file(file));
         }
+
+        Program { files }
     }
 
-    fn visit_file(&mut self, node: &mut File) {
-        self.visit_source_elements(&mut node.source_elements);
+    fn file(&mut self, file: &File) -> File {
+        let source_elements = self.source_elements(&file.source_elements);
+        File { source_elements }
     }
 
-    fn visit_source_elements(&mut self, node: &mut SourceElements) {
-        self.class.enter_source_elements(node);
-        for element in &mut node.source_elements {
-            self.visit_source_element(element);
+    fn source_elements(&mut self, node: &SourceElements) -> SourceElements {
+        let mut source_elements = vec![];
+        for element in &node.source_elements {
+            source_elements.append(&mut self.source_element(element));
         }
-        self.class.exit_source_elements(node);
+        SourceElements { source_elements }
     }
 
-    fn visit_source_element(&mut self, node: &mut SourceElement) {
+    // It's possible for an element to be lowered to a list of elements
+    // for example a Class => Vec<Function>
+    fn source_element(&mut self, node: &SourceElement) -> Vec<SourceElement> {
         match node {
-            SourceElement::FunctionDeclaration(elem) => self.visit_function_declaration(elem),
-            SourceElement::ClassDeclaration(elem) => {
-                self.visit_class_declaration(elem);
-            }
-
-            SourceElement::Statement(elem) => self.visit_statement_element(elem),
+            SourceElement::FunctionDeclaration(elem) => self.function_declaration(elem),
+            SourceElement::Statement(elem) => self.statement_element(elem),
+            SourceElement::ClassDeclaration(elem) => self.class_declaration(elem),
         }
     }
-}
 
-impl MutStatementVisitor<()> for AstDesugaring {
-    fn visit_statement_element(&mut self, node: &mut StatementElement) {
-        match node {
-            StatementElement::Block(stmt) => self.visit_block_statement(stmt),
-            StatementElement::Empty(_) => {}
-            StatementElement::Return(_) => {}
-            StatementElement::Variable(stmt) => self.visit_variable_statement(stmt),
-            StatementElement::Expression(_) => {}
-            StatementElement::If(_) => {}
-            StatementElement::Iteration(_) => {}
-        };
+    fn function_declaration(&self, node: &FunctionDeclarationElement) -> Vec<SourceElement> {
+        vec![SourceElement::FunctionDeclaration(
+            FunctionDeclarationElement {
+                span: node.span(),
+                decorators: node.decorators.clone(),
+                ident: node.ident.clone(),
+                params: node.params.clone(),
+                returns: node.returns.clone(),
+                body: node.body.clone(),
+            },
+        )]
     }
 
-    fn visit_block_statement(&mut self, node: &mut BlockStatement) {
-        self.visit_statement_list(&mut node.statements);
+    fn statement_element(&self, node: &StatementElement) -> Vec<SourceElement> {
+        vec![SourceElement::Statement(node.clone())]
     }
 
-    fn visit_empty_statement(&mut self, node: &mut EmptyStatement) {
-        // No-op
-    }
-
-    fn visit_if_statement(&mut self, node: &mut IfStatement) {
-        // No-op
-    }
-
-    fn visit_iteration_statement(&mut self, node: &mut IterationStatement) {
-        // No-op
-    }
-
-    fn visit_while_iteration_element(&mut self, node: &mut WhileIterationElement) {
-        // No-op
-    }
-
-    fn visit_return_statement(&mut self, node: &mut ReturnStatement) {
-        // No-op
-    }
-
-    fn visit_variable_statement(&mut self, node: &mut VariableStatement) {
-        // match &mut node.target {
-        //     AssignableElement::Identifier(elem) => {
-        //         elem.value = format!("{}/{}", node.span.module, elem.value).into();
-        //     }
-        // }
-    }
-
-    fn visit_expression_statement(&mut self, node: &mut ExpressionStatement) {
-        // No-op
-    }
-
-    fn visit_statement_list(&mut self, node: &mut StatementList) {
-        // No-op
-    }
-
-    fn visit_function_declaration(&mut self, node: &mut FunctionDeclarationElement) {
-        // let ident = &mut node.ident;
-        // ident.value = format!("{}/{}", node.span.module, ident.value).into();
-    }
-
-    fn visit_function_body(&mut self, node: &mut FunctionBody) {}
-
-    fn visit_class_declaration(&mut self, node: &mut ClassDeclarationElement) {
+    fn class_declaration(&mut self, node: &ClassDeclarationElement) -> Vec<SourceElement> {
         self.class.enter_class_declaration(node);
-        self.visit_class_body(&mut node.body);
+        let elements = self.class_body(&node.body);
         self.class.exit_class_declaration();
+        elements
     }
 
-    fn visit_class_body(&mut self, node: &mut ClassBody) -> () {
-        for element in &mut node.class_elements {
-            match element {
-                ClassElement::Constructor(elem) => self.visit_class_constructor_declaration(elem),
-                ClassElement::Method(elem) => self.visit_class_method_declaration(elem),
-            }
+    fn class_body(&self, node: &ClassBody) -> Vec<SourceElement> {
+        let mut elements = vec![];
+        for element in &node.class_elements {
+            elements.push(match element {
+                ClassElement::Constructor(elem) => self.class_constructor_declaration(elem),
+                ClassElement::Method(elem) => self.class_method_declaration(elem),
+            });
         }
+        elements
     }
 
-    fn visit_class_constructor_declaration(&mut self, node: &mut ClassConstructorElement) -> () {}
+    fn class_constructor_declaration(&self, node: &ClassConstructorElement) -> SourceElement {
+        self.class.enter_class_constructor(node)
+    }
 
-    fn visit_class_method_declaration(&mut self, node: &mut ClassMethodElement) -> () {
-        self.class.enter_class_method_declaration(node);
+    fn class_method_declaration(&self, node: &ClassMethodElement) -> SourceElement {
+        self.class.enter_class_method(node)
     }
 }
 
@@ -136,16 +102,16 @@ mod test {
     use jswt_tokenizer::Tokenizer;
 
     #[test]
-    fn test_global_resolver_resolves_class_binding() {
+    fn test_class_declaration_desugars_into_functions() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
             "test.1",
             r"
-        const a = 55;
+            class Array {
+                constructor(len: i32, capacity: i32) {
 
-        function test() {
-        }
-
+                }
+            }
         ",
         );
         let mut ast = Parser::new(&mut tokenizer).parse();

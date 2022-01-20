@@ -1,0 +1,16 @@
+---
+source: jswt-semantics/src/lib.rs
+expression: errors
+
+---
+[
+    FunctionAlreadyDefined {
+        name: "test",
+        span: Span {
+            file: "test.1",
+            module: "module/test.1",
+            start: 128,
+            end: 132,
+        },
+    },
+]

@@ -368,86 +368,14 @@ impl StatementVisitor<()> for CodeGenerator {
         }
     }
 
-    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {}
+    fn visit_class_constructor_declaration(&mut self, _: &ClassConstructorElement) {
+        // This should have been desugared out
+        unreachable!()
+    }
 
-    fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
-        let function_name = node.ident.value.clone();
-
-        // Push the scope for the function body
-        self.symbols.push_scope();
-        let mut type_params = vec![];
-        // Push Symbols for Params. We need this in case the scope
-        // needs to declare synthetic local variables
-        for (index, arg) in node.params.parameters.iter().enumerate() {
-            // Add to symbol table
-            self.symbols.define(
-                arg.ident.value.clone(),
-                WastSymbol::Param(index, ValueType::I32),
-            );
-            // Todo, convert to ValueType
-            type_params.push((arg.ident.value.clone(), ValueType::I32))
-        }
-
-        // Resolve return Value
-        let ty = FunctionType {
-            params: type_params,
-            ret: node.returns.as_ref().map(|_| ValueType::I32),
-        };
-        // Add type definition to type index
-        let type_idx = self.push_type(ty);
-
-        // Push a new Instruction scope to hold emitted instructions
-        self.push_instruction_scope();
-
-        // Resolve annotations
-        for annotation in &node.annotations {
-            match annotation.name.value.as_ref() {
-                // The "wast" annotation allows the developer to emit
-                // WAST instructions directily into the instruction scope
-                // of the function.
-                "wast" => {}
-                "native" => {}
-                "inline" => {}
-                _ => {}
-            }
-        }
-
-        let mut instructions = vec![];
-        // Generate instructions for the current scope context
-        // If we haven't already inlined a function body
-        self.visit_block_statement(&node.body);
-        // Function generation is done. Pop the current instructions scope
-        // and commit it to the module
-        let scope = self.pop_instruction_scope().unwrap();
-
-        instructions.push(Instruction::Block(0, scope.instructions));
-        // Add synthetic return value
-        // This is to make dealing with branching returns easier to manage
-        // We're using a keyword here to prevent users from accidentally shadowing the value
-        if node.returns.is_some() {
-            self.symbols
-                .define("return", WastSymbol::Local(ValueType::I32));
-
-            // We're pushing the synthetic return to the end of the function
-            instructions.push(Instruction::SynthReturn);
-        }
-
-        // Push our locals to the instructions
-        for (name, sym) in self.symbols.symbols_in_current_scope() {
-            if let WastSymbol::Local(ty) = sym {
-                instructions.insert(0, Instruction::Local(name.clone(), *ty))
-            }
-        }
-
-        let function = Function {
-            name: function_name.clone(),
-            type_idx,
-            instructions,
-        };
-        self.push_function(function);
-
-        // Pop the current function scope from the symbol table
-        self.symbols.pop_scope();
+    fn visit_class_method_declaration(&mut self, _: &ClassMethodElement) {
+        // This should have been desugared out
+        unreachable!()
     }
 }
 

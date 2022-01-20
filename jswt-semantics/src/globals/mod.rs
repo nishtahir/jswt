@@ -153,11 +153,39 @@ mod test {
         tokenizer.enqueue_source_str(
             "test.1",
             r"
+        let global = 55;
+
+        class Array {
+            constructor(a: i32, b: f32) {}
+            method() {}
+        }
+
+        function test() {
+            let x = 99;
+        }
+ 
+        function doSomething(): Array { }
+        ",
+        );
+        let ast = Parser::new(&mut tokenizer).parse();
+        let mut symbols = SymbolTable::default();
+        let mut bindings = BindingsTable::default();
+        let mut resolver = GlobalResolver::new(&mut symbols, &mut bindings);
+        resolver.resolve(&ast);
+        assert_debug_snapshot!(resolver);
+    }
+
+    #[test]
+    fn test_global_resolver_resolves_function_bindings() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test.1",
+            r"
         class Array {
 
         }
 
-        function test() {
+        function test(a: i32, b: i32) {
             let x = 99;
         }
  

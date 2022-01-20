@@ -1,5 +1,5 @@
 use crate::bindings::BindingsTable;
-use crate::symbols::{BlockScope, FunctionScope, TypeBinding};
+use crate::symbols::TypeBinding;
 use crate::{error::SemanticError, symbols::SymbolTable};
 use std::borrow::Borrow;
 
@@ -73,8 +73,7 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
     }
 
     fn visit_block_statement(&mut self, node: &BlockStatement) {
-        self.symbols
-            .push_scope(node.span(), Some(BlockScope::default()));
+        self.symbols.push_scope(node.span());
         self.visit_statement_list(&node.statements);
         // TODO - before we pop the scope, determine if
         // there are any types we could not resolve
@@ -157,7 +156,7 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
         // Push a new local scope for the function body
         // Scope definition should have been defined during the global pass
-        self.symbols.push_scope::<FunctionScope>(node.span(), None);
+        self.symbols.push_scope(node.span());
 
         // Add function parameters as variables in scope
         node.params.parameters.iter().for_each(|param| {
@@ -274,34 +273,3 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
 
     fn visit_member_index(&mut self, _: &MemberIndexExpression) {}
 }
-
-// #[cfg(test)]
-// mod test {
-
-//     use super::*;
-//     use jswt_assert::assert_debug_snapshot;
-//     use jswt_parser::Parser;
-//     use jswt_tokenizer::Tokenizer;
-
-//     #[test]
-//     fn test_duplicate_variable_declaration_generates_error() {
-//         let mut tokenizer = Tokenizer::default();
-//         tokenizer.enqueue_source_str("test.1", "let x = 0; let x = 1;");
-//         let ast = Parser::new(&mut tokenizer).parse();
-//         let mut resolver = Resolver::default();
-//         resolver.resolve(&ast);
-
-//         assert_debug_snapshot!(resolver.errors);
-//     }
-
-//     #[test]
-//     fn test_variable_not_defined_generates_error() {
-//         let mut tokenizer = Tokenizer::default();
-//         tokenizer.enqueue_source_str("test.1", "function test() { return x; }");
-//         let ast = Parser::new(&mut tokenizer).parse();
-//         let mut resolver = Resolver::default();
-//         resolver.resolve(&ast);
-
-//         assert_debug_snapshot!(resolver.errors);
-//     }
-// }

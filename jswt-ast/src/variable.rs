@@ -1,6 +1,6 @@
 use jswt_common::{Span, Spannable};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum VariableModifier {
     Let(Span),
     Const(Span),

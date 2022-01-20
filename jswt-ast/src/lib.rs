@@ -30,54 +30,54 @@ impl Ast {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Program {
     pub files: Vec<File>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct File {
     pub source_elements: SourceElements,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct SourceElements {
     pub source_elements: Vec<SourceElement>,
 }
 
-#[derive(Debug, PartialEq, FromEnumVariant)]
+#[derive(Debug, PartialEq, FromEnumVariant, Clone)]
 pub enum SourceElement {
     FunctionDeclaration(FunctionDeclarationElement),
     ClassDeclaration(ClassDeclarationElement),
     Statement(StatementElement),
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ClassDeclarationElement {
     pub span: Span,
     pub ident: Identifier,
     pub body: ClassBody,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ClassBody {
     pub span: Span,
     pub class_elements: Vec<ClassElement>,
 }
 
-#[derive(Debug, PartialEq, Spannable, FromEnumVariant)]
+#[derive(Debug, PartialEq, Spannable, FromEnumVariant, Clone)]
 pub enum ClassElement {
     Constructor(ClassConstructorElement),
     Method(ClassMethodElement),
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ClassConstructorElement {
     pub span: Span,
     pub params: FormalParameterList,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ClassMethodElement {
     pub span: Span,
     pub annotations: Vec<Annotation>,
@@ -87,7 +87,7 @@ pub struct ClassMethodElement {
     pub body: BlockStatement,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct FunctionDeclarationElement {
     pub span: Span,
     pub decorators: FunctionDecorators,
@@ -97,13 +97,13 @@ pub struct FunctionDeclarationElement {
     pub body: FunctionBody,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FunctionDecorators {
     pub annotations: Vec<Annotation>,
     pub export: bool,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct Annotation {
     pub span: Span,
     pub name: Identifier,
@@ -121,18 +121,18 @@ pub struct FormalParameterArg {
     pub type_annotation: TypeAnnotation,
 }
 
-#[derive(Debug, PartialEq, Spannable)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct FunctionBody {
     pub span: Span,
     pub source_elements: SourceElements,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct StatementList {
     pub statements: Vec<StatementElement>,
 }
 
-#[derive(Debug, PartialEq, FromEnumVariant, Spannable)]
+#[derive(Debug, PartialEq, FromEnumVariant, Spannable, Clone)]
 pub enum AssignableElement {
     Identifier(Identifier),
 }
