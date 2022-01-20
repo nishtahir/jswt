@@ -78,6 +78,7 @@ expression_visitor![
     visit_assignable_element: AssignableElement,
     visit_member_dot: MemberDotExpression,
     visit_member_index: MemberIndexExpression,
+    visit_new: NewExpression,
     visit_identifier_expression: IdentifierExpression,
     visit_argument_expression: ArgumentsExpression,
     visit_unary_expression: UnaryExpression,

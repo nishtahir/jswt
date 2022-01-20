@@ -93,6 +93,7 @@ lazy_static! {
         r"^\bclass\b" => TokenType::Class,
         r"^\bconstructor\b" => TokenType::Constructor,
         r"^\bthis\b" => TokenType::This,
+        r"^\bnew\b" => TokenType::New,
 
         // Multi character alternatives
         r"^\+\+" => TokenType::PlusPlus,

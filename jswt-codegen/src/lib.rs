@@ -395,6 +395,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
             SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
             SingleExpression::This(exp) => self.visit_this_expression(exp),
             SingleExpression::MemberDot(exp) => self.visit_member_dot(exp),
+            SingleExpression::New(exp) => self.visit_new(exp),
         }
     }
 
@@ -423,10 +424,18 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
         }
     }
 
+    fn visit_member_dot(&mut self, _: &MemberDotExpression) -> Instruction {
+        todo!()
+    }
+
     fn visit_member_index(&mut self, node: &MemberIndexExpression) -> Instruction {
         let container = self.visit_single_expression(&node.target);
         let index = self.visit_single_expression(&node.index);
         Instruction::Call("arrayAt".into(), vec![container, index])
+    }
+
+    fn visit_new(&mut self, _: &NewExpression) -> Instruction {
+        todo!()
     }
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Instruction {
@@ -524,7 +533,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
         }
     }
 
-    fn visit_this_expression(&mut self, node: &ThisExpression) -> Instruction {
+    fn visit_this_expression(&mut self, _: &ThisExpression) -> Instruction {
         todo!()
     }
 
@@ -567,10 +576,6 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
                 Instruction::Complex(instructions)
             }
         }
-    }
-
-    fn visit_member_dot(&mut self, node: &MemberDotExpression) -> Instruction {
-        todo!()
     }
 }
 

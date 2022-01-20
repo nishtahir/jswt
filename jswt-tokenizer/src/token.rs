@@ -83,6 +83,7 @@ pub enum TokenType {
     Class,
     Constructor,
     This,
+    New,
 
     // Other
     WhiteSpace,
@@ -135,6 +136,7 @@ impl Display for TokenType {
             TokenType::Class => f.write_str("class"),
             TokenType::Constructor => f.write_str("constructor"),
             TokenType::This => f.write_str("this"),
+            TokenType::New => f.write_str("new"),
             TokenType::Identifier => f.write_str("identifier"),
             TokenType::String => f.write_str("string"),
             TokenType::Integer => f.write_str("integer"),

@@ -423,6 +423,7 @@ impl<'a> Parser<'a> {
     /// SingleExpression
     ///   : SingleExpression '=' SingleExpression
     ///   | SingleExpression '.' Identifier
+    ///   | 'new' SingleExpression
     ///   | SingleExpression '[' SingleExpression ']'
     ///   | SingleExpression '|' SingleExpression
     ///   | SingleExpression '&' SingleExpression
@@ -443,20 +444,20 @@ impl<'a> Parser<'a> {
         self.assignment_expression()
     }
 
-    //  AssignmentExpression
-    //    : MemberDotExpression '=' MemberDotExpression
-    //    ;
+    // AssignmentExpression
+    //   : MemberDotExpression '=' MemberDotExpression
+    //   ;
     binary_expression!(
         assignment_expression,
         next: member_dot_expression,
         [exp => Assignment, op => Assign, token => Equal]
     );
 
-    //  MemberDotExpression
-    //    : MemberIndexExpression '.' Identifier
-    //    ;
+    /// MemberDotExpression
+    ///   : NewExpression '.' Identifier
+    ///   ;
     fn member_dot_expression(&mut self) -> ParseResult<SingleExpression> {
-        let expression = self.member_index_expression()?;
+        let expression = self.new_expression()?;
         if self.lookahead_is(TokenType::Dot) {
             consume_unchecked!(self);
             let target = ident!(self)?;
@@ -467,6 +468,22 @@ impl<'a> Parser<'a> {
             }));
         }
         Ok(expression)
+    }
+
+    /// NewExpression
+    ///   : 'new' SingleExpression
+    ///   ;
+    fn new_expression(&mut self) -> ParseResult<SingleExpression> {
+        if self.lookahead_is(TokenType::New) {
+            let start = consume_unchecked!(self);
+            let expression = self.single_expression()?;
+            return Ok(SingleExpression::New(NewExpression {
+                span: start + expression.span(),
+                expression: Box::new(expression),
+            }));
+        }
+
+        self.member_index_expression()
     }
 
     /// MemberIndexExpression
@@ -814,6 +831,9 @@ impl<'a> Parser<'a> {
         })
     }
 
+    /// Annotation
+    ///   : '@' Identifier ('(' SingleExpression ')')?
+    ///   ;
     fn annotation(&mut self) -> ParseResult<Annotation> {
         let start = consume!(self, TokenType::At)?;
         let ident = ident!(self)?;

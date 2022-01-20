@@ -203,6 +203,7 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
             SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
             SingleExpression::This(exp) => self.visit_this_expression(exp),
             SingleExpression::MemberDot(exp) => self.visit_member_dot(exp),
+            SingleExpression::New(exp) => self.visit_new(exp),
         }
     }
 
@@ -278,4 +279,6 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
     }
 
     fn visit_member_dot(&mut self, _node: &MemberDotExpression) {}
+
+    fn visit_new(&mut self, node: &NewExpression) {}
 }

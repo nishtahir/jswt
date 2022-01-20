@@ -8,6 +8,7 @@ pub enum SingleExpression {
     Unary(UnaryExpression),
     Assignment(BinaryExpression),
     MemberIndex(MemberIndexExpression),
+    New(NewExpression),
     Arguments(ArgumentsExpression),
     Multiplicative(BinaryExpression),
     Bitwise(BinaryExpression),
@@ -18,6 +19,30 @@ pub enum SingleExpression {
     MemberDot(MemberDotExpression),
     This(ThisExpression),
     Literal(Literal),
+}
+
+impl SingleExpression {
+    pub fn as_arguments(&self) -> Option<&ArgumentsExpression> {
+        if let Self::Arguments(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    pub fn as_identifier_mut(&mut self) -> Option<&mut IdentifierExpression> {
+        if let Self::Identifier(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Spannable, Clone)]
+pub struct NewExpression {
+    pub span: Span,
+    pub expression: Box<SingleExpression>,
 }
 
 #[derive(Debug, PartialEq, Spannable, Clone)]
