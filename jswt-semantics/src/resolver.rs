@@ -178,13 +178,13 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
         self.visit_source_elements(&node.source_elements);
     }
 
-    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {}
+    fn visit_class_declaration(&mut self, _node: &ClassDeclarationElement) {}
 
-    fn visit_class_body(&mut self, node: &ClassBody) {}
+    fn visit_class_body(&mut self, _node: &ClassBody) {}
 
-    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {}
+    fn visit_class_constructor_declaration(&mut self, _node: &ClassConstructorElement) {}
 
-    fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {}
+    fn visit_class_method_declaration(&mut self, _node: &ClassMethodElement) {}
 }
 
 impl<'a> ExpressionVisitor<()> for Resolver<'a> {
@@ -271,13 +271,11 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
         self.visit_single_expression(&node.right);
     }
 
-    fn visit_this_expression(&mut self, node: &ThisExpression) {}
+    fn visit_this_expression(&mut self, _node: &ThisExpression) {}
 
     fn visit_literal(&mut self, _: &Literal) {
         // No-op
     }
 
-    fn visit_member_dot(&mut self, node: &MemberDotExpression) {
-        todo!()
-    }
+    fn visit_member_dot(&mut self, _node: &MemberDotExpression) {}
 }

@@ -68,6 +68,17 @@ Ast {
                                                         },
                                                     ],
                                                 },
+                                                body: BlockStatement {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 30,
+                                                        end: 33,
+                                                    },
+                                                    statements: StatementList {
+                                                        statements: [],
+                                                    },
+                                                },
                                             },
                                         ),
                                     ],

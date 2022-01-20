@@ -1,0 +1,128 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 0,
+                                    end: 36,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: FunctionBody {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 16,
+                                        end: 36,
+                                    },
+                                    source_elements: SourceElements {
+                                        source_elements: [
+                                            Statement(
+                                                Expression(
+                                                    ExpressionStatement {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 18,
+                                                            end: 34,
+                                                        },
+                                                        expression: Assignment(
+                                                            BinaryExpression {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 18,
+                                                                    end: 33,
+                                                                },
+                                                                left: MemberDot(
+                                                                    MemberDotExpression {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 18,
+                                                                            end: 28,
+                                                                        },
+                                                                        expression: This(
+                                                                            ThisExpression {
+                                                                                span: Span {
+                                                                                    file: "test.1",
+                                                                                    module: "module/test.1",
+                                                                                    start: 18,
+                                                                                    end: 22,
+                                                                                },
+                                                                            },
+                                                                        ),
+                                                                        target: Identifier {
+                                                                            span: Span {
+                                                                                file: "test.1",
+                                                                                module: "module/test.1",
+                                                                                start: 23,
+                                                                                end: 28,
+                                                                            },
+                                                                            value: "index",
+                                                                        },
+                                                                    },
+                                                                ),
+                                                                op: Assign(
+                                                                    Span {
+                                                                        file: "test.1",
+                                                                        module: "module/test.1",
+                                                                        start: 29,
+                                                                        end: 30,
+                                                                    },
+                                                                ),
+                                                                right: Literal(
+                                                                    Integer(
+                                                                        IntegerLiteral {
+                                                                            span: Span {
+                                                                                file: "test.1",
+                                                                                module: "module/test.1",
+                                                                                start: 31,
+                                                                                end: 33,
+                                                                            },
+                                                                            value: 10,
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                            },
+                                                        ),
+                                                    },
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}
