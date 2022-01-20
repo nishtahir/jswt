@@ -15,7 +15,16 @@ pub enum SingleExpression {
     Equality(BinaryExpression),
     Relational(BinaryExpression),
     Identifier(IdentifierExpression),
+    MemberDot(MemberDotExpression),
+    This(ThisExpression),
     Literal(Literal),
+}
+
+#[derive(Debug, PartialEq, Spannable, Clone)]
+pub struct MemberDotExpression {
+    pub span: Span,
+    pub expression: Box<SingleExpression>,
+    pub target: Identifier,
 }
 
 #[derive(Debug, PartialEq, Spannable, Clone)]
@@ -29,6 +38,11 @@ pub struct ArgumentsExpression {
 pub struct ArgumentsList {
     pub span: Span,
     pub arguments: Vec<SingleExpression>,
+}
+
+#[derive(Debug, PartialEq, Spannable, Clone)]
+pub struct ThisExpression {
+    pub span: Span,
 }
 
 #[derive(Debug, PartialEq, Spannable, Clone)]

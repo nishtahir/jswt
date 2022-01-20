@@ -1,10 +1,10 @@
 // @ts-nocheck
 class Array {
     constructor(length: i32, capacity: i32) {
+        this.length = length;
     }
 
     setData(data: i32) {
-        i32Store(ptr, data);
     }
 }
 

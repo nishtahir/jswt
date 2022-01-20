@@ -108,6 +108,7 @@ lazy_static! {
         r"^=" => TokenType::Equal,
 
         // Single character alternatives
+        r"^\." => TokenType::Dot,
         r"^\&" => TokenType::And,
         r"^\|" => TokenType::Or,
         r"^\~" => TokenType::Not,

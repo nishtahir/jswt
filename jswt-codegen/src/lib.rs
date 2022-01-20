@@ -380,25 +380,21 @@ impl StatementVisitor<()> for CodeGenerator {
 }
 
 impl ExpressionVisitor<Instruction> for CodeGenerator {
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> Instruction {
-        let rhs = self.visit_single_expression(node.right.borrow());
-
-        match node.left.borrow() {
-            SingleExpression::Identifier(ident_exp) => {
-                let name = &ident_exp.ident.value;
-                // figure out the scope of the variable
-                let isr = if self.symbols.lookup_global(name.clone()).is_some() {
-                    Instruction::GlobalSet
-                } else {
-                    Instruction::LocalSet
-                };
-                isr(name.clone(), Box::new(rhs))
-            }
-            SingleExpression::MemberIndex(exp) => {
-                let index_ptr = self.visit_member_index(exp);
-                Instruction::I32Store(Box::new(index_ptr), Box::new(rhs))
-            }
-            _ => unimplemented!(),
+    fn visit_single_expression(&mut self, node: &SingleExpression) -> Instruction {
+        match node {
+            SingleExpression::Additive(exp)
+            | SingleExpression::Multiplicative(exp)
+            | SingleExpression::Equality(exp)
+            | SingleExpression::Bitwise(exp)
+            | SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
+            SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
+            SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
+            SingleExpression::Literal(lit) => self.visit_literal(lit),
+            SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
+            SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
+            SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
+            SingleExpression::This(exp) => self.visit_this_expression(exp),
+            SingleExpression::MemberDot(exp) => self.visit_member_dot(exp),
         }
     }
 
@@ -427,20 +423,36 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
         }
     }
 
-    fn visit_single_expression(&mut self, node: &SingleExpression) -> Instruction {
-        match node {
-            SingleExpression::Additive(exp)
-            | SingleExpression::Multiplicative(exp)
-            | SingleExpression::Equality(exp)
-            | SingleExpression::Bitwise(exp)
-            | SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
-            SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
-            SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
-            SingleExpression::Literal(lit) => self.visit_literal(lit),
-            SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
-            SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
-            SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
+    fn visit_member_index(&mut self, node: &MemberIndexExpression) -> Instruction {
+        let container = self.visit_single_expression(&node.target);
+        let index = self.visit_single_expression(&node.index);
+        Instruction::Call("arrayAt".into(), vec![container, index])
+    }
+
+    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Instruction {
+        let target = &node.ident.value;
+        if self.symbols.lookup_current(target.clone()).is_some() {
+            Instruction::LocalGet(target.clone())
+        } else {
+            Instruction::GlobalGet(target.clone())
         }
+    }
+
+    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) -> Instruction {
+        if let SingleExpression::Identifier(ident_exp) = node.ident.borrow() {
+            // Push a new instruction scope for the function call
+            let instructions = node
+                .arguments
+                .arguments
+                .iter()
+                .map(|exp| self.visit_single_expression(exp))
+                .collect();
+
+            return Instruction::Call(ident_exp.ident.value.clone(), instructions);
+        }
+
+        // Other targets for function calls.
+        todo!()
     }
 
     fn visit_unary_expression(&mut self, node: &UnaryExpression) -> Instruction {
@@ -468,6 +480,28 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
         }
     }
 
+    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> Instruction {
+        let rhs = self.visit_single_expression(node.right.borrow());
+
+        match node.left.borrow() {
+            SingleExpression::Identifier(ident_exp) => {
+                let name = &ident_exp.ident.value;
+                // figure out the scope of the variable
+                let isr = if self.symbols.lookup_global(name.clone()).is_some() {
+                    Instruction::GlobalSet
+                } else {
+                    Instruction::LocalSet
+                };
+                isr(name.clone(), Box::new(rhs))
+            }
+            SingleExpression::MemberIndex(exp) => {
+                let index_ptr = self.visit_member_index(exp);
+                Instruction::I32Store(Box::new(index_ptr), Box::new(rhs))
+            }
+            _ => unimplemented!(),
+        }
+    }
+
     fn visit_binary_expression(&mut self, node: &BinaryExpression) -> Instruction {
         let lhs = self.visit_single_expression(&node.left);
         let rhs = self.visit_single_expression(&node.right);
@@ -490,29 +524,7 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
         }
     }
 
-    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Instruction {
-        let target = &node.ident.value;
-        if self.symbols.lookup_current(target.clone()).is_some() {
-            Instruction::LocalGet(target.clone())
-        } else {
-            Instruction::GlobalGet(target.clone())
-        }
-    }
-
-    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) -> Instruction {
-        if let SingleExpression::Identifier(ident_exp) = node.ident.borrow() {
-            // Push a new instruction scope for the function call
-            let instructions = node
-                .arguments
-                .arguments
-                .iter()
-                .map(|exp| self.visit_single_expression(exp))
-                .collect();
-
-            return Instruction::Call(ident_exp.ident.value.clone(), instructions);
-        }
-
-        // Other targets for function calls.
+    fn visit_this_expression(&mut self, node: &ThisExpression) -> Instruction {
         todo!()
     }
 
@@ -557,10 +569,8 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
         }
     }
 
-    fn visit_member_index(&mut self, node: &MemberIndexExpression) -> Instruction {
-        let container = self.visit_single_expression(&node.target);
-        let index = self.visit_single_expression(&node.index);
-        Instruction::Call("arrayAt".into(), vec![container, index])
+    fn visit_member_dot(&mut self, node: &MemberDotExpression) -> Instruction {
+        todo!()
     }
 }
 

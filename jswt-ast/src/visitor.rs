@@ -76,11 +76,13 @@ statement_visitor![
 expression_visitor![
     visit_single_expression: SingleExpression,
     visit_assignable_element: AssignableElement,
+    visit_member_dot: MemberDotExpression,
     visit_member_index: MemberIndexExpression,
     visit_identifier_expression: IdentifierExpression,
     visit_argument_expression: ArgumentsExpression,
     visit_unary_expression: UnaryExpression,
     visit_assignment_expression: BinaryExpression,
     visit_binary_expression: BinaryExpression,
+    visit_this_expression: ThisExpression,
     visit_literal: Literal
 ];

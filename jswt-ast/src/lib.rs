@@ -75,6 +75,7 @@ pub enum ClassElement {
 pub struct ClassConstructorElement {
     pub span: Span,
     pub params: FormalParameterList,
+    pub body: BlockStatement,
 }
 
 #[derive(Debug, PartialEq, Spannable, Clone)]

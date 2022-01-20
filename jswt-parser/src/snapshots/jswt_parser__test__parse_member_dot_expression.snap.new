@@ -1,0 +1,68 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 0,
+                                    end: 36,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: FunctionBody {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 16,
+                                        end: 36,
+                                    },
+                                    source_elements: SourceElements {
+                                        source_elements: [
+                                            Statement(
+                                                Empty(
+                                                    EmptyStatement {
+                                                        span: Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 33,
+                                                            end: 34,
+                                                        },
+                                                    },
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

@@ -1,0 +1,39 @@
+---
+source: jswt-parser/src/lib.rs
+expression: actual
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        Statement(
+                            Expression(
+                                ExpressionStatement {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 0,
+                                        end: 5,
+                                    },
+                                    expression: This(
+                                        ThisExpression {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 0,
+                                                end: 4,
+                                            },
+                                        },
+                                    ),
+                                },
+                            ),
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

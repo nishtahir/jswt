@@ -422,6 +422,7 @@ impl<'a> Parser<'a> {
 
     /// SingleExpression
     ///   : SingleExpression '=' SingleExpression
+    ///   | SingleExpression '.' Identifier
     ///   | SingleExpression '[' SingleExpression ']'
     ///   | SingleExpression '|' SingleExpression
     ///   | SingleExpression '&' SingleExpression
@@ -433,6 +434,7 @@ impl<'a> Parser<'a> {
     ///   | '-' SingleExpression
     ///   | '+' SingleExpression
     ///   | SingleExpression Arguments
+    ///   | 'this'
     ///   | Identifier
     ///   | ArrayLiteral
     ///   | Literal
@@ -442,13 +444,30 @@ impl<'a> Parser<'a> {
     }
 
     //  AssignmentExpression
-    //    : BitwiseOrExpression '=' BitwiseOrExpression
+    //    : MemberDotExpression '=' MemberDotExpression
     //    ;
     binary_expression!(
         assignment_expression,
-        next: member_index_expression,
+        next: member_dot_expression,
         [exp => Assignment, op => Assign, token => Equal]
     );
+
+    //  MemberDotExpression
+    //    : MemberIndexExpression '.' Identifier
+    //    ;
+    fn member_dot_expression(&mut self) -> ParseResult<SingleExpression> {
+        let expression = self.member_index_expression()?;
+        if self.lookahead_is(TokenType::Dot) {
+            consume_unchecked!(self);
+            let target = ident!(self)?;
+            return Ok(SingleExpression::MemberDot(MemberDotExpression {
+                span: expression.span() + target.span(),
+                expression: Box::new(expression),
+                target,
+            }));
+        }
+        Ok(expression)
+    }
 
     /// MemberIndexExpression
     ///   : BitwiseOrExpression '[' BitwiseOrExpression ']'
@@ -598,7 +617,7 @@ impl<'a> Parser<'a> {
     ///
     fn arguments_expression(&mut self) -> ParseResult<SingleExpression> {
         // Eventually descend to ident
-        let left = self.identifier_expression()?;
+        let left = self.this()?;
         if self.lookahead_is(TokenType::LeftParen) {
             let args = self.argument_list()?;
             return Ok(SingleExpression::Arguments(ArgumentsExpression {
@@ -632,6 +651,17 @@ impl<'a> Parser<'a> {
             span: start + end,
             arguments,
         })
+    }
+
+    /// ThisExpression
+    ///   :  'this'
+    ///   ;
+    fn this(&mut self) -> ParseResult<SingleExpression> {
+        if self.lookahead_is(TokenType::This) {
+            let span = consume!(self, TokenType::This)?;
+            return Ok(SingleExpression::This(ThisExpression { span }));
+        }
+        self.identifier_expression()
     }
 
     /// IdentifierExpression
@@ -1134,6 +1164,26 @@ mod test {
     fn parse_postfix_unary_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str("test.1", "let x: i32 = 99--; let y = i++;");
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn parse_this_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str("test.1", "this;");
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn parse_member_dot_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str("test.1", "function test() { this.index = 10; }");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

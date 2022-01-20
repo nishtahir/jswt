@@ -61,11 +61,12 @@ impl<'a> Parser<'a> {
         let params = self.formal_parameter_list()?;
         consume!(self, TokenType::RightParen)?;
 
-        let block = self.block()?;
+        let body = self.block()?;
 
         Ok(ClassConstructorElement {
-            span: start + block.span(),
+            span: start + body.span(),
             params,
+            body,
         })
     }
 
@@ -122,6 +123,25 @@ mod test {
     fn test_class_method_declaration() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str("test.1", "class A { hello(a: i32) { } }");
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn test_class_method_declaration_with_this_binding() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test.1",
+            r"
+            class A { 
+                constructor(a: i32) { 
+                    this.a = a;
+                }
+            }
+        ",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

@@ -188,14 +188,6 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
 }
 
 impl<'a> ExpressionVisitor<()> for Resolver<'a> {
-    fn visit_assignment_expression(&mut self, _node: &BinaryExpression) {
-        // We should assert the the element on the left is assignable
-    }
-
-    fn visit_assignable_element(&mut self, _: &AssignableElement) {
-        // No-op
-    }
-
     fn visit_single_expression(&mut self, node: &SingleExpression) {
         match node {
             SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
@@ -209,17 +201,16 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
             SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
             SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
             SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
+            SingleExpression::This(exp) => self.visit_this_expression(exp),
+            SingleExpression::MemberDot(exp) => self.visit_member_dot(exp),
         }
     }
 
-    fn visit_unary_expression(&mut self, _node: &UnaryExpression) {
-        // TODO - Type check values
+    fn visit_assignable_element(&mut self, _: &AssignableElement) {
+        // No-op
     }
 
-    fn visit_binary_expression(&mut self, node: &BinaryExpression) {
-        self.visit_single_expression(&node.left);
-        self.visit_single_expression(&node.right);
-    }
+    fn visit_member_index(&mut self, _: &MemberIndexExpression) {}
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
         let ident = &node.ident;
@@ -267,9 +258,26 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
         }
     }
 
+    fn visit_unary_expression(&mut self, _node: &UnaryExpression) {
+        // TODO - Type check values
+    }
+
+    fn visit_assignment_expression(&mut self, _node: &BinaryExpression) {
+        // We should assert the the element on the left is assignable
+    }
+
+    fn visit_binary_expression(&mut self, node: &BinaryExpression) {
+        self.visit_single_expression(&node.left);
+        self.visit_single_expression(&node.right);
+    }
+
+    fn visit_this_expression(&mut self, node: &ThisExpression) {}
+
     fn visit_literal(&mut self, _: &Literal) {
         // No-op
     }
 
-    fn visit_member_index(&mut self, _: &MemberIndexExpression) {}
+    fn visit_member_dot(&mut self, node: &MemberDotExpression) {
+        todo!()
+    }
 }
