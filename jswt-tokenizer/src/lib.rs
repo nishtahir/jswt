@@ -92,6 +92,7 @@ lazy_static! {
         r"^\bwhile\b" => TokenType::While,
         r"^\bclass\b" => TokenType::Class,
         r"^\bconstructor\b" => TokenType::Constructor,
+        r"^\bthis\b" => TokenType::This,
 
         // Multi character alternatives
         r"^\+\+" => TokenType::PlusPlus,

@@ -82,6 +82,7 @@ pub enum TokenType {
     While,
     Class,
     Constructor,
+    This,
 
     // Other
     WhiteSpace,
@@ -133,6 +134,7 @@ impl Display for TokenType {
             TokenType::While => f.write_str("while"),
             TokenType::Class => f.write_str("class"),
             TokenType::Constructor => f.write_str("constructor"),
+            TokenType::This => f.write_str("this"),
             TokenType::Identifier => f.write_str("identifier"),
             TokenType::String => f.write_str("string"),
             TokenType::Integer => f.write_str("integer"),

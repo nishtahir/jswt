@@ -21,17 +21,39 @@ impl ClassDesugaring {
 
     pub(crate) fn enter_class_method(&self, node: &ClassMethodElement) -> SourceElement {
         let name = &node.ident.value;
+
+        // Generate synthetic function name
+        // The function name is the ClassName#methodName
+        let ident = Identifier {
+            span: node.ident.span(),
+            value: format!("{}#{}", self.class_context.as_ref().unwrap(), name).into(),
+        };
+
+        // Generate function parameters
+        // The first parameter should be the pointer to the instance binding
+        let mut params = node.params.clone();
+        params.parameters.insert(
+            0,
+            FormalParameterArg {
+                ident: Identifier {
+                    span: node.span(),
+                    value: "this".into(),
+                },
+                type_annotation: TypeAnnotation {
+                    span: node.span(),
+                    ty: Type::Primitive(PrimitiveType::I32),
+                },
+            },
+        );
+
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
             decorators: FunctionDecorators {
                 annotations: vec![],
                 export: false,
             },
-            ident: Identifier {
-                span: node.ident.span(),
-                value: format!("{}#{}", self.class_context.as_ref().unwrap(), name).into(),
-            },
-            params: node.params.clone(),
+            ident,
+            params,
             returns: node.returns.clone(),
             body: FunctionBody {
                 span: node.body.span(),
