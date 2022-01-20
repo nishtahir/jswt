@@ -49,7 +49,9 @@ GlobalResolver {
         bindings: BindingsTable {
             table: {
                 "Array": Class(
-                    ClassBinding,
+                    ClassBinding {
+                        fields: [],
+                    },
                 ),
             },
         },

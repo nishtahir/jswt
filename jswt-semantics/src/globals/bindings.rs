@@ -1,4 +1,7 @@
-use crate::{bindings::*, SemanticError};
+use crate::{
+    bindings::{BindingsTable, ClassBinding, Field},
+    SemanticError,
+};
 
 use jswt_ast::*;
 
@@ -19,8 +22,19 @@ impl<'a> GlobalBindingsResolver<'a> {
     }
 
     pub fn enter_class_declaration(&mut self, _: &ClassDeclarationElement) {
-        let binding = ClassBinding {};
+        let binding = ClassBinding::default();
         self.stack.push(binding);
+    }
+
+    pub fn enter_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+        let binding = self.stack.last_mut().unwrap();
+        for (i, param) in node.params.parameters.iter().enumerate() {
+            binding.fields.push(Field {
+                name: param.ident.value.clone(),
+                index: i,
+                size: 4,
+            })
+        }
     }
 
     pub fn exit_class_declaration(&mut self, node: &ClassDeclarationElement) {

@@ -300,7 +300,7 @@ impl StatementVisitor<()> for CodeGenerator {
         // Generate instructions for the current scope context
         // If we haven't already inlined a function body
         if !has_inlined_body {
-            self.visit_function_body(&node.body);
+            self.visit_block_statement(&node.body);
             // Function generation is done. Pop the current instructions scope
             // and commit it to the module
             let scope = self.pop_instruction_scope().unwrap();
@@ -351,9 +351,9 @@ impl StatementVisitor<()> for CodeGenerator {
         self.symbols.pop_scope();
     }
 
-    fn visit_function_body(&mut self, node: &FunctionBody) {
-        self.visit_source_elements(&node.source_elements);
-    }
+    // fn visit_function_body(&mut self, node: &FunctionBody) {
+    //     self.visit_source_elements(&node.source_elements);
+    // }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
         self.visit_class_body(&node.body);
@@ -507,7 +507,18 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
                 let index_ptr = self.visit_member_index(exp);
                 Instruction::I32Store(Box::new(index_ptr), Box::new(rhs))
             }
-            _ => unimplemented!(),
+            SingleExpression::Unary(_) => todo!(),
+            SingleExpression::Assignment(_) => todo!(),
+            SingleExpression::New(_) => todo!(),
+            SingleExpression::Arguments(_) => todo!(),
+            SingleExpression::Multiplicative(_) => todo!(),
+            SingleExpression::Bitwise(_) => todo!(),
+            SingleExpression::Additive(_) => todo!(),
+            SingleExpression::Equality(_) => todo!(),
+            SingleExpression::Relational(_) => todo!(),
+            SingleExpression::MemberDot(_) => todo!(),
+            SingleExpression::This(_) => todo!(),
+            SingleExpression::Literal(_) => todo!(),
         }
     }
 

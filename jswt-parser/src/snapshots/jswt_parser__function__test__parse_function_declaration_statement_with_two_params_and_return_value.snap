@@ -91,15 +91,15 @@ Ast {
                                         ),
                                     },
                                 ),
-                                body: FunctionBody {
+                                body: BlockStatement {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
                                         start: 35,
                                         end: 38,
                                     },
-                                    source_elements: SourceElements {
-                                        source_elements: [],
+                                    statements: StatementList {
+                                        statements: [],
                                     },
                                 },
                             },

@@ -1,6 +1,7 @@
 mod class_desugaring;
 
 use class_desugaring::*;
+
 use jswt_ast::*;
 use jswt_common::Spannable;
 
@@ -51,7 +52,7 @@ impl AstDesugaring {
     }
 
     fn function_declaration(&mut self, node: &FunctionDeclarationElement) -> Vec<SourceElement> {
-        let body = self.function_body(&node.body);
+        let body = self.block_statement(&node.body);
         vec![SourceElement::FunctionDeclaration(
             FunctionDeclarationElement {
                 span: node.span(),
@@ -64,11 +65,15 @@ impl AstDesugaring {
         )]
     }
 
-    fn function_body(&mut self, node: &FunctionBody) -> FunctionBody {
-        FunctionBody {
+    fn block_statement(&mut self, node: &BlockStatement) -> BlockStatement {
+        BlockStatement {
             span: node.span(),
-            source_elements: self.source_elements(&node.source_elements),
+            statements: self.statement_list(&node.statements),
         }
+    }
+
+    fn statement_list(&mut self, node: &StatementList) -> StatementList {
+        node.clone()
     }
 
     fn statement_element(&self, node: &StatementElement) -> Vec<SourceElement> {

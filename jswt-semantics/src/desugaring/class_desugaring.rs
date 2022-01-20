@@ -4,8 +4,11 @@ use jswt_ast::*;
 use jswt_common::Spannable;
 use jswt_types::{PrimitiveType, Type};
 
+use crate::symbols::ClassBinding;
+
 #[derive(Debug, Default)]
 pub(crate) struct ClassDesugaring {
+    binding: ClassBinding,
     class_context: Option<Cow<'static, str>>,
 }
 
@@ -55,12 +58,7 @@ impl ClassDesugaring {
             ident,
             params,
             returns: node.returns.clone(),
-            body: FunctionBody {
-                span: node.body.span(),
-                source_elements: SourceElements {
-                    source_elements: vec![],
-                },
-            },
+            body: node.body.clone(),
         })
     }
 
@@ -76,16 +74,12 @@ impl ClassDesugaring {
                 value: format!("{}#constructor", self.class_context.as_ref().unwrap()).into(),
             },
             params: node.params.clone(),
+            // Class constructors always return a pointer
             returns: Some(TypeAnnotation {
                 span: node.span(),
                 ty: Type::Primitive(PrimitiveType::I32),
             }),
-            body: FunctionBody {
-                span: node.span(),
-                source_elements: SourceElements {
-                    source_elements: vec![],
-                },
-            },
+            body: node.body.clone(),
         })
     }
 }

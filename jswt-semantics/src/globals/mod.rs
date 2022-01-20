@@ -113,21 +113,24 @@ impl<'a> StatementVisitor<()> for GlobalResolver<'a> {
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
         self.symbols.enter_function_declaration(&node);
-        self.visit_function_body(&node.body);
+        self.visit_block_statement(&node.body);
         self.symbols.exit_function_declaration(&node);
-    }
-
-    fn visit_function_body(&mut self, _: &FunctionBody) {
-        // No-op
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
         self.bindings.enter_class_declaration(node);
+        for element in &node.body.class_elements {
+            match element {
+                ClassElement::Constructor(elem) => self.visit_class_constructor_declaration(elem),
+                ClassElement::Method(elem) => self.visit_class_method_declaration(elem),
+            }
+        }
         self.bindings.exit_class_declaration(node);
     }
 
-    fn visit_class_constructor_declaration(&mut self, _: &ClassConstructorElement) {
-        // No-op
+    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+        // self.bindings.enter_
+        self.bindings.enter_constructor_declaration(node);
     }
 
     fn visit_class_method_declaration(&mut self, _: &ClassMethodElement) {

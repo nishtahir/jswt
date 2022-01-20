@@ -34,29 +34,27 @@ Ast {
                                     parameters: [],
                                 },
                                 returns: None,
-                                body: FunctionBody {
+                                body: BlockStatement {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
                                         start: 16,
                                         end: 22,
                                     },
-                                    source_elements: SourceElements {
-                                        source_elements: [
-                                            Statement(
-                                                Block(
-                                                    BlockStatement {
-                                                        span: Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
-                                                            start: 18,
-                                                            end: 20,
-                                                        },
-                                                        statements: StatementList {
-                                                            statements: [],
-                                                        },
+                                    statements: StatementList {
+                                        statements: [
+                                            Block(
+                                                BlockStatement {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 18,
+                                                        end: 20,
                                                     },
-                                                ),
+                                                    statements: StatementList {
+                                                        statements: [],
+                                                    },
+                                                },
                                             ),
                                         ],
                                     },

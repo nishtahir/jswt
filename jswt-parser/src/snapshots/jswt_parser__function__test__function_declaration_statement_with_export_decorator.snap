@@ -34,15 +34,15 @@ Ast {
                                     parameters: [],
                                 },
                                 returns: None,
-                                body: FunctionBody {
+                                body: BlockStatement {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
                                         start: 23,
                                         end: 26,
                                     },
-                                    source_elements: SourceElements {
-                                        source_elements: [],
+                                    statements: StatementList {
+                                        statements: [],
                                     },
                                 },
                             },

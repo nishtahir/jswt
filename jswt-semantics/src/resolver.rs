@@ -170,12 +170,8 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
             );
         });
 
-        self.visit_function_body(&node.body);
+        self.visit_block_statement(&node.body);
         self.symbols.pop_scope();
-    }
-
-    fn visit_function_body(&mut self, node: &FunctionBody) {
-        self.visit_source_elements(&node.source_elements);
     }
 
     fn visit_class_declaration(&mut self, _node: &ClassDeclarationElement) {}

@@ -36,10 +36,15 @@ pub struct FunctionBinding {
     pub returns: Type,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Default, PartialEq)]
 pub struct ClassBinding {
-    // fields
-// methods
+    fields: Vec<Field>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Field {
+    pub index: usize,
+    pub size: usize,
 }
 
 #[derive(Debug, Default)]

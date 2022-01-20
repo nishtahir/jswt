@@ -95,7 +95,7 @@ pub struct FunctionDeclarationElement {
     pub ident: Identifier,
     pub params: FormalParameterList,
     pub returns: Option<TypeAnnotation>,
-    pub body: FunctionBody,
+    pub body: BlockStatement,
 }
 
 #[derive(Debug, PartialEq, Clone)]

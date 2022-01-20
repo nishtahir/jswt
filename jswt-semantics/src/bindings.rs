@@ -6,9 +6,17 @@ pub enum Binding {
     Class(ClassBinding),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
+pub struct ClassBinding {
+    pub fields: Vec<Field>,
+}
 
-pub struct ClassBinding {}
+#[derive(Debug, PartialEq)]
+pub struct Field {
+    pub name: Cow<'static, str>,
+    pub index: usize,
+    pub size: usize,
+}
 
 // A binding represents an arbitrary type definition
 // these are expected to lib between semantic phases

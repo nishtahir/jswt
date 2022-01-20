@@ -31,7 +31,7 @@ impl<'a> Parser<'a> {
             returns = Some(self.type_annotation()?);
         }
 
-        let body = self.function_body()?;
+        let body = self.block()?;
 
         let decorators = FunctionDecorators {
             annotations,
@@ -44,20 +44,6 @@ impl<'a> Parser<'a> {
             params,
             returns,
             body,
-        })
-    }
-
-    ///  FunctionBody
-    ///    :  '{' SourceElements? '}'
-    ///    ;
-    pub(crate) fn function_body(&mut self) -> ParseResult<FunctionBody> {
-        let start = consume!(self, TokenType::LeftBrace)?;
-        // Read until we find a closing brace
-        let source_elements = self.source_elements(Some(TokenType::RightBrace));
-        let end = consume!(self, TokenType::RightBrace)?;
-        Ok(FunctionBody {
-            span: start + end,
-            source_elements,
         })
     }
 }

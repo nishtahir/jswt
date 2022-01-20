@@ -67,7 +67,6 @@ statement_visitor![
     visit_expression_statement: ExpressionStatement,
     visit_statement_list: StatementList,
     visit_function_declaration: FunctionDeclarationElement,
-    visit_function_body: FunctionBody,
     visit_class_declaration: ClassDeclarationElement,
     visit_class_body: ClassBody,
     visit_class_constructor_declaration: ClassConstructorElement,

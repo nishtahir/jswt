@@ -42,7 +42,20 @@ GlobalResolver {
         bindings: BindingsTable {
             table: {
                 "Array": Class(
-                    ClassBinding,
+                    ClassBinding {
+                        fields: [
+                            Field {
+                                name: "a",
+                                index: 0,
+                                size: 4,
+                            },
+                            Field {
+                                name: "b",
+                                index: 1,
+                                size: 4,
+                            },
+                        ],
+                    },
                 ),
             },
         },
