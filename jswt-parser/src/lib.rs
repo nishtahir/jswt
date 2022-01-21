@@ -453,17 +453,17 @@ impl<'a> Parser<'a> {
     );
 
     /// MemberDotExpression
-    ///   : NewExpression '.' Identifier
+    ///   : NewExpression '.' Identifier ArgumentsList?
     ///   ;
     fn member_dot_expression(&mut self) -> ParseResult<SingleExpression> {
         let expression = self.new_expression()?;
         if self.lookahead_is(TokenType::Dot) {
             consume_unchecked!(self);
-            let target = ident!(self)?;
+            let target = self.new_expression()?;
             return Ok(SingleExpression::MemberDot(MemberDotExpression {
                 span: expression.span() + target.span(),
                 expression: Box::new(expression),
-                target,
+                target: Box::new(target),
             }));
         }
         Ok(expression)
@@ -1203,6 +1203,16 @@ mod test {
     fn parse_member_dot_expression() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str("test.1", "function test() { this.index = 10; }");
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn parse_member_dot_arguments_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str("test.1", "function test() { this.set(10); }");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

@@ -1,18 +1,6 @@
 use jswt_ast::*;
 use jswt_common::Span;
-// use jswt_parser::Parser;
-// use jswt_tokenizer::Tokenizer;
 use jswt_types::{PrimitiveType, Type};
-
-// pub(crate) fn generate_expression(source: String) -> SourceElements {
-//     let mut tokenizer = Tokenizer::default();
-//     // Looks like leaking the source was predictably a terrible idea
-//     // As a result of this we end up leaking sources we generate
-//     tokenizer.enqueue_source_str("synthetic", Box::leak(source.into_boxed_str()));
-//     let mut parser = Parser::new(&mut tokenizer);
-//     let mut ast = parser.parse();
-//     ast.program.files.pop().unwrap().source_elements
-// }
 
 pub(crate) fn variable(name: &'static str, expression: SingleExpression) -> StatementElement {
     StatementElement::Variable(VariableStatement {
@@ -27,7 +15,7 @@ pub(crate) fn variable(name: &'static str, expression: SingleExpression) -> Stat
     })
 }
 
-pub(crate) fn function_1(name: &'static str, arg: i32) -> SingleExpression {
+pub(crate) fn function(name: &'static str, arguments: Vec<SingleExpression>) -> SingleExpression {
     SingleExpression::Arguments(ArgumentsExpression {
         span: Span::synthetic(),
         ident: Box::new(SingleExpression::Identifier(IdentifierExpression {
@@ -36,12 +24,7 @@ pub(crate) fn function_1(name: &'static str, arg: i32) -> SingleExpression {
         })),
         arguments: ArgumentsList {
             span: Span::synthetic(),
-            arguments: vec![SingleExpression::Literal(Literal::Integer(
-                IntegerLiteral {
-                    span: Span::synthetic(),
-                    value: arg,
-                },
-            ))],
+            arguments,
         },
     })
 }
@@ -57,5 +40,50 @@ pub(crate) fn identifier(name: &'static str) -> SingleExpression {
     SingleExpression::Identifier(IdentifierExpression {
         span: Span::synthetic(),
         ident: Identifier::new(name, Span::synthetic()),
+    })
+}
+
+pub(crate) fn malloc(size: i32) -> SingleExpression {
+    function(
+        "malloc",
+        vec![SingleExpression::Literal(Literal::Integer(
+            IntegerLiteral {
+                span: Span::synthetic(),
+                value: size,
+            },
+        ))],
+    )
+}
+
+pub(crate) fn i32_store(target: &'static str, offset: i32, value: Identifier) -> SingleExpression {
+    function(
+        "i32Store",
+        vec![
+            SingleExpression::Additive(BinaryExpression {
+                span: Span::synthetic(),
+                left: Box::new(SingleExpression::Identifier(IdentifierExpression {
+                    span: Span::synthetic(),
+                    ident: Identifier::new(target, Span::synthetic()),
+                })),
+                op: BinaryOperator::And(Span::synthetic()),
+                right: Box::new(SingleExpression::Literal(Literal::Integer(
+                    IntegerLiteral {
+                        span: Span::synthetic(),
+                        value: offset,
+                    },
+                ))),
+            }),
+            SingleExpression::Identifier(IdentifierExpression {
+                span: Span::synthetic(),
+                ident: value,
+            }),
+        ],
+    )
+}
+
+pub fn to_statement(expression: SingleExpression) -> StatementElement {
+    StatementElement::Expression(ExpressionStatement {
+        span: Span::synthetic(),
+        expression,
     })
 }

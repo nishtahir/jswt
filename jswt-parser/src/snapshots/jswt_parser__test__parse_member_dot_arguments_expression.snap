@@ -15,7 +15,7 @@ Ast {
                                     file: "test.1",
                                     module: "module/test.1",
                                     start: 0,
-                                    end: 36,
+                                    end: 33,
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -39,7 +39,7 @@ Ast {
                                         file: "test.1",
                                         module: "module/test.1",
                                         start: 16,
-                                        end: 36,
+                                        end: 33,
                                     },
                                     statements: StatementList {
                                         statements: [
@@ -49,75 +49,77 @@ Ast {
                                                         file: "test.1",
                                                         module: "module/test.1",
                                                         start: 18,
-                                                        end: 34,
+                                                        end: 31,
                                                     },
-                                                    expression: Assignment(
-                                                        BinaryExpression {
+                                                    expression: MemberDot(
+                                                        MemberDotExpression {
                                                             span: Span {
                                                                 file: "test.1",
                                                                 module: "module/test.1",
                                                                 start: 18,
-                                                                end: 33,
+                                                                end: 30,
                                                             },
-                                                            left: MemberDot(
-                                                                MemberDotExpression {
+                                                            expression: This(
+                                                                ThisExpression {
                                                                     span: Span {
                                                                         file: "test.1",
                                                                         module: "module/test.1",
                                                                         start: 18,
-                                                                        end: 28,
+                                                                        end: 22,
                                                                     },
-                                                                    expression: This(
-                                                                        ThisExpression {
-                                                                            span: Span {
-                                                                                file: "test.1",
-                                                                                module: "module/test.1",
-                                                                                start: 18,
-                                                                                end: 22,
-                                                                            },
-                                                                        },
-                                                                    ),
-                                                                    target: Identifier(
+                                                                },
+                                                            ),
+                                                            target: Arguments(
+                                                                ArgumentsExpression {
+                                                                    span: Span {
+                                                                        file: "test.1",
+                                                                        module: "module/test.1",
+                                                                        start: 23,
+                                                                        end: 30,
+                                                                    },
+                                                                    ident: Identifier(
                                                                         IdentifierExpression {
                                                                             span: Span {
                                                                                 file: "test.1",
                                                                                 module: "module/test.1",
                                                                                 start: 23,
-                                                                                end: 28,
+                                                                                end: 26,
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
                                                                                     file: "test.1",
                                                                                     module: "module/test.1",
                                                                                     start: 23,
-                                                                                    end: 28,
+                                                                                    end: 26,
                                                                                 },
-                                                                                value: "index",
+                                                                                value: "set",
                                                                             },
                                                                         },
                                                                     ),
-                                                                },
-                                                            ),
-                                                            op: Assign(
-                                                                Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
-                                                                    start: 29,
-                                                                    end: 30,
-                                                                },
-                                                            ),
-                                                            right: Literal(
-                                                                Integer(
-                                                                    IntegerLiteral {
+                                                                    arguments: ArgumentsList {
                                                                         span: Span {
                                                                             file: "test.1",
                                                                             module: "module/test.1",
-                                                                            start: 31,
-                                                                            end: 33,
+                                                                            start: 26,
+                                                                            end: 30,
                                                                         },
-                                                                        value: 10,
+                                                                        arguments: [
+                                                                            Literal(
+                                                                                Integer(
+                                                                                    IntegerLiteral {
+                                                                                        span: Span {
+                                                                                            file: "test.1",
+                                                                                            module: "module/test.1",
+                                                                                            start: 27,
+                                                                                            end: 29,
+                                                                                        },
+                                                                                        value: 10,
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        ],
                                                                     },
-                                                                ),
+                                                                },
                                                             ),
                                                         },
                                                     ),

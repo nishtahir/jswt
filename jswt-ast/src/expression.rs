@@ -49,7 +49,7 @@ pub struct NewExpression {
 pub struct MemberDotExpression {
     pub span: Span,
     pub expression: Box<SingleExpression>,
-    pub target: Identifier,
+    pub target: Box<SingleExpression>,
 }
 
 #[derive(Debug, PartialEq, Spannable, Clone)]

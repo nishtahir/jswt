@@ -1,5 +1,5 @@
 use jswt_ast::*;
-use jswt_common::{BindingsTable, ClassBinding, Span, Spannable};
+use jswt_common::{BindingsTable, ClassBinding, Spannable};
 use jswt_types::{PrimitiveType, Type};
 
 use crate::gen::*;
@@ -75,10 +75,20 @@ impl<'a> ClassLowering<'a> {
 
         let mut body = node.body.clone();
 
-        let this = variable("this", function_1("malloc", class_size as i32));
+        let this = variable("this", malloc(class_size as i32));
         let returns = returns(identifier("this"));
 
         body.statements.statements.push(this);
+
+        binding.fields.iter().for_each(|f| {
+            let offset = f.index * 4;
+            body.statements.statements.push(to_statement(i32_store(
+                "this",
+                offset as i32,
+                node.params.parameters[f.index].ident.clone(),
+            )));
+        });
+
         body.statements.statements.push(returns);
         // let elements = generate_expression(format!("const ptr:i32 = malloc({});", class_size));
         // println!("{:#?}", this);

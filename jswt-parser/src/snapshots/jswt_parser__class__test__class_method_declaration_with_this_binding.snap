@@ -111,15 +111,25 @@ Ast {
                                                                                             },
                                                                                         },
                                                                                     ),
-                                                                                    target: Identifier {
-                                                                                        span: Span {
-                                                                                            file: "test.1",
-                                                                                            module: "module/test.1",
-                                                                                            start: 88,
-                                                                                            end: 89,
+                                                                                    target: Identifier(
+                                                                                        IdentifierExpression {
+                                                                                            span: Span {
+                                                                                                file: "test.1",
+                                                                                                module: "module/test.1",
+                                                                                                start: 88,
+                                                                                                end: 89,
+                                                                                            },
+                                                                                            ident: Identifier {
+                                                                                                span: Span {
+                                                                                                    file: "test.1",
+                                                                                                    module: "module/test.1",
+                                                                                                    start: 88,
+                                                                                                    end: 89,
+                                                                                                },
+                                                                                                value: "a",
+                                                                                            },
                                                                                         },
-                                                                                        value: "a",
-                                                                                    },
+                                                                                    ),
                                                                                 },
                                                                             ),
                                                                             op: Assign(

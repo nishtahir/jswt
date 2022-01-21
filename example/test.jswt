@@ -1,6 +1,10 @@
 // @ts-nocheck
 class Array {
-    constructor(length: i32, capacity: i32) {}
+    constructor(length: i32, capacity: i32) {
+        this.length = length;
+        this.capacity = capacity;
+        this.data = malloc(capacity * elementSize);
+    }
 
     set(index: i32, data: i32) {
 
@@ -13,8 +17,15 @@ class Array {
 
 export function main(): i32 {
     let arr = new Array(1, 2);
+    arr.set(0, 1);
     return 0;
 }
+
+/**
+ * 
+ * let arr = Array#constructor(1,2);
+ * Array#set(arr, 0, 1)l
+ */
 
 function malloc(a: i32): i32 {
     return 0;

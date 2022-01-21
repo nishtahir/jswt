@@ -194,6 +194,242 @@ Ast {
                                                     ),
                                                 },
                                             ),
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "",
+                                                        module: "",
+                                                        start: 0,
+                                                        end: 0,
+                                                    },
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
+                                                            span: Span {
+                                                                file: "",
+                                                                module: "",
+                                                                start: 0,
+                                                                end: 0,
+                                                            },
+                                                            ident: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "",
+                                                                        module: "",
+                                                                        start: 0,
+                                                                        end: 0,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "",
+                                                                            module: "",
+                                                                            start: 0,
+                                                                            end: 0,
+                                                                        },
+                                                                        value: "i32Store",
+                                                                    },
+                                                                },
+                                                            ),
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
+                                                                    file: "",
+                                                                    module: "",
+                                                                    start: 0,
+                                                                    end: 0,
+                                                                },
+                                                                arguments: [
+                                                                    Additive(
+                                                                        BinaryExpression {
+                                                                            span: Span {
+                                                                                file: "",
+                                                                                module: "",
+                                                                                start: 0,
+                                                                                end: 0,
+                                                                            },
+                                                                            left: Identifier(
+                                                                                IdentifierExpression {
+                                                                                    span: Span {
+                                                                                        file: "",
+                                                                                        module: "",
+                                                                                        start: 0,
+                                                                                        end: 0,
+                                                                                    },
+                                                                                    ident: Identifier {
+                                                                                        span: Span {
+                                                                                            file: "",
+                                                                                            module: "",
+                                                                                            start: 0,
+                                                                                            end: 0,
+                                                                                        },
+                                                                                        value: "this",
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                            op: And(
+                                                                                Span {
+                                                                                    file: "",
+                                                                                    module: "",
+                                                                                    start: 0,
+                                                                                    end: 0,
+                                                                                },
+                                                                            ),
+                                                                            right: Literal(
+                                                                                Integer(
+                                                                                    IntegerLiteral {
+                                                                                        span: Span {
+                                                                                            file: "",
+                                                                                            module: "",
+                                                                                            start: 0,
+                                                                                            end: 0,
+                                                                                        },
+                                                                                        value: 0,
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "",
+                                                                                module: "",
+                                                                                start: 0,
+                                                                                end: 0,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test.1",
+                                                                                    module: "module/test.1",
+                                                                                    start: 47,
+                                                                                    end: 50,
+                                                                                },
+                                                                                value: "len",
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                ],
+                                                            },
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "",
+                                                        module: "",
+                                                        start: 0,
+                                                        end: 0,
+                                                    },
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
+                                                            span: Span {
+                                                                file: "",
+                                                                module: "",
+                                                                start: 0,
+                                                                end: 0,
+                                                            },
+                                                            ident: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "",
+                                                                        module: "",
+                                                                        start: 0,
+                                                                        end: 0,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "",
+                                                                            module: "",
+                                                                            start: 0,
+                                                                            end: 0,
+                                                                        },
+                                                                        value: "i32Store",
+                                                                    },
+                                                                },
+                                                            ),
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
+                                                                    file: "",
+                                                                    module: "",
+                                                                    start: 0,
+                                                                    end: 0,
+                                                                },
+                                                                arguments: [
+                                                                    Additive(
+                                                                        BinaryExpression {
+                                                                            span: Span {
+                                                                                file: "",
+                                                                                module: "",
+                                                                                start: 0,
+                                                                                end: 0,
+                                                                            },
+                                                                            left: Identifier(
+                                                                                IdentifierExpression {
+                                                                                    span: Span {
+                                                                                        file: "",
+                                                                                        module: "",
+                                                                                        start: 0,
+                                                                                        end: 0,
+                                                                                    },
+                                                                                    ident: Identifier {
+                                                                                        span: Span {
+                                                                                            file: "",
+                                                                                            module: "",
+                                                                                            start: 0,
+                                                                                            end: 0,
+                                                                                        },
+                                                                                        value: "this",
+                                                                                    },
+                                                                                },
+                                                                            ),
+                                                                            op: And(
+                                                                                Span {
+                                                                                    file: "",
+                                                                                    module: "",
+                                                                                    start: 0,
+                                                                                    end: 0,
+                                                                                },
+                                                                            ),
+                                                                            right: Literal(
+                                                                                Integer(
+                                                                                    IntegerLiteral {
+                                                                                        span: Span {
+                                                                                            file: "",
+                                                                                            module: "",
+                                                                                            start: 0,
+                                                                                            end: 0,
+                                                                                        },
+                                                                                        value: 4,
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "",
+                                                                                module: "",
+                                                                                start: 0,
+                                                                                end: 0,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test.1",
+                                                                                    module: "module/test.1",
+                                                                                    start: 57,
+                                                                                    end: 65,
+                                                                                },
+                                                                                value: "capacity",
+                                                                            },
+                                                                        },
+                                                                    ),
+                                                                ],
+                                                            },
+                                                        },
+                                                    ),
+                                                },
+                                            ),
                                             Return(
                                                 ReturnStatement {
                                                     span: Span {

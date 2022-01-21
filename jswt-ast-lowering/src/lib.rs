@@ -159,6 +159,7 @@ impl<'a> AstLowering<'a> {
     fn class_method_declaration(&self, node: &ClassMethodElement) -> SourceElement {
         self.class.enter_class_method(node)
     }
+
 }
 
 #[cfg(test)]
