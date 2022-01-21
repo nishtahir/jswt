@@ -10,7 +10,7 @@ pub struct Identifier {
 }
 
 impl Identifier {
-    pub fn new(value: &'static str, span: Span) -> Self {
+    pub fn new<T: Into<Cow<'static, str>>>(value: T, span: Span) -> Self {
         Self {
             span,
             value: value.into(),

@@ -37,8 +37,7 @@ pub struct FunctionBinding {
 }
 
 #[derive(Debug, Default, PartialEq)]
-pub struct ClassBinding {
-}
+pub struct ClassBinding {}
 
 #[derive(Debug, Default)]
 pub struct SymbolTable {
@@ -59,9 +58,7 @@ impl SymbolTable {
     // and defines a new key in our global symbol map
     pub fn push_scope(&mut self, key: Span) {
         self.scopes.push(key.clone());
-        self.table
-            .entry(key.clone())
-            .or_insert_with(|| Scope::default());
+        self.table.entry(key).or_insert_with(Scope::default);
     }
 
     // Poping a scope removes it from the scope stack
@@ -80,7 +77,7 @@ impl SymbolTable {
 
     /// Define a symbol within the current active scope
     pub fn define<T: Into<Cow<'static, str>>, U: Into<Symbol>>(&mut self, name: T, symbol: U) {
-        debug_assert!(self.scopes.len() > 0);
+        debug_assert!(!self.scopes.is_empty());
         let key = self.scopes.last().unwrap();
         let scope = self.table.get_mut(key).unwrap();
         scope.symbols.insert(name.into(), symbol.into());
@@ -107,7 +104,7 @@ impl SymbolTable {
     /// Look for the symbol in the local scope on
     /// the top of the stack
     pub fn lookup_current(&mut self, name: &str) -> Option<&Symbol> {
-        debug_assert!(self.scopes.len() > 0);
+        debug_assert!(!self.scopes.is_empty());
         let key = &self.scopes.last().unwrap();
         self.table
             .get_mut(key)
@@ -117,7 +114,7 @@ impl SymbolTable {
     /// Look for the symbol in the global scope on
     /// the top of the stack
     pub fn lookup_global(&mut self, name: &Cow<'static, str>) -> Option<&Symbol> {
-        debug_assert!(self.scopes.len() > 0);
+        debug_assert!(!self.scopes.is_empty());
         let key = &self.scopes.first().unwrap();
         self.table
             .get_mut(key)

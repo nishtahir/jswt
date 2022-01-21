@@ -300,8 +300,7 @@ impl Tokenizer {
         let sources_root = self.sources_root.as_ref().unwrap_or(default_source_root);
         let module_prefix = self
             .module_prefix
-            .as_ref()
-            .map(String::as_str)
+            .as_deref()
             .unwrap_or(default_module_prefix);
 
         let relative_diff = pathdiff::diff_paths(path, sources_root);

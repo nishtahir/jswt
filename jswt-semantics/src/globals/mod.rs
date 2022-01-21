@@ -1,10 +1,11 @@
 mod bindings;
 mod symbols;
 
-use self::{bindings::*, symbols::*};
-use crate::{bindings::BindingsTable, symbols::SymbolTable, SemanticError};
-
 use jswt_ast::*;
+use jswt_common::BindingsTable;
+
+use self::{bindings::*, symbols::*};
+use crate::{symbols::SymbolTable, SemanticError};
 
 #[derive(Debug)]
 pub struct GlobalResolver<'a> {
@@ -112,9 +113,9 @@ impl<'a> StatementVisitor<()> for GlobalResolver<'a> {
     }
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
-        self.symbols.enter_function_declaration(&node);
+        self.symbols.enter_function_declaration(node);
         self.visit_block_statement(&node.body);
-        self.symbols.exit_function_declaration(&node);
+        self.symbols.exit_function_declaration(node);
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {

@@ -79,7 +79,7 @@ macro_rules! ident {
             token.offset,
             token.offset + token.lexme.len(),
         );
-        let ident = Identifier::new(token.lexme.into(), span);
+        let ident = Identifier::new(token.lexme, span);
         // Advance lookahead
         $self.lookahead = $self.tokenizer.next_token();
         Ok::<Identifier, ParseError>(ident)
@@ -368,8 +368,7 @@ impl<'a> Parser<'a> {
             target,
             expression,
             type_annotation,
-        }
-        .into())
+        })
     }
 
     /// VariableModifier

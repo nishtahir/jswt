@@ -1,9 +1,7 @@
-use crate::{
-    bindings::{BindingsTable, ClassBinding, Field},
-    SemanticError,
-};
+use crate::SemanticError;
 
 use jswt_ast::*;
+use jswt_common::{BindingsTable, ClassBinding, Field};
 
 #[derive(Debug)]
 pub struct GlobalBindingsResolver<'a> {

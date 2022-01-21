@@ -5,6 +5,7 @@ extern crate clap;
 
 use clap::Arg;
 use jswt_ast::Ast;
+use jswt_ast_lowering::AstLowering;
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -204,11 +205,16 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     }
 
     // Semantic analytis pass
-    let semantic_errors = SemanticAnalyzer::analyze(&mut ast);
+    let mut analyzer = SemanticAnalyzer::default();
+    let semantic_errors = analyzer.analyze(&mut ast);
+
     for error in semantic_errors {
         has_errors = true;
         print_semantic_error(&error, &source_map.borrow())
     }
+
+    let mut lowering = AstLowering::new(&analyzer.bindings_table);
+    lowering.desugar(&mut ast);
 
     if has_errors {
         exit(1);

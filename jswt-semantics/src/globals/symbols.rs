@@ -49,7 +49,7 @@ impl<'a> GlobalSymbolsResolver<'a> {
             .map(|param| param.type_annotation.ty.clone())
             .collect();
 
-        if self.symbols.lookup_current(&name).is_some() {
+        if self.symbols.lookup_current(name).is_some() {
             let error = SemanticError::FunctionAlreadyDefined {
                 name: name.clone(),
                 span: ident.span.to_owned(),

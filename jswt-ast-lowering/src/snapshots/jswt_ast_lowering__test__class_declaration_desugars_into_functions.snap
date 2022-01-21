@@ -1,5 +1,5 @@
 ---
-source: jswt-semantics/src/lib.rs
+source: jswt-ast-lowering/src/lib.rs
 expression: ast
 
 ---
@@ -14,8 +14,8 @@ Ast {
                                 span: Span {
                                     file: "test.1",
                                     module: "module/test.1",
-                                    start: 43,
-                                    end: 100,
+                                    start: 35,
+                                    end: 88,
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -25,8 +25,8 @@ Ast {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 43,
-                                        end: 100,
+                                        start: 35,
+                                        end: 88,
                                     },
                                     value: "Array#constructor",
                                 },
@@ -37,8 +37,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 55,
-                                                    end: 58,
+                                                    start: 47,
+                                                    end: 50,
                                                 },
                                                 value: "len",
                                             },
@@ -46,8 +46,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 60,
-                                                    end: 63,
+                                                    start: 52,
+                                                    end: 55,
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -59,8 +59,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 65,
-                                                    end: 73,
+                                                    start: 57,
+                                                    end: 65,
                                                 },
                                                 value: "capacity",
                                             },
@@ -68,8 +68,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 75,
-                                                    end: 78,
+                                                    start: 67,
+                                                    end: 70,
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -83,8 +83,8 @@ Ast {
                                         span: Span {
                                             file: "test.1",
                                             module: "module/test.1",
-                                            start: 43,
-                                            end: 100,
+                                            start: 35,
+                                            end: 88,
                                         },
                                         ty: Primitive(
                                             I32,
@@ -95,8 +95,8 @@ Ast {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 80,
-                                        end: 100,
+                                        start: 72,
+                                        end: 88,
                                     },
                                     statements: StatementList {
                                         statements: [],

@@ -1,10 +1,9 @@
-use crate::bindings::BindingsTable;
 use crate::symbols::TypeBinding;
 use crate::{error::SemanticError, symbols::SymbolTable};
 use std::borrow::Borrow;
 
 use jswt_ast::*;
-use jswt_common::Spannable;
+use jswt_common::{BindingsTable, Spannable};
 use jswt_types::Type;
 
 pub struct Resolver<'a> {
@@ -125,7 +124,7 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
             AssignableElement::Identifier(ident) => &ident.value,
         };
         self.visit_single_expression(&node.expression);
-        if self.symbols.lookup_current(&name).is_some() {
+        if self.symbols.lookup_current(name).is_some() {
             let error = SemanticError::VariableAlreadyDefined {
                 name: name.clone(),
                 span: node.target.span(),

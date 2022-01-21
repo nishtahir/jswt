@@ -1,25 +1,20 @@
 [package]
-name = "jswt"
+name = "jswt-ast-lowering"
 version = "0.1.0"
 authors = ["Nish Tahir <nishtahir@outlook.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+doctest = false
 
 [dependencies]
-clap = "2.33.3"
 jswt-ast = {path = "../jswt-ast"}
-jswt-ast-lowering = {path = "../jswt-ast-lowering"}
-jswt-codegen = {path = "../jswt-codegen"}
 jswt-common = {path = "../jswt-common"}
-jswt-errors = {path = "../jswt-errors"}
+jswt-derive = {path = "../jswt-derive"}
 jswt-parser = {path = "../jswt-parser"}
 jswt-semantics = {path = "../jswt-semantics"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
-jswt-wast = {path = "../jswt-wast"}
-wasmer = "2.0.0"
+jswt-types = {path = "../jswt-types"}
 
 [dev-dependencies]
-assert_cmd = "2.0.2"
 jswt-assert = {path = "../jswt-assert"}
-regex = "1.5.4"

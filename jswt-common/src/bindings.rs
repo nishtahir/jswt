@@ -1,9 +1,15 @@
-use jswt_derive::FromEnumVariant;
 use std::{borrow::Cow, collections::BTreeMap};
 
-#[derive(Debug, FromEnumVariant)]
+#[derive(Debug)]
 pub enum Binding {
     Class(ClassBinding),
+}
+
+/// TODO generate enum variants for this
+impl From<ClassBinding> for Binding {
+    fn from(v: ClassBinding) -> Self {
+        Self::Class(v)
+    }
 }
 
 impl Binding {
@@ -20,6 +26,13 @@ impl Binding {
 pub struct ClassBinding {
     pub name: Cow<'static, str>,
     pub fields: Vec<Field>,
+}
+
+impl ClassBinding {
+    /// Total size of fields on the class
+    pub fn size(&self) -> usize {
+        self.fields.iter().fold(0, |acc, f| acc + f.size)
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -39,7 +52,7 @@ pub struct BindingsTable {
 
 impl BindingsTable {
     pub fn lookup(&self, key: &str) -> Option<&Binding> {
-        self.table.get(key.into())
+        self.table.get(key)
     }
 
     pub fn define<T: Into<Cow<'static, str>>, U: Into<Binding>>(&mut self, key: T, binding: U) {

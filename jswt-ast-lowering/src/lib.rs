@@ -1,21 +1,19 @@
-mod class_desugaring;
-
-use class_desugaring::*;
+mod class;
 
 use jswt_ast::*;
-use jswt_common::Spannable;
+use jswt_common::{BindingsTable, Spannable};
 
-use crate::bindings::BindingsTable;
+use class::ClassLowering;
 
 #[derive(Debug)]
-pub struct AstDesugaring<'a> {
-    class: ClassDesugaring<'a>,
+pub struct AstLowering<'a> {
+    class: ClassLowering<'a>,
 }
 
-impl<'a> AstDesugaring<'a> {
+impl<'a> AstLowering<'a> {
     pub fn new(bindings: &'a BindingsTable) -> Self {
         Self {
-            class: ClassDesugaring::new(&bindings),
+            class: ClassLowering::new(bindings),
         }
     }
 
@@ -25,7 +23,7 @@ impl<'a> AstDesugaring<'a> {
     }
 }
 
-impl<'a> AstDesugaring<'a> {
+impl<'a> AstLowering<'a> {
     fn program(&mut self, program: &Program) -> Program {
         let mut files = vec![];
         for file in &program.files {
@@ -151,5 +149,64 @@ impl<'a> AstDesugaring<'a> {
 
     fn class_method_declaration(&self, node: &ClassMethodElement) -> SourceElement {
         self.class.enter_class_method(node)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use jswt_assert::assert_debug_snapshot;
+    use jswt_parser::Parser;
+    use jswt_semantics::SemanticAnalyzer;
+    use jswt_tokenizer::Tokenizer;
+
+    #[test]
+    fn test_class_declaration_desugars_into_functions() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test.1",
+            r"
+        class Array {
+            constructor(len: i32, capacity: i32) {
+
+            }
+        }
+    ",
+        );
+        let mut ast = Parser::new(&mut tokenizer).parse();
+        let mut analyzer = SemanticAnalyzer::default();
+        analyzer.analyze(&mut ast);
+
+        let mut lowering = AstLowering::new(&analyzer.bindings_table);
+        lowering.desugar(&mut ast);
+
+        assert_debug_snapshot!(ast);
+    }
+
+    #[test]
+    fn test_class_declaration_desugars_new_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test.1",
+            r"
+        class Array {
+            constructor(len: i32, capacity: i32) {
+
+            }
+        }
+
+        function main() {
+            let x = new Array(1, 2);
+        }
+    ",
+        );
+        let mut ast = Parser::new(&mut tokenizer).parse();
+        let mut analyzer = SemanticAnalyzer::default();
+        analyzer.analyze(&mut ast);
+
+        let mut lowering = AstLowering::new(&analyzer.bindings_table);
+        lowering.desugar(&mut ast);
+
+        assert_debug_snapshot!(ast);
     }
 }

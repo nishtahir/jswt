@@ -1,41 +1,36 @@
-mod bindings;
-mod desugaring;
 mod error;
 mod globals;
 mod resolver;
 mod symbols;
 
-use jswt_ast::Ast;
-
-use bindings::BindingsTable;
-use desugaring::AstDesugaring;
 pub use error::*;
 use globals::*;
 use resolver::*;
 use symbols::SymbolTable;
 
-pub struct SemanticAnalyzer;
+use jswt_ast::Ast;
+use jswt_common::BindingsTable;
+
+#[derive(Debug, Default)]
+pub struct SemanticAnalyzer {
+    pub symbol_table: SymbolTable,
+    pub bindings_table: BindingsTable,
+}
 
 impl SemanticAnalyzer {
-    pub fn analyze(ast: &mut Ast) -> Vec<SemanticError> {
-        let mut symbol_table = SymbolTable::default();
-        let mut bindings_table = BindingsTable::default();
+    pub fn analyze(&mut self, ast: &mut Ast) -> Vec<SemanticError> {
         let mut errors = vec![];
 
         // This is the first semantic pass
-        let mut global_resolver = GlobalResolver::new(&mut symbol_table, &mut bindings_table);
+        let mut global_resolver =
+            GlobalResolver::new(&mut self.symbol_table, &mut self.bindings_table);
         global_resolver.resolve(ast);
         errors.append(&mut global_resolver.errors());
 
         // // This is the second semantic pass
-        let mut resolver = Resolver::new(&mut symbol_table, &mut bindings_table);
+        let mut resolver = Resolver::new(&mut self.symbol_table, &mut self.bindings_table);
         resolver.resolve(ast);
         errors.append(&mut resolver.errors);
-
-        // Desugaring pass to lower high level data types into
-        // lower complexity structures before code generation
-        let mut desugaring = AstDesugaring::new(&bindings_table);
-        desugaring.desugar(ast);
 
         errors
     }
@@ -69,7 +64,7 @@ mod test {
         ",
         );
         let mut ast = Parser::new(&mut tokenizer).parse();
-        let errors = SemanticAnalyzer::analyze(&mut ast);
+        let errors = SemanticAnalyzer::default().analyze(&mut ast);
         assert_debug_snapshot!(errors);
     }
 
@@ -86,7 +81,7 @@ mod test {
         ",
         );
         let mut ast = Parser::new(&mut tokenizer).parse();
-        let errors = SemanticAnalyzer::analyze(&mut ast);
+        let errors = SemanticAnalyzer::default().analyze(&mut ast);
         assert_debug_snapshot!(errors);
     }
 
@@ -96,55 +91,7 @@ mod test {
         tokenizer.enqueue_source_str("test.1", "function test() { return x; }");
 
         let mut ast = Parser::new(&mut tokenizer).parse();
-        let errors = SemanticAnalyzer::analyze(&mut ast);
+        let errors = SemanticAnalyzer::default().analyze(&mut ast);
         assert_debug_snapshot!(errors);
-    }
-
-    #[cfg(test)]
-    mod test {
-        use super::*;
-        use jswt_assert::assert_debug_snapshot;
-        use jswt_parser::Parser;
-        use jswt_tokenizer::Tokenizer;
-
-        #[test]
-        fn test_class_declaration_desugars_into_functions() {
-            let mut tokenizer = Tokenizer::default();
-            tokenizer.enqueue_source_str(
-                "test.1",
-                r"
-            class Array {
-                constructor(len: i32, capacity: i32) {
-
-                }
-            }
-        ",
-            );
-            let mut ast = Parser::new(&mut tokenizer).parse();
-            SemanticAnalyzer::analyze(&mut ast);
-            assert_debug_snapshot!(ast);
-        }
-
-        #[test]
-        fn test_class_declaration_desugars_new_expression() {
-            let mut tokenizer = Tokenizer::default();
-            tokenizer.enqueue_source_str(
-                "test.1",
-                r"
-            class Array {
-                constructor(len: i32, capacity: i32) {
-
-                }
-            }
-
-            function main() {
-                let x = new Array(1, 2);
-            }
-        ",
-            );
-            let mut ast = Parser::new(&mut tokenizer).parse();
-            SemanticAnalyzer::analyze(&mut ast);
-            assert_debug_snapshot!(ast);
-        }
     }
 }

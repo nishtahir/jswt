@@ -1,5 +1,5 @@
 ---
-source: jswt-semantics/src/lib.rs
+source: jswt-ast-lowering/src/lib.rs
 expression: ast
 
 ---
@@ -14,8 +14,8 @@ Ast {
                                 span: Span {
                                     file: "test.1",
                                     module: "module/test.1",
-                                    start: 43,
-                                    end: 100,
+                                    start: 35,
+                                    end: 88,
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -25,8 +25,8 @@ Ast {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 43,
-                                        end: 100,
+                                        start: 35,
+                                        end: 88,
                                     },
                                     value: "Array#constructor",
                                 },
@@ -37,8 +37,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 55,
-                                                    end: 58,
+                                                    start: 47,
+                                                    end: 50,
                                                 },
                                                 value: "len",
                                             },
@@ -46,8 +46,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 60,
-                                                    end: 63,
+                                                    start: 52,
+                                                    end: 55,
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -59,8 +59,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 65,
-                                                    end: 73,
+                                                    start: 57,
+                                                    end: 65,
                                                 },
                                                 value: "capacity",
                                             },
@@ -68,8 +68,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 75,
-                                                    end: 78,
+                                                    start: 67,
+                                                    end: 70,
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -83,8 +83,8 @@ Ast {
                                         span: Span {
                                             file: "test.1",
                                             module: "module/test.1",
-                                            start: 43,
-                                            end: 100,
+                                            start: 35,
+                                            end: 88,
                                         },
                                         ty: Primitive(
                                             I32,
@@ -95,8 +95,8 @@ Ast {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 80,
-                                        end: 100,
+                                        start: 72,
+                                        end: 88,
                                     },
                                     statements: StatementList {
                                         statements: [],
@@ -109,8 +109,8 @@ Ast {
                                 span: Span {
                                     file: "test.1",
                                     module: "module/test.1",
-                                    start: 128,
-                                    end: 200,
+                                    start: 108,
+                                    end: 172,
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -120,8 +120,8 @@ Ast {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 137,
-                                        end: 141,
+                                        start: 117,
+                                        end: 121,
                                     },
                                     value: "main",
                                 },
@@ -133,8 +133,8 @@ Ast {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 144,
-                                        end: 200,
+                                        start: 124,
+                                        end: 172,
                                     },
                                     statements: StatementList {
                                         statements: [
@@ -143,15 +143,15 @@ Ast {
                                                     span: Span {
                                                         file: "test.1",
                                                         module: "module/test.1",
-                                                        start: 162,
-                                                        end: 186,
+                                                        start: 138,
+                                                        end: 162,
                                                     },
                                                     modifier: Let(
                                                         Span {
                                                             file: "test.1",
                                                             module: "module/test.1",
-                                                            start: 162,
-                                                            end: 165,
+                                                            start: 138,
+                                                            end: 141,
                                                         },
                                                     ),
                                                     target: Identifier(
@@ -159,8 +159,8 @@ Ast {
                                                             span: Span {
                                                                 file: "test.1",
                                                                 module: "module/test.1",
-                                                                start: 166,
-                                                                end: 167,
+                                                                start: 142,
+                                                                end: 143,
                                                             },
                                                             value: "x",
                                                         },
@@ -170,31 +170,31 @@ Ast {
                                                             span: Span {
                                                                 file: "test.1",
                                                                 module: "module/test.1",
-                                                                start: 170,
-                                                                end: 185,
+                                                                start: 146,
+                                                                end: 161,
                                                             },
                                                             expression: Arguments(
                                                                 ArgumentsExpression {
                                                                     span: Span {
                                                                         file: "test.1",
                                                                         module: "module/test.1",
-                                                                        start: 174,
-                                                                        end: 185,
+                                                                        start: 150,
+                                                                        end: 161,
                                                                     },
                                                                     ident: Identifier(
                                                                         IdentifierExpression {
                                                                             span: Span {
                                                                                 file: "test.1",
                                                                                 module: "module/test.1",
-                                                                                start: 174,
-                                                                                end: 179,
+                                                                                start: 150,
+                                                                                end: 155,
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
                                                                                     file: "test.1",
                                                                                     module: "module/test.1",
-                                                                                    start: 174,
-                                                                                    end: 179,
+                                                                                    start: 150,
+                                                                                    end: 155,
                                                                                 },
                                                                                 value: "Array",
                                                                             },
@@ -204,8 +204,8 @@ Ast {
                                                                         span: Span {
                                                                             file: "test.1",
                                                                             module: "module/test.1",
-                                                                            start: 179,
-                                                                            end: 185,
+                                                                            start: 155,
+                                                                            end: 161,
                                                                         },
                                                                         arguments: [
                                                                             Literal(
@@ -214,8 +214,8 @@ Ast {
                                                                                         span: Span {
                                                                                             file: "test.1",
                                                                                             module: "module/test.1",
-                                                                                            start: 180,
-                                                                                            end: 181,
+                                                                                            start: 156,
+                                                                                            end: 157,
                                                                                         },
                                                                                         value: 1,
                                                                                     },
@@ -227,8 +227,8 @@ Ast {
                                                                                         span: Span {
                                                                                             file: "test.1",
                                                                                             module: "module/test.1",
-                                                                                            start: 183,
-                                                                                            end: 184,
+                                                                                            start: 159,
+                                                                                            end: 160,
                                                                                         },
                                                                                         value: 2,
                                                                                     },

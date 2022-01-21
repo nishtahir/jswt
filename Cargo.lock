@@ -483,6 +483,7 @@ dependencies = [
  "clap",
  "jswt-assert",
  "jswt-ast",
+ "jswt-ast-lowering",
  "jswt-codegen",
  "jswt-common",
  "jswt-errors",
@@ -508,6 +509,20 @@ version = "0.1.0"
 dependencies = [
  "jswt-common",
  "jswt-derive",
+ "jswt-types",
+]
+
+[[package]]
+name = "jswt-ast-lowering"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
+ "jswt-derive",
+ "jswt-parser",
+ "jswt-semantics",
+ "jswt-tokenizer",
  "jswt-types",
 ]
 

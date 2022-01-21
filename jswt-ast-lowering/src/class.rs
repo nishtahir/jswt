@@ -1,16 +1,14 @@
-use crate::bindings::{BindingsTable, ClassBinding};
-
 use jswt_ast::*;
-use jswt_common::Spannable;
+use jswt_common::{BindingsTable, ClassBinding, Span, Spannable};
 use jswt_types::{PrimitiveType, Type};
 
 #[derive(Debug)]
-pub(crate) struct ClassDesugaring<'a> {
+pub(crate) struct ClassLowering<'a> {
     bindings: &'a BindingsTable,
     binding_context: Option<&'a ClassBinding>,
 }
 
-impl<'a> ClassDesugaring<'a> {
+impl<'a> ClassLowering<'a> {
     pub(crate) fn new(bindings: &'a BindingsTable) -> Self {
         Self {
             bindings,
@@ -69,7 +67,10 @@ impl<'a> ClassDesugaring<'a> {
     }
 
     pub(crate) fn enter_class_constructor(&self, node: &ClassConstructorElement) -> SourceElement {
-        let class_name = self.binding_context.as_ref().unwrap().name.clone();
+        let binding = self.binding_context.unwrap();
+        let class_name = binding.name.clone();
+        let class_size = binding.size();
+
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
             decorators: FunctionDecorators {
@@ -89,4 +90,20 @@ impl<'a> ClassDesugaring<'a> {
             body: node.body.clone(),
         })
     }
+}
+
+fn function_call(span: Span, name: &'static str, arg: i32) -> SingleExpression {
+    SingleExpression::Arguments(ArgumentsExpression {
+        span: span.clone(),
+        ident: Box::new(SingleExpression::Identifier(IdentifierExpression {
+            span: span.clone(),
+            ident: Identifier::new(name, span.clone()),
+        })),
+        arguments: ArgumentsList {
+            span: span.clone(),
+            arguments: vec![SingleExpression::Literal(Literal::Integer(
+                IntegerLiteral { span, value: arg },
+            ))],
+        },
+    })
 }
