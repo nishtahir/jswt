@@ -1,4 +1,5 @@
 mod class;
+mod gen;
 
 use jswt_ast::*;
 use jswt_common::{BindingsTable, Spannable};
@@ -79,7 +80,15 @@ impl<'a> AstLowering<'a> {
     }
 
     fn statement_list(&mut self, node: &StatementList) -> StatementList {
-        node.clone()
+        let mut statements = vec![];
+        for statement in &node.statements {
+            for element in self.statement_element(statement) {
+                if let SourceElement::Statement(element) = element {
+                    statements.push(element);
+                };
+            }
+        }
+        StatementList { statements }
     }
 
     fn statement_element(&self, node: &StatementElement) -> Vec<SourceElement> {

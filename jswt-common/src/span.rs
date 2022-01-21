@@ -27,6 +27,15 @@ impl Span {
             end,
         }
     }
+
+    pub fn synthetic() -> Self {
+        Span {
+            file: "".into(),
+            module: "".into(),
+            start: 0,
+            end: 0,
+        }
+    }
 }
 
 /// Generic descriptor of a resource that has a [Span]

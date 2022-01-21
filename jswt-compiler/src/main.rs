@@ -216,6 +216,8 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     let mut lowering = AstLowering::new(&analyzer.bindings_table);
     lowering.desugar(&mut ast);
 
+    fs::write(output.with_extension("lowered.ast"), format!("{:#?}", ast)).unwrap();
+
     if has_errors {
         exit(1);
     }

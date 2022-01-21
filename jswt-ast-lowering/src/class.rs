@@ -2,6 +2,8 @@ use jswt_ast::*;
 use jswt_common::{BindingsTable, ClassBinding, Span, Spannable};
 use jswt_types::{PrimitiveType, Type};
 
+use crate::gen::*;
+
 #[derive(Debug)]
 pub(crate) struct ClassLowering<'a> {
     bindings: &'a BindingsTable,
@@ -71,6 +73,16 @@ impl<'a> ClassLowering<'a> {
         let class_name = binding.name.clone();
         let class_size = binding.size();
 
+        let mut body = node.body.clone();
+
+        let this = variable("this", function_1("malloc", class_size as i32));
+        let returns = returns(identifier("this"));
+
+        body.statements.statements.push(this);
+        body.statements.statements.push(returns);
+        // let elements = generate_expression(format!("const ptr:i32 = malloc({});", class_size));
+        // println!("{:#?}", this);
+
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
             decorators: FunctionDecorators {
@@ -87,23 +99,7 @@ impl<'a> ClassLowering<'a> {
                 span: node.span(),
                 ty: Type::Primitive(PrimitiveType::I32),
             }),
-            body: node.body.clone(),
+            body,
         })
     }
-}
-
-fn function_call(span: Span, name: &'static str, arg: i32) -> SingleExpression {
-    SingleExpression::Arguments(ArgumentsExpression {
-        span: span.clone(),
-        ident: Box::new(SingleExpression::Identifier(IdentifierExpression {
-            span: span.clone(),
-            ident: Identifier::new(name, span.clone()),
-        })),
-        arguments: ArgumentsList {
-            span: span.clone(),
-            arguments: vec![SingleExpression::Literal(Literal::Integer(
-                IntegerLiteral { span, value: arg },
-            ))],
-        },
-    })
 }

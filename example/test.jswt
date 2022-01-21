@@ -15,3 +15,7 @@ export function main(): i32 {
     let arr = new Array(1, 2);
     return 0;
 }
+
+function malloc(a: i32): i32 {
+    return 0;
+}
