@@ -1,20 +1,17 @@
 mod error;
 mod globals;
 mod resolver;
-mod symbols;
 
 pub use error::*;
 use globals::*;
 use resolver::*;
-use symbols::SymbolTable;
 
 use jswt_ast::Ast;
-use jswt_common::BindingsTable;
+use jswt_symbols::SymbolTable;
 
 #[derive(Debug, Default)]
 pub struct SemanticAnalyzer {
     pub symbol_table: SymbolTable,
-    pub bindings_table: BindingsTable,
 }
 
 impl SemanticAnalyzer {
@@ -22,13 +19,12 @@ impl SemanticAnalyzer {
         let mut errors = vec![];
 
         // This is the first semantic pass
-        let mut global_resolver =
-            GlobalResolver::new(&mut self.symbol_table, &mut self.bindings_table);
+        let mut global_resolver = GlobalResolver::new(&mut self.symbol_table);
         global_resolver.resolve(ast);
         errors.append(&mut global_resolver.errors());
 
         // // This is the second semantic pass
-        let mut resolver = Resolver::new(&mut self.symbol_table, &mut self.bindings_table);
+        let mut resolver = Resolver::new(&mut self.symbol_table);
         resolver.resolve(ast);
         errors.append(&mut resolver.errors);
 

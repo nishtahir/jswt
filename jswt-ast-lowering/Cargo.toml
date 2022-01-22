@@ -12,6 +12,7 @@ jswt-ast = {path = "../jswt-ast"}
 jswt-common = {path = "../jswt-common"}
 jswt-derive = {path = "../jswt-derive"}
 jswt-semantics = {path = "../jswt-semantics"}
+jswt-symbols = {path = "../jswt-symbols"}
 jswt-types = {path = "../jswt-types"}
 
 [dev-dependencies]

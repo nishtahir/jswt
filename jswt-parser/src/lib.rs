@@ -456,17 +456,18 @@ impl<'a> Parser<'a> {
     ///   : NewExpression '.' Identifier ArgumentsList?
     ///   ;
     fn member_dot_expression(&mut self) -> ParseResult<SingleExpression> {
-        let expression = self.new_expression()?;
+        // target.expression
+        let target = self.new_expression()?;
         if self.lookahead_is(TokenType::Dot) {
             consume_unchecked!(self);
-            let target = self.new_expression()?;
+            let expression = self.new_expression()?;
             return Ok(SingleExpression::MemberDot(MemberDotExpression {
-                span: expression.span() + target.span(),
+                span: target.span() + expression.span(),
                 expression: Box::new(expression),
                 target: Box::new(target),
             }));
         }
-        Ok(expression)
+        Ok(target)
     }
 
     /// NewExpression

@@ -1,23 +1,23 @@
-use crate::symbols::TypeBinding;
-use crate::{error::SemanticError, symbols::SymbolTable};
-use std::borrow::Borrow;
+use crate::error::SemanticError;
+use std::borrow::{Borrow, Cow};
 
 use jswt_ast::*;
-use jswt_common::{BindingsTable, Spannable};
+use jswt_common::Spannable;
+use jswt_symbols::{SymbolTable, TypeBinding};
 use jswt_types::Type;
 
 pub struct Resolver<'a> {
     pub symbols: &'a mut SymbolTable,
-    pub bindings: &'a mut BindingsTable,
     pub errors: Vec<SemanticError>,
+    binding_context: Option<Cow<'static, str>>,
 }
 
 impl<'a> Resolver<'a> {
-    pub fn new(symbols: &'a mut SymbolTable, bindings: &'a mut BindingsTable) -> Self {
+    pub fn new(symbols: &'a mut SymbolTable) -> Self {
         Self {
             symbols,
-            bindings,
             errors: vec![],
+            binding_context: None,
         }
     }
 
@@ -173,13 +173,56 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
         self.symbols.pop_scope();
     }
 
-    fn visit_class_declaration(&mut self, _node: &ClassDeclarationElement) {}
+    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
+        self.binding_context = Some(node.ident.value.clone());
+        self.visit_class_body(&node.body);
+        self.binding_context = None;
+    }
 
-    fn visit_class_body(&mut self, _node: &ClassBody) {}
+    fn visit_class_body(&mut self, node: &ClassBody) {
+        for class_element in &node.class_elements {
+            match class_element {
+                ClassElement::Constructor(elem) => self.visit_class_constructor_declaration(elem),
+                ClassElement::Method(elem) => self.visit_class_method_declaration(elem),
+            }
+        }
+    }
 
-    fn visit_class_constructor_declaration(&mut self, _node: &ClassConstructorElement) {}
+    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+        self.symbols.push_scope(node.span());
+        // Add function parameters as variables in scope
+        node.params.parameters.iter().for_each(|param| {
+            // Resolve Type from Type Annotation
+            let param_name = &param.ident.value;
+            self.symbols.define(
+                param_name.clone(),
+                TypeBinding {
+                    ty: param.type_annotation.ty.clone(),
+                },
+            );
+        });
 
-    fn visit_class_method_declaration(&mut self, _node: &ClassMethodElement) {}
+        self.visit_block_statement(&node.body);
+        self.symbols.pop_scope();
+    }
+
+    fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
+        self.symbols.push_scope(node.span());
+        // Add function parameters as variables in scope
+        node.params.parameters.iter().for_each(|param| {
+            // Resolve Type from Type Annotation
+            let param_name = &param.ident.value;
+            self.symbols.define(
+                param_name.clone(),
+                TypeBinding {
+                    ty: param.type_annotation.ty.clone(),
+                },
+            );
+        });
+
+        self.visit_block_statement(&node.body);
+        self.symbols.pop_scope();
+    }
 }
 
 impl<'a> ExpressionVisitor<()> for Resolver<'a> {
@@ -228,7 +271,7 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
                 let name = &exp.ident.value;
 
                 if let Some(sym) = self.symbols.lookup(name.clone()) {
-                    if !sym.is_function() {
+                    if !sym.is_function() && !sym.is_class() {
                         self.errors.push(SemanticError::NotAFunctionError {
                             span: node.span(),
                             name_span: exp.span(),
@@ -271,7 +314,12 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
 
     fn visit_literal(&mut self, _: &Literal) {}
 
-    fn visit_member_dot(&mut self, _node: &MemberDotExpression) {}
+    fn visit_member_dot(&mut self, node: &MemberDotExpression) {
+        self.visit_single_expression(&node.target);
+        self.visit_single_expression(&node.expression);
+    }
 
-    fn visit_new(&mut self, _node: &NewExpression) {}
+    fn visit_new(&mut self, node: &NewExpression) {
+        self.visit_single_expression(&node.expression);
+    }
 }

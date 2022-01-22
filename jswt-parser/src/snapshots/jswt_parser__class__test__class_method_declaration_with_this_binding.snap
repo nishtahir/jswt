@@ -101,7 +101,7 @@ Ast {
                                                                                         start: 83,
                                                                                         end: 89,
                                                                                     },
-                                                                                    expression: This(
+                                                                                    target: This(
                                                                                         ThisExpression {
                                                                                             span: Span {
                                                                                                 file: "test.1",
@@ -111,7 +111,7 @@ Ast {
                                                                                             },
                                                                                         },
                                                                                     ),
-                                                                                    target: Identifier(
+                                                                                    expression: Identifier(
                                                                                         IdentifierExpression {
                                                                                             span: Span {
                                                                                                 file: "test.1",

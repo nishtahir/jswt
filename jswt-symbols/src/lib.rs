@@ -1,43 +1,11 @@
+mod scope;
+mod symbol;
+
+pub use self::symbol::*;
+use self::{scope::Scope, symbol::Symbol};
 use std::{borrow::Cow, collections::BTreeMap};
 
 use jswt_common::Span;
-use jswt_derive::FromEnumVariant;
-use jswt_types::Type;
-
-#[derive(Debug, Default)]
-pub struct Scope {
-    pub symbols: BTreeMap<Cow<'static, str>, Symbol>,
-}
-
-#[derive(Debug, PartialEq, FromEnumVariant)]
-pub enum Symbol {
-    Type(TypeBinding),
-    Function(FunctionBinding),
-    Class(ClassBinding),
-}
-
-impl Symbol {
-    /// Returns `true` if the symbol is [`Function`].
-    ///
-    /// [`Function`]: Symbol::Function
-    pub fn is_function(&self) -> bool {
-        matches!(self, Self::Function(..))
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct TypeBinding {
-    pub ty: Type,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct FunctionBinding {
-    pub params: Vec<Type>,
-    pub returns: Type,
-}
-
-#[derive(Debug, Default, PartialEq)]
-pub struct ClassBinding {}
 
 #[derive(Debug, Default)]
 pub struct SymbolTable {
@@ -85,7 +53,7 @@ impl SymbolTable {
 
     /// Lookup a Symbol based on symbols in the current active scope
     /// as well as scopes lower in the stack
-    pub fn lookup<T: Into<Cow<'static, str>>>(&mut self, name: T) -> Option<&Symbol> {
+    pub fn lookup<T: Into<Cow<'static, str>>>(&self, name: T) -> Option<&Symbol> {
         // Apparently descending ranges aren't a thing.
         // as of 1.53, trying to use one doesn't generate a warning
         // https://github.com/rust-lang/rust/issues/70925

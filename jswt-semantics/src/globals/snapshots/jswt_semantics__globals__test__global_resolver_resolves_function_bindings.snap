@@ -15,6 +15,12 @@ GlobalResolver {
                     end: 0,
                 }: Scope {
                     symbols: {
+                        "Array": Class(
+                            ClassBinding {
+                                name: "Array",
+                                fields: [],
+                            },
+                        ),
                         "test": Function(
                             FunctionBinding {
                                 params: [
@@ -42,20 +48,7 @@ GlobalResolver {
                 },
             },
         },
-        errors: [],
-    },
-    bindings: GlobalBindingsResolver {
         stack: [],
-        bindings: BindingsTable {
-            table: {
-                "Array": Class(
-                    ClassBinding {
-                        name: "Array",
-                        fields: [],
-                    },
-                ),
-            },
-        },
         errors: [],
     },
 }

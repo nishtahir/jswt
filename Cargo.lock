@@ -522,6 +522,7 @@ dependencies = [
  "jswt-derive",
  "jswt-parser",
  "jswt-semantics",
+ "jswt-symbols",
  "jswt-tokenizer",
  "jswt-types",
 ]
@@ -578,6 +579,20 @@ dependencies = [
 
 [[package]]
 name = "jswt-semantics"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
+ "jswt-derive",
+ "jswt-parser",
+ "jswt-symbols",
+ "jswt-tokenizer",
+ "jswt-types",
+]
+
+[[package]]
+name = "jswt-symbols"
 version = "0.1.0"
 dependencies = [
  "jswt-assert",

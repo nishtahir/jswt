@@ -1,20 +1,23 @@
 mod class;
 mod gen;
 
-use jswt_ast::*;
-use jswt_common::{BindingsTable, Spannable};
+use std::borrow::Cow;
 
-use class::ClassLowering;
+use jswt_ast::*;
+use jswt_common::Spannable;
+use jswt_symbols::SymbolTable;
 
 #[derive(Debug)]
 pub struct AstLowering<'a> {
-    class: ClassLowering<'a>,
+    symbols: &'a mut SymbolTable,
+    binding_context: Option<Cow<'static, str>>,
 }
 
 impl<'a> AstLowering<'a> {
-    pub fn new(bindings: &'a BindingsTable) -> Self {
+    pub fn new(symbols: &'a mut SymbolTable) -> Self {
         Self {
-            class: ClassLowering::new(bindings),
+            symbols,
+            binding_context: None,
         }
     }
 
@@ -26,11 +29,12 @@ impl<'a> AstLowering<'a> {
 
 impl<'a> AstLowering<'a> {
     fn program(&mut self, program: &Program) -> Program {
+        self.symbols.push_global_scope();
         let mut files = vec![];
         for file in &program.files {
             files.push(self.file(file));
         }
-
+        self.symbols.pop_scope();
         Program { files }
     }
 
@@ -135,9 +139,9 @@ impl<'a> AstLowering<'a> {
     }
 
     fn class_declaration(&mut self, node: &ClassDeclarationElement) -> Vec<SourceElement> {
-        self.class.enter_class_declaration(node);
+        self.enter_class_declaration(node);
         let elements = self.class_body(&node.body);
-        self.class.exit_class_declaration();
+        self.exit_class_declaration();
         elements
     }
 
@@ -153,13 +157,12 @@ impl<'a> AstLowering<'a> {
     }
 
     fn class_constructor_declaration(&self, node: &ClassConstructorElement) -> SourceElement {
-        self.class.enter_class_constructor(node)
+        self.enter_class_constructor(node)
     }
 
     fn class_method_declaration(&self, node: &ClassMethodElement) -> SourceElement {
-        self.class.enter_class_method(node)
+        self.enter_class_method(node)
     }
-
 }
 
 #[cfg(test)]
@@ -187,7 +190,7 @@ mod test {
         let mut analyzer = SemanticAnalyzer::default();
         analyzer.analyze(&mut ast);
 
-        let mut lowering = AstLowering::new(&analyzer.bindings_table);
+        let mut lowering = AstLowering::new(&mut analyzer.symbol_table);
         lowering.desugar(&mut ast);
 
         assert_debug_snapshot!(ast);
@@ -214,7 +217,7 @@ mod test {
         let mut analyzer = SemanticAnalyzer::default();
         analyzer.analyze(&mut ast);
 
-        let mut lowering = AstLowering::new(&analyzer.bindings_table);
+        let mut lowering = AstLowering::new(&mut analyzer.symbol_table);
         lowering.desugar(&mut ast);
 
         assert_debug_snapshot!(ast);

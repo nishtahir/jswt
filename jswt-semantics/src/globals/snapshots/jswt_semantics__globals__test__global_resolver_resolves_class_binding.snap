@@ -15,6 +15,38 @@ GlobalResolver {
                     end: 0,
                 }: Scope {
                     symbols: {
+                        "Array": Class(
+                            ClassBinding {
+                                name: "Array",
+                                fields: [
+                                    Field {
+                                        name: "a",
+                                        index: 0,
+                                        size: 4,
+                                    },
+                                    Field {
+                                        name: "b",
+                                        index: 1,
+                                        size: 4,
+                                    },
+                                ],
+                            },
+                        ),
+                        "constructor": Function(
+                            FunctionBinding {
+                                params: [
+                                    Primitive(
+                                        I32,
+                                    ),
+                                    Primitive(
+                                        F32,
+                                    ),
+                                ],
+                                returns: Primitive(
+                                    I32,
+                                ),
+                            },
+                        ),
                         "doSomething": Function(
                             FunctionBinding {
                                 params: [],
@@ -35,31 +67,7 @@ GlobalResolver {
                 },
             },
         },
-        errors: [],
-    },
-    bindings: GlobalBindingsResolver {
         stack: [],
-        bindings: BindingsTable {
-            table: {
-                "Array": Class(
-                    ClassBinding {
-                        name: "Array",
-                        fields: [
-                            Field {
-                                name: "a",
-                                index: 0,
-                                size: 4,
-                            },
-                            Field {
-                                name: "b",
-                                index: 1,
-                                size: 4,
-                            },
-                        ],
-                    },
-                ),
-            },
-        },
         errors: [],
     },
 }

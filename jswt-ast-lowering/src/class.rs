@@ -1,26 +1,13 @@
+use crate::{gen::*, AstLowering};
+
 use jswt_ast::*;
-use jswt_common::{BindingsTable, ClassBinding, Spannable};
+use jswt_common::Spannable;
 use jswt_types::{PrimitiveType, Type};
 
-use crate::gen::*;
-
-#[derive(Debug)]
-pub(crate) struct ClassLowering<'a> {
-    bindings: &'a BindingsTable,
-    binding_context: Option<&'a ClassBinding>,
-}
-
-impl<'a> ClassLowering<'a> {
-    pub(crate) fn new(bindings: &'a BindingsTable) -> Self {
-        Self {
-            bindings,
-            binding_context: None,
-        }
-    }
-
+impl<'a> AstLowering<'a> {
     pub(crate) fn enter_class_declaration(&mut self, node: &ClassDeclarationElement) {
         let name = node.ident.value.clone();
-        self.binding_context = self.bindings.lookup(&name).and_then(|b| b.as_class());
+        self.binding_context = Some(name);
     }
 
     pub(crate) fn exit_class_declaration(&mut self) {
@@ -29,7 +16,11 @@ impl<'a> ClassLowering<'a> {
 
     pub(crate) fn enter_class_method(&self, node: &ClassMethodElement) -> SourceElement {
         let name = &node.ident.value;
-        let class_name = self.binding_context.as_ref().unwrap().name.clone();
+        let binding_context = self
+            .symbols
+            .lookup(self.binding_context.as_ref().unwrap().clone())
+            .and_then(|b| b.as_class());
+        let class_name = binding_context.as_ref().unwrap().name.clone();
 
         // Generate synthetic function name
         // The function name is the ClassName#methodName
@@ -69,10 +60,14 @@ impl<'a> ClassLowering<'a> {
     }
 
     pub(crate) fn enter_class_constructor(&self, node: &ClassConstructorElement) -> SourceElement {
-        let binding = self.binding_context.unwrap();
+        let binding = self
+            .symbols
+            .lookup(self.binding_context.as_ref().unwrap().clone())
+            .and_then(|b| b.as_class())
+            .unwrap();
+
         let class_name = binding.name.clone();
         let class_size = binding.size();
-
         let mut body = node.body.clone();
 
         let this = variable("this", malloc(class_size as i32));
@@ -88,10 +83,8 @@ impl<'a> ClassLowering<'a> {
                 node.params.parameters[f.index].ident.clone(),
             )));
         });
-
+        
         body.statements.statements.push(returns);
-        // let elements = generate_expression(format!("const ptr:i32 = malloc({});", class_size));
-        // println!("{:#?}", this);
 
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),

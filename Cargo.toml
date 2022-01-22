@@ -2,6 +2,7 @@
 
 members = [
     "jswt-ast",
+    "jswt-ast-lowering",
     "jswt-codegen",
     "jswt-common",
     "jswt-compiler",
@@ -9,6 +10,7 @@ members = [
     "jswt-errors",
     "jswt-parser",
     "jswt-semantics",
+    "jswt-symbols",
     "jswt-tokenizer",
     "jswt-types",
     "jswt-wast"

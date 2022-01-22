@@ -59,7 +59,7 @@ Ast {
                                                                 start: 18,
                                                                 end: 30,
                                                             },
-                                                            expression: This(
+                                                            target: This(
                                                                 ThisExpression {
                                                                     span: Span {
                                                                         file: "test.1",
@@ -69,7 +69,7 @@ Ast {
                                                                     },
                                                                 },
                                                             ),
-                                                            target: Arguments(
+                                                            expression: Arguments(
                                                                 ArgumentsExpression {
                                                                     span: Span {
                                                                         file: "test.1",

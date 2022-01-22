@@ -1,23 +1,20 @@
-mod bindings;
 mod symbols;
 
 use jswt_ast::*;
-use jswt_common::BindingsTable;
+use jswt_symbols::SymbolTable;
 
-use self::{bindings::*, symbols::*};
-use crate::{symbols::SymbolTable, SemanticError};
+use self::symbols::*;
+use crate::SemanticError;
 
 #[derive(Debug)]
 pub struct GlobalResolver<'a> {
     symbols: GlobalSymbolsResolver<'a>,
-    bindings: GlobalBindingsResolver<'a>,
 }
 
 impl<'a> GlobalResolver<'a> {
-    pub fn new(symbols: &'a mut SymbolTable, bindings: &'a mut BindingsTable) -> Self {
+    pub fn new(symbols: &'a mut SymbolTable) -> Self {
         Self {
             symbols: GlobalSymbolsResolver::new(symbols),
-            bindings: GlobalBindingsResolver::new(bindings),
         }
     }
 
@@ -28,7 +25,6 @@ impl<'a> GlobalResolver<'a> {
     pub fn errors(&mut self) -> Vec<SemanticError> {
         let mut errors = vec![];
         errors.append(&mut self.symbols.errors);
-        errors.append(&mut self.bindings.errors);
         errors
     }
 }
@@ -119,27 +115,26 @@ impl<'a> StatementVisitor<()> for GlobalResolver<'a> {
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
-        self.bindings.enter_class_declaration(node);
-        for element in &node.body.class_elements {
+        self.symbols.enter_class_declaration(node);
+        self.visit_class_body(&node.body);
+        self.symbols.exit_class_declaration(node);
+    }
+
+    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+        self.symbols.enter_constructor_declaration(node);
+    }
+
+    fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
+        self.symbols.enter_method_declaration(node);
+    }
+
+    fn visit_class_body(&mut self, node: &ClassBody) {
+        for element in &node.class_elements {
             match element {
                 ClassElement::Constructor(elem) => self.visit_class_constructor_declaration(elem),
                 ClassElement::Method(elem) => self.visit_class_method_declaration(elem),
             }
         }
-        self.bindings.exit_class_declaration(node);
-    }
-
-    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
-        // self.bindings.enter_
-        self.bindings.enter_constructor_declaration(node);
-    }
-
-    fn visit_class_method_declaration(&mut self, _: &ClassMethodElement) {
-        // No-op
-    }
-
-    fn visit_class_body(&mut self, _: &ClassBody) {
-        // No-op
     }
 }
 
@@ -173,8 +168,7 @@ mod test {
         );
         let ast = Parser::new(&mut tokenizer).parse();
         let mut symbols = SymbolTable::default();
-        let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalResolver::new(&mut symbols, &mut bindings);
+        let mut resolver = GlobalResolver::new(&mut symbols);
         resolver.resolve(&ast);
         assert_debug_snapshot!(resolver);
     }
@@ -200,8 +194,7 @@ mod test {
         );
         let ast = Parser::new(&mut tokenizer).parse();
         let mut symbols = SymbolTable::default();
-        let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalResolver::new(&mut symbols, &mut bindings);
+        let mut resolver = GlobalResolver::new(&mut symbols);
         resolver.resolve(&ast);
         assert_debug_snapshot!(resolver);
     }
