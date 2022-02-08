@@ -69,82 +69,80 @@ Ast {
                                                 ),
                                             },
                                         ),
-                                        statement: Block(
-                                            BlockStatement {
-                                                span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
-                                                    start: 14,
-                                                    end: 38,
-                                                },
-                                                statements: StatementList {
-                                                    statements: [
-                                                        Expression(
-                                                            ExpressionStatement {
-                                                                span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
-                                                                    start: 16,
-                                                                    end: 36,
-                                                                },
-                                                                expression: Arguments(
-                                                                    ArgumentsExpression {
-                                                                        span: Span {
-                                                                            file: "test.1",
-                                                                            module: "module/test.1",
-                                                                            start: 16,
-                                                                            end: 35,
-                                                                        },
-                                                                        ident: Identifier(
-                                                                            IdentifierExpression {
+                                        block: BlockStatement {
+                                            span: Span {
+                                                file: "test.1",
+                                                module: "module/test.1",
+                                                start: 14,
+                                                end: 38,
+                                            },
+                                            statements: StatementList {
+                                                statements: [
+                                                    Expression(
+                                                        ExpressionStatement {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 16,
+                                                                end: 36,
+                                                            },
+                                                            expression: Arguments(
+                                                                ArgumentsExpression {
+                                                                    span: Span {
+                                                                        file: "test.1",
+                                                                        module: "module/test.1",
+                                                                        start: 16,
+                                                                        end: 35,
+                                                                    },
+                                                                    ident: Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "test.1",
+                                                                                module: "module/test.1",
+                                                                                start: 16,
+                                                                                end: 23,
+                                                                            },
+                                                                            ident: Identifier {
                                                                                 span: Span {
                                                                                     file: "test.1",
                                                                                     module: "module/test.1",
                                                                                     start: 16,
                                                                                     end: 23,
                                                                                 },
-                                                                                ident: Identifier {
-                                                                                    span: Span {
-                                                                                        file: "test.1",
-                                                                                        module: "module/test.1",
-                                                                                        start: 16,
-                                                                                        end: 23,
-                                                                                    },
-                                                                                    value: "println",
-                                                                                },
+                                                                                value: "println",
                                                                             },
-                                                                        ),
-                                                                        arguments: ArgumentsList {
-                                                                            span: Span {
-                                                                                file: "test.1",
-                                                                                module: "module/test.1",
-                                                                                start: 23,
-                                                                                end: 35,
-                                                                            },
-                                                                            arguments: [
-                                                                                Literal(
-                                                                                    String(
-                                                                                        StringLiteral {
-                                                                                            span: Span {
-                                                                                                file: "test.1",
-                                                                                                module: "module/test.1",
-                                                                                                start: 24,
-                                                                                                end: 34,
-                                                                                            },
-                                                                                            value: "hey taco",
-                                                                                        },
-                                                                                    ),
-                                                                                ),
-                                                                            ],
                                                                         },
+                                                                    ),
+                                                                    arguments: ArgumentsList {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 23,
+                                                                            end: 35,
+                                                                        },
+                                                                        arguments: [
+                                                                            Literal(
+                                                                                String(
+                                                                                    StringLiteral {
+                                                                                        span: Span {
+                                                                                            file: "test.1",
+                                                                                            module: "module/test.1",
+                                                                                            start: 24,
+                                                                                            end: 34,
+                                                                                        },
+                                                                                        value: "hey taco",
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        ],
                                                                     },
-                                                                ),
-                                                            },
-                                                        ),
-                                                    ],
-                                                },
+                                                                },
+                                                            ),
+                                                        },
+                                                    ),
+                                                ],
                                             },
-                                        ),
+                                        },
                                     },
                                 ),
                             ),

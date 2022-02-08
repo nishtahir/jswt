@@ -7,6 +7,10 @@ mod types;
 mod variable;
 mod visitor;
 
+pub mod mut_visit;
+pub mod transform;
+pub mod visit;
+
 pub use expression::*;
 pub use ident::*;
 pub use iteration::*;
@@ -68,6 +72,7 @@ pub struct ClassBody {
 #[derive(Debug, PartialEq, Spannable, FromEnumVariant, Clone)]
 pub enum ClassElement {
     Constructor(ClassConstructorElement),
+    Field(ClassFieldElement),
     Method(ClassMethodElement),
 }
 
@@ -86,6 +91,14 @@ pub struct ClassMethodElement {
     pub params: FormalParameterList,
     pub returns: Option<TypeAnnotation>,
     pub body: BlockStatement,
+}
+
+#[derive(Debug, PartialEq, Spannable, Clone)]
+pub struct ClassFieldElement {
+    pub span: Span,
+    pub annotations: Vec<Annotation>,
+    pub ident: Identifier,
+    pub type_annotation: TypeAnnotation,
 }
 
 #[derive(Debug, PartialEq, Spannable, Clone)]

@@ -6,10 +6,10 @@ use jswt_derive::Spannable;
 #[derive(Debug, PartialEq, Spannable, Clone)]
 pub enum SingleExpression {
     Unary(UnaryExpression),
-    Assignment(BinaryExpression),
     MemberIndex(MemberIndexExpression),
     New(NewExpression),
     Arguments(ArgumentsExpression),
+    Assignment(BinaryExpression),
     Multiplicative(BinaryExpression),
     Bitwise(BinaryExpression),
     Additive(BinaryExpression),
@@ -24,6 +24,14 @@ pub enum SingleExpression {
 impl SingleExpression {
     pub fn as_arguments(&self) -> Option<&ArgumentsExpression> {
         if let Self::Arguments(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    pub fn as_identifier(&self) -> Option<&IdentifierExpression> {
+        if let Self::Identifier(v) = self {
             Some(v)
         } else {
             None

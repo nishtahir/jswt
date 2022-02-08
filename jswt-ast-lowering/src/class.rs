@@ -1,6 +1,6 @@
 use crate::{gen::*, AstLowering};
 
-use jswt_ast::*;
+use jswt_ast::{transform::TransformVisitor, *};
 use jswt_common::Spannable;
 use jswt_types::{PrimitiveType, Type};
 
@@ -59,7 +59,10 @@ impl<'a> AstLowering<'a> {
         })
     }
 
-    pub(crate) fn enter_class_constructor(&self, node: &ClassConstructorElement) -> SourceElement {
+    pub(crate) fn enter_class_constructor(
+        &mut self,
+        node: &ClassConstructorElement,
+    ) -> SourceElement {
         let binding = self
             .symbols
             .lookup(self.binding_context.as_ref().unwrap().clone())
@@ -68,23 +71,16 @@ impl<'a> AstLowering<'a> {
 
         let class_name = binding.name.clone();
         let class_size = binding.size();
-        let mut body = node.body.clone();
+        let mut body = self.visit_block_statement(&node.body);
 
-        let this = variable("this", malloc(class_size as i32));
-        let returns = returns(identifier("this"));
+        let this = parse_statement(format!("let self = malloc({class_size});"));
+        let returns = parse_statement(format!("return self;"));
 
-        body.statements.statements.push(this);
+        // Allocate the struct before anything else
+        body.statements.insert(0, this);
 
-        binding.fields.iter().for_each(|f| {
-            let offset = f.index * 4;
-            body.statements.statements.push(to_statement(i32_store(
-                "this",
-                offset as i32,
-                node.params.parameters[f.index].ident.clone(),
-            )));
-        });
-        
-        body.statements.statements.push(returns);
+        // finally return the struct
+        body.statements.push(returns);
 
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
@@ -102,7 +98,26 @@ impl<'a> AstLowering<'a> {
                 span: node.span(),
                 ty: Type::Primitive(PrimitiveType::I32),
             }),
-            body,
+            body: BlockStatement {
+                span: node.body.span(),
+                statements: body,
+            },
         })
+    }
+
+    pub(crate) fn class_this_field_assignment(
+        &self,
+        target: &IdentifierExpression,
+        value: &SingleExpression,
+    ) -> SingleExpression {
+        let binding = self
+            .symbols
+            .lookup(self.binding_context.as_ref().unwrap().clone())
+            .and_then(|b| b.as_class())
+            .unwrap();
+
+        // lhs is this - so we are in a class
+        let field = binding.field(&target.ident.value).unwrap();
+        i32_store("self", field.index as i32 * 4, value.clone())
     }
 }

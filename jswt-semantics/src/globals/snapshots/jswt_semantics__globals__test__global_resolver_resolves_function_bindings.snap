@@ -46,6 +46,14 @@ GlobalResolver {
                         ),
                     },
                 },
+                Span {
+                    file: "test.1",
+                    module: "module/test.1",
+                    start: 9,
+                    end: 33,
+                }: Scope {
+                    symbols: {},
+                },
             },
         },
         stack: [],

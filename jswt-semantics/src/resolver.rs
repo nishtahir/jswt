@@ -4,7 +4,7 @@ use std::borrow::{Borrow, Cow};
 use jswt_ast::*;
 use jswt_common::Spannable;
 use jswt_symbols::{SymbolTable, TypeBinding};
-use jswt_types::Type;
+use jswt_types::{ObjectType, Type};
 
 pub struct Resolver<'a> {
     pub symbols: &'a mut SymbolTable,
@@ -123,7 +123,6 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
         let name = match &node.target {
             AssignableElement::Identifier(ident) => &ident.value,
         };
-        self.visit_single_expression(&node.expression);
         if self.symbols.lookup_current(name).is_some() {
             let error = SemanticError::VariableAlreadyDefined {
                 name: name.clone(),
@@ -132,18 +131,19 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
             self.errors.push(error);
         }
 
-        let type_binding = match &node.type_annotation {
-            Some(type_annotation) => TypeBinding {
-                ty: type_annotation.ty.clone(),
-            },
-            None => TypeBinding { ty: Type::Unknown },
-        };
+        let resolved_type = self.visit_single_expression(&node.expression);
+        let declared_type = &node
+            .type_annotation
+            .as_ref()
+            .map(|t| t.ty.clone())
+            .unwrap_or(Type::Unknown);
 
-        self.symbols.define(name.clone(), type_binding);
+        self.symbols
+            .define(name.clone(), TypeBinding { ty: resolved_type });
     }
 
     fn visit_expression_statement(&mut self, node: &ExpressionStatement) {
-        self.visit_single_expression(&node.expression)
+        self.visit_single_expression(&node.expression);
     }
 
     fn visit_statement_list(&mut self, node: &StatementList) {
@@ -184,6 +184,7 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
             match class_element {
                 ClassElement::Constructor(elem) => self.visit_class_constructor_declaration(elem),
                 ClassElement::Method(elem) => self.visit_class_method_declaration(elem),
+                ClassElement::Field(elem) => self.visit_class_field_declaration(elem),
             }
         }
     }
@@ -223,10 +224,12 @@ impl<'a> StatementVisitor<()> for Resolver<'a> {
         self.visit_block_statement(&node.body);
         self.symbols.pop_scope();
     }
+
+    fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) {}
 }
 
-impl<'a> ExpressionVisitor<()> for Resolver<'a> {
-    fn visit_single_expression(&mut self, node: &SingleExpression) {
+impl<'a> ExpressionVisitor<Type> for Resolver<'a> {
+    fn visit_single_expression(&mut self, node: &SingleExpression) -> Type {
         match node {
             SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
             SingleExpression::Literal(lit) => self.visit_literal(lit),
@@ -245,28 +248,50 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
         }
     }
 
-    fn visit_assignable_element(&mut self, _: &AssignableElement) {
-        // No-op
-    }
-
-    fn visit_member_index(&mut self, _: &MemberIndexExpression) {}
-
-    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
-        let ident = &node.ident;
-        let name = &ident.value;
-        if self.symbols.lookup(name.clone()).is_none() {
-            let error = SemanticError::VariableNotDefined {
-                name: name.clone(),
-                span: ident.span.to_owned(),
-            };
-            self.errors.push(error);
+    fn visit_assignable_element(&mut self, node: &AssignableElement) -> Type {
+        match node {
+            AssignableElement::Identifier(ident) => self
+                .symbols
+                .lookup(ident.value.clone())
+                .map(|s| s.as_type())
+                .unwrap_or(Type::Unknown),
         }
     }
 
-    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {
+    fn visit_member_index(&mut self, node: &MemberIndexExpression) -> Type {
+        let target_ty = self.visit_single_expression(&node.target);
+        if let Type::Object(ObjectType::Reference(exp)) = target_ty {
+            let binding = self.symbols.lookup(exp);
+            let index = self.visit_single_expression(&node.index);
+            // TODO Check for get method. return type is the return type of get
+        }
+
+        Type::Unknown
+    }
+
+    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Type {
+        let ident = &node.ident;
+        let name = &ident.value;
+        let symbol = self.symbols.lookup(name.clone());
+        match symbol {
+            Some(_) => {}
+            None => {
+                let error = SemanticError::VariableNotDefined {
+                    name: name.clone(),
+                    span: ident.span.to_owned(),
+                };
+                self.errors.push(error);
+            }
+        };
+
+        symbol.map(|s| s.as_type()).unwrap_or(Type::Unknown)
+    }
+
+    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) -> Type {
         let expression = node.ident.borrow();
+        let mut ty = Type::Unknown;
         match expression {
-            // Function calls but be followed by an identifier for now
+            // Function calls must be an identifier for now
             SingleExpression::Identifier(exp) => {
                 let name = &exp.ident.value;
 
@@ -277,12 +302,12 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
                             name_span: exp.span(),
                         });
                     }
+                    ty = sym.as_type()
                 } else {
                     self.errors.push(SemanticError::FunctionNotDefined {
                         span: node.span(),
                         name_span: exp.ident.span.to_owned(),
                     });
-                    // not defined error
                 }
 
                 // Check that the args are defined in this scope
@@ -290,36 +315,54 @@ impl<'a> ExpressionVisitor<()> for Resolver<'a> {
                     self.visit_single_expression(arg);
                 }
             }
-            exp => self.errors.push(SemanticError::NotAFunctionError {
+            _ => self.errors.push(SemanticError::NotAFunctionError {
                 span: node.span(),
-                name_span: exp.span(),
+                name_span: expression.span(),
             }),
-        }
+        };
+        return ty;
     }
 
-    fn visit_unary_expression(&mut self, _node: &UnaryExpression) {
-        // TODO - Type check values
+    fn visit_unary_expression(&mut self, node: &UnaryExpression) -> Type {
+        self.visit_single_expression(&node.expr)
     }
 
-    fn visit_assignment_expression(&mut self, _node: &BinaryExpression) {
+    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> Type {
         // We should assert the the element on the left is assignable
-    }
-
-    fn visit_binary_expression(&mut self, node: &BinaryExpression) {
         self.visit_single_expression(&node.left);
         self.visit_single_expression(&node.right);
+
+        // Assignments are untyped
+        Type::Void
     }
 
-    fn visit_this_expression(&mut self, _node: &ThisExpression) {}
+    fn visit_binary_expression(&mut self, node: &BinaryExpression) -> Type {
+        self.visit_single_expression(&node.left);
+        self.visit_single_expression(&node.right);
 
-    fn visit_literal(&mut self, _: &Literal) {}
+        // TODO
+        Type::Unknown
+    }
 
-    fn visit_member_dot(&mut self, node: &MemberDotExpression) {
+    fn visit_this_expression(&mut self, _: &ThisExpression) -> Type {
+        // This is the type of the current class
+        self.symbols
+            .lookup(self.binding_context.as_ref().unwrap().clone())
+            .unwrap()
+            .as_type()
+    }
+
+    fn visit_literal(&mut self, lit: &Literal) -> Type {
+        lit.as_type()
+    }
+
+    fn visit_member_dot(&mut self, node: &MemberDotExpression) -> Type {
         self.visit_single_expression(&node.target);
-        self.visit_single_expression(&node.expression);
+        // Check the index/expression
+        self.visit_single_expression(&node.expression)
     }
 
-    fn visit_new(&mut self, node: &NewExpression) {
-        self.visit_single_expression(&node.expression);
+    fn visit_new(&mut self, node: &NewExpression) -> Type {
+        self.visit_single_expression(&node.expression)
     }
 }

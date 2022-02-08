@@ -56,4 +56,11 @@ impl Type {
     pub fn is_function(&self) -> bool {
         matches!(self, Self::Function(..))
     }
+
+    /// Returns `true` if the type is [`Object`].
+    ///
+    /// [`Object`]: Type::Object
+    pub fn is_object(&self) -> bool {
+        matches!(self, Self::Object(..))
+    }
 }

@@ -1,0 +1,114 @@
+---
+source: jswt-ast-lowering/src/lib.rs
+expression: ast
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 35,
+                                    end: 90,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 35,
+                                        end: 41,
+                                    },
+                                    value: "Array#getLen",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [
+                                        FormalParameterArg {
+                                            ident: Identifier {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 35,
+                                                    end: 90,
+                                                },
+                                                value: "this",
+                                            },
+                                            type_annotation: TypeAnnotation {
+                                                span: Span {
+                                                    file: "test.1",
+                                                    module: "module/test.1",
+                                                    start: 35,
+                                                    end: 90,
+                                                },
+                                                ty: Primitive(
+                                                    I32,
+                                                ),
+                                            },
+                                        },
+                                    ],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            module: "module/test.1",
+                                            start: 45,
+                                            end: 48,
+                                        },
+                                        ty: Primitive(
+                                            I32,
+                                        ),
+                                    },
+                                ),
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 49,
+                                        end: 90,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 67,
+                                                        end: 76,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 74,
+                                                                    end: 75,
+                                                                },
+                                                                value: 0,
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

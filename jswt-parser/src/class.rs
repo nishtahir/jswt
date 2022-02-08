@@ -45,7 +45,7 @@ impl<'a> Parser<'a> {
     pub(crate) fn class_element(&mut self) -> ParseResult<ClassElement> {
         let elem = match self.lookahead_type() {
             Some(TokenType::Constructor) => self.class_constructor()?.into(),
-            Some(TokenType::Identifier) => self.class_method()?.into(),
+            Some(TokenType::Identifier) => self.class_property_member()?.into(),
             _ => todo!(),
         };
 
@@ -70,36 +70,49 @@ impl<'a> Parser<'a> {
         })
     }
 
-    /// ClassMethod
-    ///   : Identifier '(' FormalParameterList ')' Block
-    pub(crate) fn class_method(&mut self) -> ParseResult<ClassMethodElement> {
+    /// ClassPropertyMember
+    ///   : Annotation? Identifier '(' FormalParameterList ')' ':' TypeAnnotation Block    #ClassMethod
+    ///   : Annotation? Identifier ':' TypeAnnotaiton     #ClassField
+    ///   ;
+    pub(crate) fn class_property_member(&mut self) -> ParseResult<ClassElement> {
         let mut annotations = vec![];
         while self.lookahead_is(TokenType::At) {
             annotations.push(self.annotation()?);
         }
 
         let ident = ident!(self)?;
+        if self.lookahead_is(TokenType::LeftParen) {
+            consume!(self, TokenType::LeftParen)?;
+            let params = self.formal_parameter_list()?;
+            consume!(self, TokenType::RightParen)?;
 
-        consume!(self, TokenType::LeftParen)?;
-        let params = self.formal_parameter_list()?;
-        consume!(self, TokenType::RightParen)?;
+            //Parse return value
+            let mut returns = None;
+            if self.lookahead_is(TokenType::Colon) {
+                returns = Some(self.type_annotation()?);
+            }
 
-        //Parse return value
-        let mut returns = None;
-        if self.lookahead_is(TokenType::Colon) {
-            returns = Some(self.type_annotation()?);
+            let body = self.block()?;
+
+            return Ok(ClassElement::Method(ClassMethodElement {
+                span: ident.span() + body.span(),
+                ident,
+                params,
+                returns,
+                body,
+                annotations,
+            }));
         }
 
-        let body = self.block()?;
+        let type_annotation = self.type_annotation()?;
+        consume!(self, TokenType::Semi)?;
 
-        Ok(ClassMethodElement {
-            span: ident.span() + body.span(),
-            ident,
-            params,
-            returns,
-            body,
+        Ok(ClassElement::Field(ClassFieldElement {
+            span: ident.span(),
             annotations,
-        })
+            ident,
+            type_annotation,
+        }))
     }
 }
 

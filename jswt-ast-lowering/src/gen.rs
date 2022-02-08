@@ -1,19 +1,7 @@
 use jswt_ast::*;
 use jswt_common::Span;
-use jswt_types::{PrimitiveType, Type};
-
-pub(crate) fn variable(name: &'static str, expression: SingleExpression) -> StatementElement {
-    StatementElement::Variable(VariableStatement {
-        span: Span::synthetic(),
-        modifier: VariableModifier::Const(Span::synthetic()),
-        target: AssignableElement::Identifier(Identifier::new(name, Span::synthetic())),
-        expression,
-        type_annotation: Some(TypeAnnotation {
-            span: Span::synthetic(),
-            ty: Type::Primitive(PrimitiveType::I32),
-        }),
-    })
-}
+use jswt_parser::Parser;
+use jswt_tokenizer::Tokenizer;
 
 pub(crate) fn function(name: &'static str, arguments: Vec<SingleExpression>) -> SingleExpression {
     SingleExpression::Arguments(ArgumentsExpression {
@@ -29,33 +17,11 @@ pub(crate) fn function(name: &'static str, arguments: Vec<SingleExpression>) -> 
     })
 }
 
-pub(crate) fn returns(expression: SingleExpression) -> StatementElement {
-    StatementElement::Return(ReturnStatement {
-        span: Span::synthetic(),
-        expression,
-    })
-}
-
-pub(crate) fn identifier(name: &'static str) -> SingleExpression {
-    SingleExpression::Identifier(IdentifierExpression {
-        span: Span::synthetic(),
-        ident: Identifier::new(name, Span::synthetic()),
-    })
-}
-
-pub(crate) fn malloc(size: i32) -> SingleExpression {
-    function(
-        "malloc",
-        vec![SingleExpression::Literal(Literal::Integer(
-            IntegerLiteral {
-                span: Span::synthetic(),
-                value: size,
-            },
-        ))],
-    )
-}
-
-pub(crate) fn i32_store(target: &'static str, offset: i32, value: Identifier) -> SingleExpression {
+pub(crate) fn i32_store(
+    target: &'static str,
+    offset: i32,
+    value: SingleExpression,
+) -> SingleExpression {
     function(
         "i32Store",
         vec![
@@ -65,7 +31,7 @@ pub(crate) fn i32_store(target: &'static str, offset: i32, value: Identifier) ->
                     span: Span::synthetic(),
                     ident: Identifier::new(target, Span::synthetic()),
                 })),
-                op: BinaryOperator::And(Span::synthetic()),
+                op: BinaryOperator::Plus(Span::synthetic()),
                 right: Box::new(SingleExpression::Literal(Literal::Integer(
                     IntegerLiteral {
                         span: Span::synthetic(),
@@ -73,17 +39,21 @@ pub(crate) fn i32_store(target: &'static str, offset: i32, value: Identifier) ->
                     },
                 ))),
             }),
-            SingleExpression::Identifier(IdentifierExpression {
-                span: Span::synthetic(),
-                ident: value,
-            }),
+            value,
         ],
     )
 }
 
-pub fn to_statement(expression: SingleExpression) -> StatementElement {
-    StatementElement::Expression(ExpressionStatement {
-        span: Span::synthetic(),
-        expression,
-    })
+pub fn parse_statement(expr: String) -> StatementElement {
+    let mut tokenizer = Tokenizer::default();
+    tokenizer.enqueue_source_str("synthetic", Box::leak(expr.into_boxed_str()));
+    let mut parser = Parser::new(&mut tokenizer);
+    parser.parse_statement()
+}
+
+pub fn parse_expr(expr: String) -> SingleExpression {
+    let mut tokenizer = Tokenizer::default();
+    tokenizer.enqueue_source_str("synthetic", Box::leak(expr.into_boxed_str()));
+    let mut parser = Parser::new(&mut tokenizer);
+    parser.single_expression().unwrap()
 }

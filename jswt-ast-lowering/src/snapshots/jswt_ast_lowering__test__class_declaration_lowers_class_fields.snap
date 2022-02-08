@@ -1,0 +1,16 @@
+---
+source: jswt-ast-lowering/src/lib.rs
+expression: ast
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [],
+                },
+            },
+        ],
+    },
+}

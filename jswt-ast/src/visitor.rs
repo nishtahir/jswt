@@ -70,7 +70,8 @@ statement_visitor![
     visit_class_declaration: ClassDeclarationElement,
     visit_class_body: ClassBody,
     visit_class_constructor_declaration: ClassConstructorElement,
-    visit_class_method_declaration: ClassMethodElement
+    visit_class_method_declaration: ClassMethodElement,
+    visit_class_field_declaration: ClassFieldElement
 ];
 expression_visitor![
     visit_single_expression: SingleExpression,

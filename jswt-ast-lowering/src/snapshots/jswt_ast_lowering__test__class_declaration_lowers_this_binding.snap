@@ -14,8 +14,8 @@ Ast {
                                 span: Span {
                                     file: "test.1",
                                     module: "module/test.1",
-                                    start: 35,
-                                    end: 88,
+                                    start: 85,
+                                    end: 211,
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -25,8 +25,8 @@ Ast {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 35,
-                                        end: 88,
+                                        start: 85,
+                                        end: 211,
                                     },
                                     value: "Array#constructor",
                                 },
@@ -37,8 +37,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 47,
-                                                    end: 50,
+                                                    start: 97,
+                                                    end: 100,
                                                 },
                                                 value: "len",
                                             },
@@ -46,8 +46,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 52,
-                                                    end: 55,
+                                                    start: 102,
+                                                    end: 105,
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -59,8 +59,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 57,
-                                                    end: 65,
+                                                    start: 107,
+                                                    end: 115,
                                                 },
                                                 value: "capacity",
                                             },
@@ -68,8 +68,8 @@ Ast {
                                                 span: Span {
                                                     file: "test.1",
                                                     module: "module/test.1",
-                                                    start: 67,
-                                                    end: 70,
+                                                    start: 117,
+                                                    end: 120,
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -83,8 +83,8 @@ Ast {
                                         span: Span {
                                             file: "test.1",
                                             module: "module/test.1",
-                                            start: 35,
-                                            end: 88,
+                                            start: 85,
+                                            end: 211,
                                         },
                                         ty: Primitive(
                                             I32,
@@ -95,60 +95,60 @@ Ast {
                                     span: Span {
                                         file: "test.1",
                                         module: "module/test.1",
-                                        start: 72,
-                                        end: 88,
+                                        start: 122,
+                                        end: 211,
                                     },
                                     statements: StatementList {
                                         statements: [
                                             Variable(
                                                 VariableStatement {
                                                     span: Span {
-                                                        file: "",
-                                                        module: "",
+                                                        file: "synthetic",
+                                                        module: "module/synthetic",
                                                         start: 0,
-                                                        end: 0,
+                                                        end: 21,
                                                     },
-                                                    modifier: Const(
+                                                    modifier: Let(
                                                         Span {
-                                                            file: "",
-                                                            module: "",
+                                                            file: "synthetic",
+                                                            module: "module/synthetic",
                                                             start: 0,
-                                                            end: 0,
+                                                            end: 3,
                                                         },
                                                     ),
                                                     target: Identifier(
                                                         Identifier {
                                                             span: Span {
-                                                                file: "",
-                                                                module: "",
-                                                                start: 0,
-                                                                end: 0,
+                                                                file: "synthetic",
+                                                                module: "module/synthetic",
+                                                                start: 4,
+                                                                end: 8,
                                                             },
-                                                            value: "this",
+                                                            value: "self",
                                                         },
                                                     ),
                                                     expression: Arguments(
                                                         ArgumentsExpression {
                                                             span: Span {
-                                                                file: "",
-                                                                module: "",
-                                                                start: 0,
-                                                                end: 0,
+                                                                file: "synthetic",
+                                                                module: "module/synthetic",
+                                                                start: 11,
+                                                                end: 20,
                                                             },
                                                             ident: Identifier(
                                                                 IdentifierExpression {
                                                                     span: Span {
-                                                                        file: "",
-                                                                        module: "",
-                                                                        start: 0,
-                                                                        end: 0,
+                                                                        file: "synthetic",
+                                                                        module: "module/synthetic",
+                                                                        start: 11,
+                                                                        end: 17,
                                                                     },
                                                                     ident: Identifier {
                                                                         span: Span {
-                                                                            file: "",
-                                                                            module: "",
-                                                                            start: 0,
-                                                                            end: 0,
+                                                                            file: "synthetic",
+                                                                            module: "module/synthetic",
+                                                                            start: 11,
+                                                                            end: 17,
                                                                         },
                                                                         value: "malloc",
                                                                     },
@@ -156,20 +156,20 @@ Ast {
                                                             ),
                                                             arguments: ArgumentsList {
                                                                 span: Span {
-                                                                    file: "",
-                                                                    module: "",
-                                                                    start: 0,
-                                                                    end: 0,
+                                                                    file: "synthetic",
+                                                                    module: "module/synthetic",
+                                                                    start: 17,
+                                                                    end: 20,
                                                                 },
                                                                 arguments: [
                                                                     Literal(
                                                                         Integer(
                                                                             IntegerLiteral {
                                                                                 span: Span {
-                                                                                    file: "",
-                                                                                    module: "",
-                                                                                    start: 0,
-                                                                                    end: 0,
+                                                                                    file: "synthetic",
+                                                                                    module: "module/synthetic",
+                                                                                    start: 18,
+                                                                                    end: 19,
                                                                                 },
                                                                                 value: 8,
                                                                             },
@@ -179,28 +179,16 @@ Ast {
                                                             },
                                                         },
                                                     ),
-                                                    type_annotation: Some(
-                                                        TypeAnnotation {
-                                                            span: Span {
-                                                                file: "",
-                                                                module: "",
-                                                                start: 0,
-                                                                end: 0,
-                                                            },
-                                                            ty: Primitive(
-                                                                I32,
-                                                            ),
-                                                        },
-                                                    ),
+                                                    type_annotation: None,
                                                 },
                                             ),
                                             Expression(
                                                 ExpressionStatement {
                                                     span: Span {
-                                                        file: "",
-                                                        module: "",
-                                                        start: 0,
-                                                        end: 0,
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 140,
+                                                        end: 154,
                                                     },
                                                     expression: Arguments(
                                                         ArgumentsExpression {
@@ -260,11 +248,11 @@ Ast {
                                                                                             start: 0,
                                                                                             end: 0,
                                                                                         },
-                                                                                        value: "this",
+                                                                                        value: "self",
                                                                                     },
                                                                                 },
                                                                             ),
-                                                                            op: And(
+                                                                            op: Plus(
                                                                                 Span {
                                                                                     file: "",
                                                                                     module: "",
@@ -290,17 +278,17 @@ Ast {
                                                                     Identifier(
                                                                         IdentifierExpression {
                                                                             span: Span {
-                                                                                file: "",
-                                                                                module: "",
-                                                                                start: 0,
-                                                                                end: 0,
+                                                                                file: "test.1",
+                                                                                module: "module/test.1",
+                                                                                start: 151,
+                                                                                end: 154,
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
                                                                                     file: "test.1",
                                                                                     module: "module/test.1",
-                                                                                    start: 47,
-                                                                                    end: 50,
+                                                                                    start: 151,
+                                                                                    end: 154,
                                                                                 },
                                                                                 value: "len",
                                                                             },
@@ -315,10 +303,10 @@ Ast {
                                             Expression(
                                                 ExpressionStatement {
                                                     span: Span {
-                                                        file: "",
-                                                        module: "",
-                                                        start: 0,
-                                                        end: 0,
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 172,
+                                                        end: 196,
                                                     },
                                                     expression: Arguments(
                                                         ArgumentsExpression {
@@ -378,11 +366,11 @@ Ast {
                                                                                             start: 0,
                                                                                             end: 0,
                                                                                         },
-                                                                                        value: "this",
+                                                                                        value: "self",
                                                                                     },
                                                                                 },
                                                                             ),
-                                                                            op: And(
+                                                                            op: Plus(
                                                                                 Span {
                                                                                     file: "",
                                                                                     module: "",
@@ -408,17 +396,17 @@ Ast {
                                                                     Identifier(
                                                                         IdentifierExpression {
                                                                             span: Span {
-                                                                                file: "",
-                                                                                module: "",
-                                                                                start: 0,
-                                                                                end: 0,
+                                                                                file: "test.1",
+                                                                                module: "module/test.1",
+                                                                                start: 188,
+                                                                                end: 196,
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
                                                                                     file: "test.1",
                                                                                     module: "module/test.1",
-                                                                                    start: 57,
-                                                                                    end: 65,
+                                                                                    start: 188,
+                                                                                    end: 196,
                                                                                 },
                                                                                 value: "capacity",
                                                                             },
@@ -433,27 +421,27 @@ Ast {
                                             Return(
                                                 ReturnStatement {
                                                     span: Span {
-                                                        file: "",
-                                                        module: "",
+                                                        file: "synthetic",
+                                                        module: "module/synthetic",
                                                         start: 0,
-                                                        end: 0,
+                                                        end: 12,
                                                     },
                                                     expression: Identifier(
                                                         IdentifierExpression {
                                                             span: Span {
-                                                                file: "",
-                                                                module: "",
-                                                                start: 0,
-                                                                end: 0,
+                                                                file: "synthetic",
+                                                                module: "module/synthetic",
+                                                                start: 7,
+                                                                end: 11,
                                                             },
                                                             ident: Identifier {
                                                                 span: Span {
-                                                                    file: "",
-                                                                    module: "",
-                                                                    start: 0,
-                                                                    end: 0,
+                                                                    file: "synthetic",
+                                                                    module: "module/synthetic",
+                                                                    start: 7,
+                                                                    end: 11,
                                                                 },
-                                                                value: "this",
+                                                                value: "self",
                                                             },
                                                         },
                                                     ),

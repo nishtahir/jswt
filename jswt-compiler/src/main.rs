@@ -269,6 +269,7 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn test_compile_and_execute_arrays_sample() {
         let mut cmd = Command::cargo_bin("jswt").unwrap();
         let assert = cmd

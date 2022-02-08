@@ -135,6 +135,12 @@ impl<'a> Parser<'a> {
         Ast::new(self.program())
     }
 
+    pub fn parse_statement(&mut self) -> StatementElement {
+        // Seed the look ahead for the entry point
+        self.lookahead = self.tokenizer.next_token();
+        self.statement().unwrap()
+    }
+
     /// Entry point of the program
     ///
     /// Program
@@ -248,8 +254,8 @@ impl<'a> Parser<'a> {
     }
 
     /// IfStatement
-    ///   : 'if' '(' SingleExpression ')' Statement 'else' Statement
-    ///   | 'if' '(' SingleExpression ')' Satement
+    ///   : 'if' '(' SingleExpression ')' BlockStatement 'else' BlockStatement
+    ///   | 'if' '(' SingleExpression ')' BlockStatement
     ///   ;
     fn if_statement(&mut self) -> ParseResult<IfStatement> {
         let start = consume!(self, TokenType::If)?;
@@ -297,12 +303,12 @@ impl<'a> Parser<'a> {
         consume!(self, TokenType::LeftParen)?;
         let expression = self.single_expression()?;
         consume!(self, TokenType::RightParen)?;
-        let statement = self.statement()?;
+        let block = self.block()?;
 
         Ok(WhileIterationElement {
-            span: start + statement.span(),
+            span: start + block.span(),
             expression,
-            statement: Box::new(statement),
+            block,
         }
         .into())
     }
@@ -439,7 +445,7 @@ impl<'a> Parser<'a> {
     ///   | ArrayLiteral
     ///   | Literal
     ///   ;
-    fn single_expression(&mut self) -> ParseResult<SingleExpression> {
+    pub fn single_expression(&mut self) -> ParseResult<SingleExpression> {
         self.assignment_expression()
     }
 

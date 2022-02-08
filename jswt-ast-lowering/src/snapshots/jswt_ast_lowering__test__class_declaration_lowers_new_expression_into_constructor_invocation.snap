@@ -1,0 +1,321 @@
+---
+source: jswt-ast-lowering/src/lib.rs
+expression: ast
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                source_elements: SourceElements {
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 35,
+                                    end: 51,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 35,
+                                        end: 51,
+                                    },
+                                    value: "Array#constructor",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            module: "module/test.1",
+                                            start: 35,
+                                            end: 51,
+                                        },
+                                        ty: Primitive(
+                                            I32,
+                                        ),
+                                    },
+                                ),
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 49,
+                                        end: 51,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "synthetic",
+                                                        module: "module/synthetic",
+                                                        start: 0,
+                                                        end: 21,
+                                                    },
+                                                    modifier: Let(
+                                                        Span {
+                                                            file: "synthetic",
+                                                            module: "module/synthetic",
+                                                            start: 0,
+                                                            end: 3,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "synthetic",
+                                                                module: "module/synthetic",
+                                                                start: 4,
+                                                                end: 8,
+                                                            },
+                                                            value: "self",
+                                                        },
+                                                    ),
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
+                                                            span: Span {
+                                                                file: "synthetic",
+                                                                module: "module/synthetic",
+                                                                start: 11,
+                                                                end: 20,
+                                                            },
+                                                            ident: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "synthetic",
+                                                                        module: "module/synthetic",
+                                                                        start: 11,
+                                                                        end: 17,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "synthetic",
+                                                                            module: "module/synthetic",
+                                                                            start: 11,
+                                                                            end: 17,
+                                                                        },
+                                                                        value: "malloc",
+                                                                    },
+                                                                },
+                                                            ),
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
+                                                                    file: "synthetic",
+                                                                    module: "module/synthetic",
+                                                                    start: 17,
+                                                                    end: 20,
+                                                                },
+                                                                arguments: [
+                                                                    Literal(
+                                                                        Integer(
+                                                                            IntegerLiteral {
+                                                                                span: Span {
+                                                                                    file: "synthetic",
+                                                                                    module: "module/synthetic",
+                                                                                    start: 18,
+                                                                                    end: 19,
+                                                                                },
+                                                                                value: 0,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                            },
+                                                        },
+                                                    ),
+                                                    type_annotation: None,
+                                                },
+                                            ),
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "synthetic",
+                                                        module: "module/synthetic",
+                                                        start: 0,
+                                                        end: 12,
+                                                    },
+                                                    expression: Identifier(
+                                                        IdentifierExpression {
+                                                            span: Span {
+                                                                file: "synthetic",
+                                                                module: "module/synthetic",
+                                                                start: 7,
+                                                                end: 11,
+                                                            },
+                                                            ident: Identifier {
+                                                                span: Span {
+                                                                    file: "synthetic",
+                                                                    module: "module/synthetic",
+                                                                    start: 7,
+                                                                    end: 11,
+                                                                },
+                                                                value: "self",
+                                                            },
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test.1",
+                                    module: "module/test.1",
+                                    start: 71,
+                                    end: 158,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 80,
+                                        end: 84,
+                                    },
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    parameters: [],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test.1",
+                                            module: "module/test.1",
+                                            start: 88,
+                                            end: 91,
+                                        },
+                                        ty: Primitive(
+                                            I32,
+                                        ),
+                                    },
+                                ),
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test.1",
+                                        module: "module/test.1",
+                                        start: 92,
+                                        end: 158,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 106,
+                                                        end: 126,
+                                                    },
+                                                    modifier: Let(
+                                                        Span {
+                                                            file: "test.1",
+                                                            module: "module/test.1",
+                                                            start: 106,
+                                                            end: 109,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 110,
+                                                                end: 111,
+                                                            },
+                                                            value: "x",
+                                                        },
+                                                    ),
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
+                                                            span: Span {
+                                                                file: "test.1",
+                                                                module: "module/test.1",
+                                                                start: 118,
+                                                                end: 125,
+                                                            },
+                                                            ident: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "test.1",
+                                                                        module: "module/test.1",
+                                                                        start: 118,
+                                                                        end: 123,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "test.1",
+                                                                            module: "module/test.1",
+                                                                            start: 118,
+                                                                            end: 123,
+                                                                        },
+                                                                        value: "Array#constructor",
+                                                                    },
+                                                                },
+                                                            ),
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 123,
+                                                                    end: 125,
+                                                                },
+                                                                arguments: [],
+                                                            },
+                                                        },
+                                                    ),
+                                                    type_annotation: None,
+                                                },
+                                            ),
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "test.1",
+                                                        module: "module/test.1",
+                                                        start: 146,
+                                                        end: 147,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test.1",
+                                                                    module: "module/test.1",
+                                                                    start: 146,
+                                                                    end: 147,
+                                                                },
+                                                                value: 0,
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

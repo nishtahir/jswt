@@ -2,7 +2,8 @@ use crate::SemanticError;
 use std::vec;
 
 use jswt_ast::*;
-use jswt_symbols::{ClassBinding, Field, FunctionBinding, SymbolTable};
+use jswt_common::Spannable;
+use jswt_symbols::{ClassBinding, Field, FunctionBinding, SymbolTable, TypeBinding};
 use jswt_types::{PrimitiveType, Type};
 
 #[derive(Debug)]
@@ -66,15 +67,6 @@ impl<'a> GlobalSymbolsResolver<'a> {
     }
 
     pub(crate) fn enter_constructor_declaration(&mut self, node: &ClassConstructorElement) {
-        let binding = self.stack.last_mut().unwrap();
-        for (i, param) in node.params.parameters.iter().enumerate() {
-            binding.fields.push(Field {
-                name: param.ident.value.clone(),
-                index: i,
-                size: 4,
-            })
-        }
-
         if self.symbols.lookup_current("constructor").is_some() {
             let error = SemanticError::FunctionAlreadyDefined {
                 name: "constructor".into(),
@@ -98,6 +90,7 @@ impl<'a> GlobalSymbolsResolver<'a> {
     }
 
     pub(crate) fn enter_class_declaration(&mut self, node: &ClassDeclarationElement) {
+        self.symbols.push_scope(node.span());
         let binding = ClassBinding {
             name: node.ident.value.clone(),
             fields: vec![],
@@ -108,7 +101,28 @@ impl<'a> GlobalSymbolsResolver<'a> {
     pub(crate) fn exit_class_declaration(&mut self, node: &ClassDeclarationElement) {
         let current = self.stack.pop().unwrap();
         let name = &node.ident.value;
+        // End the class scope
+        self.symbols.pop_scope();
+        // Add the class to the previous scope
         self.symbols.define(name.clone(), current);
+    }
+
+    pub(crate) fn enter_field_declaration(&mut self, node: &ClassFieldElement) {
+        let binding = self.stack.last_mut().unwrap();
+        binding.fields.push(Field {
+            name: node.ident.value.clone(),
+            index: binding.fields.len(),
+            size: 4, // TODO compute type size
+        });
+
+        // TODO - Double check that this is the right scope for this
+        // It does allow us to compile for now
+        self.symbols.define(
+            node.ident.value.clone(),
+            TypeBinding {
+                ty: node.type_annotation.ty.clone(),
+            },
+        )
     }
 
     pub(crate) fn enter_method_declaration(&self, node: &ClassMethodElement) {}

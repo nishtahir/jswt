@@ -1,6 +1,6 @@
 mod symbols;
 
-use jswt_ast::*;
+use jswt_ast::{visit::Visitor, *};
 use jswt_symbols::SymbolTable;
 
 use self::symbols::*;
@@ -29,112 +29,38 @@ impl<'a> GlobalResolver<'a> {
     }
 }
 
-impl<'a> ProgramVisitor<()> for GlobalResolver<'a> {
+impl<'a> Visitor for GlobalResolver<'a> {
     fn visit_program(&mut self, node: &Program) {
         self.symbols.enter_program(node);
-        for file in &node.files {
-            self.visit_file(file)
-        }
+        visit::walk_program(self, node);
         self.symbols.exit_program(node);
-    }
-
-    fn visit_file(&mut self, node: &File) {
-        self.visit_source_elements(&node.source_elements);
-    }
-
-    fn visit_source_elements(&mut self, node: &SourceElements) {
-        for element in &node.source_elements {
-            self.visit_source_element(element);
-        }
-    }
-
-    fn visit_source_element(&mut self, node: &SourceElement) {
-        match node {
-            SourceElement::FunctionDeclaration(elem) => self.visit_function_declaration(elem),
-            SourceElement::ClassDeclaration(elem) => self.visit_class_declaration(elem),
-            SourceElement::Statement(elem) => self.visit_statement_element(elem),
-        }
-    }
-}
-
-impl<'a> StatementVisitor<()> for GlobalResolver<'a> {
-    fn visit_statement_element(&mut self, node: &StatementElement) {
-        match node {
-            StatementElement::Block(stmt) => self.visit_block_statement(stmt),
-            StatementElement::Empty(stmt) => self.visit_empty_statement(stmt),
-            StatementElement::Return(stmt) => self.visit_return_statement(stmt),
-            StatementElement::Variable(stmt) => self.visit_variable_statement(stmt),
-            StatementElement::Expression(stmt) => self.visit_expression_statement(stmt),
-            StatementElement::If(stmt) => self.visit_if_statement(stmt),
-            StatementElement::Iteration(_) => {}
-        };
-    }
-
-    fn visit_block_statement(&mut self, _: &BlockStatement) {
-        // No-op
-    }
-
-    fn visit_empty_statement(&mut self, _: &EmptyStatement) {
-        // No-op
-    }
-
-    fn visit_if_statement(&mut self, _: &IfStatement) {
-        // No-op
-    }
-
-    fn visit_iteration_statement(&mut self, _: &IterationStatement) {
-        unreachable!()
-    }
-
-    fn visit_while_iteration_element(&mut self, _: &WhileIterationElement) {
-        unreachable!()
-    }
-
-    fn visit_return_statement(&mut self, _: &ReturnStatement) {
-        // No-op
-    }
-
-    fn visit_variable_statement(&mut self, _: &VariableStatement) {
-        // No-op
-    }
-
-    fn visit_expression_statement(&mut self, _: &ExpressionStatement) {
-        // No-op
-    }
-
-    fn visit_statement_list(&mut self, node: &StatementList) {
-        for statement in &node.statements {
-            self.visit_statement_element(statement);
-        }
     }
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
         self.symbols.enter_function_declaration(node);
-        self.visit_block_statement(&node.body);
+        visit::walk_function_declaration(self, node);
         self.symbols.exit_function_declaration(node);
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
         self.symbols.enter_class_declaration(node);
-        self.visit_class_body(&node.body);
+        visit::walk_class_declaration(self, node);
         self.symbols.exit_class_declaration(node);
     }
 
     fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
         self.symbols.enter_constructor_declaration(node);
+        visit::walk_class_constructor_declaration(self, node);
     }
 
     fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
         self.symbols.enter_method_declaration(node);
+        visit::walk_class_method_declaration(self, node);
     }
 
-    fn visit_class_body(&mut self, node: &ClassBody) {
-        for element in &node.class_elements {
-            match element {
-                ClassElement::Constructor(elem) => self.visit_class_constructor_declaration(elem),
-                ClassElement::Method(elem) => self.visit_class_method_declaration(elem),
-            }
-        }
+    fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) {
+        self.symbols.enter_field_declaration(node);
+        visit::walk_class_field_declaration(self, node);
     }
 }
 
@@ -155,6 +81,9 @@ mod test {
         let global = 55;
 
         class Array {
+            a: i32;
+            b: i32;
+
             constructor(a: i32, b: f32) {}
             method() {}
         }

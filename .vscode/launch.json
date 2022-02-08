@@ -46,6 +46,27 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "Debug executable 'jswt' with no std",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=jswt",
+                    "--package=jswt"
+                ],
+                "filter": {
+                    "name": "jswt",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "example/test.jswt",
+                "--no-std"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug unit tests in executable 'jswt'",
             "cargo": {
                 "args": [

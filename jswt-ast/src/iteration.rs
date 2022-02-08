@@ -1,7 +1,7 @@
 use jswt_common::Span;
 use jswt_derive::{FromEnumVariant, Spannable};
 
-use crate::{SingleExpression, StatementElement};
+use crate::{SingleExpression, BlockStatement};
 
 #[derive(Debug, PartialEq, FromEnumVariant, Spannable, Clone)]
 pub enum IterationStatement {
@@ -12,5 +12,5 @@ pub enum IterationStatement {
 pub struct WhileIterationElement {
     pub span: Span,
     pub expression: SingleExpression,
-    pub statement: Box<StatementElement>,
+    pub block: BlockStatement,
 }

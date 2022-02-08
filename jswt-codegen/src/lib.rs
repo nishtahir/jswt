@@ -182,7 +182,7 @@ impl StatementVisitor<()> for CodeGenerator {
         // Push an if scope for branching
         self.push_instruction_scope();
         // Add the statements to the scope
-        self.visit_statement_element(&node.statement);
+        self.visit_block_statement(&node.block);
 
         // Add the branch back to the top of the loop to test
         self.push_instruction(Instruction::BrLoop(loop_label));
@@ -362,8 +362,9 @@ impl StatementVisitor<()> for CodeGenerator {
     fn visit_class_body(&mut self, node: &ClassBody) {
         for element in &node.class_elements {
             match element {
-                ClassElement::Constructor(ctor) => self.visit_class_constructor_declaration(ctor),
-                ClassElement::Method(method) => self.visit_class_method_declaration(method),
+                ClassElement::Constructor(elem) => self.visit_class_constructor_declaration(elem),
+                ClassElement::Method(elem) => self.visit_class_method_declaration(elem),
+                ClassElement::Field(elem) => self.visit_class_field_declaration(elem),
             }
         }
     }
@@ -376,6 +377,10 @@ impl StatementVisitor<()> for CodeGenerator {
     fn visit_class_method_declaration(&mut self, _: &ClassMethodElement) {
         // This should have been desugared out
         unreachable!()
+    }
+
+    fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) {
+        todo!()
     }
 }
 
@@ -440,10 +445,10 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) -> Instruction {
         let target = &node.ident.value;
-        if self.symbols.lookup_current(target.clone()).is_some() {
-            Instruction::LocalGet(target.clone())
-        } else {
+        if self.symbols.lookup_global(target.clone()).is_some() {
             Instruction::GlobalGet(target.clone())
+        } else {
+            Instruction::LocalGet(target.clone())
         }
     }
 

@@ -32,21 +32,6 @@ GlobalResolver {
                                 ],
                             },
                         ),
-                        "constructor": Function(
-                            FunctionBinding {
-                                params: [
-                                    Primitive(
-                                        I32,
-                                    ),
-                                    Primitive(
-                                        F32,
-                                    ),
-                                ],
-                                returns: Primitive(
-                                    I32,
-                                ),
-                            },
-                        ),
                         "doSomething": Function(
                             FunctionBinding {
                                 params: [],
@@ -61,6 +46,44 @@ GlobalResolver {
                             FunctionBinding {
                                 params: [],
                                 returns: Void,
+                            },
+                        ),
+                    },
+                },
+                Span {
+                    file: "test.1",
+                    module: "module/test.1",
+                    start: 35,
+                    end: 166,
+                }: Scope {
+                    symbols: {
+                        "a": Type(
+                            TypeBinding {
+                                ty: Primitive(
+                                    I32,
+                                ),
+                            },
+                        ),
+                        "b": Type(
+                            TypeBinding {
+                                ty: Primitive(
+                                    I32,
+                                ),
+                            },
+                        ),
+                        "constructor": Function(
+                            FunctionBinding {
+                                params: [
+                                    Primitive(
+                                        I32,
+                                    ),
+                                    Primitive(
+                                        F32,
+                                    ),
+                                ],
+                                returns: Primitive(
+                                    I32,
+                                ),
                             },
                         ),
                     },
