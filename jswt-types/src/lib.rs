@@ -42,13 +42,6 @@ impl Display for PrimitiveType {
 }
 
 impl Type {
-    fn is_same_as(&self, other: &Type) -> bool {
-        self == other
-    }
-
-    fn is_assignable_to(&self, other: &Type) -> bool {
-        self == other
-    }
 
     /// Returns `true` if the type is [`Function`].
     ///
