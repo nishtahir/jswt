@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import "./primitives.jswt";
 import "./arrays.jswt";
 import "./env.jswt";
 import "./malloc.jswt";

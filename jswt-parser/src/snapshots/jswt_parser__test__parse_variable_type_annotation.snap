@@ -58,8 +58,8 @@ Ast {
                                                 start: 7,
                                                 end: 10,
                                             },
-                                            ty: Primitive(
-                                                I32,
+                                            ty: Class(
+                                                "i32",
                                             ),
                                         },
                                     ),

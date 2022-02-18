@@ -1,0 +1,25 @@
+// @ts-nocheck
+
+class boolean {
+
+}
+
+class i32 {
+    add(other: i32): i32 {
+    }
+
+    sub(other: i32): i32 {
+    }
+}
+
+class u32 {
+
+}
+
+class string {
+
+}
+
+class any {
+
+}

@@ -49,8 +49,8 @@ Ast {
                                                     start: 17,
                                                     end: 20,
                                                 },
-                                                ty: Primitive(
-                                                    I32,
+                                                ty: Class(
+                                                    "i32",
                                                 ),
                                             },
                                         },
@@ -71,8 +71,8 @@ Ast {
                                                     start: 25,
                                                     end: 28,
                                                 },
-                                                ty: Primitive(
-                                                    F32,
+                                                ty: Class(
+                                                    "f32",
                                                 ),
                                             },
                                         },

@@ -8,7 +8,7 @@ use std::vec;
 use jswt_ast::*;
 use jswt_common::{Span, Spannable};
 use jswt_tokenizer::{Token, TokenType, Tokenizer, TokenizerError};
-use jswt_types::{ObjectType, PrimitiveType, Type};
+use jswt_types::Type;
 
 type ParseResult<T> = Result<T, ParseError>;
 
@@ -815,21 +815,14 @@ impl<'a> Parser<'a> {
     fn type_annotation(&mut self) -> ParseResult<TypeAnnotation> {
         consume!(self, TokenType::Colon)?;
         let name = ident!(self)?;
-        let mut ty = match name.value.as_ref() {
-            "i32" => Type::Primitive(PrimitiveType::I32),
-            "f32" => Type::Primitive(PrimitiveType::F32),
-            "u32" => Type::Primitive(PrimitiveType::U32),
-            "boolean" => Type::Primitive(PrimitiveType::Boolean),
-            "string" => Type::Object(ObjectType::String),
-            _ => Type::Object(ObjectType::Reference(name.value.clone())),
-        };
+        let mut ty = Type::Class(name.value.clone());
 
-        let start = name.span();
+         let start = name.span();
         let mut end = name.span();
         while self.lookahead_is(TokenType::LeftBracket) {
             consume_unchecked!(self);
             end = consume!(self, TokenType::RightBracket)?;
-            ty = Type::Object(ObjectType::Array(Box::new(ty)))
+            ty = Type::Array(Box::new(ty))
         }
         Ok(TypeAnnotation {
             ty,

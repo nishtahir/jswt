@@ -1,0 +1,550 @@
+---
+source: jswt-compiler/src/main.rs
+expression: redact_paths(stdout)
+
+---
+error: [redacted]/jswt/jswt-compiler/test/variable-not-found.jswt:4:13
+  2 | 
+  3 | export function main(): i32 {
+> 4 |     println(x);
+    |             ^ Variable 'x' was not defined in this scope
+  5 | }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:25:14
+  23 | @inline
+  24 | function arraySetLength(ptr: i32, length: i32) {
+> 25 |     i32Store(ptr + 4, length);
+     |              ^^^^^^^ TypeError: 'ptr + 4' is not a '' expression.
+  26 | }
+  27 | 
+  28 | @inline
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:30:20
+  28 | @inline
+  29 | function arrayGetLength(ptr: i32): i32 {
+> 30 |     return i32Load(ptr + 4);
+     |                    ^^^^^^^ TypeError: 'ptr + 4' is not a '' expression.
+  31 | }
+  32 | 
+  33 | @inline
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:35:14
+  33 | @inline
+  34 | function arraySetElementSize(ptr: i32, size: i32) {
+> 35 |     i32Store(ptr + 8, size);
+     |              ^^^^^^^ TypeError: 'ptr + 8' is not a '' expression.
+  36 | }
+  37 | 
+  38 | @inline
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:40:20
+  38 | @inline
+  39 | function arrayGetElementSize(ptr: i32): i32 {
+> 40 |     return i32Load(ptr + 8);
+     |                    ^^^^^^^ TypeError: 'ptr + 8' is not a '' expression.
+  41 | }
+  42 | 
+  43 | @inline
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:45:14
+  43 | @inline
+  44 | function arraySetCapacity(ptr: i32, size: i32) {
+> 45 |     i32Store(ptr + 12, size);
+     |              ^^^^^^^^ TypeError: 'ptr + 12' is not a '' expression.
+  46 | }
+  47 | 
+  48 | @inline
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:50:20
+  48 | @inline
+  49 | function arrayGetCapacity(ptr: i32): i32 {
+> 50 |     return i32Load(ptr + 12);
+     |                    ^^^^^^^^ TypeError: 'ptr + 12' is not a '' expression.
+  51 | }
+  52 | 
+  53 | @inline
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:57:23
+  55 |     let capacity = 10; // default capacity;
+  56 |     let ptr = malloc(16);
+> 57 |     let data = malloc(capacity * elementSize);
+     |                       ^^^^^^^^^^^^^^^^^^^^^^ TypeError: 'capacity * elementSize' is not a '' expression.
+  58 |     arraySetData(ptr, data);
+  59 |     arraySetLength(ptr, 0);
+  60 |     arraySetElementSize(ptr, elementSize);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:69:18
+  67 |     const data = arrayGetData(ptr);
+  68 |     const elementSize = arrayGetElementSize(ptr);
+> 69 |     let offset = index * elementSize;
+     |                  ^^^^^^^^^^^^^^^^^^^ TypeError: 'index * elementSize' is not a '' expression.
+  70 |     return offset + data;
+  71 | }
+  72 | 
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:70:12
+  68 |     const elementSize = arrayGetElementSize(ptr);
+  69 |     let offset = index * elementSize;
+> 70 |     return offset + data;
+     |            ^^^^^^^^^^^^^ TypeError: 'offset + data' is not a '' expression.
+  71 | }
+  72 | 
+  73 | @inline
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:84:25
+  82 |     }
+  83 | 
+> 84 |     arraySetLength(ptr, length + 1);
+     |                         ^^^^^^^^^^ TypeError: 'length + 1' is not a '' expression.
+  85 | 
+  86 |     let offset = length * element_size;
+  87 |     return offset + data;
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:86:18
+  84 |     arraySetLength(ptr, length + 1);
+  85 | 
+> 86 |     let offset = length * element_size;
+     |                  ^^^^^^^^^^^^^^^^^^^^^ TypeError: 'length * element_size' is not a '' expression.
+  87 |     return offset + data;
+  88 | }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/arrays.jswt:87:12
+  85 | 
+  86 |     let offset = length * element_size;
+> 87 |     return offset + data;
+     |            ^^^^^^^^^^^^^ TypeError: 'offset + data' is not a '' expression.
+  88 | }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:11:19
+   9 | function init() {
+  10 |     // Setup header
+> 11 |     hdrSetSize(0, maxAddr - 8);
+     |                   ^^^^^^^^^^^ TypeError: 'maxAddr - 8' is not a '' expression.
+  12 |     hdrSetFree(0, true);
+  13 | 
+  14 |     // Setup footer
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:15:16
+  13 | 
+  14 |     // Setup footer
+> 15 |     hdrSetSize(maxAddr - 4, maxAddr - 8);
+     |                ^^^^^^^^^^^ TypeError: 'maxAddr - 4' is not a '' expression.
+  16 |     hdrSetFree(maxAddr - 4, true);
+  17 | 
+  18 |     isInit = true;
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:15:29
+  13 | 
+  14 |     // Setup footer
+> 15 |     hdrSetSize(maxAddr - 4, maxAddr - 8);
+     |                             ^^^^^^^^^^^ TypeError: 'maxAddr - 8' is not a '' expression.
+  16 |     hdrSetFree(maxAddr - 4, true);
+  17 | 
+  18 |     isInit = true;
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:16:16
+  14 |     // Setup footer
+  15 |     hdrSetSize(maxAddr - 4, maxAddr - 8);
+> 16 |     hdrSetFree(maxAddr - 4, true);
+     |                ^^^^^^^^^^^ TypeError: 'maxAddr - 4' is not a '' expression.
+  17 | 
+  18 |     isInit = true;
+  19 | }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:26:22
+  24 |  */
+  25 | function extend(pages: i32) {
+> 26 |     let prevFooter = maxAddr - 4;
+     |                      ^^^^^^^^^^^ TypeError: 'maxAddr - 4' is not a '' expression.
+  27 |     let nBytes = pages * 65536;
+  28 | 
+  29 |     grow(pages);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:27:18
+  25 | function extend(pages: i32) {
+  26 |     let prevFooter = maxAddr - 4;
+> 27 |     let nBytes = pages * 65536;
+     |                  ^^^^^^^^^^^^^ TypeError: 'pages * 65536' is not a '' expression.
+  28 | 
+  29 |     grow(pages);
+  30 | 
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:31:25
+  29 |     grow(pages);
+  30 | 
+> 31 |     hdrSetSize(maxAddr, nBytes - 8);
+     |                         ^^^^^^^^^^ TypeError: 'nBytes - 8' is not a '' expression.
+  32 |     hdrSetFree(maxAddr, true);
+  33 | 
+  34 |     maxAddr = maxAddr + nBytes;
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:34:15
+  32 |     hdrSetFree(maxAddr, true);
+  33 | 
+> 34 |     maxAddr = maxAddr + nBytes;
+     |               ^^^^^^^^^^^^^^^^ TypeError: 'maxAddr + nBytes' is not a '' expression.
+  35 |     let footer = maxAddr - 4;
+  36 |     hdrSetSize(footer, nBytes - 8);
+  37 |     hdrSetFree(footer, true);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:35:18
+  33 | 
+  34 |     maxAddr = maxAddr + nBytes;
+> 35 |     let footer = maxAddr - 4;
+     |                  ^^^^^^^^^^^ TypeError: 'maxAddr - 4' is not a '' expression.
+  36 |     hdrSetSize(footer, nBytes - 8);
+  37 |     hdrSetFree(footer, true);
+  38 | 
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:36:24
+  34 |     maxAddr = maxAddr + nBytes;
+  35 |     let footer = maxAddr - 4;
+> 36 |     hdrSetSize(footer, nBytes - 8);
+     |                        ^^^^^^^^^^ TypeError: 'nBytes - 8' is not a '' expression.
+  37 |     hdrSetFree(footer, true);
+  38 | 
+  39 |     if (hdrGetFree(prevFooter) != false) {
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:39:9
+  37 |     hdrSetFree(footer, true);
+  38 | 
+> 39 |     if (hdrGetFree(prevFooter) != false) {
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ TypeError: 'hdrGetFree(prevFooter) != false' is not a '' expression.
+  40 |         let prevSize = hdrGetSize(prevFooter);
+  41 |         let prevHdr = prevFooter - prevSize - 4;
+  42 |         hdrSetSize(prevHdr, prevSize + nBytes);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:41:23
+  39 |     if (hdrGetFree(prevFooter) != false) {
+  40 |         let prevSize = hdrGetSize(prevFooter);
+> 41 |         let prevHdr = prevFooter - prevSize - 4;
+     |                       ^^^^^^^^^^^^^^^^^^^^^ TypeError: 'prevFooter - prevSize' is not a '' expression.
+  42 |         hdrSetSize(prevHdr, prevSize + nBytes);
+  43 |         hdrSetSize(footer, prevSize + nBytes);
+  44 |     }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:41:23
+  39 |     if (hdrGetFree(prevFooter) != false) {
+  40 |         let prevSize = hdrGetSize(prevFooter);
+> 41 |         let prevHdr = prevFooter - prevSize - 4;
+     |                       ^^^^^^^^^^^^^^^^^^^^^^^^^ TypeError: 'prevFooter - prevSize - 4' is not a '' expression.
+  42 |         hdrSetSize(prevHdr, prevSize + nBytes);
+  43 |         hdrSetSize(footer, prevSize + nBytes);
+  44 |     }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:42:29
+  40 |         let prevSize = hdrGetSize(prevFooter);
+  41 |         let prevHdr = prevFooter - prevSize - 4;
+> 42 |         hdrSetSize(prevHdr, prevSize + nBytes);
+     |                             ^^^^^^^^^^^^^^^^^ TypeError: 'prevSize + nBytes' is not a '' expression.
+  43 |         hdrSetSize(footer, prevSize + nBytes);
+  44 |     }
+  45 | }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:43:28
+  41 |         let prevHdr = prevFooter - prevSize - 4;
+  42 |         hdrSetSize(prevHdr, prevSize + nBytes);
+> 43 |         hdrSetSize(footer, prevSize + nBytes);
+     |                            ^^^^^^^^^^^^^^^^^ TypeError: 'prevSize + nBytes' is not a '' expression.
+  44 |     }
+  45 | }
+  46 | 
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:52:30
+  50 |         let size = hdrGetSize(pointer);
+  51 |         let isFree = hdrGetFree(pointer);
+> 52 |         let payloadPointer = pointer + 4;
+     |                              ^^^^^^^^^^^ TypeError: 'pointer + 4' is not a '' expression.
+  53 | 
+  54 |         if (isFree) {
+  55 |             if (greaterUnsigned(nBytes, size)) {
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:58:43
+  56 |                 // Block is free but too small
+  57 |             }
+> 58 |             else if (lessUnsigned(nBytes, size - 8)) {
+     |                                           ^^^^^^^^ TypeError: 'size - 8' is not a '' expression.
+  59 |                 // Block is free but large enough to split
+  60 |                 // We split by allocating the new block on the left 
+  61 |                 // [hdr|     free         |ftr]
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:70:28
+  68 | 
+  69 |                 // Write footer and allocation bit
+> 70 |                 hdrSetSize(pointer + nBytes + 4, nBytes);
+     |                            ^^^^^^^^^^^^^^^^ TypeError: 'pointer + nBytes' is not a '' expression.
+  71 |                 hdrSetFree(pointer + nBytes + 4, false);
+  72 | 
+  73 |                 // Size of the block after allocation
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:70:28
+  68 | 
+  69 |                 // Write footer and allocation bit
+> 70 |                 hdrSetSize(pointer + nBytes + 4, nBytes);
+     |                            ^^^^^^^^^^^^^^^^^^^^ TypeError: 'pointer + nBytes + 4' is not a '' expression.
+  71 |                 hdrSetFree(pointer + nBytes + 4, false);
+  72 | 
+  73 |                 // Size of the block after allocation
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:71:28
+  69 |                 // Write footer and allocation bit
+  70 |                 hdrSetSize(pointer + nBytes + 4, nBytes);
+> 71 |                 hdrSetFree(pointer + nBytes + 4, false);
+     |                            ^^^^^^^^^^^^^^^^ TypeError: 'pointer + nBytes' is not a '' expression.
+  72 | 
+  73 |                 // Size of the block after allocation
+  74 |                 let rest = size - nBytes - 8;
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:71:28
+  69 |                 // Write footer and allocation bit
+  70 |                 hdrSetSize(pointer + nBytes + 4, nBytes);
+> 71 |                 hdrSetFree(pointer + nBytes + 4, false);
+     |                            ^^^^^^^^^^^^^^^^^^^^ TypeError: 'pointer + nBytes + 4' is not a '' expression.
+  72 | 
+  73 |                 // Size of the block after allocation
+  74 |                 let rest = size - nBytes - 8;
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:74:28
+  72 | 
+  73 |                 // Size of the block after allocation
+> 74 |                 let rest = size - nBytes - 8;
+     |                            ^^^^^^^^^^^^^ TypeError: 'size - nBytes' is not a '' expression.
+  75 | 
+  76 |                 // Header of next block after split
+  77 |                 hdrSetSize(pointer + nBytes + 8, rest);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:74:28
+  72 | 
+  73 |                 // Size of the block after allocation
+> 74 |                 let rest = size - nBytes - 8;
+     |                            ^^^^^^^^^^^^^^^^^ TypeError: 'size - nBytes - 8' is not a '' expression.
+  75 | 
+  76 |                 // Header of next block after split
+  77 |                 hdrSetSize(pointer + nBytes + 8, rest);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:77:28
+  75 | 
+  76 |                 // Header of next block after split
+> 77 |                 hdrSetSize(pointer + nBytes + 8, rest);
+     |                            ^^^^^^^^^^^^^^^^ TypeError: 'pointer + nBytes' is not a '' expression.
+  78 |                 hdrSetFree(pointer + nBytes + 8, true);
+  79 |                 // Footer of next block after split
+  80 |                 hdrSetSize(pointer + size + 4, rest);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:77:28
+  75 | 
+  76 |                 // Header of next block after split
+> 77 |                 hdrSetSize(pointer + nBytes + 8, rest);
+     |                            ^^^^^^^^^^^^^^^^^^^^ TypeError: 'pointer + nBytes + 8' is not a '' expression.
+  78 |                 hdrSetFree(pointer + nBytes + 8, true);
+  79 |                 // Footer of next block after split
+  80 |                 hdrSetSize(pointer + size + 4, rest);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:78:28
+  76 |                 // Header of next block after split
+  77 |                 hdrSetSize(pointer + nBytes + 8, rest);
+> 78 |                 hdrSetFree(pointer + nBytes + 8, true);
+     |                            ^^^^^^^^^^^^^^^^ TypeError: 'pointer + nBytes' is not a '' expression.
+  79 |                 // Footer of next block after split
+  80 |                 hdrSetSize(pointer + size + 4, rest);
+  81 | 
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:78:28
+  76 |                 // Header of next block after split
+  77 |                 hdrSetSize(pointer + nBytes + 8, rest);
+> 78 |                 hdrSetFree(pointer + nBytes + 8, true);
+     |                            ^^^^^^^^^^^^^^^^^^^^ TypeError: 'pointer + nBytes + 8' is not a '' expression.
+  79 |                 // Footer of next block after split
+  80 |                 hdrSetSize(pointer + size + 4, rest);
+  81 | 
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:80:28
+  78 |                 hdrSetFree(pointer + nBytes + 8, true);
+  79 |                 // Footer of next block after split
+> 80 |                 hdrSetSize(pointer + size + 4, rest);
+     |                            ^^^^^^^^^^^^^^ TypeError: 'pointer + size' is not a '' expression.
+  81 | 
+  82 |                 return payloadPointer;
+  83 |             }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:80:28
+  78 |                 hdrSetFree(pointer + nBytes + 8, true);
+  79 |                 // Footer of next block after split
+> 80 |                 hdrSetSize(pointer + size + 4, rest);
+     |                            ^^^^^^^^^^^^^^^^^^ TypeError: 'pointer + size + 4' is not a '' expression.
+  81 | 
+  82 |                 return payloadPointer;
+  83 |             }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:89:28
+  87 |                 hdrSetFree(pointer, false);
+  88 |                 // Mark footer as allocated
+> 89 |                 hdrSetFree(pointer + size + 4, false);
+     |                            ^^^^^^^^^^^^^^ TypeError: 'pointer + size' is not a '' expression.
+  90 |                 return payloadPointer;
+  91 |             }
+  92 |         }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:89:28
+  87 |                 hdrSetFree(pointer, false);
+  88 |                 // Mark footer as allocated
+> 89 |                 hdrSetFree(pointer + size + 4, false);
+     |                            ^^^^^^^^^^^^^^^^^^ TypeError: 'pointer + size + 4' is not a '' expression.
+  90 |                 return payloadPointer;
+  91 |             }
+  92 |         }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:95:19
+  93 | 
+  94 |         // Move onto the next block
+> 95 |         pointer = pointer + size + 8;
+     |                   ^^^^^^^^^^^^^^ TypeError: 'pointer + size' is not a '' expression.
+  96 |     }
+  97 | 
+  98 |     // We couldn't find a free block
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:95:19
+  93 | 
+  94 |         // Move onto the next block
+> 95 |         pointer = pointer + size + 8;
+     |                   ^^^^^^^^^^^^^^^^^^ TypeError: 'pointer + size + 8' is not a '' expression.
+  96 |     }
+  97 | 
+  98 |     // We couldn't find a free block
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:103:9
+  101 | 
+  102 | function malloc(size: i32): i32 {
+> 103 |     if (isInit == false) {
+      |         ^^^^^^^^^^^^^^^ TypeError: 'isInit == false' is not a '' expression.
+  104 |         init();
+  105 |     }
+  106 | 
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:109:9
+  107 |     const aligned_size = align4(size);
+  108 |     let pointer = find(aligned_size);
+> 109 |     if (pointer == 0) {
+      |         ^^^^^^^^^^^^ TypeError: 'pointer == 0' is not a '' expression.
+  110 |         let pages = divUnsigned(aligned_size + 65527, 65528);
+  111 |         extend(pages);
+  112 |         return find(aligned_size);
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:110:33
+  108 |     let pointer = find(aligned_size);
+  109 |     if (pointer == 0) {
+> 110 |         let pages = divUnsigned(aligned_size + 65527, 65528);
+      |                                 ^^^^^^^^^^^^^^^^^^^^ TypeError: 'aligned_size + 65527' is not a '' expression.
+  111 |         extend(pages);
+  112 |         return find(aligned_size);
+  113 |     }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:128:37
+  126 | 
+  127 |     while (lessUnsigned(offset, bytes)) {
+> 128 |         let data = i32Load8Unsigned(src + offset);
+      |                                     ^^^^^^^^^^^^ TypeError: 'src + offset' is not a '' expression.
+  129 |         i32Store8(dest + offset, data);
+  130 |         offset = offset + 1;
+  131 |     }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:129:19
+  127 |     while (lessUnsigned(offset, bytes)) {
+  128 |         let data = i32Load8Unsigned(src + offset);
+> 129 |         i32Store8(dest + offset, data);
+      |                   ^^^^^^^^^^^^^ TypeError: 'dest + offset' is not a '' expression.
+  130 |         offset = offset + 1;
+  131 |     }
+  132 | }
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:130:18
+  128 |         let data = i32Load8Unsigned(src + offset);
+  129 |         i32Store8(dest + offset, data);
+> 130 |         offset = offset + 1;
+      |                  ^^^^^^^^^^ TypeError: 'offset + 1' is not a '' expression.
+  131 |     }
+  132 | }
+  133 | 
+
+
+error: /Users/nishtahir/Developer/jswt/runtime/malloc.jswt:158:16
+  156 | @inline
+  157 | function align4(value: i32): i32 {
+> 158 |     let temp = value + 3;
+      |                ^^^^^^^^^ TypeError: 'value + 3' is not a '' expression.
+  159 |     return temp & 0xFFFFFFFC;
+  160 | }
+
+
+error: /Users/nishtahir/Developer/jswt/stdlib/math.jswt:5:9
+  3 | // Single max utility function
+  4 | function max(a: i32, b: i32): i32 {
+> 5 |     if (a > b) {
+    |         ^^^^^ TypeError: 'a > b' is not a '' expression.
+  6 |         return a;
+  7 |     }
+  8 |     return b;
+
+
+error: /Users/nishtahir/Developer/jswt/stdlib/math.jswt:12:9
+  10 | 
+  11 | function min(a: i32, b: i32): i32 {
+> 12 |     if (a < b) {
+     |         ^^^^^ TypeError: 'a < b' is not a '' expression.
+  13 |         return a;
+  14 |     }
+  15 |     return b;
+
+
+

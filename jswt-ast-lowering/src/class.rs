@@ -2,7 +2,7 @@ use crate::{gen::*, AstLowering};
 
 use jswt_ast::{transform::TransformVisitor, *};
 use jswt_common::Spannable;
-use jswt_types::{PrimitiveType, Type};
+use jswt_types::Type;
 
 impl<'a> AstLowering<'a> {
     pub(crate) fn enter_class_declaration(&mut self, node: &ClassDeclarationElement) {
@@ -41,7 +41,7 @@ impl<'a> AstLowering<'a> {
                 },
                 type_annotation: TypeAnnotation {
                     span: node.span(),
-                    ty: Type::Primitive(PrimitiveType::I32),
+                    ty: Type::Class("i32".into()),
                 },
             },
         );
@@ -96,7 +96,7 @@ impl<'a> AstLowering<'a> {
             // Class constructors always return a pointer
             returns: Some(TypeAnnotation {
                 span: node.span(),
-                ty: Type::Primitive(PrimitiveType::I32),
+                ty: Type::Class("i32".into()),
             }),
             body: BlockStatement {
                 span: node.body.span(),

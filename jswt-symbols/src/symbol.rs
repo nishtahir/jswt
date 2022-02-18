@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use jswt_derive::FromEnumVariant;
-use jswt_types::{FunctionType, ObjectType, Type};
+use jswt_types::{FunctionType, Type};
 
 #[derive(Debug, PartialEq, FromEnumVariant)]
 pub enum Symbol {
@@ -35,9 +35,9 @@ impl Symbol {
 
     pub fn as_type(&self) -> Type {
         match self {
-            Symbol::Type(binding) => binding.ty.clone(),
             Symbol::Function(binding) => binding.as_type(),
             Symbol::Class(binding) => binding.as_type(),
+            Symbol::Type(binding) => binding.ty.clone(),
         }
     }
 }
@@ -66,6 +66,8 @@ impl FunctionBinding {
 pub struct ClassBinding {
     pub name: Cow<'static, str>,
     pub fields: Vec<Field>,
+    pub methods: Vec<Method>,
+    pub constructor: Option<Constructor>,
 }
 
 impl ClassBinding {
@@ -75,13 +77,22 @@ impl ClassBinding {
     }
 
     pub fn as_type(&self) -> Type {
-        Type::Object(ObjectType::Reference(self.name.clone()))
+        Type::Class(self.name.clone())
     }
 
     pub fn field(&self, name: &str) -> Option<&Field> {
         for field in &self.fields {
             if field.name == name {
                 return Some(field);
+            }
+        }
+        None
+    }
+
+    pub fn method(&self, name: &str) -> Option<&Method> {
+        for method in &self.methods {
+            if method.name == name {
+                return Some(method);
             }
         }
         None
@@ -93,4 +104,16 @@ pub struct Field {
     pub name: Cow<'static, str>,
     pub index: usize,
     pub size: usize,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Constructor {
+    pub params: Vec<Type>,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Method {
+    pub name: Cow<'static, str>,
+    pub params: Vec<Type>,
+    pub returns: Type,
 }

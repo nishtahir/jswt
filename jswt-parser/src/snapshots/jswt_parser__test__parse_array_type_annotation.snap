@@ -49,11 +49,9 @@ Ast {
                                                     start: 20,
                                                     end: 25,
                                                 },
-                                                ty: Object(
-                                                    Array(
-                                                        Primitive(
-                                                            I32,
-                                                        ),
+                                                ty: Array(
+                                                    Class(
+                                                        "i32",
                                                     ),
                                                 ),
                                             },
@@ -68,11 +66,9 @@ Ast {
                                             start: 28,
                                             end: 36,
                                         },
-                                        ty: Object(
-                                            Array(
-                                                Object(
-                                                    String,
-                                                ),
+                                        ty: Array(
+                                            Class(
+                                                "string",
                                             ),
                                         ),
                                     },

@@ -1,0 +1,246 @@
+---
+source: jswt-semantics/src/resolver.rs
+expression: resolver
+
+---
+Resolver {
+    symbols: SymbolTable {
+        scopes: [],
+        table: {
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
+            }: Scope {
+                symbols: {
+                    "Array": Class(
+                        ClassBinding {
+                            name: "Array",
+                            fields: [
+                                Field {
+                                    name: "a",
+                                    index: 0,
+                                    size: 4,
+                                },
+                                Field {
+                                    name: "b",
+                                    index: 1,
+                                    size: 4,
+                                },
+                            ],
+                            methods: [
+                                Method {
+                                    name: "method",
+                                    params: [],
+                                    returns: Void,
+                                },
+                            ],
+                            constructor: Some(
+                                Constructor {
+                                    params: [
+                                        Class(
+                                            "i32",
+                                        ),
+                                        Class(
+                                            "f32",
+                                        ),
+                                    ],
+                                },
+                            ),
+                        },
+                    ),
+                    "doSomething": Function(
+                        FunctionBinding {
+                            params: [],
+                            returns: Class(
+                                "Array",
+                            ),
+                        },
+                    ),
+                    "global": Type(
+                        TypeBinding {
+                            ty: Class(
+                                "i32",
+                            ),
+                        },
+                    ),
+                    "test": Function(
+                        FunctionBinding {
+                            params: [],
+                            returns: Void,
+                        },
+                    ),
+                    "value": Function(
+                        FunctionBinding {
+                            params: [],
+                            returns: Class(
+                                "i32",
+                            ),
+                        },
+                    ),
+                },
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 102,
+                end: 132,
+            }: Scope {
+                symbols: {
+                    "a": Type(
+                        TypeBinding {
+                            ty: Class(
+                                "i32",
+                            ),
+                        },
+                    ),
+                    "b": Type(
+                        TypeBinding {
+                            ty: Class(
+                                "f32",
+                            ),
+                        },
+                    ),
+                },
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 130,
+                end: 132,
+            }: Scope {
+                symbols: {},
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 145,
+                end: 156,
+            }: Scope {
+                symbols: {},
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 154,
+                end: 156,
+            }: Scope {
+                symbols: {},
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 176,
+                end: 237,
+            }: Scope {
+                symbols: {},
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 192,
+                end: 237,
+            }: Scope {
+                symbols: {
+                    "x": Type(
+                        TypeBinding {
+                            ty: Class(
+                                "i32",
+                            ),
+                        },
+                    ),
+                },
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 248,
+                end: 281,
+            }: Scope {
+                symbols: {},
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 278,
+                end: 281,
+            }: Scope {
+                symbols: {},
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 291,
+                end: 346,
+            }: Scope {
+                symbols: {},
+            },
+            Span {
+                file: "test.1",
+                module: "module/test.1",
+                start: 313,
+                end: 346,
+            }: Scope {
+                symbols: {},
+            },
+        },
+    },
+    errors: [],
+    binding_context: None,
+    types: {
+        Span {
+            file: "test.1",
+            module: "module/test.1",
+            start: 22,
+            end: 24,
+        }: Class(
+            "i32",
+        ),
+        Span {
+            file: "test.1",
+            module: "module/test.1",
+            start: 214,
+            end: 216,
+        }: Class(
+            "i32",
+        ),
+        Span {
+            file: "test.1",
+            module: "module/test.1",
+            start: 214,
+            end: 226,
+        }: Class(
+            "i32",
+        ),
+        Span {
+            file: "test.1",
+            module: "module/test.1",
+            start: 219,
+            end: 224,
+        }: Function(
+            FunctionType {
+                params: [],
+                returns: Class(
+                    "i32",
+                ),
+            },
+        ),
+        Span {
+            file: "test.1",
+            module: "module/test.1",
+            start: 219,
+            end: 226,
+        }: Class(
+            "i32",
+        ),
+        Span {
+            file: "test.1",
+            module: "module/test.1",
+            start: 334,
+            end: 335,
+        }: Class(
+            "i32",
+        ),
+    },
+}

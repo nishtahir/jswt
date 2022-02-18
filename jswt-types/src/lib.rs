@@ -2,26 +2,11 @@ use std::{borrow::Cow, fmt::Display};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Type {
-    Primitive(PrimitiveType),
-    Object(ObjectType),
+    Class(Cow<'static, str>),
+    Array(Box<Type>),
     Function(FunctionType),
     Void,
     Unknown,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum ObjectType {
-    Array(Box<Type>),
-    String,
-    Reference(Cow<'static, str>),
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum PrimitiveType {
-    I32,
-    U32,
-    F32,
-    Boolean,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -30,24 +15,24 @@ pub struct FunctionType {
     pub returns: Box<Type>,
 }
 
-impl Display for PrimitiveType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            PrimitiveType::I32 => f.write_str("i32"),
-            PrimitiveType::U32 => f.write_str("u32"),
-            PrimitiveType::F32 => f.write_str("f32"),
-            PrimitiveType::Boolean => f.write_str("boolean"),
-        }
-    }
-}
-
 impl Type {
-    fn is_same_as(&self, other: &Type) -> bool {
+    pub fn is_same_as(&self, other: &Type) -> bool {
         self == other
     }
 
-    fn is_assignable_to(&self, other: &Type) -> bool {
+    pub fn is_assignable_to(&self, other: &Type) -> bool {
         self == other
+    }
+
+    pub fn is_comparable_to(&self, other: &Type) -> bool {
+        self == other
+    }
+
+    pub fn coerce(self, other: &Type) -> Type {
+        if self.is_unknown() {
+            return other.clone();
+        }
+        return self;
     }
 
     /// Returns `true` if the type is [`Function`].
@@ -57,10 +42,10 @@ impl Type {
         matches!(self, Self::Function(..))
     }
 
-    /// Returns `true` if the type is [`Object`].
+    /// Returns `true` if the type is [`Unknown`].
     ///
-    /// [`Object`]: Type::Object
-    pub fn is_object(&self) -> bool {
-        matches!(self, Self::Object(..))
+    /// [`Unknown`]: Type::Unknown
+    pub fn is_unknown(&self) -> bool {
+        matches!(self, Self::Unknown)
     }
 }

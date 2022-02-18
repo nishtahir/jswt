@@ -19,16 +19,18 @@ GlobalResolver {
                             ClassBinding {
                                 name: "Array",
                                 fields: [],
+                                methods: [],
+                                constructor: None,
                             },
                         ),
                         "test": Function(
                             FunctionBinding {
                                 params: [
-                                    Primitive(
-                                        I32,
+                                    Class(
+                                        "i32",
                                     ),
-                                    Primitive(
-                                        I32,
+                                    Class(
+                                        "i32",
                                     ),
                                 ],
                                 returns: Void,
@@ -37,22 +39,12 @@ GlobalResolver {
                         "test2": Function(
                             FunctionBinding {
                                 params: [],
-                                returns: Object(
-                                    Reference(
-                                        "Array",
-                                    ),
+                                returns: Class(
+                                    "Array",
                                 ),
                             },
                         ),
                     },
-                },
-                Span {
-                    file: "test.1",
-                    module: "module/test.1",
-                    start: 9,
-                    end: 33,
-                }: Scope {
-                    symbols: {},
                 },
             },
         },

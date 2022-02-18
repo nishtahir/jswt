@@ -1,44 +1,55 @@
 // @ts-nocheck
-class Array {
-    length: i32;
-    capacity: i32;
-    data: i32;
 
-    constructor(capacity: i32) {
-        // this.capacity = capacity;
-        // this.length = 0;
-        // this.data = malloc(capacity * 4);
-    }
+// class Array {
+//     length: i32;
+//     capacity: i32;
+//     data: i32;
 
-    set(index: i32, data: i32) {
-        // i32Store(this.data + index * 4, data);
-    }
+//     constructor(capacity: i32) {
+//         // this.capacity = capacity;
+//         // this.length = 0;
+//         // this.data = malloc(capacity * 4);
+//     }
 
-    get(index: i32): i32 {
-        // return i32Load(this.data + index * 4);
-    }
-}
+//     set(index: i32, data: i32) {
+//         // i32Store(this.data + index * 4, data);
+//     }
+
+//     get(index: i32): i32 {
+//         // return i32Load(this.data + index * 4);
+//     }
+// }
+
+
+// export function main(): i32 {
+//     let arr = new Array(10);
+//     // arr.set(0, 99);
+//     let a = arr.get(0);
+//     // println(arr.length);
+//     // println(a);
+
+//     // let arr2 = new Array(10);
+//     // arr2.set(0, 50);
+//     // let b = arr2.get(0);
+//     // println(b);
+
+//     return a;
+// }
+
+// // To pass semantic analysis
+// function get(): i32 {
+
+// }
+
+// function set() {
+
+// }
 
 export function main(): i32 {
-    let arr = new Array(10);
-    // arr.set(0, 99);
-    let a = arr.get(0);
-    println(arr.length);
-    // println(a);
-
-    // let arr2 = new Array(10);
-    // arr2.set(0, 50);
-    // let b = arr2.get(0);
-    // println(b);
-
-    return a;
+    let x = 1 + test();
+    return 0;
 }
 
-// To pass semantic analysis
-function get() {
-
-}
-
-function set() {
+function test(): boolean {
 
 }

@@ -1,6 +1,6 @@
 use jswt_common::Span;
 use jswt_derive::{FromEnumVariant, Spannable};
-use jswt_types::{ObjectType, PrimitiveType, Type};
+use jswt_types::Type;
 
 use crate::SingleExpression;
 
@@ -16,11 +16,11 @@ pub enum Literal {
 impl Literal {
     pub fn as_type(&self) -> Type {
         match self {
-            Literal::Array(_) => todo!(),
-            Literal::String(_) => Type::Object(ObjectType::String),
-            Literal::Integer(_) => Type::Primitive(PrimitiveType::I32),
-            Literal::Float(_) => Type::Primitive(PrimitiveType::F32),
-            Literal::Boolean(_) => Type::Primitive(PrimitiveType::Boolean),
+            Literal::Array(_) => Type::Array(Box::new(Type::Class("any".into()))),
+            Literal::String(_) => Type::Class("string".into()),
+            Literal::Integer(_) => Type::Class("i32".into()),
+            Literal::Float(_) => Type::Class("f32".into()),
+            Literal::Boolean(_) => Type::Class("boolean".into()),
         }
     }
 }

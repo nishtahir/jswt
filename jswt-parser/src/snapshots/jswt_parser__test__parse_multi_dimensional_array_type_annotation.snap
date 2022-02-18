@@ -49,14 +49,10 @@ Ast {
                                                     start: 20,
                                                     end: 27,
                                                 },
-                                                ty: Object(
+                                                ty: Array(
                                                     Array(
-                                                        Object(
-                                                            Array(
-                                                                Primitive(
-                                                                    I32,
-                                                                ),
-                                                            ),
+                                                        Class(
+                                                            "i32",
                                                         ),
                                                     ),
                                                 ),
@@ -72,14 +68,10 @@ Ast {
                                             start: 30,
                                             end: 40,
                                         },
-                                        ty: Object(
+                                        ty: Array(
                                             Array(
-                                                Object(
-                                                    Array(
-                                                        Object(
-                                                            String,
-                                                        ),
-                                                    ),
+                                                Class(
+                                                    "string",
                                                 ),
                                             ),
                                         ),

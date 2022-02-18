@@ -74,19 +74,9 @@ impl SymbolTable {
         name: T,
     ) -> Option<&ClassBinding> {
         self.lookup(name).and_then(|sym| match sym {
-            Symbol::Type(tb) => match &tb.ty {
-                jswt_types::Type::Primitive(_) => None,
-                jswt_types::Type::Object(obj) => match obj {
-                    jswt_types::ObjectType::Array(_) => todo!(),
-                    jswt_types::ObjectType::String => todo!(),
-                    jswt_types::ObjectType::Reference(r) => {
-                        self.lookup(r.clone()).and_then(|f| f.as_class())
-                    }
-                },
-                _ => None,
-            },
             Symbol::Function(_) => None,
             Symbol::Class(class) => Some(class),
+            Symbol::Type(_) => None,
         })
     }
 
