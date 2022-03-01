@@ -42,7 +42,6 @@ impl Display for PrimitiveType {
 }
 
 impl Type {
-
     /// Returns `true` if the type is [`Function`].
     ///
     /// [`Function`]: Type::Function

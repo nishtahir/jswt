@@ -12,10 +12,11 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                    module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
                                     start: 0,
                                     end: 38,
+                                    [content]: "function test(a: i32, b: i32): i32 { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -23,10 +24,11 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                        module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
                                         start: 9,
                                         end: 13,
+                                        [content]: "test",
                                     },
                                     value: "test",
                                 },
@@ -35,19 +37,21 @@ Ast {
                                         FormalParameterArg {
                                             ident: Identifier {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                                    module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
                                                     start: 14,
                                                     end: 15,
+                                                    [content]: "a",
                                                 },
                                                 value: "a",
                                             },
                                             type_annotation: TypeAnnotation {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                                    module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
                                                     start: 17,
                                                     end: 20,
+                                                    [content]: "i32",
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -57,19 +61,21 @@ Ast {
                                         FormalParameterArg {
                                             ident: Identifier {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                                    module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
                                                     start: 22,
                                                     end: 23,
+                                                    [content]: "b",
                                                 },
                                                 value: "b",
                                             },
                                             type_annotation: TypeAnnotation {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                                    module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
                                                     start: 25,
                                                     end: 28,
+                                                    [content]: "i32",
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -81,10 +87,11 @@ Ast {
                                 returns: Some(
                                     TypeAnnotation {
                                         span: Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
+                                            file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                            module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
                                             start: 31,
                                             end: 34,
+                                            [content]: "i32",
                                         },
                                         ty: Primitive(
                                             I32,
@@ -93,10 +100,11 @@ Ast {
                                 ),
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                        module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
                                         start: 35,
                                         end: 38,
+                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],

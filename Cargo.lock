@@ -542,6 +542,9 @@ dependencies = [
 [[package]]
 name = "jswt-common"
 version = "0.1.0"
+dependencies = [
+ "lazy_static",
+]
 
 [[package]]
 name = "jswt-derive"
@@ -609,6 +612,7 @@ name = "jswt-tokenizer"
 version = "0.1.0"
 dependencies = [
  "jswt-assert",
+ "jswt-common",
  "lazy_static",
  "pathdiff",
  "regex",

@@ -13,10 +13,11 @@ Ast {
                             Empty(
                                 EmptyStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_empty_statement",
+                                        module: "module/test_parse_empty_statement",
                                         start: 0,
                                         end: 1,
+                                        [content]: ";",
                                     },
                                 },
                             ),

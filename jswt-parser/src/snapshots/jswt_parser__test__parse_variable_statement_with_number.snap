@@ -13,26 +13,29 @@ Ast {
                             Variable(
                                 VariableStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_variable_statement_with_number",
+                                        module: "module/test_parse_variable_statement_with_number",
                                         start: 0,
                                         end: 11,
+                                        [content]: "let x = 42;",
                                     },
                                     modifier: Let(
                                         Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
+                                            file: "test_parse_variable_statement_with_number",
+                                            module: "module/test_parse_variable_statement_with_number",
                                             start: 0,
                                             end: 3,
+                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
                                         Identifier {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "test_parse_variable_statement_with_number",
+                                                module: "module/test_parse_variable_statement_with_number",
                                                 start: 4,
                                                 end: 5,
+                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -41,10 +44,11 @@ Ast {
                                         Integer(
                                             IntegerLiteral {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_variable_statement_with_number",
+                                                    module: "module/test_parse_variable_statement_with_number",
                                                     start: 8,
                                                     end: 10,
+                                                    [content]: "42",
                                                 },
                                                 value: 42,
                                             },

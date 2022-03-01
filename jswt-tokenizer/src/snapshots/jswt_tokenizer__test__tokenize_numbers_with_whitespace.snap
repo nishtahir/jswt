@@ -5,24 +5,33 @@ expression: actual
 ---
 [
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "4",
-        offset: 3,
         kind: Integer,
+        span: Span {
+            file: "test_tokenize_numbers_with_whitespace",
+            module: "module/test_tokenize_numbers_with_whitespace",
+            start: 3,
+            end: 4,
+            [content]: "4",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "2",
-        offset: 6,
         kind: Integer,
+        span: Span {
+            file: "test_tokenize_numbers_with_whitespace",
+            module: "module/test_tokenize_numbers_with_whitespace",
+            start: 6,
+            end: 7,
+            [content]: "2",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "",
-        offset: 10,
         kind: Eof,
+        span: Span {
+            file: "test_tokenize_numbers_with_whitespace",
+            module: "module/test_tokenize_numbers_with_whitespace",
+            start: 10,
+            end: 10,
+            [content]: "",
+        },
     },
 ]

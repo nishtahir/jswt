@@ -13,19 +13,21 @@ Ast {
                             Return(
                                 ReturnStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_return_statement",
+                                        module: "module/test_parse_return_statement",
                                         start: 0,
                                         end: 10,
+                                        [content]: "return 99;",
                                     },
                                     expression: Literal(
                                         Integer(
                                             IntegerLiteral {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_return_statement",
+                                                    module: "module/test_parse_return_statement",
                                                     start: 7,
                                                     end: 9,
+                                                    [content]: "99",
                                                 },
                                                 value: 99,
                                             },

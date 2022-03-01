@@ -13,26 +13,29 @@ Ast {
                             Variable(
                                 VariableStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "parse_variable_type_annotation",
+                                        module: "module/parse_variable_type_annotation",
                                         start: 0,
                                         end: 16,
+                                        [content]: "let x: i32 = 99;",
                                     },
                                     modifier: Let(
                                         Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
+                                            file: "parse_variable_type_annotation",
+                                            module: "module/parse_variable_type_annotation",
                                             start: 0,
                                             end: 3,
+                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
                                         Identifier {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "parse_variable_type_annotation",
+                                                module: "module/parse_variable_type_annotation",
                                                 start: 4,
                                                 end: 5,
+                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -41,10 +44,11 @@ Ast {
                                         Integer(
                                             IntegerLiteral {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "parse_variable_type_annotation",
+                                                    module: "module/parse_variable_type_annotation",
                                                     start: 13,
                                                     end: 15,
+                                                    [content]: "99",
                                                 },
                                                 value: 99,
                                             },
@@ -53,10 +57,11 @@ Ast {
                                     type_annotation: Some(
                                         TypeAnnotation {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "parse_variable_type_annotation",
+                                                module: "module/parse_variable_type_annotation",
                                                 start: 7,
                                                 end: 10,
+                                                [content]: "i32",
                                             },
                                             ty: Primitive(
                                                 I32,

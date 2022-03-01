@@ -7,13 +7,10 @@ use clap::Arg;
 use jswt_ast::Ast;
 use jswt_ast_lowering::AstLowering;
 use std::cell::Cell;
-use std::cell::RefCell;
-use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::exit;
-use std::rc::Rc;
 use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, Store};
 
 use jswt_codegen::CodeGenerator;
@@ -162,18 +159,13 @@ fn main() {
 }
 
 fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast {
-    // Main cache of source files that have been read for compilation
-    // It may be worth building an abstraction around this to help with resolving paths
-    // for imports and preventing issues like duplicate file reads
-    let source_map = Rc::new(RefCell::new(HashMap::new()));
-
     // Let binding to prevent the ref being dropped before getting passed to the tokenizer
-    let mut tokenizer = Tokenizer::new(source_map.clone());
+    let mut tokenizer = Tokenizer::new();
     // Sources root for user defined sources is the current directory
     // from where the compiler is being invoked.
     tokenizer.set_sources_root(Some(&std::env::current_dir().unwrap()));
     tokenizer.set_module_prefix(Some("module".to_string()));
-    tokenizer.enqueue_source(input);
+    tokenizer.enqueue_source_file(input);
 
     if let Some(runtime) = runtime {
         // Sources at the top of the source stack will be resolved first
@@ -182,7 +174,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         // should point to user defined sources
         tokenizer.set_sources_root(runtime.parent().map(Path::to_path_buf).as_ref());
         tokenizer.set_module_prefix(Some("runtime".to_string()));
-        tokenizer.enqueue_source(runtime);
+        tokenizer.enqueue_source_file(runtime);
     }
 
     let mut parser = Parser::new(&mut tokenizer);
@@ -196,12 +188,12 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     // Report errors
     for error in parser.tokenizer_errors() {
         has_errors = true;
-        print_tokenizer_error(&error, &source_map.clone().borrow());
+        print_tokenizer_error(&error);
     }
 
     for error in parser.parse_errors() {
         has_errors = true;
-        print_parser_error(&error, &source_map.clone().borrow());
+        print_parser_error(&error);
     }
 
     // Semantic analytis pass
@@ -210,7 +202,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
 
     for error in semantic_errors {
         has_errors = true;
-        print_semantic_error(&error, &source_map.borrow())
+        print_semantic_error(&error);
     }
 
     let mut lowering = AstLowering::new(&mut analyzer.symbol_table);

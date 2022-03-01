@@ -41,10 +41,11 @@ mod test {
     use jswt_tokenizer::Tokenizer;
 
     #[test]
+    #[ignore]
     fn test_duplicate_function_declaration_generates_error() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_duplicate_function_declaration_generates_error",
             r"
         class Array {
 
@@ -65,10 +66,11 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn test_duplicate_variable_declaration_generates_error() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_duplicate_variable_declaration_generates_error",
             r"
         function test(a: i32, b: i32) {
             let x = 99;
@@ -82,9 +84,10 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn test_variable_not_defined_generates_error() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "function test() { return x; }");
+        tokenizer.enqueue_source_str("test_variable_not_defined_generates_error", "function test() { return x; }");
 
         let mut ast = Parser::new(&mut tokenizer).parse();
         let errors = SemanticAnalyzer::default().analyze(&mut ast);

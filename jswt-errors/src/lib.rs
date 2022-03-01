@@ -3,9 +3,9 @@ mod emitter;
 mod highlighter;
 
 use emitter::ErrorEmitter;
-use std::{borrow::Cow, collections::HashMap};
+use std::borrow::Cow;
 
-use jswt_common::Span;
+use jswt_common::{fs, Span};
 use jswt_parser::ParseError;
 use jswt_semantics::*;
 use jswt_tokenizer::TokenizerError;
@@ -22,7 +22,7 @@ pub enum Level {
     Warning,
 }
 
-pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, &'static str>) {
+pub fn print_semantic_error(error: &SemanticError) {
     let diagnostic = match error {
         SemanticError::VariableNotDefined { name, span } => DiagnosticMessage {
             level: Level::Error,
@@ -44,7 +44,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
         },
         SemanticError::NotAFunctionError { span, name_span } => {
             let file = &span.file.to_string();
-            let source = source_map[file];
+            let source = fs::read_to_string(file);
             let offending_token = &source[name_span.start..name_span.end];
             DiagnosticMessage {
                 level: Level::Error,
@@ -59,7 +59,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
             expected,
         } => {
             let file = &span.file.to_string();
-            let source = source_map[file];
+            let source = fs::read_to_string(file);
             let offending_token = &source[offending_token.start..offending_token.end];
             DiagnosticMessage {
                 level: Level::Error,
@@ -74,7 +74,7 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
         }
         SemanticError::FunctionNotDefined { span, name_span } => {
             let file = &span.file.to_string();
-            let source = source_map[file];
+            let source = fs::read_to_string(file);
             let offending_token = &source[name_span.start..name_span.end];
             DiagnosticMessage {
                 level: Level::Error,
@@ -85,11 +85,11 @@ pub fn print_semantic_error(error: &SemanticError, source_map: &HashMap<String, 
         }
     };
 
-    let emitter = ErrorEmitter::new(source_map);
+    let emitter = ErrorEmitter::new();
     emitter.emit(&[diagnostic]);
 }
 
-pub fn print_tokenizer_error(error: &TokenizerError, source_map: &HashMap<String, &'static str>) {
+pub fn print_tokenizer_error(error: &TokenizerError) {
     let diagnostic = match error {
         TokenizerError::UnreconizedToken {
             file,
@@ -97,17 +97,22 @@ pub fn print_tokenizer_error(error: &TokenizerError, source_map: &HashMap<String
             offset,
         } => DiagnosticMessage {
             level: Level::Error,
-            span: Span::new(file.clone().into(),file.clone().into(), *offset, *offset + 1),
+            span: Span::new(
+                file.clone().into(),
+                file.clone().into(),
+                *offset,
+                *offset + 1,
+            ),
             message: format!("SyntaxError: Unrecognized token '{}'.", token).into(),
             hint: Some("Remove this token".into()),
         },
         TokenizerError::UnexpectedEof => todo!(),
     };
-    let emitter = ErrorEmitter::new(source_map);
+    let emitter = ErrorEmitter::new();
     emitter.emit(&[diagnostic]);
 }
 
-pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'static str>) {
+pub fn print_parser_error(error: &ParseError) {
     let diagnostic = match error {
         ParseError::MismatchedToken {
             expected,
@@ -139,6 +144,6 @@ pub fn print_parser_error(error: &ParseError, source_map: &HashMap<String, &'sta
             hint: None,
         },
     };
-    let emitter = ErrorEmitter::new(source_map);
+    let emitter = ErrorEmitter::new();
     emitter.emit(&[diagnostic]);
 }

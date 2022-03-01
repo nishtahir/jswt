@@ -5,38 +5,53 @@ expression: actual
 ---
 [
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "let",
-        offset: 0,
         kind: Let,
+        span: Span {
+            file: "test_tokenize_let_assignment",
+            module: "module/test_tokenize_let_assignment",
+            start: 0,
+            end: 3,
+            [content]: "let",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "a",
-        offset: 4,
         kind: Identifier,
+        span: Span {
+            file: "test_tokenize_let_assignment",
+            module: "module/test_tokenize_let_assignment",
+            start: 4,
+            end: 5,
+            [content]: "a",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "=",
-        offset: 6,
         kind: Equal,
+        span: Span {
+            file: "test_tokenize_let_assignment",
+            module: "module/test_tokenize_let_assignment",
+            start: 6,
+            end: 7,
+            [content]: "=",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "99",
-        offset: 8,
         kind: Integer,
+        span: Span {
+            file: "test_tokenize_let_assignment",
+            module: "module/test_tokenize_let_assignment",
+            start: 8,
+            end: 10,
+            [content]: "99",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "",
-        offset: 10,
         kind: Eof,
+        span: Span {
+            file: "test_tokenize_let_assignment",
+            module: "module/test_tokenize_let_assignment",
+            start: 10,
+            end: 10,
+            [content]: "",
+        },
     },
 ]

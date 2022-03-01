@@ -12,54 +12,60 @@ Ast {
                         ClassDeclaration(
                             ClassDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_class_declaration",
+                                    module: "module/test_class_declaration",
                                     start: 0,
                                     end: 35,
+                                    [content]: "class A { constructor(a: i32) { } }",
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_class_declaration",
+                                        module: "module/test_class_declaration",
                                         start: 6,
                                         end: 7,
+                                        [content]: "A",
                                     },
                                     value: "A",
                                 },
                                 body: ClassBody {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_class_declaration",
+                                        module: "module/test_class_declaration",
                                         start: 8,
                                         end: 35,
+                                        [content]: "{ constructor(a: i32) { } }",
                                     },
                                     class_elements: [
                                         Constructor(
                                             ClassConstructorElement {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_class_declaration",
+                                                    module: "module/test_class_declaration",
                                                     start: 10,
                                                     end: 33,
+                                                    [content]: "constructor(a: i32) { }",
                                                 },
                                                 params: FormalParameterList {
                                                     parameters: [
                                                         FormalParameterArg {
                                                             ident: Identifier {
                                                                 span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
+                                                                    file: "test_class_declaration",
+                                                                    module: "module/test_class_declaration",
                                                                     start: 22,
                                                                     end: 23,
+                                                                    [content]: "a",
                                                                 },
                                                                 value: "a",
                                                             },
                                                             type_annotation: TypeAnnotation {
                                                                 span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
+                                                                    file: "test_class_declaration",
+                                                                    module: "module/test_class_declaration",
                                                                     start: 25,
                                                                     end: 28,
+                                                                    [content]: "i32",
                                                                 },
                                                                 ty: Primitive(
                                                                     I32,
@@ -70,10 +76,11 @@ Ast {
                                                 },
                                                 body: BlockStatement {
                                                     span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
+                                                        file: "test_class_declaration",
+                                                        module: "module/test_class_declaration",
                                                         start: 30,
                                                         end: 33,
+                                                        [content]: "{ }",
                                                     },
                                                     statements: StatementList {
                                                         statements: [],

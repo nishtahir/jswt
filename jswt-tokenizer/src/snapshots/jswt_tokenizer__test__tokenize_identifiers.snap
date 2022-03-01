@@ -5,24 +5,33 @@ expression: actual
 ---
 [
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "user",
-        offset: 0,
         kind: Identifier,
+        span: Span {
+            file: "test_tokenize_identifiers",
+            module: "module/test_tokenize_identifiers",
+            start: 0,
+            end: 4,
+            [content]: "user",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "identifier",
-        offset: 5,
         kind: Identifier,
+        span: Span {
+            file: "test_tokenize_identifiers",
+            module: "module/test_tokenize_identifiers",
+            start: 5,
+            end: 15,
+            [content]: "identifier",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "",
-        offset: 15,
         kind: Eof,
+        span: Span {
+            file: "test_tokenize_identifiers",
+            module: "module/test_tokenize_identifiers",
+            start: 15,
+            end: 15,
+            [content]: "",
+        },
     },
 ]

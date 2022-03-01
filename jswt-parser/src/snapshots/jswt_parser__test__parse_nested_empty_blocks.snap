@@ -13,20 +13,22 @@ Ast {
                             Block(
                                 BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_nested_empty_blocks",
+                                        module: "module/test_parse_nested_empty_blocks",
                                         start: 0,
                                         end: 6,
+                                        [content]: "{ {} }",
                                     },
                                     statements: StatementList {
                                         statements: [
                                             Block(
                                                 BlockStatement {
                                                     span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
+                                                        file: "test_parse_nested_empty_blocks",
+                                                        module: "module/test_parse_nested_empty_blocks",
                                                         start: 2,
                                                         end: 4,
+                                                        [content]: "{}",
                                                     },
                                                     statements: StatementList {
                                                         statements: [],

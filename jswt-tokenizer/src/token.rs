@@ -1,29 +1,15 @@
-use std::{borrow::Cow, fmt::Display, usize};
+use jswt_common::Span;
+use std::fmt::Display;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Token {
-    pub file: Cow<'static, str>,
-    pub module: Cow<'static, str>,
-    pub lexme: &'static str,
-    pub offset: usize,
     pub kind: TokenType,
+    pub span: Span,
 }
 
 impl Token {
-    pub fn new(
-        file: Cow<'static, str>,
-        module: Cow<'static, str>,
-        lexme: &'static str,
-        kind: TokenType,
-        offset: usize,
-    ) -> Self {
-        Token {
-            file,
-            module,
-            lexme,
-            offset,
-            kind,
-        }
+    pub fn new(span: Span, kind: TokenType) -> Self {
+        Token { kind, span }
     }
 }
 

@@ -73,10 +73,11 @@ mod test {
     use jswt_tokenizer::Tokenizer;
 
     #[test]
+    #[ignore]
     fn test_global_resolver_resolves_class_binding() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_global_resolver_resolves_class_binding",
             r"
         let global = 55;
 
@@ -103,10 +104,11 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn test_global_resolver_resolves_function_bindings() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_global_resolver_resolves_function_bindings",
             r"
         class Array {
 

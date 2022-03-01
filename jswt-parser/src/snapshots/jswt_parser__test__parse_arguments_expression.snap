@@ -13,33 +13,37 @@ Ast {
                             Expression(
                                 ExpressionStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_arguments_expression",
+                                        module: "module/test_parse_arguments_expression",
                                         start: 0,
                                         end: 9,
+                                        [content]: "print(6);",
                                     },
                                     expression: Arguments(
                                         ArgumentsExpression {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "test_parse_arguments_expression",
+                                                module: "module/test_parse_arguments_expression",
                                                 start: 0,
                                                 end: 8,
+                                                [content]: "print(6)",
                                             },
                                             ident: Identifier(
                                                 IdentifierExpression {
                                                     span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
+                                                        file: "test_parse_arguments_expression",
+                                                        module: "module/test_parse_arguments_expression",
                                                         start: 0,
                                                         end: 5,
+                                                        [content]: "print",
                                                     },
                                                     ident: Identifier {
                                                         span: Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
+                                                            file: "test_parse_arguments_expression",
+                                                            module: "module/test_parse_arguments_expression",
                                                             start: 0,
                                                             end: 5,
+                                                            [content]: "print",
                                                         },
                                                         value: "print",
                                                     },
@@ -47,20 +51,22 @@ Ast {
                                             ),
                                             arguments: ArgumentsList {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_arguments_expression",
+                                                    module: "module/test_parse_arguments_expression",
                                                     start: 5,
                                                     end: 8,
+                                                    [content]: "(6)",
                                                 },
                                                 arguments: [
                                                     Literal(
                                                         Integer(
                                                             IntegerLiteral {
                                                                 span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
+                                                                    file: "test_parse_arguments_expression",
+                                                                    module: "module/test_parse_arguments_expression",
                                                                     start: 6,
                                                                     end: 7,
+                                                                    [content]: "6",
                                                                 },
                                                                 value: 6,
                                                             },

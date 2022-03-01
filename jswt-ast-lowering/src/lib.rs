@@ -102,10 +102,11 @@ mod test {
     use jswt_tokenizer::Tokenizer;
 
     #[test]
+    #[ignore]
     fn test_class_declaration_lowers_class_fields() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_class_declaration_lowers_class_fields",
             r"
         class Array {
             len: i32;
@@ -124,10 +125,11 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn test_class_declaration_lowers_methods_into_functions() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_class_declaration_lowers_methods_into_functions",
             r"
         class Array {
             getLen(): i32 {
@@ -147,10 +149,11 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn test_class_declaration_lowers_new_expression_into_constructor_invocation() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_class_declaration_lowers_new_expression_into_constructor_invocation",
             r"
         class Array {
             constructor() {}
@@ -173,10 +176,11 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn test_class_declaration_lowers_this_binding() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_class_declaration_lowers_this_binding",
             r"
         class Array {
             len: i32;

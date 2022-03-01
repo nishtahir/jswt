@@ -125,7 +125,7 @@ mod test {
     #[test]
     fn test_class_declaration() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "class A { constructor(a: i32) { } }");
+        tokenizer.enqueue_source_str("test_class_declaration", "class A { constructor(a: i32) { } }");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -135,7 +135,7 @@ mod test {
     #[test]
     fn test_class_method_declaration() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test.1", "class A { hello(a: i32) { } }");
+        tokenizer.enqueue_source_str("test_class_method_declaration", "class A { hello(a: i32) { } }");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -146,7 +146,7 @@ mod test {
     fn test_class_method_declaration_with_this_binding() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test.1",
+            "test_class_method_declaration_with_this_binding",
             r"
             class A { 
                 constructor(a: i32) { 

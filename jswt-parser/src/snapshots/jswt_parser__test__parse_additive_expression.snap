@@ -13,26 +13,29 @@ Ast {
                             Variable(
                                 VariableStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_additive_expression",
+                                        module: "module/test_parse_additive_expression",
                                         start: 0,
                                         end: 14,
+                                        [content]: "let x = 1 + 2;",
                                     },
                                     modifier: Let(
                                         Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
+                                            file: "test_parse_additive_expression",
+                                            module: "module/test_parse_additive_expression",
                                             start: 0,
                                             end: 3,
+                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
                                         Identifier {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "test_parse_additive_expression",
+                                                module: "module/test_parse_additive_expression",
                                                 start: 4,
                                                 end: 5,
+                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -40,19 +43,21 @@ Ast {
                                     expression: Additive(
                                         BinaryExpression {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "test_parse_additive_expression",
+                                                module: "module/test_parse_additive_expression",
                                                 start: 8,
                                                 end: 13,
+                                                [content]: "1 + 2",
                                             },
                                             left: Literal(
                                                 Integer(
                                                     IntegerLiteral {
                                                         span: Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
+                                                            file: "test_parse_additive_expression",
+                                                            module: "module/test_parse_additive_expression",
                                                             start: 8,
                                                             end: 9,
+                                                            [content]: "1",
                                                         },
                                                         value: 1,
                                                     },
@@ -60,20 +65,22 @@ Ast {
                                             ),
                                             op: Plus(
                                                 Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_additive_expression",
+                                                    module: "module/test_parse_additive_expression",
                                                     start: 10,
                                                     end: 11,
+                                                    [content]: "+",
                                                 },
                                             ),
                                             right: Literal(
                                                 Integer(
                                                     IntegerLiteral {
                                                         span: Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
+                                                            file: "test_parse_additive_expression",
+                                                            module: "module/test_parse_additive_expression",
                                                             start: 12,
                                                             end: 13,
+                                                            [content]: "2",
                                                         },
                                                         value: 2,
                                                     },

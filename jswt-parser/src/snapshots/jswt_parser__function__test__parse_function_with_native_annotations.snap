@@ -12,26 +12,29 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_parse_function_with_native_annotations",
+                                    module: "module/test_parse_function_with_native_annotations",
                                     start: 162,
                                     end: 194,
+                                    [content]: "function println(value: i32) { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [
                                         Annotation {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "test_parse_function_with_native_annotations",
+                                                module: "module/test_parse_function_with_native_annotations",
                                                 start: 139,
                                                 end: 153,
+                                                [content]: "@native(\"env\")",
                                             },
                                             name: Identifier {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_with_native_annotations",
+                                                    module: "module/test_parse_function_with_native_annotations",
                                                     start: 140,
                                                     end: 146,
+                                                    [content]: "native",
                                                 },
                                                 value: "native",
                                             },
@@ -40,10 +43,11 @@ Ast {
                                                     String(
                                                         StringLiteral {
                                                             span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
+                                                                file: "test_parse_function_with_native_annotations",
+                                                                module: "module/test_parse_function_with_native_annotations",
                                                                 start: 147,
                                                                 end: 152,
+                                                                [content]: "\"env\"",
                                                             },
                                                             value: "env",
                                                         },
@@ -56,10 +60,11 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_function_with_native_annotations",
+                                        module: "module/test_parse_function_with_native_annotations",
                                         start: 171,
                                         end: 178,
+                                        [content]: "println",
                                     },
                                     value: "println",
                                 },
@@ -68,19 +73,21 @@ Ast {
                                         FormalParameterArg {
                                             ident: Identifier {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_with_native_annotations",
+                                                    module: "module/test_parse_function_with_native_annotations",
                                                     start: 179,
                                                     end: 184,
+                                                    [content]: "value",
                                                 },
                                                 value: "value",
                                             },
                                             type_annotation: TypeAnnotation {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_with_native_annotations",
+                                                    module: "module/test_parse_function_with_native_annotations",
                                                     start: 186,
                                                     end: 189,
+                                                    [content]: "i32",
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -92,10 +99,11 @@ Ast {
                                 returns: None,
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_function_with_native_annotations",
+                                        module: "module/test_parse_function_with_native_annotations",
                                         start: 191,
                                         end: 194,
+                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],
@@ -106,26 +114,29 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_parse_function_with_native_annotations",
+                                    module: "module/test_parse_function_with_native_annotations",
                                     start: 344,
                                     end: 372,
+                                    [content]: "function exit(code: i32) { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [
                                         Annotation {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "test_parse_function_with_native_annotations",
+                                                module: "module/test_parse_function_with_native_annotations",
                                                 start: 321,
                                                 end: 335,
+                                                [content]: "@native(\"env\")",
                                             },
                                             name: Identifier {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_with_native_annotations",
+                                                    module: "module/test_parse_function_with_native_annotations",
                                                     start: 322,
                                                     end: 328,
+                                                    [content]: "native",
                                                 },
                                                 value: "native",
                                             },
@@ -134,10 +145,11 @@ Ast {
                                                     String(
                                                         StringLiteral {
                                                             span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
+                                                                file: "test_parse_function_with_native_annotations",
+                                                                module: "module/test_parse_function_with_native_annotations",
                                                                 start: 329,
                                                                 end: 334,
+                                                                [content]: "\"env\"",
                                                             },
                                                             value: "env",
                                                         },
@@ -150,10 +162,11 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_function_with_native_annotations",
+                                        module: "module/test_parse_function_with_native_annotations",
                                         start: 353,
                                         end: 357,
+                                        [content]: "exit",
                                     },
                                     value: "exit",
                                 },
@@ -162,19 +175,21 @@ Ast {
                                         FormalParameterArg {
                                             ident: Identifier {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_with_native_annotations",
+                                                    module: "module/test_parse_function_with_native_annotations",
                                                     start: 358,
                                                     end: 362,
+                                                    [content]: "code",
                                                 },
                                                 value: "code",
                                             },
                                             type_annotation: TypeAnnotation {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_parse_function_with_native_annotations",
+                                                    module: "module/test_parse_function_with_native_annotations",
                                                     start: 364,
                                                     end: 367,
+                                                    [content]: "i32",
                                                 },
                                                 ty: Primitive(
                                                     I32,
@@ -186,10 +201,11 @@ Ast {
                                 returns: None,
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_function_with_native_annotations",
+                                        module: "module/test_parse_function_with_native_annotations",
                                         start: 369,
                                         end: 372,
+                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],

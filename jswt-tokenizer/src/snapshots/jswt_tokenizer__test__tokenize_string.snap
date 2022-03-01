@@ -5,17 +5,23 @@ expression: actual
 ---
 [
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "\"Hello World\"",
-        offset: 0,
         kind: String,
+        span: Span {
+            file: "test_tokenize_string",
+            module: "module/test_tokenize_string",
+            start: 0,
+            end: 13,
+            [content]: "\"Hello World\"",
+        },
     },
     Token {
-        file: "test.1",
-        module: "module/test.1",
-        lexme: "",
-        offset: 13,
         kind: Eof,
+        span: Span {
+            file: "test_tokenize_string",
+            module: "module/test_tokenize_string",
+            start: 13,
+            end: 13,
+            [content]: "",
+        },
     },
 ]

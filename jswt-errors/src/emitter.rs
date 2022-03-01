@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use colored::Colorize;
+use jswt_common::fs;
 
 use crate::{
     codeframe::{code_frame, location_from_offset, LineCol, Location},
@@ -8,14 +7,12 @@ use crate::{
     DiagnosticMessage, Level,
 };
 
-pub struct ErrorEmitter<'a> {
-    source_map: &'a HashMap<String, &'static str>,
-}
+pub struct ErrorEmitter {}
 
-impl<'a> ErrorEmitter<'a> {
+impl ErrorEmitter {
     ///
-    pub fn new(source_map: &'a HashMap<String, &'static str>) -> Self {
-        Self { source_map }
+    pub fn new() -> Self {
+        Self {}
     }
 
     pub fn emit(&self, diagnostics: &[DiagnosticMessage]) {
@@ -28,7 +25,7 @@ impl<'a> ErrorEmitter<'a> {
             } = diagnostic;
 
             let file = &span.file.to_string();
-            let source = self.source_map[file];
+            let source = fs::read_to_string(file);
             let location = Location {
                 end: location_from_offset(source, span.end),
                 start: location_from_offset(source, span.start),

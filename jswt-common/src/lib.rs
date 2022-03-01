@@ -1,3 +1,4 @@
+pub mod fs;
 mod span;
 mod symbol_table;
 

@@ -13,18 +13,20 @@ Ast {
                             Expression(
                                 ExpressionStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "parse_this_expression",
+                                        module: "module/parse_this_expression",
                                         start: 0,
                                         end: 5,
+                                        [content]: "this;",
                                     },
                                     expression: This(
                                         ThisExpression {
                                             span: Span {
-                                                file: "test.1",
-                                                module: "module/test.1",
+                                                file: "parse_this_expression",
+                                                module: "module/parse_this_expression",
                                                 start: 0,
                                                 end: 4,
+                                                [content]: "this",
                                             },
                                         },
                                     ),

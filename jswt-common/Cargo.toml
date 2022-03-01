@@ -6,3 +6,6 @@ edition = "2018"
 
 [lib]
 doctest = false
+
+[dependencies]
+lazy_static ="1.4.0"

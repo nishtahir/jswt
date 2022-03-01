@@ -12,10 +12,11 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "parse_array_type_annotation",
+                                    module: "module/parse_array_type_annotation",
                                     start: 0,
                                     end: 40,
+                                    [content]: "function exit(code: i32[]): string[] { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -23,10 +24,11 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "parse_array_type_annotation",
+                                        module: "module/parse_array_type_annotation",
                                         start: 9,
                                         end: 13,
+                                        [content]: "exit",
                                     },
                                     value: "exit",
                                 },
@@ -35,19 +37,21 @@ Ast {
                                         FormalParameterArg {
                                             ident: Identifier {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "parse_array_type_annotation",
+                                                    module: "module/parse_array_type_annotation",
                                                     start: 14,
                                                     end: 18,
+                                                    [content]: "code",
                                                 },
                                                 value: "code",
                                             },
                                             type_annotation: TypeAnnotation {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "parse_array_type_annotation",
+                                                    module: "module/parse_array_type_annotation",
                                                     start: 20,
                                                     end: 25,
+                                                    [content]: "i32[]",
                                                 },
                                                 ty: Object(
                                                     Array(
@@ -63,10 +67,11 @@ Ast {
                                 returns: Some(
                                     TypeAnnotation {
                                         span: Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
+                                            file: "parse_array_type_annotation",
+                                            module: "module/parse_array_type_annotation",
                                             start: 28,
                                             end: 36,
+                                            [content]: "string[]",
                                         },
                                         ty: Object(
                                             Array(
@@ -79,10 +84,11 @@ Ast {
                                 ),
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "parse_array_type_annotation",
+                                        module: "module/parse_array_type_annotation",
                                         start: 37,
                                         end: 40,
+                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],

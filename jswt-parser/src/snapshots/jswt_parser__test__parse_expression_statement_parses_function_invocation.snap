@@ -12,10 +12,11 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_parse_expression_statement_parses_function_invocation",
+                                    module: "module/test_parse_expression_statement_parses_function_invocation",
                                     start: 0,
                                     end: 34,
+                                    [content]: "export function main() { test(); }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -23,10 +24,11 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_expression_statement_parses_function_invocation",
+                                        module: "module/test_parse_expression_statement_parses_function_invocation",
                                         start: 16,
                                         end: 20,
+                                        [content]: "main",
                                     },
                                     value: "main",
                                 },
@@ -36,43 +38,48 @@ Ast {
                                 returns: None,
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_parse_expression_statement_parses_function_invocation",
+                                        module: "module/test_parse_expression_statement_parses_function_invocation",
                                         start: 23,
                                         end: 34,
+                                        [content]: "{ test(); }",
                                     },
                                     statements: StatementList {
                                         statements: [
                                             Expression(
                                                 ExpressionStatement {
                                                     span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
+                                                        file: "test_parse_expression_statement_parses_function_invocation",
+                                                        module: "module/test_parse_expression_statement_parses_function_invocation",
                                                         start: 25,
                                                         end: 32,
+                                                        [content]: "test();",
                                                     },
                                                     expression: Arguments(
                                                         ArgumentsExpression {
                                                             span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
+                                                                file: "test_parse_expression_statement_parses_function_invocation",
+                                                                module: "module/test_parse_expression_statement_parses_function_invocation",
                                                                 start: 25,
                                                                 end: 31,
+                                                                [content]: "test()",
                                                             },
                                                             ident: Identifier(
                                                                 IdentifierExpression {
                                                                     span: Span {
-                                                                        file: "test.1",
-                                                                        module: "module/test.1",
+                                                                        file: "test_parse_expression_statement_parses_function_invocation",
+                                                                        module: "module/test_parse_expression_statement_parses_function_invocation",
                                                                         start: 25,
                                                                         end: 29,
+                                                                        [content]: "test",
                                                                     },
                                                                     ident: Identifier {
                                                                         span: Span {
-                                                                            file: "test.1",
-                                                                            module: "module/test.1",
+                                                                            file: "test_parse_expression_statement_parses_function_invocation",
+                                                                            module: "module/test_parse_expression_statement_parses_function_invocation",
                                                                             start: 25,
                                                                             end: 29,
+                                                                            [content]: "test",
                                                                         },
                                                                         value: "test",
                                                                     },
@@ -80,10 +87,11 @@ Ast {
                                                             ),
                                                             arguments: ArgumentsList {
                                                                 span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
+                                                                    file: "test_parse_expression_statement_parses_function_invocation",
+                                                                    module: "module/test_parse_expression_statement_parses_function_invocation",
                                                                     start: 29,
                                                                     end: 31,
+                                                                    [content]: "()",
                                                                 },
                                                                 arguments: [],
                                                             },

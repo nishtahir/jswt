@@ -12,54 +12,60 @@ Ast {
                         ClassDeclaration(
                             ClassDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_class_method_declaration_with_this_binding",
+                                    module: "module/test_class_method_declaration_with_this_binding",
                                     start: 13,
                                     end: 126,
+                                    [content]: "class A { \n                constructor(a: i32) { \n                    this.a = a;\n                }\n            }",
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_class_method_declaration_with_this_binding",
+                                        module: "module/test_class_method_declaration_with_this_binding",
                                         start: 19,
                                         end: 20,
+                                        [content]: "A",
                                     },
                                     value: "A",
                                 },
                                 body: ClassBody {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_class_method_declaration_with_this_binding",
+                                        module: "module/test_class_method_declaration_with_this_binding",
                                         start: 21,
                                         end: 126,
+                                        [content]: "{ \n                constructor(a: i32) { \n                    this.a = a;\n                }\n            }",
                                     },
                                     class_elements: [
                                         Constructor(
                                             ClassConstructorElement {
                                                 span: Span {
-                                                    file: "test.1",
-                                                    module: "module/test.1",
+                                                    file: "test_class_method_declaration_with_this_binding",
+                                                    module: "module/test_class_method_declaration_with_this_binding",
                                                     start: 40,
                                                     end: 112,
+                                                    [content]: "constructor(a: i32) { \n                    this.a = a;\n                }",
                                                 },
                                                 params: FormalParameterList {
                                                     parameters: [
                                                         FormalParameterArg {
                                                             ident: Identifier {
                                                                 span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
+                                                                    file: "test_class_method_declaration_with_this_binding",
+                                                                    module: "module/test_class_method_declaration_with_this_binding",
                                                                     start: 52,
                                                                     end: 53,
+                                                                    [content]: "a",
                                                                 },
                                                                 value: "a",
                                                             },
                                                             type_annotation: TypeAnnotation {
                                                                 span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
+                                                                    file: "test_class_method_declaration_with_this_binding",
+                                                                    module: "module/test_class_method_declaration_with_this_binding",
                                                                     start: 55,
                                                                     end: 58,
+                                                                    [content]: "i32",
                                                                 },
                                                                 ty: Primitive(
                                                                     I32,
@@ -70,61 +76,68 @@ Ast {
                                                 },
                                                 body: BlockStatement {
                                                     span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
+                                                        file: "test_class_method_declaration_with_this_binding",
+                                                        module: "module/test_class_method_declaration_with_this_binding",
                                                         start: 60,
                                                         end: 112,
+                                                        [content]: "{ \n                    this.a = a;\n                }",
                                                     },
                                                     statements: StatementList {
                                                         statements: [
                                                             Expression(
                                                                 ExpressionStatement {
                                                                     span: Span {
-                                                                        file: "test.1",
-                                                                        module: "module/test.1",
+                                                                        file: "test_class_method_declaration_with_this_binding",
+                                                                        module: "module/test_class_method_declaration_with_this_binding",
                                                                         start: 83,
                                                                         end: 94,
+                                                                        [content]: "this.a = a;",
                                                                     },
                                                                     expression: Assignment(
                                                                         BinaryExpression {
                                                                             span: Span {
-                                                                                file: "test.1",
-                                                                                module: "module/test.1",
+                                                                                file: "test_class_method_declaration_with_this_binding",
+                                                                                module: "module/test_class_method_declaration_with_this_binding",
                                                                                 start: 83,
                                                                                 end: 93,
+                                                                                [content]: "this.a = a",
                                                                             },
                                                                             left: MemberDot(
                                                                                 MemberDotExpression {
                                                                                     span: Span {
-                                                                                        file: "test.1",
-                                                                                        module: "module/test.1",
+                                                                                        file: "test_class_method_declaration_with_this_binding",
+                                                                                        module: "module/test_class_method_declaration_with_this_binding",
                                                                                         start: 83,
                                                                                         end: 89,
+                                                                                        [content]: "this.a",
                                                                                     },
                                                                                     target: This(
                                                                                         ThisExpression {
                                                                                             span: Span {
-                                                                                                file: "test.1",
-                                                                                                module: "module/test.1",
+                                                                                                file: "test_class_method_declaration_with_this_binding",
+                                                                                                module: "module/test_class_method_declaration_with_this_binding",
                                                                                                 start: 83,
                                                                                                 end: 87,
+                                                                                                [content]: "this",
                                                                                             },
                                                                                         },
                                                                                     ),
                                                                                     expression: Identifier(
                                                                                         IdentifierExpression {
                                                                                             span: Span {
-                                                                                                file: "test.1",
-                                                                                                module: "module/test.1",
+                                                                                                file: "test_class_method_declaration_with_this_binding",
+                                                                                                module: "module/test_class_method_declaration_with_this_binding",
                                                                                                 start: 88,
                                                                                                 end: 89,
+                                                                                                [content]: "a",
                                                                                             },
                                                                                             ident: Identifier {
                                                                                                 span: Span {
-                                                                                                    file: "test.1",
-                                                                                                    module: "module/test.1",
+                                                                                                    file: "test_class_method_declaration_with_this_binding",
+                                                                                                    module: "module/test_class_method_declaration_with_this_binding",
                                                                                                     start: 88,
                                                                                                     end: 89,
+                                                                                                    [content]: "a",
                                                                                                 },
                                                                                                 value: "a",
                                                                                             },
@@ -134,26 +147,29 @@ Ast {
                                                                             ),
                                                                             op: Assign(
                                                                                 Span {
-                                                                                    file: "test.1",
-                                                                                    module: "module/test.1",
+                                                                                    file: "test_class_method_declaration_with_this_binding",
+                                                                                    module: "module/test_class_method_declaration_with_this_binding",
                                                                                     start: 90,
                                                                                     end: 91,
+                                                                                    [content]: "=",
                                                                                 },
                                                                             ),
                                                                             right: Identifier(
                                                                                 IdentifierExpression {
                                                                                     span: Span {
-                                                                                        file: "test.1",
-                                                                                        module: "module/test.1",
+                                                                                        file: "test_class_method_declaration_with_this_binding",
+                                                                                        module: "module/test_class_method_declaration_with_this_binding",
                                                                                         start: 92,
                                                                                         end: 93,
+                                                                                        [content]: "a",
                                                                                     },
                                                                                     ident: Identifier {
                                                                                         span: Span {
-                                                                                            file: "test.1",
-                                                                                            module: "module/test.1",
+                                                                                            file: "test_class_method_declaration_with_this_binding",
+                                                                                            module: "module/test_class_method_declaration_with_this_binding",
                                                                                             start: 92,
                                                                                             end: 93,
+                                                                                            [content]: "a",
                                                                                         },
                                                                                         value: "a",
                                                                                     },

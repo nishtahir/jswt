@@ -12,10 +12,11 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_function_declaration_statement_with_export_decorator",
+                                    module: "module/test_function_declaration_statement_with_export_decorator",
                                     start: 0,
                                     end: 26,
+                                    [content]: "export function test() { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -23,10 +24,11 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_function_declaration_statement_with_export_decorator",
+                                        module: "module/test_function_declaration_statement_with_export_decorator",
                                         start: 16,
                                         end: 20,
+                                        [content]: "test",
                                     },
                                     value: "test",
                                 },
@@ -36,10 +38,11 @@ Ast {
                                 returns: None,
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_function_declaration_statement_with_export_decorator",
+                                        module: "module/test_function_declaration_statement_with_export_decorator",
                                         start: 23,
                                         end: 26,
+                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],
