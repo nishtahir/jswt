@@ -61,8 +61,22 @@ Ast {
                                                     [content]: "constructor(a: i32) { }",
                                                 },
                                                 params: FormalParameterList {
+                                                    span: Span {
+                                                        file: "test_class_declaration",
+                                                        module: "module/test_class_declaration",
+                                                        start: 21,
+                                                        end: 29,
+                                                        [content]: "(a: i32)",
+                                                    },
                                                     parameters: [
                                                         FormalParameterArg {
+                                                            span: Span {
+                                                                file: "test_class_declaration",
+                                                                module: "module/test_class_declaration",
+                                                                start: 22,
+                                                                end: 28,
+                                                                [content]: "a: i32",
+                                                            },
                                                             ident: Identifier {
                                                                 span: Span {
                                                                     file: "test_class_declaration",

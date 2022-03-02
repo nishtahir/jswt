@@ -20,10 +20,7 @@ impl<'a> Parser<'a> {
         let start_span = export_span.to_owned().unwrap_or(function_span);
 
         let ident = ident!(self)?;
-
-        consume!(self, TokenType::LeftParen)?;
         let params = self.formal_parameter_list()?;
-        consume!(self, TokenType::RightParen)?;
 
         //Parse return value
         let mut returns = None;

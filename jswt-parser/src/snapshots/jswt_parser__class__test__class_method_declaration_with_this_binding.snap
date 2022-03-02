@@ -61,8 +61,22 @@ Ast {
                                                     [content]: "constructor(a: i32) { \n                    this.a = a;\n                }",
                                                 },
                                                 params: FormalParameterList {
+                                                    span: Span {
+                                                        file: "test_class_method_declaration_with_this_binding",
+                                                        module: "module/test_class_method_declaration_with_this_binding",
+                                                        start: 51,
+                                                        end: 59,
+                                                        [content]: "(a: i32)",
+                                                    },
                                                     parameters: [
                                                         FormalParameterArg {
+                                                            span: Span {
+                                                                file: "test_class_method_declaration_with_this_binding",
+                                                                module: "module/test_class_method_declaration_with_this_binding",
+                                                                start: 52,
+                                                                end: 58,
+                                                                [content]: "a: i32",
+                                                            },
                                                             ident: Identifier {
                                                                 span: Span {
                                                                     file: "test_class_method_declaration_with_this_binding",

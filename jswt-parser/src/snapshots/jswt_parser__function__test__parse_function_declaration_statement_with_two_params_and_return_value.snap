@@ -47,8 +47,22 @@ Ast {
                                     value: "test",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                        module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                        start: 13,
+                                        end: 29,
+                                        [content]: "(a: i32, b: i32)",
+                                    },
                                     parameters: [
                                         FormalParameterArg {
+                                            span: Span {
+                                                file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                                module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                                start: 14,
+                                                end: 20,
+                                                [content]: "a: i32",
+                                            },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
@@ -73,6 +87,13 @@ Ast {
                                             },
                                         },
                                         FormalParameterArg {
+                                            span: Span {
+                                                file: "test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                                module: "module/test_parse_function_declaration_statement_with_two_params_and_return_value",
+                                                start: 22,
+                                                end: 28,
+                                                [content]: "b: i32",
+                                            },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test_parse_function_declaration_statement_with_two_params_and_return_value",

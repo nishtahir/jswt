@@ -856,10 +856,11 @@ impl<'a> Parser<'a> {
     }
 
     /// FormalParameterList
-    ///   :  FormalParameterArg
-    ///   |  FormalParameterArg , FormalParameterArg
+    ///   :  '(' FormalParameterArg ')'
+    ///   |  '(' FormalParameterArg , FormalParameterArg ')'
     ///   ;
     fn formal_parameter_list(&mut self) -> ParseResult<FormalParameterList> {
+        let start = consume!(self, TokenType::LeftParen)?;
         let mut parameters = vec![];
         if !self.lookahead_is(TokenType::RightParen) {
             loop {
@@ -870,7 +871,11 @@ impl<'a> Parser<'a> {
                 consume_unchecked!(self);
             }
         }
-        Ok(FormalParameterList { parameters })
+        let end = consume!(self, TokenType::RightParen)?;
+        Ok(FormalParameterList {
+            span: start + end,
+            parameters,
+        })
     }
 
     /// FormalParameterArg
@@ -880,6 +885,7 @@ impl<'a> Parser<'a> {
         let ident = ident!(self)?;
         let type_annotation = self.type_annotation()?;
         Ok(FormalParameterArg {
+            span: ident.span() + type_annotation.span(),
             ident,
             type_annotation,
         })

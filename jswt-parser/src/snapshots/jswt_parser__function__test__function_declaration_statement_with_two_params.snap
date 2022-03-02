@@ -47,8 +47,22 @@ Ast {
                                     value: "name",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_function_declaration_statement_with_two_params",
+                                        module: "module/test_function_declaration_statement_with_two_params",
+                                        start: 13,
+                                        end: 29,
+                                        [content]: "(a: i32, b: f32)",
+                                    },
                                     parameters: [
                                         FormalParameterArg {
+                                            span: Span {
+                                                file: "test_function_declaration_statement_with_two_params",
+                                                module: "module/test_function_declaration_statement_with_two_params",
+                                                start: 14,
+                                                end: 20,
+                                                [content]: "a: i32",
+                                            },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test_function_declaration_statement_with_two_params",
@@ -73,6 +87,13 @@ Ast {
                                             },
                                         },
                                         FormalParameterArg {
+                                            span: Span {
+                                                file: "test_function_declaration_statement_with_two_params",
+                                                module: "module/test_function_declaration_statement_with_two_params",
+                                                start: 22,
+                                                end: 28,
+                                                [content]: "b: f32",
+                                            },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test_function_declaration_statement_with_two_params",

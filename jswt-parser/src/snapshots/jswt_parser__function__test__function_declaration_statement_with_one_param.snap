@@ -47,8 +47,22 @@ Ast {
                                     value: "name",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_function_declaration_statement_with_one_param",
+                                        module: "module/test_function_declaration_statement_with_one_param",
+                                        start: 13,
+                                        end: 21,
+                                        [content]: "(a: i32)",
+                                    },
                                     parameters: [
                                         FormalParameterArg {
+                                            span: Span {
+                                                file: "test_function_declaration_statement_with_one_param",
+                                                module: "module/test_function_declaration_statement_with_one_param",
+                                                start: 14,
+                                                end: 20,
+                                                [content]: "a: i32",
+                                            },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test_function_declaration_statement_with_one_param",

@@ -53,14 +53,12 @@ impl<'a> Parser<'a> {
     }
 
     /// ClassConstructor
-    ///   : 'constructor' '(' FormalParameterList ')' Block
+    ///   : 'constructor' FormalParameterList Block
     ///   ;
     pub(crate) fn class_constructor(&mut self) -> ParseResult<ClassConstructorElement> {
         let start = consume!(self, TokenType::Constructor)?;
-        consume!(self, TokenType::LeftParen)?;
-        let params = self.formal_parameter_list()?;
-        consume!(self, TokenType::RightParen)?;
 
+        let params = self.formal_parameter_list()?;
         let body = self.block()?;
 
         Ok(ClassConstructorElement {
@@ -82,10 +80,7 @@ impl<'a> Parser<'a> {
 
         let ident = ident!(self)?;
         if self.lookahead_is(TokenType::LeftParen) {
-            consume!(self, TokenType::LeftParen)?;
             let params = self.formal_parameter_list()?;
-            consume!(self, TokenType::RightParen)?;
-
             //Parse return value
             let mut returns = None;
             if self.lookahead_is(TokenType::Colon) {

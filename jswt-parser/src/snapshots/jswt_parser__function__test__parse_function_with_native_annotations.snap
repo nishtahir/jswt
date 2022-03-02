@@ -83,8 +83,22 @@ Ast {
                                     value: "println",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_function_with_native_annotations",
+                                        module: "module/test_parse_function_with_native_annotations",
+                                        start: 178,
+                                        end: 190,
+                                        [content]: "(value: i32)",
+                                    },
                                     parameters: [
                                         FormalParameterArg {
+                                            span: Span {
+                                                file: "test_parse_function_with_native_annotations",
+                                                module: "module/test_parse_function_with_native_annotations",
+                                                start: 179,
+                                                end: 189,
+                                                [content]: "value: i32",
+                                            },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test_parse_function_with_native_annotations",
@@ -185,8 +199,22 @@ Ast {
                                     value: "exit",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_function_with_native_annotations",
+                                        module: "module/test_parse_function_with_native_annotations",
+                                        start: 357,
+                                        end: 368,
+                                        [content]: "(code: i32)",
+                                    },
                                     parameters: [
                                         FormalParameterArg {
+                                            span: Span {
+                                                file: "test_parse_function_with_native_annotations",
+                                                module: "module/test_parse_function_with_native_annotations",
+                                                start: 358,
+                                                end: 367,
+                                                [content]: "code: i32",
+                                            },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "test_parse_function_with_native_annotations",

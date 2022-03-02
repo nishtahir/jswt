@@ -103,6 +103,13 @@ Ast {
                                     value: "a",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_function_with_multiple_annotations",
+                                        module: "module/test_parse_function_with_multiple_annotations",
+                                        start: 32,
+                                        end: 34,
+                                        [content]: "()",
+                                    },
                                     parameters: [],
                                 },
                                 returns: None,

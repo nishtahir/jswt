@@ -47,8 +47,22 @@ Ast {
                                     value: "exit",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "parse_array_type_annotation",
+                                        module: "module/parse_array_type_annotation",
+                                        start: 13,
+                                        end: 26,
+                                        [content]: "(code: i32[])",
+                                    },
                                     parameters: [
                                         FormalParameterArg {
+                                            span: Span {
+                                                file: "parse_array_type_annotation",
+                                                module: "module/parse_array_type_annotation",
+                                                start: 14,
+                                                end: 25,
+                                                [content]: "code: i32[]",
+                                            },
                                             ident: Identifier {
                                                 span: Span {
                                                     file: "parse_array_type_annotation",

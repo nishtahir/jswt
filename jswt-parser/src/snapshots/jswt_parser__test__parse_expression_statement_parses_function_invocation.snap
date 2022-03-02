@@ -47,6 +47,13 @@ Ast {
                                     value: "main",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_expression_statement_parses_function_invocation",
+                                        module: "module/test_parse_expression_statement_parses_function_invocation",
+                                        start: 20,
+                                        end: 22,
+                                        [content]: "()",
+                                    },
                                     parameters: [],
                                 },
                                 returns: None,

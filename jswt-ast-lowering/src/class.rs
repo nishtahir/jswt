@@ -35,6 +35,7 @@ impl<'a> AstLowering<'a> {
         params.parameters.insert(
             0,
             FormalParameterArg {
+                span: node.span(),
                 ident: Identifier {
                     span: node.span(),
                     value: "this".into(),

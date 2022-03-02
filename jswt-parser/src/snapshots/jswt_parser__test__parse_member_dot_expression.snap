@@ -47,6 +47,13 @@ Ast {
                                     value: "test",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "parse_member_dot_expression",
+                                        module: "module/parse_member_dot_expression",
+                                        start: 13,
+                                        end: 15,
+                                        [content]: "()",
+                                    },
                                     parameters: [],
                                 },
                                 returns: None,

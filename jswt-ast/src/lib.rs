@@ -126,13 +126,15 @@ pub struct Annotation {
     pub expr: Option<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct FormalParameterList {
+    pub span: Span,
     pub parameters: Vec<FormalParameterArg>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct FormalParameterArg {
+    pub span: Span,
     pub ident: Identifier,
     pub type_annotation: TypeAnnotation,
 }

@@ -47,6 +47,13 @@ Ast {
                                     value: "test",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_function_declaration_statement_with_export_decorator",
+                                        module: "module/test_function_declaration_statement_with_export_decorator",
+                                        start: 20,
+                                        end: 22,
+                                        [content]: "()",
+                                    },
                                     parameters: [],
                                 },
                                 returns: None,
