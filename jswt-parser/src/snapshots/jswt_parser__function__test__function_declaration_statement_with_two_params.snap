@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_function_declaration_statement_with_two_params",
+                    module: "module/test_function_declaration_statement_with_two_params",
+                    start: 0,
+                    end: 33,
+                    [content]: "function name(a: i32, b: f32) { }",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_function_declaration_statement_with_two_params",
+                        module: "module/test_function_declaration_statement_with_two_params",
+                        start: 0,
+                        end: 33,
+                        [content]: "function name(a: i32, b: f32) { }",
+                    },
                     source_elements: [
                         FunctionDeclaration(
                             FunctionDeclarationElement {

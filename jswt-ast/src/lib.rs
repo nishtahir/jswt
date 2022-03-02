@@ -39,17 +39,19 @@ pub struct Program {
     pub files: Vec<File>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct File {
+    pub span: Span,
     pub source_elements: SourceElements,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct SourceElements {
+    pub span: Span,
     pub source_elements: Vec<SourceElement>,
 }
 
-#[derive(Debug, PartialEq, FromEnumVariant, Clone)]
+#[derive(Debug, PartialEq, FromEnumVariant, Spannable, Clone)]
 pub enum SourceElement {
     FunctionDeclaration(FunctionDeclarationElement),
     ClassDeclaration(ClassDeclarationElement),

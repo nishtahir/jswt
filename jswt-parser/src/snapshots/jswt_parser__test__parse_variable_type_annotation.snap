@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "parse_variable_type_annotation",
+                    module: "module/parse_variable_type_annotation",
+                    start: 0,
+                    end: 16,
+                    [content]: "let x: i32 = 99;",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "parse_variable_type_annotation",
+                        module: "module/parse_variable_type_annotation",
+                        start: 0,
+                        end: 16,
+                        [content]: "let x: i32 = 99;",
+                    },
                     source_elements: [
                         Statement(
                             Variable(

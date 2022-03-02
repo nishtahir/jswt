@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_parse_argument_expression_with_expression_parameter",
+                    module: "module/test_parse_argument_expression_with_expression_parameter",
+                    start: 0,
+                    end: 12,
+                    [content]: "test(1 + 2);",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_argument_expression_with_expression_parameter",
+                        module: "module/test_parse_argument_expression_with_expression_parameter",
+                        start: 0,
+                        end: 12,
+                        [content]: "test(1 + 2);",
+                    },
                     source_elements: [
                         Statement(
                             Expression(

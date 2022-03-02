@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_class_method_declaration_with_this_binding",
+                    module: "module/test_class_method_declaration_with_this_binding",
+                    start: 13,
+                    end: 135,
+                    [content]: "class A { \n                constructor(a: i32) { \n                    this.a = a;\n                }\n            }\n        ",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_class_method_declaration_with_this_binding",
+                        module: "module/test_class_method_declaration_with_this_binding",
+                        start: 13,
+                        end: 135,
+                        [content]: "class A { \n                constructor(a: i32) { \n                    this.a = a;\n                }\n            }\n        ",
+                    },
                     source_elements: [
                         ClassDeclaration(
                             ClassDeclarationElement {

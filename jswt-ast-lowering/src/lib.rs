@@ -47,18 +47,21 @@ impl<'a> TransformVisitor for AstLowering<'a> {
         node: &ClassConstructorElement,
     ) -> SourceElements {
         SourceElements {
+            span: node.span(),
             source_elements: vec![self.enter_class_constructor(node)],
         }
     }
 
     fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) -> SourceElements {
         SourceElements {
+            span: node.span(),
             source_elements: vec![self.enter_class_method(node)],
         }
     }
 
-    fn visit_class_field_declaration(&mut self, _: &ClassFieldElement) -> SourceElements {
+    fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) -> SourceElements {
         SourceElements {
+            span: node.span(),
             // Fields don't show up in the lowered AST
             // They are only indicators for the compiler to align class structures
             source_elements: vec![],

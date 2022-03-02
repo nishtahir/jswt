@@ -46,14 +46,14 @@ pub(crate) fn i32_store(
 
 pub fn parse_statement(expr: String) -> StatementElement {
     let mut tokenizer = Tokenizer::default();
-    tokenizer.enqueue_source_str("synthetic", Box::leak(expr.into_boxed_str()));
+    tokenizer.enqueue_source_str("synthetic", expr);
     let mut parser = Parser::new(&mut tokenizer);
     parser.parse_statement()
 }
 
 pub fn parse_expr(expr: String) -> SingleExpression {
     let mut tokenizer = Tokenizer::default();
-    tokenizer.enqueue_source_str("synthetic", Box::leak(expr.into_boxed_str()));
+    tokenizer.enqueue_source_str("synthetic", expr);
     let mut parser = Parser::new(&mut tokenizer);
     parser.single_expression().unwrap()
 }

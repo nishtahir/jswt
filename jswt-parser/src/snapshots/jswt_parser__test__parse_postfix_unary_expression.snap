@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "parse_postfix_unary_expression",
+                    module: "module/parse_postfix_unary_expression",
+                    start: 0,
+                    end: 31,
+                    [content]: "let x: i32 = 99--; let y = i++;",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "parse_postfix_unary_expression",
+                        module: "module/parse_postfix_unary_expression",
+                        start: 0,
+                        end: 31,
+                        [content]: "let x: i32 = 99--; let y = i++;",
+                    },
                     source_elements: [
                         Statement(
                             Variable(

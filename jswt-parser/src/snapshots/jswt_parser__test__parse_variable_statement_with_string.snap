@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_parse_variable_statement_with_string",
+                    module: "module/test_parse_variable_statement_with_string",
+                    start: 0,
+                    end: 22,
+                    [content]: "let x = \"Hello World\";",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_variable_statement_with_string",
+                        module: "module/test_parse_variable_statement_with_string",
+                        start: 0,
+                        end: 22,
+                        [content]: "let x = \"Hello World\";",
+                    },
                     source_elements: [
                         Statement(
                             Variable(

@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "parse_array_type_annotation",
+                    module: "module/parse_array_type_annotation",
+                    start: 0,
+                    end: 40,
+                    [content]: "function exit(code: i32[]): string[] { }",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "parse_array_type_annotation",
+                        module: "module/parse_array_type_annotation",
+                        start: 0,
+                        end: 40,
+                        [content]: "function exit(code: i32[]): string[] { }",
+                    },
                     source_elements: [
                         FunctionDeclaration(
                             FunctionDeclarationElement {

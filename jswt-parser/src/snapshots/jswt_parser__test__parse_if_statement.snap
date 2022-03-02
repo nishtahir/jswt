@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_parse_if_statement",
+                    module: "module/test_parse_if_statement",
+                    start: 0,
+                    end: 43,
+                    [content]: "if(x == y) { return 0; } else { return 1; }",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_if_statement",
+                        module: "module/test_parse_if_statement",
+                        start: 0,
+                        end: 43,
+                        [content]: "if(x == y) { return 0; } else { return 1; }",
+                    },
                     source_elements: [
                         Statement(
                             If(

@@ -151,10 +151,14 @@ impl<'a> Parser<'a> {
     ///   : SourceElements? Eof
     ///   ;
     fn file(&mut self) -> File {
+        let start = self.lookahead_span();
         let source_elements = self.source_elements(Some(TokenType::Eof));
         // Eat the EOF token
-        consume_unchecked!(self);
-        File { source_elements }
+        let end = consume_unchecked!(self);
+        File {
+            span: start + end,
+            source_elements,
+        }
     }
 
     /// SourceElements
@@ -163,6 +167,7 @@ impl<'a> Parser<'a> {
     ///   ;
     fn source_elements(&mut self, terminal: Option<TokenType>) -> SourceElements {
         let mut source_elements = vec![];
+        let start = self.lookahead_span();
         while self.lookahead_type().is_some() && self.lookahead_type() != terminal {
             match self.source_element() {
                 Ok(element) => source_elements.push(element),
@@ -183,7 +188,11 @@ impl<'a> Parser<'a> {
             };
         }
 
-        SourceElements { source_elements }
+        let end = self.lookahead_span();
+        SourceElements {
+            span: start + end,
+            source_elements,
+        }
     }
 
     /// SourceElement
@@ -998,7 +1007,10 @@ mod test {
     #[test]
     fn test_parse_variable_statement_with_string() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_variable_statement_with_string", "let x = \"Hello World\";");
+        tokenizer.enqueue_source_str(
+            "test_parse_variable_statement_with_string",
+            "let x = \"Hello World\";",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1038,7 +1050,10 @@ mod test {
     #[test]
     fn test_parse_nested_math_expression_has_correct_precedence() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_nested_math_expression_has_correct_precedence", "let x = 3 * 2 + 1 * 0;");
+        tokenizer.enqueue_source_str(
+            "test_parse_nested_math_expression_has_correct_precedence",
+            "let x = 3 * 2 + 1 * 0;",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1048,7 +1063,10 @@ mod test {
     #[test]
     fn test_parse_additive_expression_left_associativity() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_additive_expression_left_associativity", "let x = 3 + 2 + 1 + 0;");
+        tokenizer.enqueue_source_str(
+            "test_parse_additive_expression_left_associativity",
+            "let x = 3 + 2 + 1 + 0;",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1058,7 +1076,10 @@ mod test {
     #[test]
     fn test_parse_expression_statement_parses_function_invocation() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_expression_statement_parses_function_invocation", "export function main() { test(); }");
+        tokenizer.enqueue_source_str(
+            "test_parse_expression_statement_parses_function_invocation",
+            "export function main() { test(); }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1068,7 +1089,10 @@ mod test {
     #[test]
     fn test_parse_argument_expression_with_expression_parameter() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_argument_expression_with_expression_parameter", "test(1 + 2);");
+        tokenizer.enqueue_source_str(
+            "test_parse_argument_expression_with_expression_parameter",
+            "test(1 + 2);",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1078,7 +1102,10 @@ mod test {
     #[test]
     fn test_parse_if_statement() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_if_statement", "if(x == y) { return 0; } else { return 1; }");
+        tokenizer.enqueue_source_str(
+            "test_parse_if_statement",
+            "if(x == y) { return 0; } else { return 1; }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1101,7 +1128,10 @@ mod test {
     #[test]
     fn test_parse_while_iteration_statement() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_while_iteration_statement", "while(x < 99) { println(\"hey taco\"); }");
+        tokenizer.enqueue_source_str(
+            "test_parse_while_iteration_statement",
+            "while(x < 99) { println(\"hey taco\"); }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1141,7 +1171,10 @@ mod test {
     #[test]
     fn parse_array_type_annotation() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("parse_array_type_annotation", "function exit(code: i32[]): string[] { }");
+        tokenizer.enqueue_source_str(
+            "parse_array_type_annotation",
+            "function exit(code: i32[]): string[] { }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1151,7 +1184,10 @@ mod test {
     #[test]
     fn parse_multi_dimensional_array_type_annotation() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("parse_multi_dimensional_array_type_annotation", "function exit(code: i32[][]): string[][] { }");
+        tokenizer.enqueue_source_str(
+            "parse_multi_dimensional_array_type_annotation",
+            "function exit(code: i32[][]): string[][] { }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1171,7 +1207,10 @@ mod test {
     #[test]
     fn parse_postfix_unary_expression() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("parse_postfix_unary_expression", "let x: i32 = 99--; let y = i++;");
+        tokenizer.enqueue_source_str(
+            "parse_postfix_unary_expression",
+            "let x: i32 = 99--; let y = i++;",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1191,7 +1230,10 @@ mod test {
     #[test]
     fn parse_member_dot_expression() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("parse_member_dot_expression", "function test() { this.index = 10; }");
+        tokenizer.enqueue_source_str(
+            "parse_member_dot_expression",
+            "function test() { this.index = 10; }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -1201,7 +1243,10 @@ mod test {
     #[test]
     fn parse_member_dot_arguments_expression() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("parse_member_dot_arguments_expression", "function test() { this.set(10); }");
+        tokenizer.enqueue_source_str(
+            "parse_member_dot_arguments_expression",
+            "function test() { this.set(10); }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

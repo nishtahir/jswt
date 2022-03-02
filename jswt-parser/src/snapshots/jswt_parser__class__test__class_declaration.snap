@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_class_declaration",
+                    module: "module/test_class_declaration",
+                    start: 0,
+                    end: 35,
+                    [content]: "class A { constructor(a: i32) { } }",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_class_declaration",
+                        module: "module/test_class_declaration",
+                        start: 0,
+                        end: 35,
+                        [content]: "class A { constructor(a: i32) { } }",
+                    },
                     source_elements: [
                         ClassDeclaration(
                             ClassDeclarationElement {

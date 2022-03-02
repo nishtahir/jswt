@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_parse_empty_statement",
+                    module: "module/test_parse_empty_statement",
+                    start: 0,
+                    end: 1,
+                    [content]: ";",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_empty_statement",
+                        module: "module/test_parse_empty_statement",
+                        start: 0,
+                        end: 1,
+                        [content]: ";",
+                    },
                     source_elements: [
                         Statement(
                             Empty(

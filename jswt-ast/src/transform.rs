@@ -143,7 +143,10 @@ pub fn walk_program<V: TransformVisitor>(visitor: &mut V, node: &Program) -> Pro
 
 pub fn walk_file<V: TransformVisitor>(visitor: &mut V, node: &File) -> File {
     let source_elements = visitor.visit_source_elements(&node.source_elements);
-    File { source_elements }
+    File {
+        span: node.span(),
+        source_elements,
+    }
 }
 
 pub fn walk_source_elements<V: TransformVisitor>(
@@ -155,7 +158,10 @@ pub fn walk_source_elements<V: TransformVisitor>(
         let mut elements = visitor.visit_source_element(element);
         source_elements.append(&mut elements.source_elements);
     }
-    SourceElements { source_elements }
+    SourceElements {
+        span: node.span(),
+        source_elements,
+    }
 }
 
 // It's possible for an element to be lowered to a list of elements
@@ -167,6 +173,7 @@ pub fn walk_source_element<V: TransformVisitor>(
     match node {
         SourceElement::FunctionDeclaration(elem) => visitor.visit_function_declaration(elem),
         SourceElement::Statement(elem) => SourceElements {
+            span: node.span(),
             source_elements: vec![SourceElement::Statement(StatementElement::Block(
                 BlockStatement {
                     span: elem.span(),
@@ -319,6 +326,7 @@ pub fn walk_function_declaration<V: TransformVisitor>(
     };
 
     SourceElements {
+        span: node.span(),
         source_elements: vec![SourceElement::FunctionDeclaration(declaration)],
     }
 }
@@ -341,7 +349,10 @@ pub fn walk_class_body<V: TransformVisitor>(visitor: &mut V, node: &ClassBody) -
         source_elements.append(&mut elements.source_elements);
     }
 
-    SourceElements { source_elements }
+    SourceElements {
+        span: node.span(),
+        source_elements,
+    }
 }
 
 pub fn walk_class_constructor_declaration<V: TransformVisitor>(

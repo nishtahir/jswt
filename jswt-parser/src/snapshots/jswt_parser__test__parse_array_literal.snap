@@ -7,7 +7,21 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_parse_array_literal",
+                    module: "module/test_parse_array_literal",
+                    start: 0,
+                    end: 21,
+                    [content]: "[-1, 10, -5, \"test\"];",
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_array_literal",
+                        module: "module/test_parse_array_literal",
+                        start: 0,
+                        end: 21,
+                        [content]: "[-1, 10, -5, \"test\"];",
+                    },
                     source_elements: [
                         Statement(
                             Expression(
