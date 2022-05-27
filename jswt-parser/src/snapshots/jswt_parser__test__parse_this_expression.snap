@@ -12,7 +12,6 @@ Ast {
                     module: "module/parse_this_expression",
                     start: 0,
                     end: 5,
-                    [content]: "this;",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/parse_this_expression",
                         start: 0,
                         end: 5,
-                        [content]: "this;",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/parse_this_expression",
                                         start: 0,
                                         end: 5,
-                                        [content]: "this;",
                                     },
                                     expression: This(
                                         ThisExpression {
@@ -40,7 +37,6 @@ Ast {
                                                 module: "module/parse_this_expression",
                                                 start: 0,
                                                 end: 4,
-                                                [content]: "this",
                                             },
                                         },
                                     ),

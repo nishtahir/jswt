@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_array_literal",
                     start: 0,
                     end: 21,
-                    [content]: "[-1, 10, -5, \"test\"];",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_array_literal",
                         start: 0,
                         end: 21,
-                        [content]: "[-1, 10, -5, \"test\"];",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_array_literal",
                                         start: 0,
                                         end: 21,
-                                        [content]: "[-1, 10, -5, \"test\"];",
                                     },
                                     expression: Literal(
                                         Array(
@@ -41,7 +38,6 @@ Ast {
                                                     module: "module/test_parse_array_literal",
                                                     start: 0,
                                                     end: 20,
-                                                    [content]: "[-1, 10, -5, \"test\"]",
                                                 },
                                                 elements: [
                                                     Unary(
@@ -51,7 +47,6 @@ Ast {
                                                                 module: "module/test_parse_array_literal",
                                                                 start: 1,
                                                                 end: 3,
-                                                                [content]: "-1",
                                                             },
                                                             op: Minus(
                                                                 Span {
@@ -59,7 +54,6 @@ Ast {
                                                                     module: "module/test_parse_array_literal",
                                                                     start: 1,
                                                                     end: 2,
-                                                                    [content]: "-",
                                                                 },
                                                             ),
                                                             expr: Literal(
@@ -70,7 +64,6 @@ Ast {
                                                                             module: "module/test_parse_array_literal",
                                                                             start: 2,
                                                                             end: 3,
-                                                                            [content]: "1",
                                                                         },
                                                                         value: 1,
                                                                     },
@@ -86,7 +79,6 @@ Ast {
                                                                     module: "module/test_parse_array_literal",
                                                                     start: 5,
                                                                     end: 7,
-                                                                    [content]: "10",
                                                                 },
                                                                 value: 10,
                                                             },
@@ -99,7 +91,6 @@ Ast {
                                                                 module: "module/test_parse_array_literal",
                                                                 start: 9,
                                                                 end: 11,
-                                                                [content]: "-5",
                                                             },
                                                             op: Minus(
                                                                 Span {
@@ -107,7 +98,6 @@ Ast {
                                                                     module: "module/test_parse_array_literal",
                                                                     start: 9,
                                                                     end: 10,
-                                                                    [content]: "-",
                                                                 },
                                                             ),
                                                             expr: Literal(
@@ -118,7 +108,6 @@ Ast {
                                                                             module: "module/test_parse_array_literal",
                                                                             start: 10,
                                                                             end: 11,
-                                                                            [content]: "5",
                                                                         },
                                                                         value: 5,
                                                                     },
@@ -134,7 +123,6 @@ Ast {
                                                                     module: "module/test_parse_array_literal",
                                                                     start: 13,
                                                                     end: 19,
-                                                                    [content]: "\"test\"",
                                                                 },
                                                                 value: "test",
                                                             },

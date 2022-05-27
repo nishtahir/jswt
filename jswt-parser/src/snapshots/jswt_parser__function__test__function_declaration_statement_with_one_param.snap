@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_function_declaration_statement_with_one_param",
                     start: 0,
                     end: 25,
-                    [content]: "function name(a: i32) { }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_function_declaration_statement_with_one_param",
                         start: 0,
                         end: 25,
-                        [content]: "function name(a: i32) { }",
                     },
                     source_elements: [
                         FunctionDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/test_function_declaration_statement_with_one_param",
                                     start: 0,
                                     end: 25,
-                                    [content]: "function name(a: i32) { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -42,7 +39,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_one_param",
                                         start: 9,
                                         end: 13,
-                                        [content]: "name",
                                     },
                                     value: "name",
                                 },
@@ -52,7 +48,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_one_param",
                                         start: 13,
                                         end: 21,
-                                        [content]: "(a: i32)",
                                     },
                                     parameters: [
                                         FormalParameterArg {
@@ -61,7 +56,6 @@ Ast {
                                                 module: "module/test_function_declaration_statement_with_one_param",
                                                 start: 14,
                                                 end: 20,
-                                                [content]: "a: i32",
                                             },
                                             ident: Identifier {
                                                 span: Span {
@@ -69,7 +63,6 @@ Ast {
                                                     module: "module/test_function_declaration_statement_with_one_param",
                                                     start: 14,
                                                     end: 15,
-                                                    [content]: "a",
                                                 },
                                                 value: "a",
                                             },
@@ -79,10 +72,11 @@ Ast {
                                                     module: "module/test_function_declaration_statement_with_one_param",
                                                     start: 17,
                                                     end: 20,
-                                                    [content]: "i32",
                                                 },
-                                                ty: Primitive(
-                                                    I32,
+                                                ty: Identifier(
+                                                    IdentifierType {
+                                                        name: "i32",
+                                                    },
                                                 ),
                                             },
                                         },
@@ -95,7 +89,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_one_param",
                                         start: 22,
                                         end: 25,
-                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],

@@ -5,17 +5,21 @@ use std::borrow::Cow;
 
 use jswt_ast::{transform::TransformVisitor, *};
 use jswt_common::Spannable;
-use jswt_symbols::SymbolTable;
+use jswt_symbols::{BindingsTable, Symbol};
+
+type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
 
 #[derive(Debug)]
 pub struct AstLowering<'a> {
+    bindings: &'a mut BindingsTable,
     symbols: &'a mut SymbolTable,
     binding_context: Option<Cow<'static, str>>,
 }
 
 impl<'a> AstLowering<'a> {
-    pub fn new(symbols: &'a mut SymbolTable) -> Self {
+    pub fn new(bindings: &'a mut BindingsTable, symbols: &'a mut SymbolTable) -> Self {
         Self {
+            bindings,
             symbols,
             binding_context: None,
         }
@@ -29,9 +33,7 @@ impl<'a> AstLowering<'a> {
 
 impl<'a> TransformVisitor for AstLowering<'a> {
     fn visit_program(&mut self, node: &Program) -> Program {
-        self.symbols.push_global_scope();
         let program = transform::walk_program(self, node);
-        self.symbols.pop_scope();
         program
     }
 
@@ -105,7 +107,6 @@ mod test {
     use jswt_tokenizer::Tokenizer;
 
     #[test]
-    #[ignore]
     fn test_class_declaration_lowers_class_fields() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
@@ -121,21 +122,21 @@ mod test {
         let mut analyzer = SemanticAnalyzer::default();
         analyzer.analyze(&mut ast);
 
-        let mut lowering = AstLowering::new(&mut analyzer.symbol_table);
+        let mut lowering =
+            AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
         lowering.desugar(&mut ast);
 
         assert_debug_snapshot!(ast);
     }
 
     #[test]
-    #[ignore]
     fn test_class_declaration_lowers_methods_into_functions() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
             "test_class_declaration_lowers_methods_into_functions",
             r"
         class Array {
-            getLen(): i32 {
+            len(): i32 {
                 return 0;
             }
         }
@@ -145,64 +146,65 @@ mod test {
         let mut analyzer = SemanticAnalyzer::default();
         analyzer.analyze(&mut ast);
 
-        let mut lowering = AstLowering::new(&mut analyzer.symbol_table);
+        let mut lowering =
+            AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
         lowering.desugar(&mut ast);
 
         assert_debug_snapshot!(ast);
     }
 
-    #[test]
-    #[ignore]
-    fn test_class_declaration_lowers_new_expression_into_constructor_invocation() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str(
-            "test_class_declaration_lowers_new_expression_into_constructor_invocation",
-            r"
-        class Array {
-            constructor() {}
-        }
+    // #[test]
+    // fn test_class_declaration_lowers_new_expression_into_constructor_invocation() {
+    //     let mut tokenizer = Tokenizer::default();
+    //     tokenizer.enqueue_source_str(
+    //         "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+    //         r"
+    //     class Array {
+    //         constructor() {}
+    //     }
 
-        function main(): i32 {
-            let x = new Array();
-            return 0;
-        }
-    ",
-        );
-        let mut ast = Parser::new(&mut tokenizer).parse();
-        let mut analyzer = SemanticAnalyzer::default();
-        analyzer.analyze(&mut ast);
+    //     function main(): i32 {
+    //         let x = new Array();
+    //         return 0;
+    //     }
+    // ",
+    //     );
+    //     let mut ast = Parser::new(&mut tokenizer).parse();
+    //     let mut analyzer = SemanticAnalyzer::default();
+    //     analyzer.analyze(&mut ast);
 
-        let mut lowering = AstLowering::new(&mut analyzer.symbol_table);
-        lowering.desugar(&mut ast);
+    //     let mut lowering =
+    //         AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
+    //     lowering.desugar(&mut ast);
 
-        assert_debug_snapshot!(ast);
-    }
+    //     assert_debug_snapshot!(ast);
+    // }
 
-    #[test]
-    #[ignore]
-    fn test_class_declaration_lowers_this_binding() {
-        let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str(
-            "test_class_declaration_lowers_this_binding",
-            r"
-        class Array {
-            len: i32;
-            capacity: i32;
+    // #[test]
+    // fn test_class_declaration_lowers_this_binding() {
+    //     let mut tokenizer = Tokenizer::default();
+    //     tokenizer.enqueue_source_str(
+    //         "test_class_declaration_lowers_this_binding",
+    //         r"
+    //     class Array {
+    //         len: i32;
+    //         capacity: i32;
 
-            constructor(len: i32, capacity: i32) {
-                this.len = len;
-                this.capacity = capacity;
-            }
-        }
-    ",
-        );
-        let mut ast = Parser::new(&mut tokenizer).parse();
-        let mut analyzer = SemanticAnalyzer::default();
-        analyzer.analyze(&mut ast);
+    //         constructor(len: i32, capacity: i32) {
+    //             this.len = len;
+    //             this.capacity = capacity;
+    //         }
+    //     }
+    // ",
+    //     );
+    //     let mut ast = Parser::new(&mut tokenizer).parse();
+    //     let mut analyzer = SemanticAnalyzer::default();
+    //     analyzer.analyze(&mut ast);
 
-        let mut lowering = AstLowering::new(&mut analyzer.symbol_table);
-        lowering.desugar(&mut ast);
+    //     let mut lowering =
+    //         AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
+    //     lowering.desugar(&mut ast);
 
-        assert_debug_snapshot!(ast);
-    }
+    //     assert_debug_snapshot!(ast);
+    // }
 }

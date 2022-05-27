@@ -11,7 +11,6 @@ expression: actual
             module: "module/test_tokenize_keywords",
             start: 0,
             end: 3,
-            [content]: "let",
         },
     },
     Token {
@@ -21,7 +20,6 @@ expression: actual
             module: "module/test_tokenize_keywords",
             start: 4,
             end: 9,
-            [content]: "false",
         },
     },
     Token {
@@ -31,7 +29,6 @@ expression: actual
             module: "module/test_tokenize_keywords",
             start: 10,
             end: 14,
-            [content]: "true",
         },
     },
     Token {
@@ -41,7 +38,6 @@ expression: actual
             module: "module/test_tokenize_keywords",
             start: 15,
             end: 21,
-            [content]: "return",
         },
     },
     Token {
@@ -51,7 +47,6 @@ expression: actual
             module: "module/test_tokenize_keywords",
             start: 22,
             end: 30,
-            [content]: "function",
         },
     },
     Token {
@@ -61,7 +56,6 @@ expression: actual
             module: "module/test_tokenize_keywords",
             start: 30,
             end: 30,
-            [content]: "",
         },
     },
 ]

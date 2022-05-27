@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_function_declaration_statement_with_return_value",
                     start: 0,
                     end: 24,
-                    [content]: "function test(): i32 { }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_function_declaration_statement_with_return_value",
                         start: 0,
                         end: 24,
-                        [content]: "function test(): i32 { }",
                     },
                     source_elements: [
                         FunctionDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/test_function_declaration_statement_with_return_value",
                                     start: 0,
                                     end: 24,
-                                    [content]: "function test(): i32 { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -42,7 +39,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_return_value",
                                         start: 9,
                                         end: 13,
-                                        [content]: "test",
                                     },
                                     value: "test",
                                 },
@@ -52,7 +48,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_return_value",
                                         start: 13,
                                         end: 15,
-                                        [content]: "()",
                                     },
                                     parameters: [],
                                 },
@@ -63,10 +58,11 @@ Ast {
                                             module: "module/test_function_declaration_statement_with_return_value",
                                             start: 17,
                                             end: 20,
-                                            [content]: "i32",
                                         },
-                                        ty: Primitive(
-                                            I32,
+                                        ty: Identifier(
+                                            IdentifierType {
+                                                name: "i32",
+                                            },
                                         ),
                                     },
                                 ),
@@ -76,7 +72,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_return_value",
                                         start: 21,
                                         end: 24,
-                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],

@@ -7,7 +7,19 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_class_declaration_lowers_class_fields",
+                    module: "module/test_class_declaration_lowers_class_fields",
+                    start: 9,
+                    end: 86,
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_class_declaration_lowers_class_fields",
+                        module: "module/test_class_declaration_lowers_class_fields",
+                        start: 9,
+                        end: 86,
+                    },
                     source_elements: [],
                 },
             },

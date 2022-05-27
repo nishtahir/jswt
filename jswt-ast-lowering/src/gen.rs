@@ -44,6 +44,10 @@ pub(crate) fn i32_store(
     )
 }
 
+pub(crate) fn type_i32() -> Type {
+    Type::Identifier(IdentifierType { name: "i32".into() })
+}
+
 pub fn parse_statement(expr: String) -> StatementElement {
     let mut tokenizer = Tokenizer::default();
     tokenizer.enqueue_source_str("synthetic", expr);

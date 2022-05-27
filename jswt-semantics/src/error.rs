@@ -16,6 +16,10 @@ pub enum SemanticError {
         name: Cow<'static, str>,
         span: Span,
     },
+    ClassAlreadyDefined {
+        name: Cow<'static, str>,
+        span: Span,
+    },
     FunctionNotDefined {
         name_span: Span,
         span: Span,

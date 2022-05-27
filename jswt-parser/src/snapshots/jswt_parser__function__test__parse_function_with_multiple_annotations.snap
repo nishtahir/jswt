@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_function_with_multiple_annotations",
                     start: 0,
                     end: 37,
-                    [content]: "@inline @wast(\"test\") function a() {}",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_function_with_multiple_annotations",
                         start: 0,
                         end: 37,
-                        [content]: "@inline @wast(\"test\") function a() {}",
                     },
                     source_elements: [
                         FunctionDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/test_parse_function_with_multiple_annotations",
                                     start: 22,
                                     end: 37,
-                                    [content]: "function a() {}",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [
@@ -40,7 +37,6 @@ Ast {
                                                 module: "module/test_parse_function_with_multiple_annotations",
                                                 start: 0,
                                                 end: 7,
-                                                [content]: "@inline",
                                             },
                                             name: Identifier {
                                                 span: Span {
@@ -48,7 +44,6 @@ Ast {
                                                     module: "module/test_parse_function_with_multiple_annotations",
                                                     start: 1,
                                                     end: 7,
-                                                    [content]: "inline",
                                                 },
                                                 value: "inline",
                                             },
@@ -60,7 +55,6 @@ Ast {
                                                 module: "module/test_parse_function_with_multiple_annotations",
                                                 start: 8,
                                                 end: 21,
-                                                [content]: "@wast(\"test\")",
                                             },
                                             name: Identifier {
                                                 span: Span {
@@ -68,7 +62,6 @@ Ast {
                                                     module: "module/test_parse_function_with_multiple_annotations",
                                                     start: 9,
                                                     end: 13,
-                                                    [content]: "wast",
                                                 },
                                                 value: "wast",
                                             },
@@ -81,7 +74,6 @@ Ast {
                                                                 module: "module/test_parse_function_with_multiple_annotations",
                                                                 start: 14,
                                                                 end: 20,
-                                                                [content]: "\"test\"",
                                                             },
                                                             value: "test",
                                                         },
@@ -98,7 +90,6 @@ Ast {
                                         module: "module/test_parse_function_with_multiple_annotations",
                                         start: 31,
                                         end: 32,
-                                        [content]: "a",
                                     },
                                     value: "a",
                                 },
@@ -108,7 +99,6 @@ Ast {
                                         module: "module/test_parse_function_with_multiple_annotations",
                                         start: 32,
                                         end: 34,
-                                        [content]: "()",
                                     },
                                     parameters: [],
                                 },
@@ -119,7 +109,6 @@ Ast {
                                         module: "module/test_parse_function_with_multiple_annotations",
                                         start: 35,
                                         end: 37,
-                                        [content]: "{}",
                                     },
                                     statements: StatementList {
                                         statements: [],

@@ -1,8 +1,12 @@
 // @ts-nocheck
 
-import "./arrays.jswt";
-import "./env.jswt";
-import "./malloc.jswt";
+// primitives
+import "i32.jswt";
+import "f32.jswt";
 
-// stdlib components
-import "../stdlib/math.jswt";
+// import "./arrays.jswt";
+// import "./env.jswt";
+// import "./malloc.jswt";
+
+// // stdlib components
+// import "../stdlib/math.jswt";

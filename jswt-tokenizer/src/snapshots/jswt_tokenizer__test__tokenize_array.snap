@@ -11,7 +11,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 0,
             end: 3,
-            [content]: "let",
         },
     },
     Token {
@@ -21,7 +20,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 4,
             end: 7,
-            [content]: "arr",
         },
     },
     Token {
@@ -31,7 +29,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 8,
             end: 9,
-            [content]: "=",
         },
     },
     Token {
@@ -41,7 +38,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 10,
             end: 11,
-            [content]: "[",
         },
     },
     Token {
@@ -51,7 +47,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 11,
             end: 12,
-            [content]: "1",
         },
     },
     Token {
@@ -61,7 +56,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 12,
             end: 13,
-            [content]: ",",
         },
     },
     Token {
@@ -71,7 +65,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 14,
             end: 15,
-            [content]: "2",
         },
     },
     Token {
@@ -81,7 +74,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 15,
             end: 16,
-            [content]: ",",
         },
     },
     Token {
@@ -91,7 +83,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 17,
             end: 18,
-            [content]: "3",
         },
     },
     Token {
@@ -101,7 +92,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 18,
             end: 19,
-            [content]: "]",
         },
     },
     Token {
@@ -111,7 +101,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 19,
             end: 20,
-            [content]: ";",
         },
     },
     Token {
@@ -121,7 +110,6 @@ expression: actual
             module: "module/test_tokenize_array",
             start: 20,
             end: 20,
-            [content]: "",
         },
     },
 ]

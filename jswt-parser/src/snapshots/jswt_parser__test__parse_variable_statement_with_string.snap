@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_variable_statement_with_string",
                     start: 0,
                     end: 22,
-                    [content]: "let x = \"Hello World\";",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_variable_statement_with_string",
                         start: 0,
                         end: 22,
-                        [content]: "let x = \"Hello World\";",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_variable_statement_with_string",
                                         start: 0,
                                         end: 22,
-                                        [content]: "let x = \"Hello World\";",
                                     },
                                     modifier: Let(
                                         Span {
@@ -39,7 +36,6 @@ Ast {
                                             module: "module/test_parse_variable_statement_with_string",
                                             start: 0,
                                             end: 3,
-                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
@@ -49,7 +45,6 @@ Ast {
                                                 module: "module/test_parse_variable_statement_with_string",
                                                 start: 4,
                                                 end: 5,
-                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -62,7 +57,6 @@ Ast {
                                                     module: "module/test_parse_variable_statement_with_string",
                                                     start: 8,
                                                     end: 21,
-                                                    [content]: "\"Hello World\"",
                                                 },
                                                 value: "Hello World",
                                             },

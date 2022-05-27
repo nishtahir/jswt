@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_argument_expression_with_expression_parameter",
                     start: 0,
                     end: 12,
-                    [content]: "test(1 + 2);",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_argument_expression_with_expression_parameter",
                         start: 0,
                         end: 12,
-                        [content]: "test(1 + 2);",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_argument_expression_with_expression_parameter",
                                         start: 0,
                                         end: 12,
-                                        [content]: "test(1 + 2);",
                                     },
                                     expression: Arguments(
                                         ArgumentsExpression {
@@ -40,7 +37,6 @@ Ast {
                                                 module: "module/test_parse_argument_expression_with_expression_parameter",
                                                 start: 0,
                                                 end: 11,
-                                                [content]: "test(1 + 2)",
                                             },
                                             ident: Identifier(
                                                 IdentifierExpression {
@@ -49,7 +45,6 @@ Ast {
                                                         module: "module/test_parse_argument_expression_with_expression_parameter",
                                                         start: 0,
                                                         end: 4,
-                                                        [content]: "test",
                                                     },
                                                     ident: Identifier {
                                                         span: Span {
@@ -57,7 +52,6 @@ Ast {
                                                             module: "module/test_parse_argument_expression_with_expression_parameter",
                                                             start: 0,
                                                             end: 4,
-                                                            [content]: "test",
                                                         },
                                                         value: "test",
                                                     },
@@ -69,7 +63,6 @@ Ast {
                                                     module: "module/test_parse_argument_expression_with_expression_parameter",
                                                     start: 4,
                                                     end: 11,
-                                                    [content]: "(1 + 2)",
                                                 },
                                                 arguments: [
                                                     Additive(
@@ -79,7 +72,6 @@ Ast {
                                                                 module: "module/test_parse_argument_expression_with_expression_parameter",
                                                                 start: 5,
                                                                 end: 10,
-                                                                [content]: "1 + 2",
                                                             },
                                                             left: Literal(
                                                                 Integer(
@@ -89,7 +81,6 @@ Ast {
                                                                             module: "module/test_parse_argument_expression_with_expression_parameter",
                                                                             start: 5,
                                                                             end: 6,
-                                                                            [content]: "1",
                                                                         },
                                                                         value: 1,
                                                                     },
@@ -101,7 +92,6 @@ Ast {
                                                                     module: "module/test_parse_argument_expression_with_expression_parameter",
                                                                     start: 7,
                                                                     end: 8,
-                                                                    [content]: "+",
                                                                 },
                                                             ),
                                                             right: Literal(
@@ -112,7 +102,6 @@ Ast {
                                                                             module: "module/test_parse_argument_expression_with_expression_parameter",
                                                                             start: 9,
                                                                             end: 10,
-                                                                            [content]: "2",
                                                                         },
                                                                         value: 2,
                                                                     },

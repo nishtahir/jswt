@@ -1,0 +1,4 @@
+// @ts-nocheck
+
+// Stub class for void non-type
+class void { }

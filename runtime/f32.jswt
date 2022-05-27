@@ -1,0 +1,6 @@
+// @ts-nocheck
+
+// Stub class for i32 primitive type
+class f32 {
+
+}

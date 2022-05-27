@@ -12,7 +12,6 @@ Ast {
                     module: "module/parse_member_dot_expression",
                     start: 0,
                     end: 36,
-                    [content]: "function test() { this.index = 10; }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/parse_member_dot_expression",
                         start: 0,
                         end: 36,
-                        [content]: "function test() { this.index = 10; }",
                     },
                     source_elements: [
                         FunctionDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/parse_member_dot_expression",
                                     start: 0,
                                     end: 36,
-                                    [content]: "function test() { this.index = 10; }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -42,7 +39,6 @@ Ast {
                                         module: "module/parse_member_dot_expression",
                                         start: 9,
                                         end: 13,
-                                        [content]: "test",
                                     },
                                     value: "test",
                                 },
@@ -52,7 +48,6 @@ Ast {
                                         module: "module/parse_member_dot_expression",
                                         start: 13,
                                         end: 15,
-                                        [content]: "()",
                                     },
                                     parameters: [],
                                 },
@@ -63,7 +58,6 @@ Ast {
                                         module: "module/parse_member_dot_expression",
                                         start: 16,
                                         end: 36,
-                                        [content]: "{ this.index = 10; }",
                                     },
                                     statements: StatementList {
                                         statements: [
@@ -74,7 +68,6 @@ Ast {
                                                         module: "module/parse_member_dot_expression",
                                                         start: 18,
                                                         end: 34,
-                                                        [content]: "this.index = 10;",
                                                     },
                                                     expression: Assignment(
                                                         BinaryExpression {
@@ -83,7 +76,6 @@ Ast {
                                                                 module: "module/parse_member_dot_expression",
                                                                 start: 18,
                                                                 end: 33,
-                                                                [content]: "this.index = 10",
                                                             },
                                                             left: MemberDot(
                                                                 MemberDotExpression {
@@ -92,7 +84,6 @@ Ast {
                                                                         module: "module/parse_member_dot_expression",
                                                                         start: 18,
                                                                         end: 28,
-                                                                        [content]: "this.index",
                                                                     },
                                                                     target: This(
                                                                         ThisExpression {
@@ -101,7 +92,6 @@ Ast {
                                                                                 module: "module/parse_member_dot_expression",
                                                                                 start: 18,
                                                                                 end: 22,
-                                                                                [content]: "this",
                                                                             },
                                                                         },
                                                                     ),
@@ -112,7 +102,6 @@ Ast {
                                                                                 module: "module/parse_member_dot_expression",
                                                                                 start: 23,
                                                                                 end: 28,
-                                                                                [content]: "index",
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
@@ -120,7 +109,6 @@ Ast {
                                                                                     module: "module/parse_member_dot_expression",
                                                                                     start: 23,
                                                                                     end: 28,
-                                                                                    [content]: "index",
                                                                                 },
                                                                                 value: "index",
                                                                             },
@@ -134,7 +122,6 @@ Ast {
                                                                     module: "module/parse_member_dot_expression",
                                                                     start: 29,
                                                                     end: 30,
-                                                                    [content]: "=",
                                                                 },
                                                             ),
                                                             right: Literal(
@@ -145,7 +132,6 @@ Ast {
                                                                             module: "module/parse_member_dot_expression",
                                                                             start: 31,
                                                                             end: 33,
-                                                                            [content]: "10",
                                                                         },
                                                                         value: 10,
                                                                     },

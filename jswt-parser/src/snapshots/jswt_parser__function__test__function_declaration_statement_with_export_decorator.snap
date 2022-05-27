@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_function_declaration_statement_with_export_decorator",
                     start: 0,
                     end: 26,
-                    [content]: "export function test() { }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_function_declaration_statement_with_export_decorator",
                         start: 0,
                         end: 26,
-                        [content]: "export function test() { }",
                     },
                     source_elements: [
                         FunctionDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/test_function_declaration_statement_with_export_decorator",
                                     start: 0,
                                     end: 26,
-                                    [content]: "export function test() { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -42,7 +39,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_export_decorator",
                                         start: 16,
                                         end: 20,
-                                        [content]: "test",
                                     },
                                     value: "test",
                                 },
@@ -52,7 +48,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_export_decorator",
                                         start: 20,
                                         end: 22,
-                                        [content]: "()",
                                     },
                                     parameters: [],
                                 },
@@ -63,7 +58,6 @@ Ast {
                                         module: "module/test_function_declaration_statement_with_export_decorator",
                                         start: 23,
                                         end: 26,
-                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],

@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_while_iteration_statement",
                     start: 0,
                     end: 38,
-                    [content]: "while(x < 99) { println(\"hey taco\"); }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_while_iteration_statement",
                         start: 0,
                         end: 38,
-                        [content]: "while(x < 99) { println(\"hey taco\"); }",
                     },
                     source_elements: [
                         Statement(
@@ -32,7 +30,6 @@ Ast {
                                             module: "module/test_parse_while_iteration_statement",
                                             start: 0,
                                             end: 38,
-                                            [content]: "while(x < 99) { println(\"hey taco\"); }",
                                         },
                                         expression: Relational(
                                             BinaryExpression {
@@ -41,7 +38,6 @@ Ast {
                                                     module: "module/test_parse_while_iteration_statement",
                                                     start: 6,
                                                     end: 12,
-                                                    [content]: "x < 99",
                                                 },
                                                 left: Identifier(
                                                     IdentifierExpression {
@@ -50,7 +46,6 @@ Ast {
                                                             module: "module/test_parse_while_iteration_statement",
                                                             start: 6,
                                                             end: 7,
-                                                            [content]: "x",
                                                         },
                                                         ident: Identifier {
                                                             span: Span {
@@ -58,7 +53,6 @@ Ast {
                                                                 module: "module/test_parse_while_iteration_statement",
                                                                 start: 6,
                                                                 end: 7,
-                                                                [content]: "x",
                                                             },
                                                             value: "x",
                                                         },
@@ -70,7 +64,6 @@ Ast {
                                                         module: "module/test_parse_while_iteration_statement",
                                                         start: 8,
                                                         end: 9,
-                                                        [content]: "<",
                                                     },
                                                 ),
                                                 right: Literal(
@@ -81,7 +74,6 @@ Ast {
                                                                 module: "module/test_parse_while_iteration_statement",
                                                                 start: 10,
                                                                 end: 12,
-                                                                [content]: "99",
                                                             },
                                                             value: 99,
                                                         },
@@ -95,7 +87,6 @@ Ast {
                                                 module: "module/test_parse_while_iteration_statement",
                                                 start: 14,
                                                 end: 38,
-                                                [content]: "{ println(\"hey taco\"); }",
                                             },
                                             statements: StatementList {
                                                 statements: [
@@ -106,7 +97,6 @@ Ast {
                                                                 module: "module/test_parse_while_iteration_statement",
                                                                 start: 16,
                                                                 end: 36,
-                                                                [content]: "println(\"hey taco\");",
                                                             },
                                                             expression: Arguments(
                                                                 ArgumentsExpression {
@@ -115,7 +105,6 @@ Ast {
                                                                         module: "module/test_parse_while_iteration_statement",
                                                                         start: 16,
                                                                         end: 35,
-                                                                        [content]: "println(\"hey taco\")",
                                                                     },
                                                                     ident: Identifier(
                                                                         IdentifierExpression {
@@ -124,7 +113,6 @@ Ast {
                                                                                 module: "module/test_parse_while_iteration_statement",
                                                                                 start: 16,
                                                                                 end: 23,
-                                                                                [content]: "println",
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
@@ -132,7 +120,6 @@ Ast {
                                                                                     module: "module/test_parse_while_iteration_statement",
                                                                                     start: 16,
                                                                                     end: 23,
-                                                                                    [content]: "println",
                                                                                 },
                                                                                 value: "println",
                                                                             },
@@ -144,7 +131,6 @@ Ast {
                                                                             module: "module/test_parse_while_iteration_statement",
                                                                             start: 23,
                                                                             end: 35,
-                                                                            [content]: "(\"hey taco\")",
                                                                         },
                                                                         arguments: [
                                                                             Literal(
@@ -155,7 +141,6 @@ Ast {
                                                                                             module: "module/test_parse_while_iteration_statement",
                                                                                             start: 24,
                                                                                             end: 34,
-                                                                                            [content]: "\"hey taco\"",
                                                                                         },
                                                                                         value: "hey taco",
                                                                                     },

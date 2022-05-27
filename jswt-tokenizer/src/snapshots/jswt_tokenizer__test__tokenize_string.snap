@@ -11,7 +11,6 @@ expression: actual
             module: "module/test_tokenize_string",
             start: 0,
             end: 13,
-            [content]: "\"Hello World\"",
         },
     },
     Token {
@@ -21,7 +20,6 @@ expression: actual
             module: "module/test_tokenize_string",
             start: 13,
             end: 13,
-            [content]: "",
         },
     },
 ]

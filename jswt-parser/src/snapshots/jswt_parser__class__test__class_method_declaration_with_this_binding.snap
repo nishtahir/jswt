@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_class_method_declaration_with_this_binding",
                     start: 13,
                     end: 135,
-                    [content]: "class A { \n                constructor(a: i32) { \n                    this.a = a;\n                }\n            }\n        ",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_class_method_declaration_with_this_binding",
                         start: 13,
                         end: 135,
-                        [content]: "class A { \n                constructor(a: i32) { \n                    this.a = a;\n                }\n            }\n        ",
                     },
                     source_elements: [
                         ClassDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/test_class_method_declaration_with_this_binding",
                                     start: 13,
                                     end: 126,
-                                    [content]: "class A { \n                constructor(a: i32) { \n                    this.a = a;\n                }\n            }",
                                 },
                                 ident: Identifier {
                                     span: Span {
@@ -38,7 +35,6 @@ Ast {
                                         module: "module/test_class_method_declaration_with_this_binding",
                                         start: 19,
                                         end: 20,
-                                        [content]: "A",
                                     },
                                     value: "A",
                                 },
@@ -48,7 +44,6 @@ Ast {
                                         module: "module/test_class_method_declaration_with_this_binding",
                                         start: 21,
                                         end: 126,
-                                        [content]: "{ \n                constructor(a: i32) { \n                    this.a = a;\n                }\n            }",
                                     },
                                     class_elements: [
                                         Constructor(
@@ -58,7 +53,6 @@ Ast {
                                                     module: "module/test_class_method_declaration_with_this_binding",
                                                     start: 40,
                                                     end: 112,
-                                                    [content]: "constructor(a: i32) { \n                    this.a = a;\n                }",
                                                 },
                                                 params: FormalParameterList {
                                                     span: Span {
@@ -66,7 +60,6 @@ Ast {
                                                         module: "module/test_class_method_declaration_with_this_binding",
                                                         start: 51,
                                                         end: 59,
-                                                        [content]: "(a: i32)",
                                                     },
                                                     parameters: [
                                                         FormalParameterArg {
@@ -75,7 +68,6 @@ Ast {
                                                                 module: "module/test_class_method_declaration_with_this_binding",
                                                                 start: 52,
                                                                 end: 58,
-                                                                [content]: "a: i32",
                                                             },
                                                             ident: Identifier {
                                                                 span: Span {
@@ -83,7 +75,6 @@ Ast {
                                                                     module: "module/test_class_method_declaration_with_this_binding",
                                                                     start: 52,
                                                                     end: 53,
-                                                                    [content]: "a",
                                                                 },
                                                                 value: "a",
                                                             },
@@ -93,10 +84,11 @@ Ast {
                                                                     module: "module/test_class_method_declaration_with_this_binding",
                                                                     start: 55,
                                                                     end: 58,
-                                                                    [content]: "i32",
                                                                 },
-                                                                ty: Primitive(
-                                                                    I32,
+                                                                ty: Identifier(
+                                                                    IdentifierType {
+                                                                        name: "i32",
+                                                                    },
                                                                 ),
                                                             },
                                                         },
@@ -108,7 +100,6 @@ Ast {
                                                         module: "module/test_class_method_declaration_with_this_binding",
                                                         start: 60,
                                                         end: 112,
-                                                        [content]: "{ \n                    this.a = a;\n                }",
                                                     },
                                                     statements: StatementList {
                                                         statements: [
@@ -119,7 +110,6 @@ Ast {
                                                                         module: "module/test_class_method_declaration_with_this_binding",
                                                                         start: 83,
                                                                         end: 94,
-                                                                        [content]: "this.a = a;",
                                                                     },
                                                                     expression: Assignment(
                                                                         BinaryExpression {
@@ -128,7 +118,6 @@ Ast {
                                                                                 module: "module/test_class_method_declaration_with_this_binding",
                                                                                 start: 83,
                                                                                 end: 93,
-                                                                                [content]: "this.a = a",
                                                                             },
                                                                             left: MemberDot(
                                                                                 MemberDotExpression {
@@ -137,7 +126,6 @@ Ast {
                                                                                         module: "module/test_class_method_declaration_with_this_binding",
                                                                                         start: 83,
                                                                                         end: 89,
-                                                                                        [content]: "this.a",
                                                                                     },
                                                                                     target: This(
                                                                                         ThisExpression {
@@ -146,7 +134,6 @@ Ast {
                                                                                                 module: "module/test_class_method_declaration_with_this_binding",
                                                                                                 start: 83,
                                                                                                 end: 87,
-                                                                                                [content]: "this",
                                                                                             },
                                                                                         },
                                                                                     ),
@@ -157,7 +144,6 @@ Ast {
                                                                                                 module: "module/test_class_method_declaration_with_this_binding",
                                                                                                 start: 88,
                                                                                                 end: 89,
-                                                                                                [content]: "a",
                                                                                             },
                                                                                             ident: Identifier {
                                                                                                 span: Span {
@@ -165,7 +151,6 @@ Ast {
                                                                                                     module: "module/test_class_method_declaration_with_this_binding",
                                                                                                     start: 88,
                                                                                                     end: 89,
-                                                                                                    [content]: "a",
                                                                                                 },
                                                                                                 value: "a",
                                                                                             },
@@ -179,7 +164,6 @@ Ast {
                                                                                     module: "module/test_class_method_declaration_with_this_binding",
                                                                                     start: 90,
                                                                                     end: 91,
-                                                                                    [content]: "=",
                                                                                 },
                                                                             ),
                                                                             right: Identifier(
@@ -189,7 +173,6 @@ Ast {
                                                                                         module: "module/test_class_method_declaration_with_this_binding",
                                                                                         start: 92,
                                                                                         end: 93,
-                                                                                        [content]: "a",
                                                                                     },
                                                                                     ident: Identifier {
                                                                                         span: Span {
@@ -197,7 +180,6 @@ Ast {
                                                                                             module: "module/test_class_method_declaration_with_this_binding",
                                                                                             start: 92,
                                                                                             end: 93,
-                                                                                            [content]: "a",
                                                                                         },
                                                                                         value: "a",
                                                                                     },

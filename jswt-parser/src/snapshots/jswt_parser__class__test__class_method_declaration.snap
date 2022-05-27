@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_class_method_declaration",
                     start: 0,
                     end: 29,
-                    [content]: "class A { hello(a: i32) { } }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_class_method_declaration",
                         start: 0,
                         end: 29,
-                        [content]: "class A { hello(a: i32) { } }",
                     },
                     source_elements: [
                         ClassDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/test_class_method_declaration",
                                     start: 0,
                                     end: 29,
-                                    [content]: "class A { hello(a: i32) { } }",
                                 },
                                 ident: Identifier {
                                     span: Span {
@@ -38,7 +35,6 @@ Ast {
                                         module: "module/test_class_method_declaration",
                                         start: 6,
                                         end: 7,
-                                        [content]: "A",
                                     },
                                     value: "A",
                                 },
@@ -48,7 +44,6 @@ Ast {
                                         module: "module/test_class_method_declaration",
                                         start: 8,
                                         end: 29,
-                                        [content]: "{ hello(a: i32) { } }",
                                     },
                                     class_elements: [
                                         Method(
@@ -58,7 +53,6 @@ Ast {
                                                     module: "module/test_class_method_declaration",
                                                     start: 10,
                                                     end: 27,
-                                                    [content]: "hello(a: i32) { }",
                                                 },
                                                 annotations: [],
                                                 ident: Identifier {
@@ -67,7 +61,6 @@ Ast {
                                                         module: "module/test_class_method_declaration",
                                                         start: 10,
                                                         end: 15,
-                                                        [content]: "hello",
                                                     },
                                                     value: "hello",
                                                 },
@@ -77,7 +70,6 @@ Ast {
                                                         module: "module/test_class_method_declaration",
                                                         start: 15,
                                                         end: 23,
-                                                        [content]: "(a: i32)",
                                                     },
                                                     parameters: [
                                                         FormalParameterArg {
@@ -86,7 +78,6 @@ Ast {
                                                                 module: "module/test_class_method_declaration",
                                                                 start: 16,
                                                                 end: 22,
-                                                                [content]: "a: i32",
                                                             },
                                                             ident: Identifier {
                                                                 span: Span {
@@ -94,7 +85,6 @@ Ast {
                                                                     module: "module/test_class_method_declaration",
                                                                     start: 16,
                                                                     end: 17,
-                                                                    [content]: "a",
                                                                 },
                                                                 value: "a",
                                                             },
@@ -104,10 +94,11 @@ Ast {
                                                                     module: "module/test_class_method_declaration",
                                                                     start: 19,
                                                                     end: 22,
-                                                                    [content]: "i32",
                                                                 },
-                                                                ty: Primitive(
-                                                                    I32,
+                                                                ty: Identifier(
+                                                                    IdentifierType {
+                                                                        name: "i32",
+                                                                    },
                                                                 ),
                                                             },
                                                         },
@@ -120,7 +111,6 @@ Ast {
                                                         module: "module/test_class_method_declaration",
                                                         start: 24,
                                                         end: 27,
-                                                        [content]: "{ }",
                                                     },
                                                     statements: StatementList {
                                                         statements: [],

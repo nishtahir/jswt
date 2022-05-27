@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_if_else_if_statement",
                     start: 0,
                     end: 74,
-                    [content]: "if(x == y) { return 0; } else if (x > y) { return 1; } else { return -1; }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_if_else_if_statement",
                         start: 0,
                         end: 74,
-                        [content]: "if(x == y) { return 0; } else if (x > y) { return 1; } else { return -1; }",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_if_else_if_statement",
                                         start: 0,
                                         end: 74,
-                                        [content]: "if(x == y) { return 0; } else if (x > y) { return 1; } else { return -1; }",
                                     },
                                     condition: Equality(
                                         BinaryExpression {
@@ -40,7 +37,6 @@ Ast {
                                                 module: "module/test_parse_if_else_if_statement",
                                                 start: 3,
                                                 end: 9,
-                                                [content]: "x == y",
                                             },
                                             left: Identifier(
                                                 IdentifierExpression {
@@ -49,7 +45,6 @@ Ast {
                                                         module: "module/test_parse_if_else_if_statement",
                                                         start: 3,
                                                         end: 4,
-                                                        [content]: "x",
                                                     },
                                                     ident: Identifier {
                                                         span: Span {
@@ -57,7 +52,6 @@ Ast {
                                                             module: "module/test_parse_if_else_if_statement",
                                                             start: 3,
                                                             end: 4,
-                                                            [content]: "x",
                                                         },
                                                         value: "x",
                                                     },
@@ -69,7 +63,6 @@ Ast {
                                                     module: "module/test_parse_if_else_if_statement",
                                                     start: 5,
                                                     end: 7,
-                                                    [content]: "==",
                                                 },
                                             ),
                                             right: Identifier(
@@ -79,7 +72,6 @@ Ast {
                                                         module: "module/test_parse_if_else_if_statement",
                                                         start: 8,
                                                         end: 9,
-                                                        [content]: "y",
                                                     },
                                                     ident: Identifier {
                                                         span: Span {
@@ -87,7 +79,6 @@ Ast {
                                                             module: "module/test_parse_if_else_if_statement",
                                                             start: 8,
                                                             end: 9,
-                                                            [content]: "y",
                                                         },
                                                         value: "y",
                                                     },
@@ -102,7 +93,6 @@ Ast {
                                                 module: "module/test_parse_if_else_if_statement",
                                                 start: 11,
                                                 end: 24,
-                                                [content]: "{ return 0; }",
                                             },
                                             statements: StatementList {
                                                 statements: [
@@ -113,7 +103,6 @@ Ast {
                                                                 module: "module/test_parse_if_else_if_statement",
                                                                 start: 13,
                                                                 end: 22,
-                                                                [content]: "return 0;",
                                                             },
                                                             expression: Literal(
                                                                 Integer(
@@ -123,7 +112,6 @@ Ast {
                                                                             module: "module/test_parse_if_else_if_statement",
                                                                             start: 20,
                                                                             end: 21,
-                                                                            [content]: "0",
                                                                         },
                                                                         value: 0,
                                                                     },
@@ -143,7 +131,6 @@ Ast {
                                                     module: "module/test_parse_if_else_if_statement",
                                                     start: 30,
                                                     end: 74,
-                                                    [content]: "if (x > y) { return 1; } else { return -1; }",
                                                 },
                                                 condition: Relational(
                                                     BinaryExpression {
@@ -152,7 +139,6 @@ Ast {
                                                             module: "module/test_parse_if_else_if_statement",
                                                             start: 34,
                                                             end: 39,
-                                                            [content]: "x > y",
                                                         },
                                                         left: Identifier(
                                                             IdentifierExpression {
@@ -161,7 +147,6 @@ Ast {
                                                                     module: "module/test_parse_if_else_if_statement",
                                                                     start: 34,
                                                                     end: 35,
-                                                                    [content]: "x",
                                                                 },
                                                                 ident: Identifier {
                                                                     span: Span {
@@ -169,7 +154,6 @@ Ast {
                                                                         module: "module/test_parse_if_else_if_statement",
                                                                         start: 34,
                                                                         end: 35,
-                                                                        [content]: "x",
                                                                     },
                                                                     value: "x",
                                                                 },
@@ -181,7 +165,6 @@ Ast {
                                                                 module: "module/test_parse_if_else_if_statement",
                                                                 start: 36,
                                                                 end: 37,
-                                                                [content]: ">",
                                                             },
                                                         ),
                                                         right: Identifier(
@@ -191,7 +174,6 @@ Ast {
                                                                     module: "module/test_parse_if_else_if_statement",
                                                                     start: 38,
                                                                     end: 39,
-                                                                    [content]: "y",
                                                                 },
                                                                 ident: Identifier {
                                                                     span: Span {
@@ -199,7 +181,6 @@ Ast {
                                                                         module: "module/test_parse_if_else_if_statement",
                                                                         start: 38,
                                                                         end: 39,
-                                                                        [content]: "y",
                                                                     },
                                                                     value: "y",
                                                                 },
@@ -214,7 +195,6 @@ Ast {
                                                             module: "module/test_parse_if_else_if_statement",
                                                             start: 41,
                                                             end: 54,
-                                                            [content]: "{ return 1; }",
                                                         },
                                                         statements: StatementList {
                                                             statements: [
@@ -225,7 +205,6 @@ Ast {
                                                                             module: "module/test_parse_if_else_if_statement",
                                                                             start: 43,
                                                                             end: 52,
-                                                                            [content]: "return 1;",
                                                                         },
                                                                         expression: Literal(
                                                                             Integer(
@@ -235,7 +214,6 @@ Ast {
                                                                                         module: "module/test_parse_if_else_if_statement",
                                                                                         start: 50,
                                                                                         end: 51,
-                                                                                        [content]: "1",
                                                                                     },
                                                                                     value: 1,
                                                                                 },
@@ -255,7 +233,6 @@ Ast {
                                                                 module: "module/test_parse_if_else_if_statement",
                                                                 start: 60,
                                                                 end: 74,
-                                                                [content]: "{ return -1; }",
                                                             },
                                                             statements: StatementList {
                                                                 statements: [
@@ -266,7 +243,6 @@ Ast {
                                                                                 module: "module/test_parse_if_else_if_statement",
                                                                                 start: 62,
                                                                                 end: 72,
-                                                                                [content]: "return -1;",
                                                                             },
                                                                             expression: Unary(
                                                                                 UnaryExpression {
@@ -275,7 +251,6 @@ Ast {
                                                                                         module: "module/test_parse_if_else_if_statement",
                                                                                         start: 69,
                                                                                         end: 71,
-                                                                                        [content]: "-1",
                                                                                     },
                                                                                     op: Minus(
                                                                                         Span {
@@ -283,7 +258,6 @@ Ast {
                                                                                             module: "module/test_parse_if_else_if_statement",
                                                                                             start: 69,
                                                                                             end: 70,
-                                                                                            [content]: "-",
                                                                                         },
                                                                                     ),
                                                                                     expr: Literal(
@@ -294,7 +268,6 @@ Ast {
                                                                                                     module: "module/test_parse_if_else_if_statement",
                                                                                                     start: 70,
                                                                                                     end: 71,
-                                                                                                    [content]: "1",
                                                                                                 },
                                                                                                 value: 1,
                                                                                             },

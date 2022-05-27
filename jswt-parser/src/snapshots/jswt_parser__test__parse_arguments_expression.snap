@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_arguments_expression",
                     start: 0,
                     end: 9,
-                    [content]: "print(6);",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_arguments_expression",
                         start: 0,
                         end: 9,
-                        [content]: "print(6);",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_arguments_expression",
                                         start: 0,
                                         end: 9,
-                                        [content]: "print(6);",
                                     },
                                     expression: Arguments(
                                         ArgumentsExpression {
@@ -40,7 +37,6 @@ Ast {
                                                 module: "module/test_parse_arguments_expression",
                                                 start: 0,
                                                 end: 8,
-                                                [content]: "print(6)",
                                             },
                                             ident: Identifier(
                                                 IdentifierExpression {
@@ -49,7 +45,6 @@ Ast {
                                                         module: "module/test_parse_arguments_expression",
                                                         start: 0,
                                                         end: 5,
-                                                        [content]: "print",
                                                     },
                                                     ident: Identifier {
                                                         span: Span {
@@ -57,7 +52,6 @@ Ast {
                                                             module: "module/test_parse_arguments_expression",
                                                             start: 0,
                                                             end: 5,
-                                                            [content]: "print",
                                                         },
                                                         value: "print",
                                                     },
@@ -69,7 +63,6 @@ Ast {
                                                     module: "module/test_parse_arguments_expression",
                                                     start: 5,
                                                     end: 8,
-                                                    [content]: "(6)",
                                                 },
                                                 arguments: [
                                                     Literal(
@@ -80,7 +73,6 @@ Ast {
                                                                     module: "module/test_parse_arguments_expression",
                                                                     start: 6,
                                                                     end: 7,
-                                                                    [content]: "6",
                                                                 },
                                                                 value: 6,
                                                             },

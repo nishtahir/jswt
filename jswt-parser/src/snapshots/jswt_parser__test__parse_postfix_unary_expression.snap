@@ -12,7 +12,6 @@ Ast {
                     module: "module/parse_postfix_unary_expression",
                     start: 0,
                     end: 31,
-                    [content]: "let x: i32 = 99--; let y = i++;",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/parse_postfix_unary_expression",
                         start: 0,
                         end: 31,
-                        [content]: "let x: i32 = 99--; let y = i++;",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/parse_postfix_unary_expression",
                                         start: 0,
                                         end: 18,
-                                        [content]: "let x: i32 = 99--;",
                                     },
                                     modifier: Let(
                                         Span {
@@ -39,7 +36,6 @@ Ast {
                                             module: "module/parse_postfix_unary_expression",
                                             start: 0,
                                             end: 3,
-                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
@@ -49,7 +45,6 @@ Ast {
                                                 module: "module/parse_postfix_unary_expression",
                                                 start: 4,
                                                 end: 5,
-                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -61,7 +56,6 @@ Ast {
                                                 module: "module/parse_postfix_unary_expression",
                                                 start: 15,
                                                 end: 15,
-                                                [content]: "",
                                             },
                                             op: PostDecrement(
                                                 Span {
@@ -69,7 +63,6 @@ Ast {
                                                     module: "module/parse_postfix_unary_expression",
                                                     start: 15,
                                                     end: 17,
-                                                    [content]: "--",
                                                 },
                                             ),
                                             expr: Literal(
@@ -80,7 +73,6 @@ Ast {
                                                             module: "module/parse_postfix_unary_expression",
                                                             start: 13,
                                                             end: 15,
-                                                            [content]: "99",
                                                         },
                                                         value: 99,
                                                     },
@@ -95,10 +87,11 @@ Ast {
                                                 module: "module/parse_postfix_unary_expression",
                                                 start: 7,
                                                 end: 10,
-                                                [content]: "i32",
                                             },
-                                            ty: Primitive(
-                                                I32,
+                                            ty: Identifier(
+                                                IdentifierType {
+                                                    name: "i32",
+                                                },
                                             ),
                                         },
                                     ),
@@ -113,7 +106,6 @@ Ast {
                                         module: "module/parse_postfix_unary_expression",
                                         start: 19,
                                         end: 31,
-                                        [content]: "let y = i++;",
                                     },
                                     modifier: Let(
                                         Span {
@@ -121,7 +113,6 @@ Ast {
                                             module: "module/parse_postfix_unary_expression",
                                             start: 19,
                                             end: 22,
-                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
@@ -131,7 +122,6 @@ Ast {
                                                 module: "module/parse_postfix_unary_expression",
                                                 start: 23,
                                                 end: 24,
-                                                [content]: "y",
                                             },
                                             value: "y",
                                         },
@@ -143,7 +133,6 @@ Ast {
                                                 module: "module/parse_postfix_unary_expression",
                                                 start: 28,
                                                 end: 28,
-                                                [content]: "",
                                             },
                                             op: PostIncrement(
                                                 Span {
@@ -151,7 +140,6 @@ Ast {
                                                     module: "module/parse_postfix_unary_expression",
                                                     start: 28,
                                                     end: 30,
-                                                    [content]: "++",
                                                 },
                                             ),
                                             expr: Identifier(
@@ -161,7 +149,6 @@ Ast {
                                                         module: "module/parse_postfix_unary_expression",
                                                         start: 27,
                                                         end: 28,
-                                                        [content]: "i",
                                                     },
                                                     ident: Identifier {
                                                         span: Span {
@@ -169,7 +156,6 @@ Ast {
                                                             module: "module/parse_postfix_unary_expression",
                                                             start: 27,
                                                             end: 28,
-                                                            [content]: "i",
                                                         },
                                                         value: "i",
                                                     },

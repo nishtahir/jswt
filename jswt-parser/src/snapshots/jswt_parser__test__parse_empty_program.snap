@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_empty_program",
                     start: 0,
                     end: 0,
-                    [content]: "",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_empty_program",
                         start: 0,
                         end: 0,
-                        [content]: "",
                     },
                     source_elements: [],
                 },

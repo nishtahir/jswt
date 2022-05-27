@@ -205,7 +205,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         print_semantic_error(&error);
     }
 
-    let mut lowering = AstLowering::new(&mut analyzer.symbol_table);
+    let mut lowering = AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
     lowering.desugar(&mut ast);
 
     fs::write(output.with_extension("lowered.ast"), format!("{:#?}", ast)).unwrap();

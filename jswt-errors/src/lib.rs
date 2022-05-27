@@ -42,6 +42,12 @@ pub fn print_semantic_error(error: &SemanticError) {
             message: format!("Function '{}' was already defined in this scope", name).into(),
             hint: None,
         },
+        SemanticError::ClassAlreadyDefined { name, span } => DiagnosticMessage {
+            level: Level::Error,
+            span: span.clone(),
+            message: format!("Class '{}' was already defined in this scope", name).into(),
+            hint: None,
+        },
         SemanticError::NotAFunctionError { span, name_span } => {
             let file = &span.file.to_string();
             let source = fs::read_to_string(file);

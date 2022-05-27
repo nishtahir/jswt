@@ -7,13 +7,25 @@ Ast {
     program: Program {
         files: [
             File {
+                span: Span {
+                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                    start: 9,
+                    end: 163,
+                },
                 source_elements: SourceElements {
+                    span: Span {
+                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                        start: 9,
+                        end: 163,
+                    },
                     source_elements: [
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                     start: 35,
                                     end: 51,
                                 },
@@ -23,33 +35,41 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                         start: 35,
                                         end: 51,
                                     },
                                     value: "Array#constructor",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        start: 46,
+                                        end: 48,
+                                    },
                                     parameters: [],
                                 },
                                 returns: Some(
                                     TypeAnnotation {
                                         span: Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
+                                            file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                            module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                             start: 35,
                                             end: 51,
                                         },
-                                        ty: Primitive(
-                                            I32,
+                                        ty: Identifier(
+                                            IdentifierType {
+                                                name: "i32",
+                                            },
                                         ),
                                     },
                                 ),
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                         start: 49,
                                         end: 51,
                                     },
@@ -174,8 +194,8 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "test.1",
-                                    module: "module/test.1",
+                                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                     start: 71,
                                     end: 158,
                                 },
@@ -185,33 +205,41 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                         start: 80,
                                         end: 84,
                                     },
                                     value: "main",
                                 },
                                 params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        start: 84,
+                                        end: 86,
+                                    },
                                     parameters: [],
                                 },
                                 returns: Some(
                                     TypeAnnotation {
                                         span: Span {
-                                            file: "test.1",
-                                            module: "module/test.1",
+                                            file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                            module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                             start: 88,
                                             end: 91,
                                         },
-                                        ty: Primitive(
-                                            I32,
+                                        ty: Identifier(
+                                            IdentifierType {
+                                                name: "i32",
+                                            },
                                         ),
                                     },
                                 ),
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "test.1",
-                                        module: "module/test.1",
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                         start: 92,
                                         end: 158,
                                     },
@@ -220,15 +248,15 @@ Ast {
                                             Variable(
                                                 VariableStatement {
                                                     span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
+                                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                         start: 106,
                                                         end: 126,
                                                     },
                                                     modifier: Let(
                                                         Span {
-                                                            file: "test.1",
-                                                            module: "module/test.1",
+                                                            file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                            module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                             start: 106,
                                                             end: 109,
                                                         },
@@ -236,8 +264,8 @@ Ast {
                                                     target: Identifier(
                                                         Identifier {
                                                             span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
+                                                                file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                                 start: 110,
                                                                 end: 111,
                                                             },
@@ -247,23 +275,23 @@ Ast {
                                                     expression: Arguments(
                                                         ArgumentsExpression {
                                                             span: Span {
-                                                                file: "test.1",
-                                                                module: "module/test.1",
+                                                                file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                                 start: 118,
                                                                 end: 125,
                                                             },
                                                             ident: Identifier(
                                                                 IdentifierExpression {
                                                                     span: Span {
-                                                                        file: "test.1",
-                                                                        module: "module/test.1",
+                                                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                                         start: 118,
                                                                         end: 123,
                                                                     },
                                                                     ident: Identifier {
                                                                         span: Span {
-                                                                            file: "test.1",
-                                                                            module: "module/test.1",
+                                                                            file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                            module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                                             start: 118,
                                                                             end: 123,
                                                                         },
@@ -273,8 +301,8 @@ Ast {
                                                             ),
                                                             arguments: ArgumentsList {
                                                                 span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
+                                                                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                                     start: 123,
                                                                     end: 125,
                                                                 },
@@ -288,8 +316,8 @@ Ast {
                                             Return(
                                                 ReturnStatement {
                                                     span: Span {
-                                                        file: "test.1",
-                                                        module: "module/test.1",
+                                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                         start: 146,
                                                         end: 147,
                                                     },
@@ -297,8 +325,8 @@ Ast {
                                                         Integer(
                                                             IntegerLiteral {
                                                                 span: Span {
-                                                                    file: "test.1",
-                                                                    module: "module/test.1",
+                                                                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
                                                                     start: 146,
                                                                     end: 147,
                                                                 },

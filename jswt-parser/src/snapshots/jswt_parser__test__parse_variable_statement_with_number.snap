@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_variable_statement_with_number",
                     start: 0,
                     end: 11,
-                    [content]: "let x = 42;",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_variable_statement_with_number",
                         start: 0,
                         end: 11,
-                        [content]: "let x = 42;",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_variable_statement_with_number",
                                         start: 0,
                                         end: 11,
-                                        [content]: "let x = 42;",
                                     },
                                     modifier: Let(
                                         Span {
@@ -39,7 +36,6 @@ Ast {
                                             module: "module/test_parse_variable_statement_with_number",
                                             start: 0,
                                             end: 3,
-                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
@@ -49,7 +45,6 @@ Ast {
                                                 module: "module/test_parse_variable_statement_with_number",
                                                 start: 4,
                                                 end: 5,
-                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -62,7 +57,6 @@ Ast {
                                                     module: "module/test_parse_variable_statement_with_number",
                                                     start: 8,
                                                     end: 10,
-                                                    [content]: "42",
                                                 },
                                                 value: 42,
                                             },

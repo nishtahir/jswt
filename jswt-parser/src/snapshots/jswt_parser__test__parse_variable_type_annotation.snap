@@ -12,7 +12,6 @@ Ast {
                     module: "module/parse_variable_type_annotation",
                     start: 0,
                     end: 16,
-                    [content]: "let x: i32 = 99;",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/parse_variable_type_annotation",
                         start: 0,
                         end: 16,
-                        [content]: "let x: i32 = 99;",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/parse_variable_type_annotation",
                                         start: 0,
                                         end: 16,
-                                        [content]: "let x: i32 = 99;",
                                     },
                                     modifier: Let(
                                         Span {
@@ -39,7 +36,6 @@ Ast {
                                             module: "module/parse_variable_type_annotation",
                                             start: 0,
                                             end: 3,
-                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
@@ -49,7 +45,6 @@ Ast {
                                                 module: "module/parse_variable_type_annotation",
                                                 start: 4,
                                                 end: 5,
-                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -62,7 +57,6 @@ Ast {
                                                     module: "module/parse_variable_type_annotation",
                                                     start: 13,
                                                     end: 15,
-                                                    [content]: "99",
                                                 },
                                                 value: 99,
                                             },
@@ -75,10 +69,11 @@ Ast {
                                                 module: "module/parse_variable_type_annotation",
                                                 start: 7,
                                                 end: 10,
-                                                [content]: "i32",
                                             },
-                                            ty: Primitive(
-                                                I32,
+                                            ty: Identifier(
+                                                IdentifierType {
+                                                    name: "i32",
+                                                },
                                             ),
                                         },
                                     ),

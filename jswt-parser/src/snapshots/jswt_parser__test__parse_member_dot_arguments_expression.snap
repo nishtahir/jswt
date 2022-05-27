@@ -12,7 +12,6 @@ Ast {
                     module: "module/parse_member_dot_arguments_expression",
                     start: 0,
                     end: 33,
-                    [content]: "function test() { this.set(10); }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/parse_member_dot_arguments_expression",
                         start: 0,
                         end: 33,
-                        [content]: "function test() { this.set(10); }",
                     },
                     source_elements: [
                         FunctionDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/parse_member_dot_arguments_expression",
                                     start: 0,
                                     end: 33,
-                                    [content]: "function test() { this.set(10); }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -42,7 +39,6 @@ Ast {
                                         module: "module/parse_member_dot_arguments_expression",
                                         start: 9,
                                         end: 13,
-                                        [content]: "test",
                                     },
                                     value: "test",
                                 },
@@ -52,7 +48,6 @@ Ast {
                                         module: "module/parse_member_dot_arguments_expression",
                                         start: 13,
                                         end: 15,
-                                        [content]: "()",
                                     },
                                     parameters: [],
                                 },
@@ -63,7 +58,6 @@ Ast {
                                         module: "module/parse_member_dot_arguments_expression",
                                         start: 16,
                                         end: 33,
-                                        [content]: "{ this.set(10); }",
                                     },
                                     statements: StatementList {
                                         statements: [
@@ -74,7 +68,6 @@ Ast {
                                                         module: "module/parse_member_dot_arguments_expression",
                                                         start: 18,
                                                         end: 31,
-                                                        [content]: "this.set(10);",
                                                     },
                                                     expression: MemberDot(
                                                         MemberDotExpression {
@@ -83,7 +76,6 @@ Ast {
                                                                 module: "module/parse_member_dot_arguments_expression",
                                                                 start: 18,
                                                                 end: 30,
-                                                                [content]: "this.set(10)",
                                                             },
                                                             target: This(
                                                                 ThisExpression {
@@ -92,7 +84,6 @@ Ast {
                                                                         module: "module/parse_member_dot_arguments_expression",
                                                                         start: 18,
                                                                         end: 22,
-                                                                        [content]: "this",
                                                                     },
                                                                 },
                                                             ),
@@ -103,7 +94,6 @@ Ast {
                                                                         module: "module/parse_member_dot_arguments_expression",
                                                                         start: 23,
                                                                         end: 30,
-                                                                        [content]: "set(10)",
                                                                     },
                                                                     ident: Identifier(
                                                                         IdentifierExpression {
@@ -112,7 +102,6 @@ Ast {
                                                                                 module: "module/parse_member_dot_arguments_expression",
                                                                                 start: 23,
                                                                                 end: 26,
-                                                                                [content]: "set",
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
@@ -120,7 +109,6 @@ Ast {
                                                                                     module: "module/parse_member_dot_arguments_expression",
                                                                                     start: 23,
                                                                                     end: 26,
-                                                                                    [content]: "set",
                                                                                 },
                                                                                 value: "set",
                                                                             },
@@ -132,7 +120,6 @@ Ast {
                                                                             module: "module/parse_member_dot_arguments_expression",
                                                                             start: 26,
                                                                             end: 30,
-                                                                            [content]: "(10)",
                                                                         },
                                                                         arguments: [
                                                                             Literal(
@@ -143,7 +130,6 @@ Ast {
                                                                                             module: "module/parse_member_dot_arguments_expression",
                                                                                             start: 27,
                                                                                             end: 29,
-                                                                                            [content]: "10",
                                                                                         },
                                                                                         value: 10,
                                                                                     },

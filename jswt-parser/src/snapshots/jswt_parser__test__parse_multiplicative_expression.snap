@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_multiplicative_expression",
                     start: 0,
                     end: 14,
-                    [content]: "let x = 3 * 2;",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_multiplicative_expression",
                         start: 0,
                         end: 14,
-                        [content]: "let x = 3 * 2;",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_multiplicative_expression",
                                         start: 0,
                                         end: 14,
-                                        [content]: "let x = 3 * 2;",
                                     },
                                     modifier: Let(
                                         Span {
@@ -39,7 +36,6 @@ Ast {
                                             module: "module/test_parse_multiplicative_expression",
                                             start: 0,
                                             end: 3,
-                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
@@ -49,7 +45,6 @@ Ast {
                                                 module: "module/test_parse_multiplicative_expression",
                                                 start: 4,
                                                 end: 5,
-                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -61,7 +56,6 @@ Ast {
                                                 module: "module/test_parse_multiplicative_expression",
                                                 start: 8,
                                                 end: 13,
-                                                [content]: "3 * 2",
                                             },
                                             left: Literal(
                                                 Integer(
@@ -71,7 +65,6 @@ Ast {
                                                             module: "module/test_parse_multiplicative_expression",
                                                             start: 8,
                                                             end: 9,
-                                                            [content]: "3",
                                                         },
                                                         value: 3,
                                                     },
@@ -83,7 +76,6 @@ Ast {
                                                     module: "module/test_parse_multiplicative_expression",
                                                     start: 10,
                                                     end: 11,
-                                                    [content]: "*",
                                                 },
                                             ),
                                             right: Literal(
@@ -94,7 +86,6 @@ Ast {
                                                             module: "module/test_parse_multiplicative_expression",
                                                             start: 12,
                                                             end: 13,
-                                                            [content]: "2",
                                                         },
                                                         value: 2,
                                                     },

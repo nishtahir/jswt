@@ -38,8 +38,8 @@ impl Span {
 
     pub fn synthetic() -> Self {
         Span {
-            file: "".into(),
-            module: "".into(),
+            file: "synthetic".into(),
+            module: "synthetic".into(),
             start: 0,
             end: 0,
         }
@@ -57,7 +57,10 @@ impl fmt::Debug for Span {
             .field("module", &self.module)
             .field("start", &self.start)
             .field("end", &self.end)
-            .field("[content]", &fs::from_span(&self).to_owned())
+            // This is problematic because the lowering pass reuses the AST so spans
+            // may not exist or may have been overwritten in the cache.
+            // This feature will require a rework. 
+            // .field("[content]", &fs::from_span(&self).to_owned())
             .finish()
     }
 }

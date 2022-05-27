@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_additive_expression_left_associativity",
                     start: 0,
                     end: 22,
-                    [content]: "let x = 3 + 2 + 1 + 0;",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_additive_expression_left_associativity",
                         start: 0,
                         end: 22,
-                        [content]: "let x = 3 + 2 + 1 + 0;",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_additive_expression_left_associativity",
                                         start: 0,
                                         end: 22,
-                                        [content]: "let x = 3 + 2 + 1 + 0;",
                                     },
                                     modifier: Let(
                                         Span {
@@ -39,7 +36,6 @@ Ast {
                                             module: "module/test_parse_additive_expression_left_associativity",
                                             start: 0,
                                             end: 3,
-                                            [content]: "let",
                                         },
                                     ),
                                     target: Identifier(
@@ -49,7 +45,6 @@ Ast {
                                                 module: "module/test_parse_additive_expression_left_associativity",
                                                 start: 4,
                                                 end: 5,
-                                                [content]: "x",
                                             },
                                             value: "x",
                                         },
@@ -61,7 +56,6 @@ Ast {
                                                 module: "module/test_parse_additive_expression_left_associativity",
                                                 start: 8,
                                                 end: 21,
-                                                [content]: "3 + 2 + 1 + 0",
                                             },
                                             left: Additive(
                                                 BinaryExpression {
@@ -70,7 +64,6 @@ Ast {
                                                         module: "module/test_parse_additive_expression_left_associativity",
                                                         start: 8,
                                                         end: 17,
-                                                        [content]: "3 + 2 + 1",
                                                     },
                                                     left: Additive(
                                                         BinaryExpression {
@@ -79,7 +72,6 @@ Ast {
                                                                 module: "module/test_parse_additive_expression_left_associativity",
                                                                 start: 8,
                                                                 end: 13,
-                                                                [content]: "3 + 2",
                                                             },
                                                             left: Literal(
                                                                 Integer(
@@ -89,7 +81,6 @@ Ast {
                                                                             module: "module/test_parse_additive_expression_left_associativity",
                                                                             start: 8,
                                                                             end: 9,
-                                                                            [content]: "3",
                                                                         },
                                                                         value: 3,
                                                                     },
@@ -101,7 +92,6 @@ Ast {
                                                                     module: "module/test_parse_additive_expression_left_associativity",
                                                                     start: 10,
                                                                     end: 11,
-                                                                    [content]: "+",
                                                                 },
                                                             ),
                                                             right: Literal(
@@ -112,7 +102,6 @@ Ast {
                                                                             module: "module/test_parse_additive_expression_left_associativity",
                                                                             start: 12,
                                                                             end: 13,
-                                                                            [content]: "2",
                                                                         },
                                                                         value: 2,
                                                                     },
@@ -126,7 +115,6 @@ Ast {
                                                             module: "module/test_parse_additive_expression_left_associativity",
                                                             start: 14,
                                                             end: 15,
-                                                            [content]: "+",
                                                         },
                                                     ),
                                                     right: Literal(
@@ -137,7 +125,6 @@ Ast {
                                                                     module: "module/test_parse_additive_expression_left_associativity",
                                                                     start: 16,
                                                                     end: 17,
-                                                                    [content]: "1",
                                                                 },
                                                                 value: 1,
                                                             },
@@ -151,7 +138,6 @@ Ast {
                                                     module: "module/test_parse_additive_expression_left_associativity",
                                                     start: 18,
                                                     end: 19,
-                                                    [content]: "+",
                                                 },
                                             ),
                                             right: Literal(
@@ -162,7 +148,6 @@ Ast {
                                                             module: "module/test_parse_additive_expression_left_associativity",
                                                             start: 20,
                                                             end: 21,
-                                                            [content]: "0",
                                                         },
                                                         value: 0,
                                                     },

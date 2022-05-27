@@ -1,0 +1,63 @@
+---
+source: jswt-semantics/src/globals.rs
+expression: resolver
+
+---
+GlobalResolver {
+    bindings_table: BindingsTable {
+        bindings: {
+            "Array": ClassBinding {
+                name: "Array",
+                fields: [
+                    Field {
+                        name: "a",
+                        index: 0,
+                        size: 4,
+                    },
+                    Field {
+                        name: "b",
+                        index: 1,
+                        size: 4,
+                    },
+                ],
+                methods: [
+                    Method {
+                        name: "size",
+                        signature: FunctionSignature {
+                            params: [],
+                            returns: Identifier(
+                                IdentifierType {
+                                    name: "i32",
+                                },
+                            ),
+                        },
+                    },
+                    Method {
+                        name: "indexOf",
+                        signature: FunctionSignature {
+                            params: [
+                                Identifier(
+                                    IdentifierType {
+                                        name: "i32",
+                                    },
+                                ),
+                            ],
+                            returns: Identifier(
+                                IdentifierType {
+                                    name: "i32",
+                                },
+                            ),
+                        },
+                    },
+                ],
+            },
+        },
+    },
+    symbol_table: SymbolTable {
+        table: [
+            {},
+        ],
+    },
+    bindings_context: [],
+    errors: [],
+}

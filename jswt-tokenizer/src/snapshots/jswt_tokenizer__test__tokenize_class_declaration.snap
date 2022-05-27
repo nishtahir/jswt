@@ -11,7 +11,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 0,
             end: 5,
-            [content]: "class",
         },
     },
     Token {
@@ -21,7 +20,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 6,
             end: 7,
-            [content]: "A",
         },
     },
     Token {
@@ -31,7 +29,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 8,
             end: 9,
-            [content]: "{",
         },
     },
     Token {
@@ -41,7 +38,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 10,
             end: 21,
-            [content]: "constructor",
         },
     },
     Token {
@@ -51,7 +47,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 21,
             end: 22,
-            [content]: "(",
         },
     },
     Token {
@@ -61,7 +56,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 22,
             end: 23,
-            [content]: "b",
         },
     },
     Token {
@@ -71,7 +65,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 23,
             end: 24,
-            [content]: ":",
         },
     },
     Token {
@@ -81,7 +74,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 25,
             end: 28,
-            [content]: "i32",
         },
     },
     Token {
@@ -91,7 +83,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 28,
             end: 29,
-            [content]: ")",
         },
     },
     Token {
@@ -101,7 +92,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 30,
             end: 31,
-            [content]: "{",
         },
     },
     Token {
@@ -111,7 +101,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 31,
             end: 32,
-            [content]: "}",
         },
     },
     Token {
@@ -121,7 +110,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 33,
             end: 34,
-            [content]: "}",
         },
     },
     Token {
@@ -131,7 +119,6 @@ expression: actual
             module: "module/test_tokenize_class_declaration",
             start: 34,
             end: 34,
-            [content]: "",
         },
     },
 ]

@@ -2,8 +2,23 @@ use crate::{gen::*, AstLowering};
 
 use jswt_ast::{transform::TransformVisitor, *};
 use jswt_common::Spannable;
-use jswt_types::{PrimitiveType, Type};
 
+/// At a high level the goal here is to remove class declarations from the AST by rewriting them
+/// into a series of functions
+///  
+/// ```
+/// class Array {
+///   constructor() {}
+///   get(index: i32): i32 {}
+/// }
+/// ```
+///
+/// should be rewriten as
+///
+/// ```
+/// function Array#constructor(): i32 {}
+/// function Array#get(this: i32, index: i32): i32 {}
+/// ```
 impl<'a> AstLowering<'a> {
     pub(crate) fn enter_class_declaration(&mut self, node: &ClassDeclarationElement) {
         let name = node.ident.value.clone();
@@ -14,19 +29,18 @@ impl<'a> AstLowering<'a> {
         self.binding_context = None;
     }
 
-    pub(crate) fn enter_class_method(&self, node: &ClassMethodElement) -> SourceElement {
-        let name = &node.ident.value;
-        let binding_context = self
-            .symbols
-            .lookup(self.binding_context.as_ref().unwrap().clone())
-            .and_then(|b| b.as_class());
-        let class_name = binding_context.as_ref().unwrap().name.clone();
+    pub(crate) fn enter_class_method(&mut self, node: &ClassMethodElement) -> SourceElement {
+        let method_name = &node.ident.value;
+        let binding = self
+            .bindings
+            .lookup(&self.binding_context.as_ref().unwrap())
+            .unwrap();
 
         // Generate synthetic function name
         // The function name is the ClassName#methodName
         let ident = Identifier {
             span: node.ident.span(),
-            value: format!("{}#{}", class_name, name).into(),
+            value: format!("{}#{}", binding.name, method_name).into(),
         };
 
         // Generate function parameters
@@ -42,7 +56,7 @@ impl<'a> AstLowering<'a> {
                 },
                 type_annotation: TypeAnnotation {
                     span: node.span(),
-                    ty: Type::Primitive(PrimitiveType::I32),
+                    ty: type_i32(),
                 },
             },
         );
@@ -65,9 +79,8 @@ impl<'a> AstLowering<'a> {
         node: &ClassConstructorElement,
     ) -> SourceElement {
         let binding = self
-            .symbols
-            .lookup(self.binding_context.as_ref().unwrap().clone())
-            .and_then(|b| b.as_class())
+            .bindings
+            .lookup(&self.binding_context.as_ref().unwrap())
             .unwrap();
 
         let class_name = binding.name.clone();
@@ -97,7 +110,7 @@ impl<'a> AstLowering<'a> {
             // Class constructors always return a pointer
             returns: Some(TypeAnnotation {
                 span: node.span(),
-                ty: Type::Primitive(PrimitiveType::I32),
+                ty: type_i32(),
             }),
             body: BlockStatement {
                 span: node.body.span(),
@@ -107,14 +120,13 @@ impl<'a> AstLowering<'a> {
     }
 
     pub(crate) fn class_this_field_assignment(
-        &self,
+        &mut self,
         target: &IdentifierExpression,
         value: &SingleExpression,
     ) -> SingleExpression {
         let binding = self
-            .symbols
-            .lookup(self.binding_context.as_ref().unwrap().clone())
-            .and_then(|b| b.as_class())
+            .bindings
+            .lookup(&self.binding_context.as_ref().unwrap())
             .unwrap();
 
         // lhs is this - so we are in a class

@@ -1,0 +1,50 @@
+---
+source: jswt-semantics/src/globals.rs
+expression: resolver
+
+---
+GlobalResolver {
+    bindings_table: BindingsTable {
+        bindings: {},
+    },
+    symbol_table: SymbolTable {
+        table: [
+            {
+                "PI": Unknown,
+                "test": Function(
+                    FunctionSignature {
+                        params: [
+                            Identifier(
+                                IdentifierType {
+                                    name: "i32",
+                                },
+                            ),
+                            Identifier(
+                                IdentifierType {
+                                    name: "i32",
+                                },
+                            ),
+                        ],
+                        returns: Identifier(
+                            IdentifierType {
+                                name: "void",
+                            },
+                        ),
+                    },
+                ),
+                "test2": Function(
+                    FunctionSignature {
+                        params: [],
+                        returns: Identifier(
+                            IdentifierType {
+                                name: "Array",
+                            },
+                        ),
+                    },
+                ),
+            },
+        ],
+    },
+    bindings_context: [],
+    errors: [],
+}

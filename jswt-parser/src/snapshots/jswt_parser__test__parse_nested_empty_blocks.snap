@@ -12,7 +12,6 @@ Ast {
                     module: "module/test_parse_nested_empty_blocks",
                     start: 0,
                     end: 6,
-                    [content]: "{ {} }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/test_parse_nested_empty_blocks",
                         start: 0,
                         end: 6,
-                        [content]: "{ {} }",
                     },
                     source_elements: [
                         Statement(
@@ -31,7 +29,6 @@ Ast {
                                         module: "module/test_parse_nested_empty_blocks",
                                         start: 0,
                                         end: 6,
-                                        [content]: "{ {} }",
                                     },
                                     statements: StatementList {
                                         statements: [
@@ -42,7 +39,6 @@ Ast {
                                                         module: "module/test_parse_nested_empty_blocks",
                                                         start: 2,
                                                         end: 4,
-                                                        [content]: "{}",
                                                     },
                                                     statements: StatementList {
                                                         statements: [],

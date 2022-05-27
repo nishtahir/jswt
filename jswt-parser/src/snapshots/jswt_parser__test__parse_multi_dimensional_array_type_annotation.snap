@@ -12,7 +12,6 @@ Ast {
                     module: "module/parse_multi_dimensional_array_type_annotation",
                     start: 0,
                     end: 44,
-                    [content]: "function exit(code: i32[][]): string[][] { }",
                 },
                 source_elements: SourceElements {
                     span: Span {
@@ -20,7 +19,6 @@ Ast {
                         module: "module/parse_multi_dimensional_array_type_annotation",
                         start: 0,
                         end: 44,
-                        [content]: "function exit(code: i32[][]): string[][] { }",
                     },
                     source_elements: [
                         FunctionDeclaration(
@@ -30,7 +28,6 @@ Ast {
                                     module: "module/parse_multi_dimensional_array_type_annotation",
                                     start: 0,
                                     end: 44,
-                                    [content]: "function exit(code: i32[][]): string[][] { }",
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -42,7 +39,6 @@ Ast {
                                         module: "module/parse_multi_dimensional_array_type_annotation",
                                         start: 9,
                                         end: 13,
-                                        [content]: "exit",
                                     },
                                     value: "exit",
                                 },
@@ -52,7 +48,6 @@ Ast {
                                         module: "module/parse_multi_dimensional_array_type_annotation",
                                         start: 13,
                                         end: 28,
-                                        [content]: "(code: i32[][])",
                                     },
                                     parameters: [
                                         FormalParameterArg {
@@ -61,7 +56,6 @@ Ast {
                                                 module: "module/parse_multi_dimensional_array_type_annotation",
                                                 start: 14,
                                                 end: 27,
-                                                [content]: "code: i32[][]",
                                             },
                                             ident: Identifier {
                                                 span: Span {
@@ -69,7 +63,6 @@ Ast {
                                                     module: "module/parse_multi_dimensional_array_type_annotation",
                                                     start: 14,
                                                     end: 18,
-                                                    [content]: "code",
                                                 },
                                                 value: "code",
                                             },
@@ -79,18 +72,19 @@ Ast {
                                                     module: "module/parse_multi_dimensional_array_type_annotation",
                                                     start: 20,
                                                     end: 27,
-                                                    [content]: "i32[][]",
                                                 },
-                                                ty: Object(
-                                                    Array(
-                                                        Object(
-                                                            Array(
-                                                                Primitive(
-                                                                    I32,
+                                                ty: Array(
+                                                    ArrayType {
+                                                        ident: Array(
+                                                            ArrayType {
+                                                                ident: Identifier(
+                                                                    IdentifierType {
+                                                                        name: "i32",
+                                                                    },
                                                                 ),
-                                                            ),
+                                                            },
                                                         ),
-                                                    ),
+                                                    },
                                                 ),
                                             },
                                         },
@@ -103,18 +97,19 @@ Ast {
                                             module: "module/parse_multi_dimensional_array_type_annotation",
                                             start: 30,
                                             end: 40,
-                                            [content]: "string[][]",
                                         },
-                                        ty: Object(
-                                            Array(
-                                                Object(
-                                                    Array(
-                                                        Object(
-                                                            String,
+                                        ty: Array(
+                                            ArrayType {
+                                                ident: Array(
+                                                    ArrayType {
+                                                        ident: Identifier(
+                                                            IdentifierType {
+                                                                name: "string",
+                                                            },
                                                         ),
-                                                    ),
+                                                    },
                                                 ),
-                                            ),
+                                            },
                                         ),
                                     },
                                 ),
@@ -124,7 +119,6 @@ Ast {
                                         module: "module/parse_multi_dimensional_array_type_annotation",
                                         start: 41,
                                         end: 44,
-                                        [content]: "{ }",
                                     },
                                     statements: StatementList {
                                         statements: [],
