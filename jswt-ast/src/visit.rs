@@ -199,7 +199,7 @@ pub fn walk_return_statement<V: Visitor>(visitor: &mut V, node: &ReturnStatement
 
 pub fn walk_variable_statement<V: Visitor>(visitor: &mut V, node: &VariableStatement) {
     visitor.visit_assignable_element(&node.target);
-    visitor.visit_single_expression(&node.expression)
+    visitor.visit_single_expression(&node.expression);
 }
 
 pub fn walk_expression_statement<V: Visitor>(visitor: &mut V, node: &ExpressionStatement) {

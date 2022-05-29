@@ -1,5 +1,5 @@
 [package]
-name = "jswt-ast-lowering"
+name = "jswt-ast-serializer"
 version = "0.1.0"
 authors = ["Nish Tahir <nishtahir@outlook.com>"]
 edition = "2018"
@@ -11,11 +11,11 @@ doctest = false
 jswt-ast = {path = "../jswt-ast"}
 jswt-common = {path = "../jswt-common"}
 jswt-derive = {path = "../jswt-derive"}
+jswt-parser = {path = "../jswt-parser"}
 jswt-semantics = {path = "../jswt-semantics"}
 jswt-symbols = {path = "../jswt-symbols"}
+jswt-tokenizer = {path = "../jswt-tokenizer"}
 jswt-types = {path = "../jswt-types"}
 
 [dev-dependencies]
 jswt-assert = {path = "../jswt-assert"}
-jswt-parser = {path = "../jswt-parser"}
-jswt-tokenizer = {path = "../jswt-tokenizer"}

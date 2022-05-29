@@ -484,6 +484,7 @@ dependencies = [
  "jswt-assert",
  "jswt-ast",
  "jswt-ast-lowering",
+ "jswt-ast-serializer",
  "jswt-codegen",
  "jswt-common",
  "jswt-errors",
@@ -514,6 +515,21 @@ dependencies = [
 
 [[package]]
 name = "jswt-ast-lowering"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
+ "jswt-derive",
+ "jswt-parser",
+ "jswt-semantics",
+ "jswt-symbols",
+ "jswt-tokenizer",
+ "jswt-types",
+]
+
+[[package]]
+name = "jswt-ast-serializer"
 version = "0.1.0"
 dependencies = [
  "jswt-assert",

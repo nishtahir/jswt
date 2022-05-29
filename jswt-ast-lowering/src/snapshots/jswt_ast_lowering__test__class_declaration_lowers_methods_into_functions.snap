@@ -75,7 +75,7 @@ Ast {
                                                 },
                                                 ty: Identifier(
                                                     IdentifierType {
-                                                        name: "i32",
+                                                        name: "ptr",
                                                     },
                                                 ),
                                             },
@@ -101,7 +101,7 @@ Ast {
                                     span: Span {
                                         file: "test_class_declaration_lowers_methods_into_functions",
                                         module: "module/test_class_declaration_lowers_methods_into_functions",
-                                        start: 46,
+                                        start: 35,
                                         end: 87,
                                     },
                                     statements: StatementList {
@@ -111,8 +111,8 @@ Ast {
                                                     span: Span {
                                                         file: "test_class_declaration_lowers_methods_into_functions",
                                                         module: "module/test_class_declaration_lowers_methods_into_functions",
-                                                        start: 64,
-                                                        end: 73,
+                                                        start: 71,
+                                                        end: 72,
                                                     },
                                                     expression: Literal(
                                                         Integer(

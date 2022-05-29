@@ -37,7 +37,7 @@ impl<'a> Visitor for Resolver<'a> {
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
-        walk_variable_statement(self, node);
+        // walk_variable_statement(self, node);
 
         let name = match &node.target {
             AssignableElement::Identifier(ident) => &ident.value,

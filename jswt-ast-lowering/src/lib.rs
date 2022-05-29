@@ -3,7 +3,8 @@ mod gen;
 
 use std::borrow::Cow;
 
-use jswt_ast::{transform::TransformVisitor, *};
+use gen::ident_exp;
+use jswt_ast::{transform::*, *};
 use jswt_common::Spannable;
 use jswt_symbols::{BindingsTable, Symbol};
 
@@ -33,8 +34,7 @@ impl<'a> AstLowering<'a> {
 
 impl<'a> TransformVisitor for AstLowering<'a> {
     fn visit_program(&mut self, node: &Program) -> Program {
-        let program = transform::walk_program(self, node);
-        program
+        transform::walk_program(self, node)
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) -> SourceElements {
@@ -96,6 +96,20 @@ impl<'a> TransformVisitor for AstLowering<'a> {
             right: Box::new(self.visit_single_expression(&node.right)),
         })
     }
+
+    fn visit_member_dot(&mut self, node: &MemberDotExpression) -> SingleExpression {
+        if let SingleExpression::This(_) = &*node.target {
+            // This is always an identifier
+            let target = node.expression.as_identifier().unwrap();
+            return self.class_this_access(target);
+        }
+        return transform::walk_member_dot(self, node);
+    }
+
+    fn visit_this_expression(&mut self, _: &ThisExpression) -> SingleExpression {
+        ident_exp("this".into())
+    }
+
 }
 
 #[cfg(test)]

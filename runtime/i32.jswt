@@ -5,4 +5,8 @@ class i32 {
     add(other: i32): i32 {
         return this + other;
     }
+
+    sub(other: i32): i32 {
+        return this - other;
+    }
 }

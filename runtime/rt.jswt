@@ -3,10 +3,12 @@
 // primitives
 import "i32.jswt";
 import "f32.jswt";
+import "ptr.jswt";
 
+import "env.jswt";
+import "memory.jswt";
+import "malloc.jswt";
 // import "./arrays.jswt";
-// import "./env.jswt";
-// import "./malloc.jswt";
 
-// // stdlib components
+// stdlib components
 // import "../stdlib/math.jswt";

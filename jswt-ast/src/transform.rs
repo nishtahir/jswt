@@ -551,9 +551,9 @@ pub fn walk_binary_expression<V: TransformVisitor>(
 
 pub fn walk_this_expression<V: TransformVisitor>(
     _visitor: &mut V,
-    _node: &ThisExpression,
+    node: &ThisExpression,
 ) -> SingleExpression {
-    unimplemented!("This should be overriden.")
+    SingleExpression::This(node.clone())
 }
 
 pub fn walk_literal<V: TransformVisitor>(_visitor: &mut V, node: &Literal) -> SingleExpression {

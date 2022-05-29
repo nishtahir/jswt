@@ -3,22 +3,22 @@ use crate::{gen::*, AstLowering};
 use jswt_ast::{transform::TransformVisitor, *};
 use jswt_common::Spannable;
 
-/// At a high level the goal here is to remove class declarations from the AST by rewriting them
-/// into a series of functions
-///  
-/// ```
-/// class Array {
-///   constructor() {}
-///   get(index: i32): i32 {}
-/// }
-/// ```
-///
-/// should be rewriten as
-///
-/// ```
-/// function Array#constructor(): i32 {}
-/// function Array#get(this: i32, index: i32): i32 {}
-/// ```
+// At a high level the goal here is to remove class declarations from the AST by rewriting them
+// into a series of functions
+//  
+// ```
+// class Array {
+//   constructor() {}
+//   get(index: i32): i32 {}
+// }
+// ```
+//
+// should be rewriten as
+//
+// ```
+// function Array#constructor(): i32 {}
+// function Array#get(this: i32, index: i32): i32 {}
+// ```
 impl<'a> AstLowering<'a> {
     pub(crate) fn enter_class_declaration(&mut self, node: &ClassDeclarationElement) {
         let name = node.ident.value.clone();
@@ -56,10 +56,15 @@ impl<'a> AstLowering<'a> {
                 },
                 type_annotation: TypeAnnotation {
                     span: node.span(),
-                    ty: type_i32(),
+                    ty: type_ptr(),
                 },
             },
         );
+
+        let block = BlockStatement {
+            span: node.span(),
+            statements: self.visit_block_statement(&node.body),
+        };
 
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
@@ -70,7 +75,7 @@ impl<'a> AstLowering<'a> {
             ident,
             params,
             returns: node.returns.clone(),
-            body: node.body.clone(),
+            body: block,
         })
     }
 
@@ -87,14 +92,14 @@ impl<'a> AstLowering<'a> {
         let class_size = binding.size();
         let mut body = self.visit_block_statement(&node.body);
 
-        let this = parse_statement(format!("let self = malloc({class_size});"));
-        let returns = parse_statement(format!("return self;"));
+        let this = variable_decl_stmt("this".into(), malloc(class_size));
+        let returns = return_stmt(ident_exp("this".into()));
 
         // Allocate the struct before anything else
         body.statements.insert(0, this);
-
         // finally return the struct
         body.statements.push(returns);
+
 
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
@@ -110,7 +115,7 @@ impl<'a> AstLowering<'a> {
             // Class constructors always return a pointer
             returns: Some(TypeAnnotation {
                 span: node.span(),
-                ty: type_i32(),
+                ty: type_ptr(),
             }),
             body: BlockStatement {
                 span: node.body.span(),
@@ -131,6 +136,20 @@ impl<'a> AstLowering<'a> {
 
         // lhs is this - so we are in a class
         let field = binding.field(&target.ident.value).unwrap();
-        i32_store("self", field.index as i32 * 4, value.clone())
+        i32_store("this", field.index as i32 * 4, value.clone())
+    }
+
+    pub(crate) fn class_this_access(
+        &mut self,
+        target: &IdentifierExpression,
+    ) -> SingleExpression {
+        let binding = self
+            .bindings
+            .lookup(&self.binding_context.as_ref().unwrap())
+            .unwrap();
+
+        // lhs is this - so we are in a class
+        let field = binding.field(&target.ident.value).unwrap();
+        i32_load("this", field.index as i32 * 4)
     }
 }

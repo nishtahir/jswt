@@ -1,9 +1,12 @@
+use std::borrow::Cow;
+
 use jswt_ast::*;
 use jswt_common::Span;
-use jswt_parser::Parser;
-use jswt_tokenizer::Tokenizer;
 
-pub(crate) fn function(name: &'static str, arguments: Vec<SingleExpression>) -> SingleExpression {
+pub(crate) fn function_call(
+    name: &'static str,
+    arguments: Vec<SingleExpression>,
+) -> SingleExpression {
     SingleExpression::Arguments(ArgumentsExpression {
         span: Span::synthetic(),
         ident: Box::new(SingleExpression::Identifier(IdentifierExpression {
@@ -22,7 +25,7 @@ pub(crate) fn i32_store(
     offset: i32,
     value: SingleExpression,
 ) -> SingleExpression {
-    function(
+    function_call(
         "i32Store",
         vec![
             SingleExpression::Additive(BinaryExpression {
@@ -44,20 +47,71 @@ pub(crate) fn i32_store(
     )
 }
 
-pub(crate) fn type_i32() -> Type {
-    Type::Identifier(IdentifierType { name: "i32".into() })
+pub(crate) fn i32_load(target: &'static str, offset: i32) -> SingleExpression {
+    function_call(
+        "i32Load",
+        vec![SingleExpression::Additive(BinaryExpression {
+            span: Span::synthetic(),
+            left: Box::new(SingleExpression::Identifier(IdentifierExpression {
+                span: Span::synthetic(),
+                ident: Identifier::new(target, Span::synthetic()),
+            })),
+            op: BinaryOperator::Plus(Span::synthetic()),
+            right: Box::new(SingleExpression::Literal(Literal::Integer(
+                IntegerLiteral {
+                    span: Span::synthetic(),
+                    value: offset,
+                },
+            ))),
+        })],
+    )
 }
 
-pub fn parse_statement(expr: String) -> StatementElement {
-    let mut tokenizer = Tokenizer::default();
-    tokenizer.enqueue_source_str("synthetic", expr);
-    let mut parser = Parser::new(&mut tokenizer);
-    parser.parse_statement()
+pub(crate) fn malloc(size: usize) -> SingleExpression {
+    function_call(
+        "malloc",
+        vec![SingleExpression::Literal(Literal::Integer(
+            IntegerLiteral {
+                span: Span::synthetic(),
+                value: size as i32,
+            },
+        ))],
+    )
 }
 
-pub fn parse_expr(expr: String) -> SingleExpression {
-    let mut tokenizer = Tokenizer::default();
-    tokenizer.enqueue_source_str("synthetic", expr);
-    let mut parser = Parser::new(&mut tokenizer);
-    parser.single_expression().unwrap()
+pub(crate) fn variable_decl_stmt(
+    ident: Cow<'static, str>,
+    expression: SingleExpression,
+) -> StatementElement {
+    StatementElement::Variable(VariableStatement {
+        span: Span::synthetic(),
+        modifier: VariableModifier::Const(Span::synthetic()),
+        target: AssignableElement::Identifier(Identifier {
+            span: Span::synthetic(),
+            value: ident,
+        }),
+        expression,
+        type_annotation: None,
+    })
+}
+
+pub(crate) fn return_stmt(expression: SingleExpression) -> StatementElement {
+    StatementElement::Return(ReturnStatement {
+        span: Span::synthetic(),
+        expression,
+    })
+}
+
+pub(crate) fn ident_exp(ident: Cow<'static, str>) -> SingleExpression {
+    SingleExpression::Identifier(IdentifierExpression {
+        span: Span::synthetic(),
+        ident: Identifier {
+            span: Span::synthetic(),
+            value: ident,
+        },
+    })
+}
+
+pub(crate) fn type_ptr() -> Type {
+    Type::Identifier(IdentifierType { name: "ptr".into() })
 }

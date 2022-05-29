@@ -27,12 +27,12 @@ impl SemanticAnalyzer {
         let mut global_resolver =
             GlobalResolver::new(&mut self.bindings_table, &mut self.symbol_table);
         global_resolver.resolve(ast);
-        errors.append(&mut global_resolver.errors);
+        // errors.append(&mut global_resolver.errors);
 
         // // This is the second semantic pass to inspect function content
         let mut resolver = Resolver::new(&mut self.symbol_table);
         resolver.resolve(ast);
-        errors.append(&mut resolver.errors);
+        // errors.append(&mut resolver.errors);
 
         errors
     }

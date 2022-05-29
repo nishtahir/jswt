@@ -127,12 +127,6 @@ impl<'a> Parser<'a> {
         Ast::new(self.program())
     }
 
-    pub fn parse_statement(&mut self) -> StatementElement {
-        // Seed the look ahead for the entry point
-        self.lookahead = self.tokenizer.next_token();
-        self.statement().unwrap()
-    }
-
     /// Entry point of the program
     ///
     /// Program
@@ -423,7 +417,6 @@ impl<'a> Parser<'a> {
 
     /// SingleExpression
     ///   : SingleExpression '=' SingleExpression
-    ///   | SingleExpression '.' Identifier
     ///   | 'new' SingleExpression
     ///   | SingleExpression '[' SingleExpression ']'
     ///   | SingleExpression '|' SingleExpression
@@ -436,6 +429,7 @@ impl<'a> Parser<'a> {
     ///   | '-' SingleExpression
     ///   | '+' SingleExpression
     ///   | SingleExpression Arguments
+    ///   | SingleExpression '.' Identifier
     ///   | 'this'
     ///   | Identifier
     ///   | ArrayLiteral
@@ -450,27 +444,9 @@ impl<'a> Parser<'a> {
     //   ;
     binary_expression!(
         assignment_expression,
-        next: member_dot_expression,
+        next: new_expression,
         [exp => Assignment, op => Assign, token => Equal]
     );
-
-    /// MemberDotExpression
-    ///   : NewExpression '.' Identifier ArgumentsList?
-    ///   ;
-    fn member_dot_expression(&mut self) -> ParseResult<SingleExpression> {
-        // target.expression
-        let target = self.new_expression()?;
-        if self.lookahead_is(TokenType::Dot) {
-            consume_unchecked!(self);
-            let expression = self.new_expression()?;
-            return Ok(SingleExpression::MemberDot(MemberDotExpression {
-                span: target.span() + expression.span(),
-                expression: Box::new(expression),
-                target: Box::new(target),
-            }));
-        }
-        Ok(target)
-    }
 
     /// NewExpression
     ///   : 'new' SingleExpression
@@ -636,7 +612,7 @@ impl<'a> Parser<'a> {
     ///
     fn arguments_expression(&mut self) -> ParseResult<SingleExpression> {
         // Eventually descend to ident
-        let left = self.this()?;
+        let left = self.member_dot_expression()?;
         if self.lookahead_is(TokenType::LeftParen) {
             let args = self.argument_list()?;
             return Ok(SingleExpression::Arguments(ArgumentsExpression {
@@ -670,6 +646,24 @@ impl<'a> Parser<'a> {
             span: start + end,
             arguments,
         })
+    }
+
+    /// MemberDotExpression
+    ///   : NewExpression '.' Identifier ArgumentsList?
+    ///   ;
+    fn member_dot_expression(&mut self) -> ParseResult<SingleExpression> {
+        // target.expression
+        let target = self.this()?;
+        if self.lookahead_is(TokenType::Dot) {
+            consume_unchecked!(self);
+            let expression = self.identifier_expression()?;
+            return Ok(SingleExpression::MemberDot(MemberDotExpression {
+                span: target.span() + expression.span(),
+                expression: Box::new(expression),
+                target: Box::new(target),
+            }));
+        }
+        Ok(target)
     }
 
     /// ThisExpression
@@ -1248,6 +1242,19 @@ mod test {
         tokenizer.enqueue_source_str(
             "parse_member_dot_arguments_expression",
             "function test() { this.set(10); }",
+        );
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn parse_member_dot_is_left_associative() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "parse_member_dot_arguments_expression",
+            "function test() { this.data + 1; }",
         );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();

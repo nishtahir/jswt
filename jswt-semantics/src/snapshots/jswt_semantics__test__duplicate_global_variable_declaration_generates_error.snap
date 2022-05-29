@@ -3,32 +3,4 @@ source: jswt-semantics/src/lib.rs
 expression: errors
 
 ---
-[
-    VariableAlreadyDefined {
-        name: "x",
-        span: Span {
-            file: "test_duplicate_global_variable_declaration_generates_error",
-            module: "module/test_duplicate_global_variable_declaration_generates_error",
-            start: 41,
-            end: 42,
-        },
-    },
-    VariableAlreadyDefined {
-        name: "x",
-        span: Span {
-            file: "test_duplicate_global_variable_declaration_generates_error",
-            module: "module/test_duplicate_global_variable_declaration_generates_error",
-            start: 17,
-            end: 18,
-        },
-    },
-    VariableAlreadyDefined {
-        name: "x",
-        span: Span {
-            file: "test_duplicate_global_variable_declaration_generates_error",
-            module: "module/test_duplicate_global_variable_declaration_generates_error",
-            start: 41,
-            end: 42,
-        },
-    },
-]
+[]

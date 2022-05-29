@@ -4,9 +4,9 @@
 *.info
 
 **/*.ast
+**/*.lowered.jswt
 **/*.tokens
 **/*.wast
 **/*.wasm
 **/*.mem
-
 **/*.new

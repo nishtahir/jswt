@@ -2,7 +2,8 @@
 
 members = [
     "jswt-ast",
-    "jswt-ast-lowering",
+    "jswt-ast-lowering",    
+    "jswt-ast-serializer",
     "jswt-codegen",
     "jswt-common",
     "jswt-compiler",

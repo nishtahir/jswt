@@ -6,6 +6,7 @@ extern crate clap;
 use clap::Arg;
 use jswt_ast::Ast;
 use jswt_ast_lowering::AstLowering;
+use jswt_ast_serializer::AstSerializer;
 use std::cell::Cell;
 use std::fs;
 use std::path::Path;
@@ -209,6 +210,10 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     lowering.desugar(&mut ast);
 
     fs::write(output.with_extension("lowered.ast"), format!("{:#?}", ast)).unwrap();
+
+    let mut serializer = AstSerializer::default();
+    let content = serializer.serialze(&ast);
+    fs::write(output.with_extension("lowered.jswt"), content).unwrap();
 
     if has_errors {
         exit(1);

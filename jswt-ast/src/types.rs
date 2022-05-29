@@ -24,3 +24,12 @@ pub struct IdentifierType {
 pub struct ArrayType {
     pub ident: Box<Type>,
 }
+
+impl Type {
+    pub fn to_string(&self) -> &str {
+        match self {
+            Type::Identifier(ident) => &ident.name,
+            Type::Array(_) => todo!(),
+        }
+    }
+}

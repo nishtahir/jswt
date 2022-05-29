@@ -2,5 +2,11 @@
 
 // Stub class for i32 primitive type
 class f32 {
+    add(other: f32): f32 {
+        return this + other;
+    }
 
+    sub(other: f32): f32 {
+        return this - other;
+    }
 }
