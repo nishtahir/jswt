@@ -30,7 +30,7 @@ impl SemanticAnalyzer {
         errors.append(&mut global_resolver.errors);
 
         // // This is the second semantic pass to inspect function content
-        let mut resolver = Resolver::new(&mut self.symbol_table);
+        let mut resolver = Resolver::new(&mut self.symbol_table, &mut self.bindings_table);
         resolver.resolve(ast);
         errors.append(&mut resolver.errors);
 
@@ -45,7 +45,6 @@ mod test {
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
     use jswt_tokenizer::Tokenizer;
-
 
     #[test]
     fn test_semantic_analyzer_analyzes_correctly() {
@@ -168,4 +167,17 @@ mod test {
         let errors = SemanticAnalyzer::default().analyze(&mut ast);
         assert_debug_snapshot!(errors);
     }
+
+    // #[test]
+    // fn test_if_statement_condition_must_be_boolean_expression() {
+    //     let mut tokenizer = Tokenizer::default();
+    //     tokenizer.enqueue_source_str(
+    //         "test_if_statement_condition_must_be_boolean_expression",
+    //         "function test() { if(10) {} }",
+    //     );
+
+    //     let mut ast = Parser::new(&mut tokenizer).parse();
+    //     let errors = SemanticAnalyzer::default().analyze(&mut ast);
+    //     assert_debug_snapshot!(errors);
+    // }
 }

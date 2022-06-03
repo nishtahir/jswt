@@ -33,4 +33,11 @@ pub enum SemanticError {
         offending_token: Span,
         expected: &'static str,
     },
+    ThisOutsideClass {
+        span: Span,
+    },
+    PropertyNotDefined {
+        name: Cow<'static, str>,
+        span: Span,
+    },
 }

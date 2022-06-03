@@ -89,6 +89,18 @@ pub fn print_semantic_error(error: &SemanticError) {
                 hint: None,
             }
         }
+        SemanticError::ThisOutsideClass { span } => DiagnosticMessage {
+            level: Level::Error,
+            span: span.clone(),
+            message: format!("'this' cannot be used outside a class definition.").into(),
+            hint: None,
+        },
+        SemanticError::PropertyNotDefined { name, span } => DiagnosticMessage {
+            level: Level::Error,
+            span: span.clone(),
+            message: format!("Property '{}' was not defined in this scope", name).into(),
+            hint: None,
+        },
     };
 
     let emitter = ErrorEmitter::new();

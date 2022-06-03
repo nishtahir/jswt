@@ -370,17 +370,15 @@ impl StatementVisitor<()> for CodeGenerator {
     }
 
     fn visit_class_constructor_declaration(&mut self, _: &ClassConstructorElement) {
-        // This should have been desugared out
-        unreachable!()
+        unreachable!("This should have been desugared out of the AST")
     }
 
     fn visit_class_method_declaration(&mut self, _: &ClassMethodElement) {
-        // This should have been desugared out
-        unreachable!()
+        unreachable!("This should have been desugared out of the AST")
     }
 
-    fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) {
-        todo!()
+    fn visit_class_field_declaration(&mut self, _: &ClassFieldElement) {
+        unreachable!("This should have been desugared out of the AST")
     }
 }
 
@@ -618,7 +616,10 @@ mod test {
     #[ignore]
     fn test_ast_with_empty_function_generates_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_ast_with_empty_function_generates_module", "function test() {}");
+        tokenizer.enqueue_source_str(
+            "test_ast_with_empty_function_generates_module",
+            "function test() {}",
+        );
         let ast = Parser::new(&mut tokenizer).parse();
         let mut generator = CodeGenerator::default();
         let actual = generator.generate_module(&ast);
@@ -629,7 +630,10 @@ mod test {
     #[ignore]
     fn test_ast_with_empty_function_with_params_generates_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_ast_with_empty_function_with_params_generates_module", "function test(a: i32) {}");
+        tokenizer.enqueue_source_str(
+            "test_ast_with_empty_function_with_params_generates_module",
+            "function test(a: i32) {}",
+        );
         let ast = Parser::new(&mut tokenizer).parse();
 
         let mut generator = CodeGenerator::default();
@@ -640,7 +644,10 @@ mod test {
     #[ignore]
     fn test_ast_with_empty_function_with_params_and_return_value_generates_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_ast_with_empty_function_with_params_and_return_value_generates_module", "function test(a: i32): i32 {}");
+        tokenizer.enqueue_source_str(
+            "test_ast_with_empty_function_with_params_and_return_value_generates_module",
+            "function test(a: i32): i32 {}",
+        );
         let ast = Parser::new(&mut tokenizer).parse();
 
         let mut generator = CodeGenerator::default();
@@ -652,7 +659,10 @@ mod test {
     #[ignore]
     fn test_ast_with_function_containing_return_expression_generates_module() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_ast_with_function_containing_return_expression_generates_module", "function test() { return 1 + 2; }");
+        tokenizer.enqueue_source_str(
+            "test_ast_with_function_containing_return_expression_generates_module",
+            "function test() { return 1 + 2; }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let ast = parser.parse();
 

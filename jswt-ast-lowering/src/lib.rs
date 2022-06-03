@@ -110,8 +110,31 @@ impl<'a> TransformVisitor for AstLowering<'a> {
         ident_exp("this".into())
     }
 
+    // fn visit_single_expression(&mut self, node: &SingleExpression) -> SingleExpression {
+    //     match node {
+    //         SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
+    //         SingleExpression::Literal(lit) => self.visit_literal(lit),
+    //         SingleExpression::Multiplicative(exp) => self.visit_binary_expression(exp),
+    //         SingleExpression::Additive(exp) => self.lower_additive_expression(node),
+    //         SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
+    //         SingleExpression::Equality(exp) => self.visit_binary_expression(exp),
+    //         SingleExpression::Bitwise(exp) => self.visit_binary_expression(exp),
+    //         SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
+    //         SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
+    //         SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
+    //         SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
+    //         SingleExpression::This(exp) => self.visit_this_expression(exp),
+    //         SingleExpression::MemberDot(exp) => self.visit_member_dot(exp),
+    //         SingleExpression::New(exp) => self.visit_new(exp),
+    //     }
+    // }
 }
 
+// impl<'a> AstLowering<'a> {
+//     fn lower_additive_expression(&self, node: &SingleExpression) -> SingleExpression {
+//         todo!()
+//     }
+// }
 #[cfg(test)]
 mod test {
     use super::*;
@@ -167,58 +190,58 @@ mod test {
         assert_debug_snapshot!(ast);
     }
 
-    // #[test]
-    // fn test_class_declaration_lowers_new_expression_into_constructor_invocation() {
-    //     let mut tokenizer = Tokenizer::default();
-    //     tokenizer.enqueue_source_str(
-    //         "test_class_declaration_lowers_new_expression_into_constructor_invocation",
-    //         r"
-    //     class Array {
-    //         constructor() {}
-    //     }
+    #[test]
+    fn test_class_declaration_lowers_new_expression_into_constructor_invocation() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+            r"
+        class Array {
+            constructor() {}
+        }
 
-    //     function main(): i32 {
-    //         let x = new Array();
-    //         return 0;
-    //     }
-    // ",
-    //     );
-    //     let mut ast = Parser::new(&mut tokenizer).parse();
-    //     let mut analyzer = SemanticAnalyzer::default();
-    //     analyzer.analyze(&mut ast);
+        function main(): i32 {
+            let x = new Array();
+            return 0;
+        }
+    ",
+        );
+        let mut ast = Parser::new(&mut tokenizer).parse();
+        let mut analyzer = SemanticAnalyzer::default();
+        analyzer.analyze(&mut ast);
 
-    //     let mut lowering =
-    //         AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
-    //     lowering.desugar(&mut ast);
+        let mut lowering =
+            AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
+        lowering.desugar(&mut ast);
 
-    //     assert_debug_snapshot!(ast);
-    // }
+        assert_debug_snapshot!(ast);
+    }
 
-    // #[test]
-    // fn test_class_declaration_lowers_this_binding() {
-    //     let mut tokenizer = Tokenizer::default();
-    //     tokenizer.enqueue_source_str(
-    //         "test_class_declaration_lowers_this_binding",
-    //         r"
-    //     class Array {
-    //         len: i32;
-    //         capacity: i32;
+    #[test]
+    fn test_class_declaration_lowers_this_binding() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test_class_declaration_lowers_this_binding",
+            r"
+        class Array {
+            len: i32;
+            capacity: i32;
 
-    //         constructor(len: i32, capacity: i32) {
-    //             this.len = len;
-    //             this.capacity = capacity;
-    //         }
-    //     }
-    // ",
-    //     );
-    //     let mut ast = Parser::new(&mut tokenizer).parse();
-    //     let mut analyzer = SemanticAnalyzer::default();
-    //     analyzer.analyze(&mut ast);
+            constructor(len: i32, capacity: i32) {
+                this.len = len;
+                this.capacity = capacity;
+            }
+        }
+    ",
+        );
+        let mut ast = Parser::new(&mut tokenizer).parse();
+        let mut analyzer = SemanticAnalyzer::default();
+        analyzer.analyze(&mut ast);
 
-    //     let mut lowering =
-    //         AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
-    //     lowering.desugar(&mut ast);
+        let mut lowering =
+            AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
+        lowering.desugar(&mut ast);
 
-    //     assert_debug_snapshot!(ast);
-    // }
+        assert_debug_snapshot!(ast);
+    }
 }
