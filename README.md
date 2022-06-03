@@ -14,7 +14,7 @@ A JavaScript/TypeScript like language that compiles to web assembly.
 
 Compilation takes place in phases described in the following chart. Each of these phases roughly takes place in a module of a similar name.
 
-[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBBW0lucHV0Lmpzd3RdIC0tPiBCXG4gICAgICAgIHN1YmdyYXBoIFBhcnNpbmdcbiAgICAgICAgICAgIEIoVG9rZW5pemVyKSAtLT4gQyhQYXJzZXIpXG4gICAgICAgIGVuZFxuICAgIEMgLS0-IERbQVNUXVxuICAgIEQgLS0-IEVcbiAgICAgICAgc3ViZ3JhcGggU2VtYW50aWMgQW5hbHlzaXNcbiAgICAgICAgICAgIEUoR2xvYmFsIFN5bWJvbCBSZXNvbHV0aW9uKSAtLT4gRihMb2NhbCBTeW1ib2wgUmVzb2x1dGlvbilcbiAgICAgICAgICAgICAtLT4gRyhUeXBlIENoZWNraW5nKVxuICAgICAgICBlbmRcbiAgICBHIC0tPiBIKENvZGUgR2VuZXJhdGlvbilcbiAgICAgICAgc3ViZ3JhcGggQ29kZSBHZW5lcmF0aW9uXG4gICAgICAgICAgICBIKFdBU1QgR2VuZXJhdGlvbilcbiAgICAgICAgZW5kIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZSwiYXV0b1N5bmMiOnRydWUsInVwZGF0ZURpYWdyYW0iOmZhbHNlfQ)](https://mermaid.live/edit/#eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBBW0lucHV0Lmpzd3RdIC0tPiBCXG4gICAgICAgIHN1YmdyYXBoIFBhcnNpbmdcbiAgICAgICAgICAgIEIoVG9rZW5pemVyKSAtLT4gQyhQYXJzZXIpXG4gICAgICAgIGVuZFxuICAgIEMgLS0-IERbQVNUXVxuICAgIEQgLS0-IEVcbiAgICAgICAgc3ViZ3JhcGggU2VtYW50aWMgQW5hbHlzaXNcbiAgICAgICAgICAgIEUoR2xvYmFsIFN5bWJvbCBSZXNvbHV0aW9uKSAtLT4gRihMb2NhbCBTeW1ib2wgUmVzb2x1dGlvbilcbiAgICAgICAgICAgICAtLT4gRyhUeXBlIENoZWNraW5nKVxuICAgICAgICBlbmRcbiAgICBHIC0tPiBIKENvZGUgR2VuZXJhdGlvbilcbiAgICAgICAgc3ViZ3JhcGggQ29kZSBHZW5lcmF0aW9uXG4gICAgICAgICAgICBIKFdBU1QgR2VuZXJhdGlvbilcbiAgICAgICAgZW5kIiwibWVybWFpZCI6IntcbiAgXCJ0aGVtZVwiOiBcImRlZmF1bHRcIlxufSIsInVwZGF0ZUVkaXRvciI6ZmFsc2UsImF1dG9TeW5jIjp0cnVlLCJ1cGRhdGVEaWFncmFtIjpmYWxzZX0)
+[![](https://mermaid.ink/img/pako:eNptkU1ugzAQha9ieeVKSQ_AohIBSpBYVAGpi5CFgUlwYmzkH0U0yt1rIG1ExKw88z7PvLFvuJI1YA-fFO0alO4KgVz4-0R01ryf9dUc0Hr9gTaTMIS25UR_UaWZOD2VITYklxcQ7AfU23gzIAPnsicHop6SYCTCvZ_lh6kSjpVoYVoGLRWGVcgXlPea6fnciMRclpSjrG9LydEOtOTWMCkmG58kldWiPO8zwjHJ-w5Q0EB1cRsuWY9HcDtYR6m8gnLcY4ftKCUkcE-LYhCg6Mug_6VekLmVhHwP3Rc7OB94hVtQLWW1-7_bIBXYNNBCgT13rOFILTcFLsTdobarqYGoZkYq7B0p17DC1BqZ9aLCnlEW_qCQUeeufVD3X6HUoa4)](https://mermaid.live/edit#pako:eNptkU1ugzAQha9ieeVKSQ_AohIBSpBYVAGpi5CFgUlwYmzkH0U0yt1rIG1ExKw88z7PvLFvuJI1YA-fFO0alO4KgVz4-0R01ryf9dUc0Hr9gTaTMIS25UR_UaWZOD2VITYklxcQ7AfU23gzIAPnsicHop6SYCTCvZ_lh6kSjpVoYVoGLRWGVcgXlPea6fnciMRclpSjrG9LydEOtOTWMCkmG58kldWiPO8zwjHJ-w5Q0EB1cRsuWY9HcDtYR6m8gnLcY4ftKCUkcE-LYhCg6Mug_6VekLmVhHwP3Rc7OB94hVtQLWW1-7_bIBXYNNBCgT13rOFILTcFLsTdobarqYGoZkYq7B0p17DC1BqZ9aLCnlEW_qCQUeeufVD3X6HUoa4)
 
 [Wasmer](https://wasmer.io/) is used as the WASM execution engine.
 
@@ -37,6 +37,39 @@ OPTIONS:
 
 ARGS:
     <file>    Input file to begin compiling
+```
+
+# Sample
+
+```
+class Array {
+    length: i32;
+    capacity: i32;
+    data: i32;
+
+    constructor(capacity: i32) {
+        this.length = 0;
+        this.capacity = capacity;
+        this.data = malloc(capacity * 4);
+    }
+
+    set(index: i32, data: i32) {
+        i32Store(this.data + index * 4, data);
+    }
+
+    get(index: i32): i32 {
+        return i32Load(this.data + index * 4);
+    }
+}
+
+export function main(): i32 {
+    let value: i32 = 10;
+    let value2 = value + 33;
+
+    println(value2);
+
+    return 0;
+}
 ```
 
 ## Resources

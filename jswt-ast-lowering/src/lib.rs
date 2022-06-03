@@ -6,7 +6,7 @@ use std::borrow::Cow;
 use gen::ident_exp;
 use jswt_ast::{transform::*, *};
 use jswt_common::{Span, Spannable};
-use jswt_symbols::{BindingsTable, ClassBinding, Symbol};
+use jswt_symbols::{BindingsTable, Symbol};
 
 type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
 
@@ -111,14 +111,13 @@ impl<'a> TransformVisitor for AstLowering<'a> {
     }
 
     fn visit_binary_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
-        let span = node.span();
         let lhs_type = type_of(&*node.left);
         let left = Box::new(self.visit_single_expression(&node.left));
         let right = Box::new(self.visit_single_expression(&node.right));
         let op = node.op.clone();
         match op {
             BinaryOperator::Plus(_) => SingleExpression::Arguments(ArgumentsExpression {
-                span: Span::synthetic(),
+                span: node.span(),
                 ident: Box::new(SingleExpression::Identifier(IdentifierExpression {
                     span: Span::synthetic(),
                     ident: Identifier {
@@ -132,7 +131,7 @@ impl<'a> TransformVisitor for AstLowering<'a> {
                 },
             }),
             BinaryOperator::Minus(_) => SingleExpression::Arguments(ArgumentsExpression {
-                span: Span::synthetic(),
+                span: node.span(),
                 ident: Box::new(SingleExpression::Identifier(IdentifierExpression {
                     span: Span::synthetic(),
                     ident: Identifier {
@@ -149,24 +148,6 @@ impl<'a> TransformVisitor for AstLowering<'a> {
         }
     }
 
-    // fn visit_single_expression(&mut self, node: &SingleExpression) -> SingleExpression {
-    //     match node {
-    //         SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
-    //         SingleExpression::Literal(lit) => self.visit_literal(lit),
-    //         SingleExpression::Multiplicative(exp) => self.visit_binary_expression(exp),
-    //         SingleExpression::Additive(exp) => self.lower_additive_expression(node),
-    //         SingleExpression::Identifier(ident) => self.visit_identifier_expression(ident),
-    //         SingleExpression::Equality(exp) => self.visit_binary_expression(exp),
-    //         SingleExpression::Bitwise(exp) => self.visit_binary_expression(exp),
-    //         SingleExpression::Relational(exp) => self.visit_binary_expression(exp),
-    //         SingleExpression::Assignment(exp) => self.visit_assignment_expression(exp),
-    //         SingleExpression::Unary(exp) => self.visit_unary_expression(exp),
-    //         SingleExpression::MemberIndex(exp) => self.visit_member_index(exp),
-    //         SingleExpression::This(exp) => self.visit_this_expression(exp),
-    //         SingleExpression::MemberDot(exp) => self.visit_member_dot(exp),
-    //         SingleExpression::New(exp) => self.visit_new(exp),
-    //     }
-    // }
 }
 
 // Resolve an expression into the appropriate class binding
@@ -174,11 +155,6 @@ fn type_of(expr: &SingleExpression) -> Cow<'static, str> {
     "i32".into()
 }
 
-// impl<'a> AstLowering<'a> {
-//     fn lower_additive_expression(&self, node: &SingleExpression) -> SingleExpression {
-//         todo!()
-//     }
-// }
 #[cfg(test)]
 mod test {
     use super::*;
