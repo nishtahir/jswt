@@ -11,14 +11,14 @@ Ast {
                     file: "parse_member_dot_arguments_expression",
                     module: "module/parse_member_dot_arguments_expression",
                     start: 0,
-                    end: 34,
+                    end: 33,
                 },
                 source_elements: SourceElements {
                     span: Span {
                         file: "parse_member_dot_arguments_expression",
                         module: "module/parse_member_dot_arguments_expression",
                         start: 0,
-                        end: 34,
+                        end: 33,
                     },
                     source_elements: [
                         FunctionDeclaration(
@@ -27,7 +27,7 @@ Ast {
                                     file: "parse_member_dot_arguments_expression",
                                     module: "module/parse_member_dot_arguments_expression",
                                     start: 0,
-                                    end: 34,
+                                    end: 33,
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -57,7 +57,7 @@ Ast {
                                         file: "parse_member_dot_arguments_expression",
                                         module: "module/parse_member_dot_arguments_expression",
                                         start: 16,
-                                        end: 34,
+                                        end: 33,
                                     },
                                     statements: StatementList {
                                         statements: [
@@ -67,23 +67,23 @@ Ast {
                                                         file: "parse_member_dot_arguments_expression",
                                                         module: "module/parse_member_dot_arguments_expression",
                                                         start: 18,
-                                                        end: 32,
+                                                        end: 31,
                                                     },
-                                                    expression: Additive(
-                                                        BinaryExpression {
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
                                                             span: Span {
                                                                 file: "parse_member_dot_arguments_expression",
                                                                 module: "module/parse_member_dot_arguments_expression",
                                                                 start: 18,
-                                                                end: 31,
+                                                                end: 30,
                                                             },
-                                                            left: MemberDot(
+                                                            ident: MemberDot(
                                                                 MemberDotExpression {
                                                                     span: Span {
                                                                         file: "parse_member_dot_arguments_expression",
                                                                         module: "module/parse_member_dot_arguments_expression",
                                                                         start: 18,
-                                                                        end: 27,
+                                                                        end: 26,
                                                                     },
                                                                     target: This(
                                                                         ThisExpression {
@@ -101,42 +101,44 @@ Ast {
                                                                                 file: "parse_member_dot_arguments_expression",
                                                                                 module: "module/parse_member_dot_arguments_expression",
                                                                                 start: 23,
-                                                                                end: 27,
+                                                                                end: 26,
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
                                                                                     file: "parse_member_dot_arguments_expression",
                                                                                     module: "module/parse_member_dot_arguments_expression",
                                                                                     start: 23,
-                                                                                    end: 27,
+                                                                                    end: 26,
                                                                                 },
-                                                                                value: "data",
+                                                                                value: "set",
                                                                             },
                                                                         },
                                                                     ),
                                                                 },
                                                             ),
-                                                            op: Plus(
-                                                                Span {
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
                                                                     file: "parse_member_dot_arguments_expression",
                                                                     module: "module/parse_member_dot_arguments_expression",
-                                                                    start: 28,
-                                                                    end: 29,
+                                                                    start: 26,
+                                                                    end: 30,
                                                                 },
-                                                            ),
-                                                            right: Literal(
-                                                                Integer(
-                                                                    IntegerLiteral {
-                                                                        span: Span {
-                                                                            file: "parse_member_dot_arguments_expression",
-                                                                            module: "module/parse_member_dot_arguments_expression",
-                                                                            start: 30,
-                                                                            end: 31,
-                                                                        },
-                                                                        value: 1,
-                                                                    },
-                                                                ),
-                                                            ),
+                                                                arguments: [
+                                                                    Literal(
+                                                                        Integer(
+                                                                            IntegerLiteral {
+                                                                                span: Span {
+                                                                                    file: "parse_member_dot_arguments_expression",
+                                                                                    module: "module/parse_member_dot_arguments_expression",
+                                                                                    start: 27,
+                                                                                    end: 29,
+                                                                                },
+                                                                                value: 10,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                            },
                                                         },
                                                     ),
                                                 },

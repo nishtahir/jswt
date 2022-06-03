@@ -227,4 +227,48 @@ mod test {
         assert_eq!(resolver.errors.len(), 0);
         assert_debug_snapshot!(resolver);
     }
+
+    #[test]
+    fn test_global_resolver_resolves_global_variables_with_duplicate_function_error() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test_global_resolver_resolves_global_variables_with_duplicate_function_error",
+            r"
+        function test2(): Array {
+
+        }
+        function test2(): Array {
+
+        }
+        ",
+        );
+        let ast = Parser::new(&mut tokenizer).parse();
+        let mut symbols = SymbolTable::default();
+        let mut bindings = BindingsTable::default();
+        let mut resolver = GlobalResolver::new(&mut bindings, &mut symbols);
+        resolver.resolve(&ast);
+
+        assert_debug_snapshot!(resolver);
+    }
+
+    #[test]
+    fn test_global_resolver_resolves_class_binding_with_duplicate_class_error() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test_global_resolver_resolves_class_binding_with_duplicate_class_error",
+            r"
+            class Array {
+            }
+            class Array {
+            }
+        ",
+        );
+        let ast = Parser::new(&mut tokenizer).parse();
+        let mut symbols = SymbolTable::default();
+        let mut bindings = BindingsTable::default();
+        let mut resolver = GlobalResolver::new(&mut bindings, &mut symbols);
+        resolver.resolve(&ast);
+
+        assert_debug_snapshot!(resolver);
+    }
 }

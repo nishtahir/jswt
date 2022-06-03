@@ -61,7 +61,6 @@ function find(nBytes: i32): i32 {
                 // [hdr|     free         |ftr]
                 // [hdr|alloc|ftr|hdr|free|ftr]
 
-
                 // Write header and allocation bit
                 hdrSetSize(pointer, nBytes);
                 hdrSetFree(pointer, false);

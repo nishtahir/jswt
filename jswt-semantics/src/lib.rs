@@ -27,12 +27,12 @@ impl SemanticAnalyzer {
         let mut global_resolver =
             GlobalResolver::new(&mut self.bindings_table, &mut self.symbol_table);
         global_resolver.resolve(ast);
-        // errors.append(&mut global_resolver.errors);
+        errors.append(&mut global_resolver.errors);
 
         // // This is the second semantic pass to inspect function content
         let mut resolver = Resolver::new(&mut self.symbol_table);
         resolver.resolve(ast);
-        // errors.append(&mut resolver.errors);
+        errors.append(&mut resolver.errors);
 
         errors
     }
@@ -45,6 +45,27 @@ mod test {
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
     use jswt_tokenizer::Tokenizer;
+
+
+    #[test]
+    fn test_semantic_analyzer_analyzes_correctly() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test_semantic_analyzer_analyzes_correctly",
+            r"
+        class Array {
+
+        }
+
+        function test(a: i32, b: i32) {
+            let x = 99;
+        }
+        ",
+        );
+        let mut ast = Parser::new(&mut tokenizer).parse();
+        let errors = SemanticAnalyzer::default().analyze(&mut ast);
+        assert_debug_snapshot!(errors);
+    }
 
     #[test]
     fn test_duplicate_function_declaration_generates_error() {
@@ -86,7 +107,6 @@ mod test {
     }
 
     #[test]
-    #[ignore]
     fn test_duplicate_variable_declaration_generates_error() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
@@ -124,12 +144,24 @@ mod test {
     }
 
     #[test]
-    #[ignore]
     fn test_variable_not_defined_generates_error() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
             "test_variable_not_defined_generates_error",
             "function test() { return x; }",
+        );
+
+        let mut ast = Parser::new(&mut tokenizer).parse();
+        let errors = SemanticAnalyzer::default().analyze(&mut ast);
+        assert_debug_snapshot!(errors);
+    }
+
+    #[test]
+    fn test_if_statement_condition_must_be_boolean_expression() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test_if_statement_condition_must_be_boolean_expression",
+            "function test() { if(10) {} }",
         );
 
         let mut ast = Parser::new(&mut tokenizer).parse();

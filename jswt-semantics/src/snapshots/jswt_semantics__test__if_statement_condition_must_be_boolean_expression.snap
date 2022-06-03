@@ -1,0 +1,22 @@
+---
+source: jswt-semantics/src/lib.rs
+expression: errors
+
+---
+[
+    TypeError {
+        span: Span {
+            file: "test_if_statement_condition_must_be_boolean_expression",
+            module: "module/test_if_statement_condition_must_be_boolean_expression",
+            start: 21,
+            end: 23,
+        },
+        offending_token: Span {
+            file: "test_if_statement_condition_must_be_boolean_expression",
+            module: "module/test_if_statement_condition_must_be_boolean_expression",
+            start: 21,
+            end: 23,
+        },
+        expected: "Boolean",
+    },
+]

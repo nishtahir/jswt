@@ -8,15 +8,15 @@ Ast {
         files: [
             File {
                 span: Span {
-                    file: "parse_member_dot_arguments_expression",
-                    module: "module/parse_member_dot_arguments_expression",
+                    file: "parse_member_dot_is_left_associative",
+                    module: "module/parse_member_dot_is_left_associative",
                     start: 0,
                     end: 34,
                 },
                 source_elements: SourceElements {
                     span: Span {
-                        file: "parse_member_dot_arguments_expression",
-                        module: "module/parse_member_dot_arguments_expression",
+                        file: "parse_member_dot_is_left_associative",
+                        module: "module/parse_member_dot_is_left_associative",
                         start: 0,
                         end: 34,
                     },
@@ -24,8 +24,8 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "parse_member_dot_arguments_expression",
-                                    module: "module/parse_member_dot_arguments_expression",
+                                    file: "parse_member_dot_is_left_associative",
+                                    module: "module/parse_member_dot_is_left_associative",
                                     start: 0,
                                     end: 34,
                                 },
@@ -35,8 +35,8 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "parse_member_dot_arguments_expression",
-                                        module: "module/parse_member_dot_arguments_expression",
+                                        file: "parse_member_dot_is_left_associative",
+                                        module: "module/parse_member_dot_is_left_associative",
                                         start: 9,
                                         end: 13,
                                     },
@@ -44,8 +44,8 @@ Ast {
                                 },
                                 params: FormalParameterList {
                                     span: Span {
-                                        file: "parse_member_dot_arguments_expression",
-                                        module: "module/parse_member_dot_arguments_expression",
+                                        file: "parse_member_dot_is_left_associative",
+                                        module: "module/parse_member_dot_is_left_associative",
                                         start: 13,
                                         end: 15,
                                     },
@@ -54,8 +54,8 @@ Ast {
                                 returns: None,
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "parse_member_dot_arguments_expression",
-                                        module: "module/parse_member_dot_arguments_expression",
+                                        file: "parse_member_dot_is_left_associative",
+                                        module: "module/parse_member_dot_is_left_associative",
                                         start: 16,
                                         end: 34,
                                     },
@@ -64,32 +64,32 @@ Ast {
                                             Expression(
                                                 ExpressionStatement {
                                                     span: Span {
-                                                        file: "parse_member_dot_arguments_expression",
-                                                        module: "module/parse_member_dot_arguments_expression",
+                                                        file: "parse_member_dot_is_left_associative",
+                                                        module: "module/parse_member_dot_is_left_associative",
                                                         start: 18,
                                                         end: 32,
                                                     },
                                                     expression: Additive(
                                                         BinaryExpression {
                                                             span: Span {
-                                                                file: "parse_member_dot_arguments_expression",
-                                                                module: "module/parse_member_dot_arguments_expression",
+                                                                file: "parse_member_dot_is_left_associative",
+                                                                module: "module/parse_member_dot_is_left_associative",
                                                                 start: 18,
                                                                 end: 31,
                                                             },
                                                             left: MemberDot(
                                                                 MemberDotExpression {
                                                                     span: Span {
-                                                                        file: "parse_member_dot_arguments_expression",
-                                                                        module: "module/parse_member_dot_arguments_expression",
+                                                                        file: "parse_member_dot_is_left_associative",
+                                                                        module: "module/parse_member_dot_is_left_associative",
                                                                         start: 18,
                                                                         end: 27,
                                                                     },
                                                                     target: This(
                                                                         ThisExpression {
                                                                             span: Span {
-                                                                                file: "parse_member_dot_arguments_expression",
-                                                                                module: "module/parse_member_dot_arguments_expression",
+                                                                                file: "parse_member_dot_is_left_associative",
+                                                                                module: "module/parse_member_dot_is_left_associative",
                                                                                 start: 18,
                                                                                 end: 22,
                                                                             },
@@ -98,15 +98,15 @@ Ast {
                                                                     expression: Identifier(
                                                                         IdentifierExpression {
                                                                             span: Span {
-                                                                                file: "parse_member_dot_arguments_expression",
-                                                                                module: "module/parse_member_dot_arguments_expression",
+                                                                                file: "parse_member_dot_is_left_associative",
+                                                                                module: "module/parse_member_dot_is_left_associative",
                                                                                 start: 23,
                                                                                 end: 27,
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
-                                                                                    file: "parse_member_dot_arguments_expression",
-                                                                                    module: "module/parse_member_dot_arguments_expression",
+                                                                                    file: "parse_member_dot_is_left_associative",
+                                                                                    module: "module/parse_member_dot_is_left_associative",
                                                                                     start: 23,
                                                                                     end: 27,
                                                                                 },
@@ -118,8 +118,8 @@ Ast {
                                                             ),
                                                             op: Plus(
                                                                 Span {
-                                                                    file: "parse_member_dot_arguments_expression",
-                                                                    module: "module/parse_member_dot_arguments_expression",
+                                                                    file: "parse_member_dot_is_left_associative",
+                                                                    module: "module/parse_member_dot_is_left_associative",
                                                                     start: 28,
                                                                     end: 29,
                                                                 },
@@ -128,8 +128,8 @@ Ast {
                                                                 Integer(
                                                                     IntegerLiteral {
                                                                         span: Span {
-                                                                            file: "parse_member_dot_arguments_expression",
-                                                                            module: "module/parse_member_dot_arguments_expression",
+                                                                            file: "parse_member_dot_is_left_associative",
+                                                                            module: "module/parse_member_dot_is_left_associative",
                                                                             start: 30,
                                                                             end: 31,
                                                                         },

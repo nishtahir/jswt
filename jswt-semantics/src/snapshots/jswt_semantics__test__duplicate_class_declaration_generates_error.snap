@@ -3,4 +3,14 @@ source: jswt-semantics/src/lib.rs
 expression: errors
 
 ---
-[]
+[
+    ClassAlreadyDefined {
+        name: "Array",
+        span: Span {
+            file: "test_duplicate_class_declaration_generates_error",
+            module: "module/test_duplicate_class_declaration_generates_error",
+            start: 61,
+            end: 66,
+        },
+    },
+]

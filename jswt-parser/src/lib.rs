@@ -1253,7 +1253,7 @@ mod test {
     fn parse_member_dot_is_left_associative() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "parse_member_dot_arguments_expression",
+            "parse_member_dot_is_left_associative",
             "function test() { this.data + 1; }",
         );
         let mut parser = Parser::new(&mut tokenizer);

@@ -1,0 +1,33 @@
+---
+source: jswt-semantics/src/globals.rs
+expression: resolver
+
+---
+GlobalResolver {
+    bindings_table: BindingsTable {
+        bindings: {
+            "Array": ClassBinding {
+                name: "Array",
+                fields: [],
+                methods: [],
+            },
+        },
+    },
+    symbol_table: SymbolTable {
+        table: [
+            {},
+        ],
+    },
+    bindings_context: [],
+    errors: [
+        ClassAlreadyDefined {
+            name: "Array",
+            span: Span {
+                file: "test_global_resolver_resolves_class_binding_with_duplicate_class_error",
+                module: "module/test_global_resolver_resolves_class_binding_with_duplicate_class_error",
+                start: 59,
+                end: 64,
+            },
+        },
+    ],
+}

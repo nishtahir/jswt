@@ -7,8 +7,8 @@ expression: errors
     VariableAlreadyDefined {
         name: "x",
         span: Span {
-            file: "test.1",
-            module: "module/test.1",
+            file: "test_duplicate_variable_declaration_generates_error",
+            module: "module/test_duplicate_variable_declaration_generates_error",
             start: 81,
             end: 82,
         },

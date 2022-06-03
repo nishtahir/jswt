@@ -1,0 +1,38 @@
+---
+source: jswt-semantics/src/globals.rs
+expression: resolver
+
+---
+GlobalResolver {
+    bindings_table: BindingsTable {
+        bindings: {},
+    },
+    symbol_table: SymbolTable {
+        table: [
+            {
+                "test2": Function(
+                    FunctionSignature {
+                        params: [],
+                        returns: Identifier(
+                            IdentifierType {
+                                name: "Array",
+                            },
+                        ),
+                    },
+                ),
+            },
+        ],
+    },
+    bindings_context: [],
+    errors: [
+        FunctionAlreadyDefined {
+            name: "test2",
+            span: Span {
+                file: "test_global_resolver_resolves_global_variables_with_duplicate_function_error",
+                module: "module/test_global_resolver_resolves_global_variables_with_duplicate_function_error",
+                start: 63,
+                end: 68,
+            },
+        },
+    ],
+}

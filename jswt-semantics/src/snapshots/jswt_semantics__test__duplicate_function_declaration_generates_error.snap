@@ -3,4 +3,14 @@ source: jswt-semantics/src/lib.rs
 expression: errors
 
 ---
-[]
+[
+    FunctionAlreadyDefined {
+        name: "test",
+        span: Span {
+            file: "test_duplicate_function_declaration_generates_error",
+            module: "module/test_duplicate_function_declaration_generates_error",
+            start: 128,
+            end: 132,
+        },
+    },
+]
