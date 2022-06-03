@@ -45,7 +45,7 @@ impl<'a> Parser<'a> {
     pub(crate) fn class_element(&mut self) -> ParseResult<ClassElement> {
         let elem = match self.lookahead_type() {
             Some(TokenType::Constructor) => self.class_constructor()?.into(),
-            Some(TokenType::Identifier) => self.class_property_member()?.into(),
+            Some(TokenType::Identifier) | Some(TokenType::At) => self.class_property_member()?.into(),
             _ => todo!(),
         };
 

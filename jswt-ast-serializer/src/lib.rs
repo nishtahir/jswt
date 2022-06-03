@@ -34,6 +34,16 @@ impl Visitor for AstSerializer {
     }
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+        for annotation in node.decorators.annotations.iter() {
+            self.content += "@";
+            self.content += &annotation.name.value;
+            self.content += "(";
+            self.content += &format!("{:?}", annotation.expr);
+            self.content += ")";
+            self.content += "\n";
+            self.indent()
+        }
+
         self.content += "function ";
         self.content += &node.ident.value;
         self.content += "(";

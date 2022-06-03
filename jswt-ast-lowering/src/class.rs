@@ -5,7 +5,7 @@ use jswt_common::Spannable;
 
 // At a high level the goal here is to remove class declarations from the AST by rewriting them
 // into a series of functions
-//  
+//
 // ```
 // class Array {
 //   constructor() {}
@@ -69,7 +69,7 @@ impl<'a> AstLowering<'a> {
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
             decorators: FunctionDecorators {
-                annotations: vec![],
+                annotations: node.annotations.clone(),
                 export: false,
             },
             ident,
@@ -99,7 +99,6 @@ impl<'a> AstLowering<'a> {
         body.statements.insert(0, this);
         // finally return the struct
         body.statements.push(returns);
-
 
         SourceElement::FunctionDeclaration(FunctionDeclarationElement {
             span: node.span(),
@@ -139,10 +138,7 @@ impl<'a> AstLowering<'a> {
         i32_store("this", field.index as i32 * 4, value.clone())
     }
 
-    pub(crate) fn class_this_access(
-        &mut self,
-        target: &IdentifierExpression,
-    ) -> SingleExpression {
+    pub(crate) fn class_this_access(&mut self, target: &IdentifierExpression) -> SingleExpression {
         let binding = self
             .bindings
             .lookup(&self.binding_context.as_ref().unwrap())

@@ -5,8 +5,8 @@ use std::borrow::Cow;
 
 use gen::ident_exp;
 use jswt_ast::{transform::*, *};
-use jswt_common::Spannable;
-use jswt_symbols::{BindingsTable, Symbol};
+use jswt_common::{Span, Spannable};
+use jswt_symbols::{BindingsTable, ClassBinding, Symbol};
 
 type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
 
@@ -110,6 +110,45 @@ impl<'a> TransformVisitor for AstLowering<'a> {
         ident_exp("this".into())
     }
 
+    fn visit_binary_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
+        let span = node.span();
+        let lhs_type = type_of(&*node.left);
+        let left = Box::new(self.visit_single_expression(&node.left));
+        let right = Box::new(self.visit_single_expression(&node.right));
+        let op = node.op.clone();
+        match op {
+            BinaryOperator::Plus(_) => SingleExpression::Arguments(ArgumentsExpression {
+                span: Span::synthetic(),
+                ident: Box::new(SingleExpression::Identifier(IdentifierExpression {
+                    span: Span::synthetic(),
+                    ident: Identifier {
+                        span: Span::synthetic(),
+                        value: format!("{}#add", lhs_type).into(),
+                    },
+                })),
+                arguments: ArgumentsList {
+                    span: Span::synthetic(),
+                    arguments: vec![*left, *right],
+                },
+            }),
+            BinaryOperator::Minus(_) => SingleExpression::Arguments(ArgumentsExpression {
+                span: Span::synthetic(),
+                ident: Box::new(SingleExpression::Identifier(IdentifierExpression {
+                    span: Span::synthetic(),
+                    ident: Identifier {
+                        span: Span::synthetic(),
+                        value: format!("{}#sub", lhs_type).into(),
+                    },
+                })),
+                arguments: ArgumentsList {
+                    span: Span::synthetic(),
+                    arguments: vec![*left, *right],
+                },
+            }),
+            _ => walk_binary_expression(self, node),
+        }
+    }
+
     // fn visit_single_expression(&mut self, node: &SingleExpression) -> SingleExpression {
     //     match node {
     //         SingleExpression::Arguments(exp) => self.visit_argument_expression(exp),
@@ -128,6 +167,11 @@ impl<'a> TransformVisitor for AstLowering<'a> {
     //         SingleExpression::New(exp) => self.visit_new(exp),
     //     }
     // }
+}
+
+// Resolve an expression into the appropriate class binding
+fn type_of(expr: &SingleExpression) -> Cow<'static, str> {
+    "i32".into()
 }
 
 // impl<'a> AstLowering<'a> {
