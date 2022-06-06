@@ -73,10 +73,8 @@ Ast {
                                                     start: 35,
                                                     end: 87,
                                                 },
-                                                ty: Identifier(
-                                                    IdentifierType {
-                                                        name: "ptr",
-                                                    },
+                                                ty: Binding(
+                                                    "ptr",
                                                 ),
                                             },
                                         },
@@ -90,10 +88,8 @@ Ast {
                                             start: 42,
                                             end: 45,
                                         },
-                                        ty: Identifier(
-                                            IdentifierType {
-                                                name: "i32",
-                                            },
+                                        ty: Binding(
+                                            "i32",
                                         ),
                                     },
                                 ),
@@ -124,6 +120,9 @@ Ast {
                                                                     end: 72,
                                                                 },
                                                                 value: 0,
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
                                                             },
                                                         ),
                                                     ),

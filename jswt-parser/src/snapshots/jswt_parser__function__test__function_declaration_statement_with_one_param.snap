@@ -73,10 +73,8 @@ Ast {
                                                     start: 17,
                                                     end: 20,
                                                 },
-                                                ty: Identifier(
-                                                    IdentifierType {
-                                                        name: "i32",
-                                                    },
+                                                ty: Binding(
+                                                    "i32",
                                                 ),
                                             },
                                         },

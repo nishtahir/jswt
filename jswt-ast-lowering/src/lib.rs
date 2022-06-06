@@ -5,7 +5,7 @@ use std::borrow::Cow;
 
 use gen::ident_exp;
 use jswt_ast::{transform::*, *};
-use jswt_common::{Span, Spannable};
+use jswt_common::{Span, Spannable, Typeable};
 use jswt_symbols::{BindingsTable, Symbol};
 
 type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
@@ -94,6 +94,7 @@ impl<'a> TransformVisitor for AstLowering<'a> {
             left: Box::new(self.visit_single_expression(&node.left)),
             op: node.op.clone(),
             right: Box::new(self.visit_single_expression(&node.right)),
+            ty: node.ty(),
         })
     }
 
@@ -111,7 +112,7 @@ impl<'a> TransformVisitor for AstLowering<'a> {
     }
 
     fn visit_binary_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
-        let lhs_type = type_of(&*node.left);
+        let op_type = node.ty().to_string();
         let left = Box::new(self.visit_single_expression(&node.left));
         let right = Box::new(self.visit_single_expression(&node.right));
         let op = node.op.clone();
@@ -122,13 +123,15 @@ impl<'a> TransformVisitor for AstLowering<'a> {
                     span: Span::synthetic(),
                     ident: Identifier {
                         span: Span::synthetic(),
-                        value: format!("{}#add", lhs_type).into(),
+                        value: format!("{}#add", op_type).into(),
                     },
+                    ty: node.ty(),
                 })),
                 arguments: ArgumentsList {
                     span: Span::synthetic(),
                     arguments: vec![*left, *right],
                 },
+                ty: node.ty(),
             }),
             BinaryOperator::Minus(_) => SingleExpression::Arguments(ArgumentsExpression {
                 span: node.span(),
@@ -136,23 +139,19 @@ impl<'a> TransformVisitor for AstLowering<'a> {
                     span: Span::synthetic(),
                     ident: Identifier {
                         span: Span::synthetic(),
-                        value: format!("{}#sub", lhs_type).into(),
+                        value: format!("{}#sub", op_type).into(),
                     },
+                    ty: node.ty(),
                 })),
                 arguments: ArgumentsList {
                     span: Span::synthetic(),
                     arguments: vec![*left, *right],
                 },
+                ty: node.ty(),
             }),
             _ => walk_binary_expression(self, node),
         }
     }
-
-}
-
-// Resolve an expression into the appropriate class binding
-fn type_of(expr: &SingleExpression) -> Cow<'static, str> {
-    "i32".into()
 }
 
 #[cfg(test)]

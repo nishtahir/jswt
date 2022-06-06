@@ -59,6 +59,7 @@ Ast {
                                                     end: 15,
                                                 },
                                                 value: 99,
+                                                ty: Unknown,
                                             },
                                         ),
                                     ),
@@ -70,10 +71,8 @@ Ast {
                                                 start: 7,
                                                 end: 10,
                                             },
-                                            ty: Identifier(
-                                                IdentifierType {
-                                                    name: "i32",
-                                                },
+                                            ty: Binding(
+                                                "i32",
                                             ),
                                         },
                                     ),

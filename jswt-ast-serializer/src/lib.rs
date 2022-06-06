@@ -2,6 +2,7 @@ use jswt_ast::{
     visit::{self, Visitor},
     *,
 };
+use jswt_common::Typeable;
 
 #[derive(Default)]
 pub struct AstSerializer {
@@ -56,10 +57,11 @@ impl Visitor for AstSerializer {
                 self.content += ", "
             }
         }
-        self.content += ")";
+        self.content += "): ";
         if let Some(ret) = &node.returns {
-            self.content += ": ";
-            self.content += ret.ty.to_string();
+            self.content += &ret.ty.to_string();
+        } else {
+            self.content += "void";
         }
 
         self.content += " ";
@@ -125,6 +127,8 @@ impl Visitor for AstSerializer {
         self.content += modifier;
         self.content += " ";
         self.visit_assignable_element(&node.target);
+        self.content += ": ";
+        self.content += &node.expression.ty().to_string();
         self.content += " = ";
         self.visit_single_expression(&node.expression);
     }
@@ -180,6 +184,9 @@ impl Visitor for AstSerializer {
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
         self.content += &node.ident.value;
+        self.content += "/* ";
+        self.content += &node.ty().to_string();
+        self.content += " */"
     }
 
     fn visit_literal(&mut self, node: &Literal) {

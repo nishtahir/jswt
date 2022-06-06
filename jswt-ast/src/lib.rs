@@ -20,7 +20,7 @@ pub use types::*;
 pub use variable::*;
 pub use visitor::*;
 
-use jswt_common::{Span, Spannable};
+use jswt_common::{Span, Spannable, Typeable};
 use jswt_derive::{FromEnumVariant, Spannable};
 
 #[derive(Debug)]

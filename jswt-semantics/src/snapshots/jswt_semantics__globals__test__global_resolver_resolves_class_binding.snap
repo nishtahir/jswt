@@ -13,11 +13,17 @@ GlobalResolver {
                         name: "a",
                         index: 0,
                         size: 4,
+                        ty: Binding(
+                            "i32",
+                        ),
                     },
                     Field {
                         name: "b",
                         index: 1,
                         size: 4,
+                        ty: Binding(
+                            "i32",
+                        ),
                     },
                 ],
                 methods: [
@@ -25,10 +31,8 @@ GlobalResolver {
                         name: "size",
                         signature: FunctionSignature {
                             params: [],
-                            returns: Identifier(
-                                IdentifierType {
-                                    name: "i32",
-                                },
+                            returns: Binding(
+                                "i32",
                             ),
                         },
                     },
@@ -36,16 +40,12 @@ GlobalResolver {
                         name: "indexOf",
                         signature: FunctionSignature {
                             params: [
-                                Identifier(
-                                    IdentifierType {
-                                        name: "i32",
-                                    },
+                                Binding(
+                                    "i32",
                                 ),
                             ],
-                            returns: Identifier(
-                                IdentifierType {
-                                    name: "i32",
-                                },
+                            returns: Binding(
+                                "i32",
                             ),
                         },
                     },

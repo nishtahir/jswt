@@ -1,6 +1,7 @@
 use crate::{SemanticError, SymbolTable};
 
 use jswt_ast::{visit::*, *};
+use jswt_common::Type;
 use jswt_symbols::{BindingsTable, ClassBinding, Field, FunctionSignature, Method, Symbol};
 
 #[derive(Debug)]
@@ -57,9 +58,7 @@ impl<'a> Visitor for GlobalResolver<'a> {
             .returns
             .as_ref()
             .map(|it| it.ty.clone())
-            .unwrap_or(Type::Identifier(IdentifierType {
-                name: "void".into(),
-            }));
+            .unwrap_or(Type::Binding("void".into()));
 
         let params = node
             .params
@@ -110,6 +109,7 @@ impl<'a> Visitor for GlobalResolver<'a> {
             name: node.ident.value.clone(),
             index: binding.fields.len(),
             size: 4, // TODO compute type size
+            ty: node.type_annotation.ty.clone(),
         });
         walk_class_field_declaration(self, node);
     }
@@ -120,9 +120,7 @@ impl<'a> Visitor for GlobalResolver<'a> {
             .returns
             .as_ref()
             .map(|it| it.ty.clone())
-            .unwrap_or(Type::Identifier(IdentifierType {
-                name: "void".into(),
-            }));
+            .unwrap_or(Type::Binding("void".into()));
 
         let params = node
             .params

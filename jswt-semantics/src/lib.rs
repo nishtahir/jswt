@@ -1,6 +1,7 @@
 mod error;
 mod globals;
 mod resolver;
+mod types;
 
 use std::borrow::Cow;
 
@@ -10,6 +11,7 @@ use resolver::*;
 
 use jswt_ast::Ast;
 use jswt_symbols::{BindingsTable, Symbol};
+use types::TypeChecker;
 
 type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
 
@@ -24,15 +26,19 @@ impl SemanticAnalyzer {
         let mut errors = vec![];
 
         // This is the first semantic pass to resolve global variables
-        let mut global_resolver =
-            GlobalResolver::new(&mut self.bindings_table, &mut self.symbol_table);
-        global_resolver.resolve(ast);
-        errors.append(&mut global_resolver.errors);
+        let mut global = GlobalResolver::new(&mut self.bindings_table, &mut self.symbol_table);
+        global.resolve(ast);
+        errors.append(&mut global.errors);
 
         // // This is the second semantic pass to inspect function content
         let mut resolver = Resolver::new(&mut self.symbol_table, &mut self.bindings_table);
         resolver.resolve(ast);
         errors.append(&mut resolver.errors);
+
+        // Perform type checks and annotate AST
+        let mut types = TypeChecker::new(&mut self.symbol_table, &mut self.bindings_table);
+        types.resolve(ast);
+        errors.append(&mut types.errors);
 
         errors
     }

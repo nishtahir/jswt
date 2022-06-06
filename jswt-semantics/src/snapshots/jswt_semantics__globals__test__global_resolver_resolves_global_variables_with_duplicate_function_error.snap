@@ -13,10 +13,8 @@ GlobalResolver {
                 "test2": Function(
                     FunctionSignature {
                         params: [],
-                        returns: Identifier(
-                            IdentifierType {
-                                name: "Array",
-                            },
+                        returns: Binding(
+                            "Array",
                         ),
                     },
                 ),

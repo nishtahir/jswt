@@ -1,7 +1,7 @@
 mod bindings;
 mod symbol;
 
-use jswt_ast::Type;
+use jswt_common::Type;
 
 pub use self::bindings::*;
 pub use self::symbol::*;

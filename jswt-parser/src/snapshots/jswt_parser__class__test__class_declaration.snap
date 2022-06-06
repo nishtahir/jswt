@@ -85,10 +85,8 @@ Ast {
                                                                     start: 25,
                                                                     end: 28,
                                                                 },
-                                                                ty: Identifier(
-                                                                    IdentifierType {
-                                                                        name: "i32",
-                                                                    },
+                                                                ty: Binding(
+                                                                    "i32",
                                                                 ),
                                                             },
                                                         },

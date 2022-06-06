@@ -38,6 +38,7 @@ Ast {
                                                 start: 0,
                                                 end: 4,
                                             },
+                                            ty: Unknown,
                                         },
                                     ),
                                 },

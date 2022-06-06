@@ -10,4 +10,5 @@ class i32 {
     @wast("(i32.sub(local.get $this local.get $other))")
     sub(other: i32): i32 {
     }
+
 }

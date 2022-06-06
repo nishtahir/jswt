@@ -413,6 +413,7 @@ pub fn walk_member_dot<V: TransformVisitor>(
         span: node.span(),
         target: Box::new(visitor.visit_single_expression(&node.target)),
         expression: Box::new(visitor.visit_single_expression(&node.expression)),
+        ty: node.ty(),
     })
 }
 
@@ -424,6 +425,7 @@ pub fn walk_member_index<V: TransformVisitor>(
         span: node.span(),
         target: Box::new(visitor.visit_single_expression(&node.target)),
         index: Box::new(visitor.visit_single_expression(&node.index)),
+        ty: node.ty(),
     })
 }
 
@@ -431,6 +433,7 @@ pub fn walk_new<V: TransformVisitor>(visitor: &mut V, node: &NewExpression) -> S
     SingleExpression::New(NewExpression {
         span: node.span(),
         expression: Box::new(visitor.visit_single_expression(&node.expression)),
+        ty: node.ty(),
     })
 }
 
@@ -441,6 +444,7 @@ pub fn walk_identifier_expression<V: TransformVisitor>(
     SingleExpression::Identifier(IdentifierExpression {
         span: node.span(),
         ident: node.ident.clone(),
+        ty: node.ty(),
     })
 }
 
@@ -461,6 +465,7 @@ pub fn walk_argument_expression<V: TransformVisitor>(
             span: argument_list.span(),
             arguments,
         },
+        ty: node.ty(),
     })
 }
 
@@ -472,6 +477,7 @@ pub fn walk_unary_expression<V: TransformVisitor>(
         span: node.span(),
         op: node.op.clone(),
         expr: Box::new(visitor.visit_single_expression(&node.expr)),
+        ty: node.ty(),
     })
 }
 
@@ -487,6 +493,7 @@ pub fn walk_assignment_expression<V: TransformVisitor>(
         left,
         op,
         right,
+        ty: node.ty(),
     })
 }
 
@@ -505,6 +512,7 @@ pub fn walk_binary_expression<V: TransformVisitor>(
                 left,
                 op,
                 right,
+                ty: node.ty(),
             })
         }
         BinaryOperator::Mult(_) | BinaryOperator::Div(_) => {
@@ -513,6 +521,7 @@ pub fn walk_binary_expression<V: TransformVisitor>(
                 left,
                 op,
                 right,
+                ty: node.ty(),
             })
         }
         BinaryOperator::Equal(_) | BinaryOperator::NotEqual(_) => {
@@ -521,6 +530,7 @@ pub fn walk_binary_expression<V: TransformVisitor>(
                 left,
                 op,
                 right,
+                ty: node.ty(),
             })
         }
         BinaryOperator::Greater(_)
@@ -531,6 +541,7 @@ pub fn walk_binary_expression<V: TransformVisitor>(
             left,
             op,
             right,
+            ty: node.ty(),
         }),
         BinaryOperator::And(_) | BinaryOperator::Or(_) => {
             SingleExpression::Bitwise(BinaryExpression {
@@ -538,6 +549,7 @@ pub fn walk_binary_expression<V: TransformVisitor>(
                 left,
                 op,
                 right,
+                ty: node.ty(),
             })
         }
         BinaryOperator::Assign(_) => SingleExpression::Assignment(BinaryExpression {
@@ -545,6 +557,7 @@ pub fn walk_binary_expression<V: TransformVisitor>(
             left,
             op,
             right,
+            ty: node.ty(),
         }),
     }
 }

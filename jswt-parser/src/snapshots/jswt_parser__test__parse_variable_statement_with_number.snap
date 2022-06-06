@@ -59,6 +59,7 @@ Ast {
                                                     end: 10,
                                                 },
                                                 value: 42,
+                                                ty: Unknown,
                                             },
                                         ),
                                     ),

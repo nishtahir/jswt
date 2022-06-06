@@ -73,10 +73,8 @@ Ast {
                                                     start: 17,
                                                     end: 20,
                                                 },
-                                                ty: Identifier(
-                                                    IdentifierType {
-                                                        name: "i32",
-                                                    },
+                                                ty: Binding(
+                                                    "i32",
                                                 ),
                                             },
                                         },
@@ -103,10 +101,8 @@ Ast {
                                                     start: 25,
                                                     end: 28,
                                                 },
-                                                ty: Identifier(
-                                                    IdentifierType {
-                                                        name: "i32",
-                                                    },
+                                                ty: Binding(
+                                                    "i32",
                                                 ),
                                             },
                                         },
@@ -120,10 +116,8 @@ Ast {
                                             start: 31,
                                             end: 34,
                                         },
-                                        ty: Identifier(
-                                            IdentifierType {
-                                                name: "i32",
-                                            },
+                                        ty: Binding(
+                                            "i32",
                                         ),
                                     },
                                 ),

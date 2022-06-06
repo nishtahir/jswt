@@ -1,7 +1,7 @@
 use core::hash::Hash;
 use std::collections::BTreeMap;
 
-use jswt_ast::Type;
+use jswt_common::Type;
 
 use crate::{FunctionSignature, TypeSignature};
 

@@ -1,5 +1,7 @@
 use std::{borrow::Cow, collections::BTreeMap};
 
+use jswt_common::Type;
+
 use crate::FunctionSignature;
 
 // Class containing all bindings that
@@ -58,6 +60,7 @@ pub struct Field {
     pub name: Cow<'static, str>,
     pub index: usize,
     pub size: usize,
+    pub ty: Type,
 }
 
 #[derive(Debug, PartialEq)]

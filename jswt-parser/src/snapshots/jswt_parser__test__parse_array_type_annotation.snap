@@ -73,15 +73,7 @@ Ast {
                                                     start: 20,
                                                     end: 25,
                                                 },
-                                                ty: Array(
-                                                    ArrayType {
-                                                        ident: Identifier(
-                                                            IdentifierType {
-                                                                name: "i32",
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
+                                                ty: Unknown,
                                             },
                                         },
                                     ],
@@ -94,15 +86,7 @@ Ast {
                                             start: 28,
                                             end: 36,
                                         },
-                                        ty: Array(
-                                            ArrayType {
-                                                ident: Identifier(
-                                                    IdentifierType {
-                                                        name: "string",
-                                                    },
-                                                ),
-                                            },
-                                        ),
+                                        ty: Unknown,
                                     },
                                 ),
                                 body: BlockStatement {

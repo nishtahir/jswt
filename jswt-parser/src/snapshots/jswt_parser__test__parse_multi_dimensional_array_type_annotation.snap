@@ -73,19 +73,7 @@ Ast {
                                                     start: 20,
                                                     end: 27,
                                                 },
-                                                ty: Array(
-                                                    ArrayType {
-                                                        ident: Array(
-                                                            ArrayType {
-                                                                ident: Identifier(
-                                                                    IdentifierType {
-                                                                        name: "i32",
-                                                                    },
-                                                                ),
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
+                                                ty: Unknown,
                                             },
                                         },
                                     ],
@@ -98,19 +86,7 @@ Ast {
                                             start: 30,
                                             end: 40,
                                         },
-                                        ty: Array(
-                                            ArrayType {
-                                                ident: Array(
-                                                    ArrayType {
-                                                        ident: Identifier(
-                                                            IdentifierType {
-                                                                name: "string",
-                                                            },
-                                                        ),
-                                                    },
-                                                ),
-                                            },
-                                        ),
+                                        ty: Unknown,
                                     },
                                 ),
                                 body: BlockStatement {

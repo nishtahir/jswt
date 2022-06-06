@@ -73,10 +73,8 @@ Ast {
                                                     start: 102,
                                                     end: 105,
                                                 },
-                                                ty: Identifier(
-                                                    IdentifierType {
-                                                        name: "i32",
-                                                    },
+                                                ty: Binding(
+                                                    "i32",
                                                 ),
                                             },
                                         },
@@ -103,10 +101,8 @@ Ast {
                                                     start: 117,
                                                     end: 120,
                                                 },
-                                                ty: Identifier(
-                                                    IdentifierType {
-                                                        name: "i32",
-                                                    },
+                                                ty: Binding(
+                                                    "i32",
                                                 ),
                                             },
                                         },
@@ -120,10 +116,8 @@ Ast {
                                             start: 85,
                                             end: 211,
                                         },
-                                        ty: Identifier(
-                                            IdentifierType {
-                                                name: "ptr",
-                                            },
+                                        ty: Binding(
+                                            "ptr",
                                         ),
                                     },
                                 ),
@@ -188,6 +182,9 @@ Ast {
                                                                         },
                                                                         value: "malloc",
                                                                     },
+                                                                    ty: Binding(
+                                                                        "ptr",
+                                                                    ),
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -208,11 +205,17 @@ Ast {
                                                                                     end: 0,
                                                                                 },
                                                                                 value: 8,
+                                                                                ty: Binding(
+                                                                                    "ptr",
+                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
                                                                 ],
                                                             },
+                                                            ty: Binding(
+                                                                "ptr",
+                                                            ),
                                                         },
                                                     ),
                                                     type_annotation: None,
@@ -251,6 +254,9 @@ Ast {
                                                                         },
                                                                         value: "i32Store",
                                                                     },
+                                                                    ty: Binding(
+                                                                        "i32",
+                                                                    ),
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -286,6 +292,9 @@ Ast {
                                                                                         },
                                                                                         value: "this",
                                                                                     },
+                                                                                    ty: Binding(
+                                                                                        "i32",
+                                                                                    ),
                                                                                 },
                                                                             ),
                                                                             op: Plus(
@@ -306,8 +315,14 @@ Ast {
                                                                                             end: 0,
                                                                                         },
                                                                                         value: 0,
+                                                                                        ty: Binding(
+                                                                                            "i32",
+                                                                                        ),
                                                                                     },
                                                                                 ),
+                                                                            ),
+                                                                            ty: Binding(
+                                                                                "i32",
                                                                             ),
                                                                         },
                                                                     ),
@@ -328,10 +343,16 @@ Ast {
                                                                                 },
                                                                                 value: "len",
                                                                             },
+                                                                            ty: Binding(
+                                                                                "i32",
+                                                                            ),
                                                                         },
                                                                     ),
                                                                 ],
                                                             },
+                                                            ty: Binding(
+                                                                "i32",
+                                                            ),
                                                         },
                                                     ),
                                                 },
@@ -369,6 +390,9 @@ Ast {
                                                                         },
                                                                         value: "i32Store",
                                                                     },
+                                                                    ty: Binding(
+                                                                        "i32",
+                                                                    ),
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -404,6 +428,9 @@ Ast {
                                                                                         },
                                                                                         value: "this",
                                                                                     },
+                                                                                    ty: Binding(
+                                                                                        "i32",
+                                                                                    ),
                                                                                 },
                                                                             ),
                                                                             op: Plus(
@@ -424,8 +451,14 @@ Ast {
                                                                                             end: 0,
                                                                                         },
                                                                                         value: 4,
+                                                                                        ty: Binding(
+                                                                                            "i32",
+                                                                                        ),
                                                                                     },
                                                                                 ),
+                                                                            ),
+                                                                            ty: Binding(
+                                                                                "i32",
                                                                             ),
                                                                         },
                                                                     ),
@@ -446,10 +479,16 @@ Ast {
                                                                                 },
                                                                                 value: "capacity",
                                                                             },
+                                                                            ty: Binding(
+                                                                                "i32",
+                                                                            ),
                                                                         },
                                                                     ),
                                                                 ],
                                                             },
+                                                            ty: Binding(
+                                                                "i32",
+                                                            ),
                                                         },
                                                     ),
                                                 },
@@ -479,6 +518,9 @@ Ast {
                                                                 },
                                                                 value: "this",
                                                             },
+                                                            ty: Binding(
+                                                                "ptr",
+                                                            ),
                                                         },
                                                     ),
                                                 },

@@ -85,10 +85,8 @@ Ast {
                                                                     start: 55,
                                                                     end: 58,
                                                                 },
-                                                                ty: Identifier(
-                                                                    IdentifierType {
-                                                                        name: "i32",
-                                                                    },
+                                                                ty: Binding(
+                                                                    "i32",
                                                                 ),
                                                             },
                                                         },
@@ -135,6 +133,7 @@ Ast {
                                                                                                 start: 83,
                                                                                                 end: 87,
                                                                                             },
+                                                                                            ty: Unknown,
                                                                                         },
                                                                                     ),
                                                                                     expression: Identifier(
@@ -154,8 +153,10 @@ Ast {
                                                                                                 },
                                                                                                 value: "a",
                                                                                             },
+                                                                                            ty: Unknown,
                                                                                         },
                                                                                     ),
+                                                                                    ty: Unknown,
                                                                                 },
                                                                             ),
                                                                             op: Assign(
@@ -183,8 +184,10 @@ Ast {
                                                                                         },
                                                                                         value: "a",
                                                                                     },
+                                                                                    ty: Unknown,
                                                                                 },
                                                                             ),
+                                                                            ty: Unknown,
                                                                         },
                                                                     ),
                                                                 },

@@ -58,6 +58,7 @@ Ast {
                                                                 end: 152,
                                                             },
                                                             value: "env",
+                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 ),
@@ -106,10 +107,8 @@ Ast {
                                                     start: 186,
                                                     end: 189,
                                                 },
-                                                ty: Identifier(
-                                                    IdentifierType {
-                                                        name: "i32",
-                                                    },
+                                                ty: Binding(
+                                                    "i32",
                                                 ),
                                             },
                                         },
@@ -166,6 +165,7 @@ Ast {
                                                                 end: 334,
                                                             },
                                                             value: "env",
+                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 ),
@@ -214,10 +214,8 @@ Ast {
                                                     start: 364,
                                                     end: 367,
                                                 },
-                                                ty: Identifier(
-                                                    IdentifierType {
-                                                        name: "i32",
-                                                    },
+                                                ty: Binding(
+                                                    "i32",
                                                 ),
                                             },
                                         },

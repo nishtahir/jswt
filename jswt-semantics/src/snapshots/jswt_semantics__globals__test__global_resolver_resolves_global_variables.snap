@@ -14,31 +14,23 @@ GlobalResolver {
                 "test": Function(
                     FunctionSignature {
                         params: [
-                            Identifier(
-                                IdentifierType {
-                                    name: "i32",
-                                },
+                            Binding(
+                                "i32",
                             ),
-                            Identifier(
-                                IdentifierType {
-                                    name: "i32",
-                                },
+                            Binding(
+                                "i32",
                             ),
                         ],
-                        returns: Identifier(
-                            IdentifierType {
-                                name: "void",
-                            },
+                        returns: Binding(
+                            "void",
                         ),
                     },
                 ),
                 "test2": Function(
                     FunctionSignature {
                         params: [],
-                        returns: Identifier(
-                            IdentifierType {
-                                name: "Array",
-                            },
+                        returns: Binding(
+                            "Array",
                         ),
                     },
                 ),

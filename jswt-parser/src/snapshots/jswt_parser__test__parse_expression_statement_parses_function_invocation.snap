@@ -94,6 +94,7 @@ Ast {
                                                                         },
                                                                         value: "test",
                                                                     },
+                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -105,6 +106,7 @@ Ast {
                                                                 },
                                                                 arguments: [],
                                                             },
+                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

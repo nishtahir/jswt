@@ -75,9 +75,11 @@ Ast {
                                                             end: 15,
                                                         },
                                                         value: 99,
+                                                        ty: Unknown,
                                                     },
                                                 ),
                                             ),
+                                            ty: Unknown,
                                         },
                                     ),
                                     type_annotation: Some(
@@ -88,10 +90,8 @@ Ast {
                                                 start: 7,
                                                 end: 10,
                                             },
-                                            ty: Identifier(
-                                                IdentifierType {
-                                                    name: "i32",
-                                                },
+                                            ty: Binding(
+                                                "i32",
                                             ),
                                         },
                                     ),
@@ -159,8 +159,10 @@ Ast {
                                                         },
                                                         value: "i",
                                                     },
+                                                    ty: Unknown,
                                                 },
                                             ),
+                                            ty: Unknown,
                                         },
                                     ),
                                     type_annotation: None,

@@ -6,7 +6,7 @@ pub use errors::ParseError;
 use std::vec;
 
 use jswt_ast::*;
-use jswt_common::{Span, Spannable};
+use jswt_common::{Span, Spannable, Type};
 use jswt_tokenizer::{Token, TokenType, Tokenizer, TokenizerError};
 
 type ParseResult<T> = Result<T, ParseError>;
@@ -93,6 +93,7 @@ macro_rules! binary_expression {
                                 left: Box::new(left),
                                 op: BinaryOperator::$op(op_span),
                                 right: Box::new(right),
+                                ty: jswt_common::Type::Unknown,
                             });
                         }
                     )*
@@ -458,6 +459,7 @@ impl<'a> Parser<'a> {
             return Ok(SingleExpression::New(NewExpression {
                 span: start + expression.span(),
                 expression: Box::new(expression),
+                ty: jswt_common::Type::Unknown,
             }));
         }
 
@@ -478,6 +480,7 @@ impl<'a> Parser<'a> {
                 span: target.span() + end,
                 target: Box::new(target),
                 index: Box::new(index),
+                ty: jswt_common::Type::Unknown,
             }));
         }
         Ok(target)
@@ -554,6 +557,7 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::PostIncrement(op),
                 expr: Box::new(expr),
+                ty: jswt_common::Type::Unknown,
             }));
         }
         if self.lookahead_is(TokenType::MinusMinus) {
@@ -562,6 +566,7 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::PostDecrement(op),
                 expr: Box::new(expr),
+                ty: jswt_common::Type::Unknown,
             }));
         }
         Ok(expr)
@@ -580,6 +585,7 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Plus(op),
                 expr: Box::new(expr),
+                ty: jswt_common::Type::Unknown,
             }));
         }
 
@@ -590,6 +596,7 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Minus(op),
                 expr: Box::new(expr),
+                ty: jswt_common::Type::Unknown,
             }));
         }
 
@@ -600,6 +607,7 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Not(op),
                 expr: Box::new(expr),
+                ty: jswt_common::Type::Unknown,
             }));
         }
 
@@ -619,6 +627,7 @@ impl<'a> Parser<'a> {
                 span: left.span() + args.span(),
                 ident: Box::new(left),
                 arguments: args,
+                ty: jswt_common::Type::Unknown,
             }));
         }
 
@@ -661,6 +670,7 @@ impl<'a> Parser<'a> {
                 span: target.span() + expression.span(),
                 expression: Box::new(expression),
                 target: Box::new(target),
+                ty: jswt_common::Type::Unknown,
             }));
         }
         Ok(target)
@@ -672,7 +682,10 @@ impl<'a> Parser<'a> {
     fn this(&mut self) -> ParseResult<SingleExpression> {
         if self.lookahead_is(TokenType::This) {
             let span = consume!(self, TokenType::This)?;
-            return Ok(SingleExpression::This(ThisExpression { span }));
+            return Ok(SingleExpression::This(ThisExpression {
+                span,
+                ty: jswt_common::Type::Unknown,
+            }));
         }
         self.identifier_expression()
     }
@@ -684,6 +697,7 @@ impl<'a> Parser<'a> {
         if self.lookahead_is(TokenType::Identifier) {
             let ident = ident!(self)?;
             return Ok(SingleExpression::Identifier(IdentifierExpression {
+                ty: jswt_common::Type::Unknown,
                 span: ident.span.to_owned(),
                 ident,
             }));
@@ -716,6 +730,7 @@ impl<'a> Parser<'a> {
             return Ok(SingleExpression::Literal(Literal::Array(ArrayLiteral {
                 span: start + end,
                 elements,
+                ty: jswt_common::Type::Unknown,
             })));
         };
 
@@ -731,11 +746,21 @@ impl<'a> Parser<'a> {
         let literal: Literal = match self.lookahead_type() {
             Some(TokenType::True) => {
                 let span = consume_unchecked!(self);
-                BooleanLiteral { span, value: true }.into()
+                BooleanLiteral {
+                    span,
+                    value: true,
+                    ty: jswt_common::Type::Unknown,
+                }
+                .into()
             }
             Some(TokenType::False) => {
                 let span = consume_unchecked!(self);
-                BooleanLiteral { span, value: false }.into()
+                BooleanLiteral {
+                    span,
+                    value: false,
+                    ty: jswt_common::Type::Unknown,
+                }
+                .into()
             }
             Some(TokenType::String) => {
                 let span = consume_unchecked!(self);
@@ -744,6 +769,7 @@ impl<'a> Parser<'a> {
                     span,
                     // Drop quoute characters from value
                     value: &lexme[1..lexme.len() - 1],
+                    ty: jswt_common::Type::Unknown,
                 }
                 .into()
             }
@@ -755,6 +781,7 @@ impl<'a> Parser<'a> {
                     // Should be safe to unwrap since
                     // the tokenizer matched this
                     value: lexme.parse().unwrap(),
+                    ty: jswt_common::Type::Unknown,
                 }
                 .into()
             }
@@ -765,6 +792,7 @@ impl<'a> Parser<'a> {
                     span,
                     // Allow integer overflows in this specific instance
                     value: u32::from_str_radix(without_prefix, 16).unwrap() as i32,
+                    ty: jswt_common::Type::Unknown,
                 }
                 .into()
             }
@@ -774,6 +802,7 @@ impl<'a> Parser<'a> {
                 FloatingPointLiteral {
                     span,
                     value: lexme.parse::<f32>().unwrap(),
+                    ty: jswt_common::Type::Unknown,
                 }
                 .into()
             }
@@ -804,18 +833,18 @@ impl<'a> Parser<'a> {
     fn type_annotation(&mut self) -> ParseResult<TypeAnnotation> {
         consume!(self, TokenType::Colon)?;
         let name = ident!(self)?;
-        let mut ty = Type::Identifier(IdentifierType {
-            name: name.value.clone(),
-        });
+        let mut ty = Type::Binding(name.value.clone());
 
         let start = name.span();
         let mut end = name.span();
         while self.lookahead_is(TokenType::LeftBracket) {
             consume_unchecked!(self);
             end = consume!(self, TokenType::RightBracket)?;
-            ty = Type::Array(ArrayType {
-                ident: Box::new(ty),
-            })
+            // TODO
+            // ty = Type::Binding(ArrayType {
+            //     ident: Box::new(ty),
+            // })
+            ty = Type::Unknown;
         }
         Ok(TypeAnnotation {
             ty,

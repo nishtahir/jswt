@@ -76,6 +76,7 @@ Ast {
                                                                 end: 20,
                                                             },
                                                             value: "test",
+                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 ),
