@@ -125,6 +125,7 @@ impl<'a> MutVisitor for TypeChecker<'a> {
                 // TODO: Technically incorrect
                 Symbol::Function(sig) => node.ty = sig.returns.clone(),
                 Symbol::Unknown => todo!(),
+                Symbol::Class => node.ty = Type::Binding(name.clone()),
             }
         }
     }

@@ -189,6 +189,11 @@ impl<'a> Visitor for Resolver<'a> {
         }
         walk_this_expression(self, node);
     }
+
+    fn visit_new(&mut self, node: &NewExpression) {
+        // println!("{:#?}", node);
+        // TODO check that the expression here is a constructor
+    }
 }
 // impl<'a> StatementVisitor<()> for Resolver<'a> {
 

@@ -2,10 +2,13 @@
 
 // Stub class for i32 primitive type
 class f32 {
+
+    // @wast("(f32.add(local.get $this local.get $other))")
     add(other: f32): f32 {
         return this + other;
     }
 
+    // @wast("(f32.sub(local.get $this local.get $other))")
     sub(other: f32): f32 {
         return this - other;
     }

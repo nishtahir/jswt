@@ -23,7 +23,7 @@ class Array {
 export function main(): i32 {
     let value: i32 = 10;
     let value2 = value + 33;
-    // let arr = new Array();
+    let arr = new Array(10);
 
     println(value2);
 

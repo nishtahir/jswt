@@ -349,7 +349,7 @@ impl<'a> Parser<'a> {
     }
 
     /// VariableStatement
-    ///   :  VariableModifier Assignable ('=' singleExpression)? ';'
+    ///   :  VariableModifier Assignable '=' singleExpression ';'
     ///   ;
     fn variable_statement(&mut self) -> ParseResult<VariableStatement> {
         let modifier = self.variable_modifier()?;

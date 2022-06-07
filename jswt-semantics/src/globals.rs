@@ -83,24 +83,25 @@ impl<'a> Visitor for GlobalResolver<'a> {
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
         let ident = &node.ident;
         let name = ident.value.clone();
-        self.bindings_context.push(ClassBinding {
-            name: name.clone(),
-            fields: vec![],
-            methods: vec![],
-        });
-
-        walk_class_declaration(self, node);
-
         if self.bindings_table.lookup(&name).is_some() {
+            // if we've seen this class before report and ignore it
             let error = SemanticError::ClassAlreadyDefined {
                 name: name.clone(),
                 span: ident.span.to_owned(),
             };
             self.errors.push(error);
-        }
+        } else {
+            self.bindings_context.push(ClassBinding {
+                name: name.clone(),
+                fields: vec![],
+                methods: vec![],
+            });
 
-        let binding = self.bindings_context.pop().unwrap();
-        self.bindings_table.insert(name, binding);
+            walk_class_declaration(self, node);
+
+            let binding = self.bindings_context.pop().unwrap();
+            self.bindings_table.insert(name, binding);
+        }
     }
 
     fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) {

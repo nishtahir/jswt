@@ -234,7 +234,6 @@ mod test {
     use std::{borrow::Cow, process::Command};
 
     #[test]
-    #[ignore]
     fn test_compile_and_execute_variables_sample() {
         let mut cmd = Command::cargo_bin("jswt").unwrap();
         cmd.arg("--runtime-path")
@@ -245,7 +244,6 @@ mod test {
     }
 
     #[test]
-    #[ignore]
     fn test_compile_and_execute_loops_sample() {
         let mut cmd = Command::cargo_bin("jswt").unwrap();
         let assert = cmd
@@ -259,7 +257,6 @@ mod test {
     }
 
     #[test]
-    #[ignore]
     fn test_compile_and_execute_arithmetics_sample() {
         let mut cmd = Command::cargo_bin("jswt").unwrap();
         let assert = cmd
@@ -287,7 +284,6 @@ mod test {
     }
 
     #[test]
-    #[ignore]
     fn test_variable_not_found_semantic_error() {
         let mut cmd = Command::cargo_bin("jswt").unwrap();
         let assert = cmd

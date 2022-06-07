@@ -81,6 +81,7 @@ impl<K: Eq + Hash + Ord, V> Default for SymbolTable<K, V> {
 pub enum Symbol {
     Type(TypeSignature),
     Function(FunctionSignature),
+    Class,
     Unknown,
 }
 
