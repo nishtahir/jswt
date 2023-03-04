@@ -18,7 +18,7 @@ jswt-parser = {path = "../jswt-parser"}
 jswt-semantics = {path = "../jswt-semantics"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
 jswt-wast = {path = "../jswt-wast"}
-wasmer = "2.0.0"
+wasmer = "3.1.1"
 
 [dev-dependencies]
 assert_cmd = "2.0.2"

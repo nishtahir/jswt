@@ -98,7 +98,7 @@ fn main() {
     fs::write(output.with_extension("wast"), &wast).unwrap();
 
     // Embed wasmer runtime and execute generated wasm
-    let store = Store::default();
+    let mut store = Store::default();
     let module = match WasmerModule::new(&store, wast) {
         Ok(module) => module,
         Err(e) => {
@@ -106,20 +106,20 @@ fn main() {
         }
     };
 
-    let import_object = imports! {
+    let imports = imports! {
         "env" => {
-            "println" => Function::new_native(&store, env::println),
-            "exit" => Function::new_native(&store, env::exit),
-            "assertEqual" => Function::new_native(&store, env::assert_equal)
+            "println" => Function::new_typed(&mut store, env::println),
+            "exit" => Function::new_typed(&mut store, env::exit),
+            "assertEqual" => Function::new_typed(&mut store, env::assert_equal)
         },
     };
-    let instance = Instance::new(&module, &import_object).unwrap();
+    let instance = Instance::new(&mut store, &module, &imports).unwrap();
 
     // Assume main is a function that accepts no args and returns an i32
     // The returned i32 is the exit code
     // function main(): i32 { return 0; } // OK
     let main = instance.exports.get_function("main").unwrap();
-    let result = match main.call(&[]) {
+    let result = match main.call(&mut store, &mut []) {
         Ok(result) => result,
         Err(e) => {
             panic!("{}", e);
@@ -129,15 +129,21 @@ fn main() {
     if matches.is_present("log-mem") {
         // Log memory contents to a file
         let memory = instance.exports.get_memory("memory").unwrap();
-        let view: MemoryView<u8> = memory.view();
-        let mem = view
+
+        let view: MemoryView = memory.view(&store);
+        let mut slice = vec![];
+
+        for i in 0..view.data_size() {
+            slice.push(view.read_u8(i).unwrap());
+        }
+
+        let mem = slice
             // log the memory with 16 bytes per row
             // This will give us 4096 rows per page
             .chunks(16)
             .map(|chunk| {
                 chunk
                     .iter()
-                    .map(Cell::get)
                     .map(|val| format!("{:02x?}", val))
                     .collect::<Vec<String>>()
                     .join(" ")
