@@ -1,13 +1,9 @@
 mod env;
 
-#[macro_use]
-extern crate clap;
-
-use clap::Arg;
+use clap::Parser;
 use jswt_ast::Ast;
 use jswt_ast_lowering::AstLowering;
 use jswt_ast_serializer::AstSerializer;
-use std::cell::Cell;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
@@ -16,90 +12,92 @@ use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, St
 
 use jswt_codegen::CodeGenerator;
 use jswt_errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
-use jswt_parser::Parser;
+use jswt_parser::Parser as JswtParser;
 use jswt_semantics::SemanticAnalyzer;
 use jswt_tokenizer::Tokenizer;
 
+#[derive(Parser, Debug)]
+#[command(author, version, about)]
+struct Args {
+    #[arg(short, long, help = "Write output to file")]
+    output: Option<PathBuf>,
+
+    #[arg(help = "Write output to file")]
+    file: PathBuf,
+
+    #[arg(
+        short,
+        long,
+        help = "Write the generated WAST",
+        default_value = "false"
+    )]
+    wast: bool,
+
+    #[arg(
+        short,
+        long,
+        help = "Log the memory layout after execution",
+        default_value = "false"
+    )]
+    log_mem: bool,
+
+    #[arg(short, long, help = "Minify WAST output", default_value = "false")]
+    minified: bool,
+
+    #[arg(
+        short,
+        long,
+        help = "Do not include the runtime and stdlib",
+        default_value = "false"
+    )]
+    no_std: bool,
+
+    #[arg(short, long, help = "Path to runtime sources")]
+    runtime_path: Option<PathBuf>,
+}
+
 fn main() {
-    let matches = app_from_crate!()
-        .arg(
-            Arg::with_name("output")
-                .short("o")
-                .help("Write output to file")
-                .required(false)
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("file")
-                .help("Input file to begin compiling")
-                .required(true)
-                .index(1),
-        )
-        .arg(
-            Arg::with_name("log-mem")
-                .long("log-mem")
-                .required(false)
-                .takes_value(false)
-                .help("Log the memory layout after execution"),
-        )
-        .arg(
-            Arg::with_name("minified")
-                .long("minified")
-                .required(false)
-                .takes_value(false)
-                .help("Minify WAST output"),
-        )
-        .arg(
-            Arg::with_name("no-std")
-                .long("no-std")
-                .required(false)
-                .takes_value(false)
-                .help("Do not include the runtime and stdlib"),
-        )
-        .arg(
-            Arg::with_name("runtime-path")
-                .long("runtime-path")
-                .required(false)
-                .takes_value(true)
-                .help("Path to runtime sources"),
-        )
-        .get_matches();
+    let Args {
+        output,
+        file,
+        wast,
+        log_mem,
+        minified,
+        no_std,
+        runtime_path,
+    } = Args::parse();
 
-    let input = match matches.value_of("file") {
-        Some(it) => PathBuf::from(it)
-            .canonicalize()
-            .expect("Failed to determine canonical input"),
-        _ => return,
-    };
-
-    let output = match matches.value_of("output") {
+    let output = match output {
         Some(it) => PathBuf::from(it),
-        None => input.clone(),
+        None => file.clone(),
     };
 
-    let runtime = if matches.is_present("no-std") {
+    let runtime = if no_std {
         // Don't include the runtime even if the path is provided
         None
     } else {
         // If a runtime path isn't provided use the default path
-        matches
-            .value_of("runtime-path")
-            .or(Some("./runtime/rt.jswt"))
+        let default = PathBuf::from("./runtime/rt.jswt");
+        runtime_path
+            .or(Some(default))
             .map(fs::canonicalize)
             .map(Result::unwrap)
     };
 
-    let ast = compile_module(&input, &output, runtime.as_ref());
+    let ast = compile_module(&file, &output, runtime.as_ref());
     let mut code_gen = CodeGenerator::default();
     let module = code_gen.generate_module(&ast);
-    // Write generated wasm AST for debugging
-    let wast = module.as_wat(matches.is_present("minified"));
 
-    fs::write(output.with_extension("wast"), &wast).unwrap();
+    // Write generated wasm AST for debugging
+    let stringified_wast = module.as_wat(minified);
+
+    if wast {
+        fs::write(output.with_extension("wast"), &stringified_wast).unwrap();
+    }
 
     // Embed wasmer runtime and execute generated wasm
     let mut store = Store::default();
-    let module = match WasmerModule::new(&store, wast) {
+    let module = match WasmerModule::new(&store, stringified_wast) {
         Ok(module) => module,
         Err(e) => {
             panic!("{}", e);
@@ -126,7 +124,7 @@ fn main() {
         }
     };
 
-    if matches.is_present("log-mem") {
+    if log_mem {
         // Log memory contents to a file
         let memory = instance.exports.get_memory("memory").unwrap();
 
@@ -184,7 +182,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         tokenizer.enqueue_source_file(runtime);
     }
 
-    let mut parser = Parser::new(&mut tokenizer);
+    let mut parser = JswtParser::new(&mut tokenizer);
     let mut ast = parser.parse();
 
     // Write AST for debugging
