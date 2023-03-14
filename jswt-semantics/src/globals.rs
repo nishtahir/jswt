@@ -22,7 +22,7 @@ impl<'a> GlobalResolver<'a> {
         }
     }
 
-    pub(crate) fn resolve(&mut self, ast: &Ast) {
+    pub fn resolve(&mut self, ast: &Ast) {
         self.visit_program(&ast.program);
         debug_assert!(self.symbol_table.depth() == 1);
     }

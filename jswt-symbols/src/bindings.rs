@@ -18,7 +18,7 @@ impl BindingsTable {
         self.bindings.insert(name, binding);
     }
 
-    pub fn lookup(&mut self, name: &str) -> Option<&ClassBinding> {
+    pub fn lookup(&self, name: &str) -> Option<&ClassBinding> {
         self.bindings.get(name.into())
     }
 }
@@ -45,10 +45,10 @@ impl ClassBinding {
         None
     }
 
-    pub fn method(&self, name: &str) -> Option<&Field> {
-        for field in &self.fields {
-            if field.name == name {
-                return Some(field);
+    pub fn method(&self, name: &str) -> Option<&Method> {
+        for method in &self.methods {
+            if method.name == name {
+                return Some(method);
             }
         }
         None

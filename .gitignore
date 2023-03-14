@@ -4,7 +4,9 @@
 *.info
 
 **/*.ast
+**/*.hir.jswt
 **/*.lowered.jswt
+**/*.mir.jswt
 **/*.tokens
 **/*.wast
 **/*.wasm

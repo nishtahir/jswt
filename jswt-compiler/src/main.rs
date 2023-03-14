@@ -2,8 +2,12 @@ mod env;
 
 use clap::Parser;
 use jswt_ast::Ast;
-use jswt_ast_lowering::AstLowering;
 use jswt_ast_serializer::AstSerializer;
+use jswt_hir_lowering::HirLoweringContext;
+use jswt_mir_lowering::MirLoweringContext;
+use jswt_semantics::GlobalResolver;
+use jswt_symbols::BindingsTable;
+use jswt_symbols::SymbolTable;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
@@ -201,9 +205,14 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         print_parser_error(&error);
     }
 
-    // Semantic analytis pass
-    let mut analyzer = SemanticAnalyzer::default();
-    let semantic_errors = analyzer.analyze(&mut ast);
+    // Global Semantic analytis pass
+    let mut symbol_table = SymbolTable::default();
+    let mut bindings_table = BindingsTable::default();
+    let mut global = GlobalResolver::new(&mut bindings_table, &mut symbol_table);
+    global.resolve(&ast);
+
+    let mut semantic_errors = vec![];
+    semantic_errors.append(&mut global.errors);
 
     for error in semantic_errors {
         has_errors = true;
@@ -214,14 +223,36 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         exit(1);
     }
 
-    let mut lowering = AstLowering::new(&mut analyzer.bindings_table, &mut analyzer.symbol_table);
-    lowering.desugar(&mut ast);
+    // Hir lowering pass
+    let mut lowering = HirLoweringContext::new(&mut bindings_table, &mut symbol_table);
+    let ast = lowering.lower(&mut ast);
 
-    fs::write(output.with_extension("lowered.ast"), format!("{:#?}", ast)).unwrap();
+    fs::write(output.with_extension("hir.ast"), format!("{:#?}", ast)).unwrap();
 
     let mut serializer = AstSerializer::default();
     let content = serializer.serialze(&ast);
-    fs::write(output.with_extension("lowered.jswt"), content).unwrap();
+    fs::write(output.with_extension("hir.jswt"), content).unwrap();
+
+    // Local semantic analysis pass
+    // TODO run local semantic analysis pass
+    // let mut global = Resolver::new(&mut bindings_table, &mut symbol_table);
+    // global.resolve(&ast);
+
+    // let mut semantic_errors = vec![];
+    // semantic_errors.append(&mut global.errors);
+
+    // for error in semantic_errors {
+    //     has_errors = true;
+    //     print_semantic_error(&error);
+    // }
+
+    // if has_errors {
+    //     exit(1);
+    // }
+
+    // Mir lowering pass
+    let mut mir_lowering = MirLoweringContext::new(&mut bindings_table, &mut symbol_table);
+    let ast = mir_lowering.lower(&ast);
 
     if has_errors {
         exit(1);

@@ -1,0 +1,302 @@
+---
+source: jswt-hir-lowering/src/class.rs
+expression: lowered
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_class_declaration_lowers_class_this_reference",
+                    module: "module/test_class_declaration_lowers_class_this_reference",
+                    start: 9,
+                    end: 178,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_class_declaration_lowers_class_this_reference",
+                        module: "module/test_class_declaration_lowers_class_this_reference",
+                        start: 9,
+                        end: 178,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_class_declaration_lowers_class_this_reference",
+                                    module: "module/test_class_declaration_lowers_class_this_reference",
+                                    start: 35,
+                                    end: 87,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_class_this_reference",
+                                        module: "module/test_class_declaration_lowers_class_this_reference",
+                                        start: 35,
+                                        end: 38,
+                                    },
+                                    value: "Array#len",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_class_this_reference",
+                                        module: "module/test_class_declaration_lowers_class_this_reference",
+                                        start: 38,
+                                        end: 40,
+                                    },
+                                    parameters: [
+                                        FormalParameterArg {
+                                            span: Span {
+                                                file: "test_class_declaration_lowers_class_this_reference",
+                                                module: "module/test_class_declaration_lowers_class_this_reference",
+                                                start: 35,
+                                                end: 87,
+                                            },
+                                            ident: Identifier {
+                                                span: Span {
+                                                    file: "test_class_declaration_lowers_class_this_reference",
+                                                    module: "module/test_class_declaration_lowers_class_this_reference",
+                                                    start: 35,
+                                                    end: 87,
+                                                },
+                                                value: "this",
+                                            },
+                                            type_annotation: TypeAnnotation {
+                                                span: Span {
+                                                    file: "test_class_declaration_lowers_class_this_reference",
+                                                    module: "module/test_class_declaration_lowers_class_this_reference",
+                                                    start: 35,
+                                                    end: 87,
+                                                },
+                                                ty: Binding(
+                                                    "ptr",
+                                                ),
+                                            },
+                                        },
+                                    ],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test_class_declaration_lowers_class_this_reference",
+                                            module: "module/test_class_declaration_lowers_class_this_reference",
+                                            start: 42,
+                                            end: 45,
+                                        },
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ),
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_class_this_reference",
+                                        module: "module/test_class_declaration_lowers_class_this_reference",
+                                        start: 35,
+                                        end: 87,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "test_class_declaration_lowers_class_this_reference",
+                                                        module: "module/test_class_declaration_lowers_class_this_reference",
+                                                        start: 71,
+                                                        end: 72,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_class_declaration_lowers_class_this_reference",
+                                                                    module: "module/test_class_declaration_lowers_class_this_reference",
+                                                                    start: 71,
+                                                                    end: 72,
+                                                                },
+                                                                value: 0,
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_class_declaration_lowers_class_this_reference",
+                                    module: "module/test_class_declaration_lowers_class_this_reference",
+                                    start: 101,
+                                    end: 163,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_class_this_reference",
+                                        module: "module/test_class_declaration_lowers_class_this_reference",
+                                        start: 101,
+                                        end: 105,
+                                    },
+                                    value: "Array#len2",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_class_this_reference",
+                                        module: "module/test_class_declaration_lowers_class_this_reference",
+                                        start: 105,
+                                        end: 107,
+                                    },
+                                    parameters: [
+                                        FormalParameterArg {
+                                            span: Span {
+                                                file: "test_class_declaration_lowers_class_this_reference",
+                                                module: "module/test_class_declaration_lowers_class_this_reference",
+                                                start: 101,
+                                                end: 163,
+                                            },
+                                            ident: Identifier {
+                                                span: Span {
+                                                    file: "test_class_declaration_lowers_class_this_reference",
+                                                    module: "module/test_class_declaration_lowers_class_this_reference",
+                                                    start: 101,
+                                                    end: 163,
+                                                },
+                                                value: "this",
+                                            },
+                                            type_annotation: TypeAnnotation {
+                                                span: Span {
+                                                    file: "test_class_declaration_lowers_class_this_reference",
+                                                    module: "module/test_class_declaration_lowers_class_this_reference",
+                                                    start: 101,
+                                                    end: 163,
+                                                },
+                                                ty: Binding(
+                                                    "ptr",
+                                                ),
+                                            },
+                                        },
+                                    ],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test_class_declaration_lowers_class_this_reference",
+                                            module: "module/test_class_declaration_lowers_class_this_reference",
+                                            start: 109,
+                                            end: 112,
+                                        },
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ),
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_class_this_reference",
+                                        module: "module/test_class_declaration_lowers_class_this_reference",
+                                        start: 101,
+                                        end: 163,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "test_class_declaration_lowers_class_this_reference",
+                                                        module: "module/test_class_declaration_lowers_class_this_reference",
+                                                        start: 138,
+                                                        end: 148,
+                                                    },
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
+                                                            span: Span {
+                                                                file: "synthetic",
+                                                                module: "synthetic",
+                                                                start: 0,
+                                                                end: 0,
+                                                            },
+                                                            ident: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "synthetic",
+                                                                        module: "synthetic",
+                                                                        start: 0,
+                                                                        end: 0,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "synthetic",
+                                                                            module: "synthetic",
+                                                                            start: 0,
+                                                                            end: 0,
+                                                                        },
+                                                                        value: "Array#len",
+                                                                    },
+                                                                    ty: Binding(
+                                                                        "i32",
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
+                                                                    file: "synthetic",
+                                                                    module: "synthetic",
+                                                                    start: 0,
+                                                                    end: 0,
+                                                                },
+                                                                arguments: [
+                                                                    Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "synthetic",
+                                                                                module: "synthetic",
+                                                                                start: 0,
+                                                                                end: 0,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "synthetic",
+                                                                                    module: "synthetic",
+                                                                                    start: 0,
+                                                                                    end: 0,
+                                                                                },
+                                                                                value: "this",
+                                                                            },
+                                                                            ty: Binding(
+                                                                                "ptr",
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                ],
+                                                            },
+                                                            ty: Binding(
+                                                                "i32",
+                                                            ),
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

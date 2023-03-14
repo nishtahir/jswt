@@ -652,13 +652,15 @@ dependencies = [
  "clap",
  "jswt-assert",
  "jswt-ast",
- "jswt-ast-lowering",
  "jswt-ast-serializer",
  "jswt-codegen",
  "jswt-common",
  "jswt-errors",
+ "jswt-hir-lowering",
+ "jswt-mir-lowering",
  "jswt-parser",
  "jswt-semantics",
+ "jswt-symbols",
  "jswt-tokenizer",
  "jswt-wast",
  "regex",
@@ -679,21 +681,6 @@ version = "0.1.0"
 dependencies = [
  "jswt-common",
  "jswt-derive",
- "jswt-types",
-]
-
-[[package]]
-name = "jswt-ast-lowering"
-version = "0.1.0"
-dependencies = [
- "jswt-assert",
- "jswt-ast",
- "jswt-common",
- "jswt-derive",
- "jswt-parser",
- "jswt-semantics",
- "jswt-symbols",
- "jswt-tokenizer",
  "jswt-types",
 ]
 
@@ -755,6 +742,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "jswt-hir-lowering"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
+ "jswt-derive",
+ "jswt-parser",
+ "jswt-semantics",
+ "jswt-symbols",
+ "jswt-synthetic",
+ "jswt-tokenizer",
+ "jswt-types",
+]
+
+[[package]]
+name = "jswt-mir-lowering"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
+ "jswt-derive",
+ "jswt-parser",
+ "jswt-semantics",
+ "jswt-symbols",
+ "jswt-synthetic",
+ "jswt-tokenizer",
+ "jswt-types",
+]
+
+[[package]]
 name = "jswt-parser"
 version = "0.1.0"
 dependencies = [
@@ -788,6 +807,21 @@ dependencies = [
  "jswt-common",
  "jswt-derive",
  "jswt-parser",
+ "jswt-tokenizer",
+ "jswt-types",
+]
+
+[[package]]
+name = "jswt-synthetic"
+version = "0.1.0"
+dependencies = [
+ "jswt-assert",
+ "jswt-ast",
+ "jswt-common",
+ "jswt-derive",
+ "jswt-parser",
+ "jswt-semantics",
+ "jswt-symbols",
  "jswt-tokenizer",
  "jswt-types",
 ]

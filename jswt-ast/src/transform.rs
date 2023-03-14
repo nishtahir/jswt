@@ -457,10 +457,10 @@ pub fn walk_argument_expression<V: TransformVisitor>(
     for arg in &argument_list.arguments {
         arguments.push(visitor.visit_single_expression(arg));
     }
-
+    let ident = visitor.visit_single_expression(&*node.ident);
     SingleExpression::Arguments(ArgumentsExpression {
         span: node.span(),
-        ident: node.ident.clone(),
+        ident: Box::new(ident),
         arguments: ArgumentsList {
             span: argument_list.span(),
             arguments,

@@ -2,16 +2,18 @@
 
 members = [
     "jswt-ast",
-    "jswt-ast-lowering",    
     "jswt-ast-serializer",
     "jswt-codegen",
     "jswt-common",
     "jswt-compiler",
     "jswt-derive",
     "jswt-errors",
+    "jswt-hir-lowering",
+    "jswt-mir-lowering",
     "jswt-parser",
     "jswt-semantics",
     "jswt-symbols",
+    "jswt-synthetic",
     "jswt-tokenizer",
     "jswt-types",
     "jswt-wast"

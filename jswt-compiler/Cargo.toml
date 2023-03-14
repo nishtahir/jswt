@@ -9,13 +9,15 @@ edition = "2018"
 [dependencies]
 clap = { version = "4.1.4", features = ["derive"] }
 jswt-ast = {path = "../jswt-ast"}
-jswt-ast-lowering = {path = "../jswt-ast-lowering"}
 jswt-ast-serializer = {path = "../jswt-ast-serializer"}
 jswt-codegen = {path = "../jswt-codegen"}
 jswt-common = {path = "../jswt-common"}
 jswt-errors = {path = "../jswt-errors"}
+jswt-hir-lowering = {path = "../jswt-hir-lowering"}
+jswt-mir-lowering = {path = "../jswt-mir-lowering"}
 jswt-parser = {path = "../jswt-parser"}
 jswt-semantics = {path = "../jswt-semantics"}
+jswt-symbols = {path = "../jswt-symbols"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
 jswt-wast = {path = "../jswt-wast"}
 wasmer = "3.1.1"

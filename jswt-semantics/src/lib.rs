@@ -6,8 +6,8 @@ mod types;
 use std::borrow::Cow;
 
 pub use error::*;
-use globals::*;
-use resolver::*;
+pub use globals::*;
+pub use resolver::*;
 
 use jswt_ast::Ast;
 use jswt_symbols::{BindingsTable, Symbol};
