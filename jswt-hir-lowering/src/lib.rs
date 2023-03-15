@@ -17,12 +17,15 @@ type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
 #[derive(Debug)]
 pub struct HirLoweringContext<'a> {
     bindings: &'a BindingsTable,
-    symbols: &'a SymbolTable,
+    _symbols: &'a SymbolTable,
 }
 
 impl<'a> HirLoweringContext<'a> {
     pub fn new(bindings: &'a BindingsTable, symbols: &'a SymbolTable) -> Self {
-        Self { bindings, symbols }
+        Self {
+            bindings,
+            _symbols: symbols,
+        }
     }
 
     pub fn lower(&mut self, ast: &Ast) -> Ast {
@@ -46,5 +49,4 @@ impl<'a> TransformVisitor for HirLoweringContext<'a> {
         let mut lowering = HirNewLoweringContext::new(&self.bindings);
         lowering.visit_new(node)
     }
-
 }

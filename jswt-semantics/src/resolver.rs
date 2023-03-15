@@ -1,6 +1,5 @@
 use crate::{SemanticError, SymbolTable};
-use jswt_ast::visit::*;
-use jswt_ast::*;
+use jswt_ast::{visit::*, *};
 use jswt_common::Spannable;
 use jswt_symbols::{BindingsTable, Symbol};
 

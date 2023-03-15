@@ -45,7 +45,7 @@ mod test {
 
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_semantics::GlobalResolver;
+    use jswt_semantics::GlobalSemanticResolver;
     use jswt_symbols::SymbolTable;
     use jswt_tokenizer::Tokenizer;
 
@@ -73,11 +73,11 @@ mod test {
 
         let mut symbol_table = SymbolTable::default();
         let mut bindings_table = BindingsTable::default();
-        let mut global_resolver = GlobalResolver::new(&mut bindings_table, &mut symbol_table);
+        let mut global_resolver = GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
         global_resolver.resolve(&ast);
 
         // No errors in global resolver
-        assert!(global_resolver.errors.len() == 0);
+        assert!(global_resolver.errors().len() == 0);
 
         let mut lowering = HirLoweringContext::new(&bindings_table, &symbol_table);
         let lowered = lowering.lower(&ast);

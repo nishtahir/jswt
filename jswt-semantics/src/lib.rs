@@ -6,7 +6,7 @@ mod types;
 use std::borrow::Cow;
 
 pub use error::*;
-pub use globals::*;
+pub use globals::GlobalSemanticResolver;
 pub use resolver::*;
 
 use jswt_ast::Ast;
@@ -15,6 +15,7 @@ use types::TypeChecker;
 
 type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
 
+// TODO - deprecate and remove this
 #[derive(Debug, Default)]
 pub struct SemanticAnalyzer {
     pub symbol_table: SymbolTable,
@@ -24,11 +25,6 @@ pub struct SemanticAnalyzer {
 impl SemanticAnalyzer {
     pub fn analyze(&mut self, ast: &mut Ast) -> Vec<SemanticError> {
         let mut errors = vec![];
-
-        // This is the first semantic pass to resolve global variables
-        let mut global = GlobalResolver::new(&mut self.bindings_table, &mut self.symbol_table);
-        global.resolve(ast);
-        errors.append(&mut global.errors);
 
         // // This is the second semantic pass to inspect function content
         let mut resolver = Resolver::new(&mut self.symbol_table, &mut self.bindings_table);

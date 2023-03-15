@@ -5,7 +5,7 @@ use jswt_ast::Ast;
 use jswt_ast_serializer::AstSerializer;
 use jswt_hir_lowering::HirLoweringContext;
 use jswt_mir_lowering::MirLoweringContext;
-use jswt_semantics::GlobalResolver;
+use jswt_semantics::GlobalSemanticResolver;
 use jswt_symbols::BindingsTable;
 use jswt_symbols::SymbolTable;
 use std::fs;
@@ -17,7 +17,6 @@ use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, St
 use jswt_codegen::CodeGenerator;
 use jswt_errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
 use jswt_parser::Parser as JswtParser;
-use jswt_semantics::SemanticAnalyzer;
 use jswt_tokenizer::Tokenizer;
 
 #[derive(Parser, Debug)]
@@ -208,11 +207,11 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     // Global Semantic analytis pass
     let mut symbol_table = SymbolTable::default();
     let mut bindings_table = BindingsTable::default();
-    let mut global = GlobalResolver::new(&mut bindings_table, &mut symbol_table);
+    let mut global = GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
     global.resolve(&ast);
 
     let mut semantic_errors = vec![];
-    semantic_errors.append(&mut global.errors);
+    semantic_errors.append(&mut global.errors());
 
     for error in semantic_errors {
         has_errors = true;

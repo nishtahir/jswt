@@ -1,0 +1,37 @@
+---
+source: jswt-semantics/src/globals/variables.rs
+expression: resolver
+
+---
+GlobalSemanticResolver {
+    bindings: BindingsTable {
+        bindings: {},
+    },
+    symbols: SymbolTable {
+        table: [
+            {
+                "PI": Type(
+                    TypeSignature {
+                        ty: Unknown,
+                    },
+                ),
+                "test": Function(
+                    FunctionSignature {
+                        params: [
+                            Binding(
+                                "i32",
+                            ),
+                            Binding(
+                                "i32",
+                            ),
+                        ],
+                        returns: Binding(
+                            "void",
+                        ),
+                    },
+                ),
+            },
+        ],
+    },
+    errors: [],
+}

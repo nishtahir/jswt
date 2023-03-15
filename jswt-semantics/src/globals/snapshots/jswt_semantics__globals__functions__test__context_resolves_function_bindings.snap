@@ -1,16 +1,15 @@
 ---
-source: jswt-semantics/src/globals.rs
+source: jswt-semantics/src/globals/functions.rs
 expression: resolver
 
 ---
-GlobalResolver {
-    bindings_table: BindingsTable {
+GlobalSemanticResolver {
+    bindings: BindingsTable {
         bindings: {},
     },
-    symbol_table: SymbolTable {
+    symbols: SymbolTable {
         table: [
             {
-                "PI": Unknown,
                 "test": Function(
                     FunctionSignature {
                         params: [
@@ -37,6 +36,5 @@ GlobalResolver {
             },
         ],
     },
-    bindings_context: [],
     errors: [],
 }

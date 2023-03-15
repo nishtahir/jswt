@@ -1,8 +1,6 @@
-use std::{borrow::Cow, collections::BTreeMap};
-
-use jswt_common::Type;
-
 use crate::FunctionSignature;
+use jswt_common::Type;
+use std::{borrow::Cow, collections::BTreeMap};
 
 // Class containing all bindings that
 // we've discovered in the global scope
@@ -23,7 +21,7 @@ impl BindingsTable {
     }
 }
 
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub struct ClassBinding {
     pub name: Cow<'static, str>,
     pub fields: Vec<Field>,
@@ -36,26 +34,18 @@ impl ClassBinding {
         self.fields.iter().fold(0, |acc, f| acc + f.size)
     }
 
+    /// Find a field with the given name on the class binding
     pub fn field(&self, name: &str) -> Option<&Field> {
-        for field in &self.fields {
-            if field.name == name {
-                return Some(field);
-            }
-        }
-        None
+        self.fields.iter().find(|f| f.name == name)
     }
 
+    /// Find a method with the given name on the class binding
     pub fn method(&self, name: &str) -> Option<&Method> {
-        for method in &self.methods {
-            if method.name == name {
-                return Some(method);
-            }
-        }
-        None
+        self.methods.iter().find(|m| m.name == name)
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Field {
     pub name: Cow<'static, str>,
     pub index: usize,
@@ -63,7 +53,7 @@ pub struct Field {
     pub ty: Type,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Method {
     pub name: Cow<'static, str>,
     pub signature: FunctionSignature,

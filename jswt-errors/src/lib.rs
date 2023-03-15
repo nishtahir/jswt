@@ -101,6 +101,18 @@ pub fn print_semantic_error(error: &SemanticError) {
             message: format!("Property '{}' was not defined in this scope", name).into(),
             hint: None,
         },
+        SemanticError::FieldAlreadyDefined { name, span } => DiagnosticMessage {
+            level: Level::Error,
+            span: span.clone(),
+            message: format!("Field '{}' was already defined in this scope", name).into(),
+            hint: None,
+        },
+        SemanticError::MethodAlreadyDefined { name, span } => DiagnosticMessage {
+            level: Level::Error,
+            span: span.clone(),
+            message: format!("Method '{}' was already defined in this scope", name).into(),
+            hint: None,
+        },
     };
 
     let emitter = ErrorEmitter::new();

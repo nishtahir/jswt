@@ -1,15 +1,20 @@
 ---
-source: jswt-semantics/src/globals.rs
+source: jswt-semantics/src/globals/variables.rs
 expression: resolver
 
 ---
-GlobalResolver {
-    bindings_table: BindingsTable {
+GlobalSemanticResolver {
+    bindings: BindingsTable {
         bindings: {},
     },
-    symbol_table: SymbolTable {
+    symbols: SymbolTable {
         table: [
             {
+                "PI": Type(
+                    TypeSignature {
+                        ty: Unknown,
+                    },
+                ),
                 "test": Function(
                     FunctionSignature {
                         params: [
@@ -25,17 +30,18 @@ GlobalResolver {
                         ),
                     },
                 ),
-                "test2": Function(
-                    FunctionSignature {
-                        params: [],
-                        returns: Binding(
-                            "Array",
-                        ),
-                    },
-                ),
             },
         ],
     },
-    bindings_context: [],
-    errors: [],
+    errors: [
+        VariableAlreadyDefined {
+            name: "PI",
+            span: Span {
+                file: "test_context_resolves_duplicate_variable_error",
+                module: "module/test_context_resolves_duplicate_variable_error",
+                start: 40,
+                end: 42,
+            },
+        },
+    ],
 }

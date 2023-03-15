@@ -1,5 +1,9 @@
 use std::borrow::Cow;
 
+trait SizedType {
+    fn size(&self) -> usize;
+}
+
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum Type {
     Binding(Cow<'static, str>),

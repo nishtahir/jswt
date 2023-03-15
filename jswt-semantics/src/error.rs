@@ -40,4 +40,12 @@ pub enum SemanticError {
         name: Cow<'static, str>,
         span: Span,
     },
+    FieldAlreadyDefined {
+        name: Cow<'static, str>,
+        span: Span,
+    },
+    MethodAlreadyDefined {
+        name: Cow<'static, str>,
+        span: Span,
+    },
 }

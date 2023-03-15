@@ -1,25 +1,17 @@
 ---
-source: jswt-semantics/src/globals.rs
+source: jswt-semantics/src/globals/class.rs
 expression: resolver
 
 ---
-GlobalResolver {
-    bindings_table: BindingsTable {
+GlobalSemanticResolver {
+    bindings: BindingsTable {
         bindings: {
-            "Array": ClassBinding {
-                name: "Array",
+            "Foo": ClassBinding {
+                name: "Foo",
                 fields: [
                     Field {
-                        name: "a",
+                        name: "bar",
                         index: 0,
-                        size: 4,
-                        ty: Binding(
-                            "i32",
-                        ),
-                    },
-                    Field {
-                        name: "b",
-                        index: 1,
                         size: 4,
                         ty: Binding(
                             "i32",
@@ -28,16 +20,7 @@ GlobalResolver {
                 ],
                 methods: [
                     Method {
-                        name: "size",
-                        signature: FunctionSignature {
-                            params: [],
-                            returns: Binding(
-                                "i32",
-                            ),
-                        },
-                    },
-                    Method {
-                        name: "indexOf",
+                        name: "baz",
                         signature: FunctionSignature {
                             params: [
                                 Binding(
@@ -49,15 +32,23 @@ GlobalResolver {
                             ),
                         },
                     },
+                    Method {
+                        name: "empty",
+                        signature: FunctionSignature {
+                            params: [],
+                            returns: Binding(
+                                "void",
+                            ),
+                        },
+                    },
                 ],
             },
         },
     },
-    symbol_table: SymbolTable {
+    symbols: SymbolTable {
         table: [
             {},
         ],
     },
-    bindings_context: [],
     errors: [],
 }

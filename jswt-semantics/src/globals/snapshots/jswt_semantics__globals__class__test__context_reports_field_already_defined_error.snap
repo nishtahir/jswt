@@ -1,0 +1,49 @@
+---
+source: jswt-semantics/src/globals/class.rs
+expression: resolver
+
+---
+GlobalSemanticResolver {
+    bindings: BindingsTable {
+        bindings: {
+            "Foo": ClassBinding {
+                name: "Foo",
+                fields: [
+                    Field {
+                        name: "bar",
+                        index: 0,
+                        size: 4,
+                        ty: Binding(
+                            "i32",
+                        ),
+                    },
+                    Field {
+                        name: "bar",
+                        index: 1,
+                        size: 4,
+                        ty: Binding(
+                            "i32",
+                        ),
+                    },
+                ],
+                methods: [],
+            },
+        },
+    },
+    symbols: SymbolTable {
+        table: [
+            {},
+        ],
+    },
+    errors: [
+        FieldAlreadyDefined {
+            name: "bar",
+            span: Span {
+                file: "test_context_reports_field_already_defined_error",
+                module: "module/test_context_reports_field_already_defined_error",
+                start: 67,
+                end: 70,
+            },
+        },
+    ],
+}
