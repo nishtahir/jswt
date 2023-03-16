@@ -43,12 +43,12 @@ impl<'a> GlobalSemanticResolver<'a> {
 impl<'a> Visitor for GlobalSemanticResolver<'a> {
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
         let mut ctx = FunctionDeclarationGlobalContext::new(self);
-        ctx.visit_function_declaration(node)
+        ctx.visit_function_declaration(node);
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
         let mut ctx = VariableDeclarationGlobalContext::new(self);
-        ctx.visit_variable_statement(node)
+        ctx.visit_variable_statement(node);
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {

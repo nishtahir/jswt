@@ -1,24 +1,24 @@
+mod variables;
+
 use crate::{SemanticError, SymbolTable};
 use jswt_ast::{visit::*, *};
-use jswt_common::Spannable;
-use jswt_symbols::{BindingsTable, Symbol};
+use jswt_symbols::BindingsTable;
 
-pub struct Resolver<'a> {
+use self::variables::VariableDeclarationLocalContext;
+
+#[derive(Debug)]
+pub struct LocalSemanticResolver<'a> {
     pub symbols: &'a mut SymbolTable,
     pub bindings: &'a mut BindingsTable,
     pub errors: Vec<SemanticError>,
-    binding_context: Option<String>,
-    in_this_expr: bool,
 }
 
-impl<'a> Resolver<'a> {
-    pub fn new(symbols: &'a mut SymbolTable, bindings: &'a mut BindingsTable) -> Self {
+impl<'a> LocalSemanticResolver<'a> {
+    pub fn new(bindings: &'a mut BindingsTable, symbols: &'a mut SymbolTable) -> Self {
         Self {
             symbols,
             bindings,
             errors: vec![],
-            binding_context: None,
-            in_this_expr: false,
         }
     }
 
@@ -29,7 +29,7 @@ impl<'a> Resolver<'a> {
     }
 }
 
-impl<'a> Visitor for Resolver<'a> {
+impl<'a> Visitor for LocalSemanticResolver<'a> {
     fn visit_block_statement(&mut self, node: &BlockStatement) {
         self.symbols.push_scope();
         walk_block_statement(self, node);
@@ -37,162 +37,128 @@ impl<'a> Visitor for Resolver<'a> {
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
-        if self.symbols.depth() > 1 {
-            // We are in a local scope
-            let name = match &node.target {
-                AssignableElement::Identifier(ident) => &ident.value,
-            };
-
-            if self.symbols.lookup_current(name).is_some() {
-                let error = SemanticError::VariableAlreadyDefined {
-                    name: name.clone(),
-                    span: node.target.span(),
-                };
-                self.errors.push(error);
-            }
-
-            let declared_type = node
-                .type_annotation
-                .as_ref()
-                .map(|t| Symbol::ty(t.ty.clone()))
-                .unwrap_or(Symbol::Unknown);
-
-            self.symbols.define(name.clone(), declared_type);
-        }
-        walk_variable_statement(self, node);
+        let mut ctx = VariableDeclarationLocalContext::new(self);
+        ctx.visit_variable_statement(node);
     }
 
-    fn visit_if_statement(&mut self, node: &IfStatement) {
-        match node.condition {
-            SingleExpression::Equality(_)
-            | SingleExpression::Relational(_)
-            | SingleExpression::Literal(Literal::Boolean(_)) => {
-                // Valid boolean expression
-            }
-            SingleExpression::Arguments(_) => {
-                // TODO type check the function
-            }
-            SingleExpression::Identifier(_) => {} // TODO Type check the symbol
-            _ => {
-                let error = SemanticError::TypeError {
-                    span: node.condition.span(),
-                    offending_token: node.condition.span(),
-                    expected: "Boolean",
-                };
-                self.errors.push(error);
-            }
-        }
-        walk_if_statement(self, node);
-    }
+    // fn visit_if_statement(&mut self, node: &IfStatement) {
+    //     match node.condition {
+    //         SingleExpression::Equality(_)
+    //         | SingleExpression::Relational(_)
+    //         | SingleExpression::Literal(Literal::Boolean(_)) => {
+    //             // Valid boolean expression
+    //         }
+    //         SingleExpression::Arguments(_) => {
+    //             // TODO type check the function
+    //         }
+    //         SingleExpression::Identifier(_) => {} // TODO Type check the symbol
+    //         _ => {
+    //             let error = SemanticError::TypeError {
+    //                 span: node.condition.span(),
+    //                 offending_token: node.condition.span(),
+    //                 expected: "Boolean",
+    //             };
+    //             self.errors.push(error);
+    //         }
+    //     }
+    //     walk_if_statement(self, node);
+    // }
 
-    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
-        let ident = &node.ident;
-        let name = &ident.value;
-        if self.in_this_expr {
-            // check bindings table for the field
-            let binding = self
-                .bindings
-                .lookup(&self.binding_context.as_ref().unwrap())
-                .unwrap();
+    // fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
+    //     let ident = &node.ident;
+    //     let name = &ident.value;
+    //     if self.in_this_expr {
+    //         // check bindings table for the field
+    //         let binding = self
+    //             .bindings
+    //             .lookup(&self.binding_context.as_ref().unwrap())
+    //             .unwrap();
 
-            if let None = binding.field(name) {
-                let error = SemanticError::PropertyNotDefined {
-                    name: name.clone(),
-                    span: ident.span.to_owned(),
-                };
-                self.errors.push(error);
-            }
-        } else {
-            let symbol = self.symbols.lookup(name);
-            if let None = symbol {
-                let error = SemanticError::VariableNotDefined {
-                    name: name.clone(),
-                    span: ident.span.to_owned(),
-                };
-                self.errors.push(error);
-            };
-        }
-        walk_identifier_expression(self, node);
-    }
+    //         if let None = binding.field(name) {
+    //             let error = SemanticError::PropertyNotDefined {
+    //                 name: name.clone(),
+    //                 span: ident.span.to_owned(),
+    //             };
+    //             self.errors.push(error);
+    //         }
+    //     } else {
+    //         let symbol = self.symbols.lookup(name);
+    //         if let None = symbol {
+    //             let error = SemanticError::VariableNotDefined {
+    //                 name: name.clone(),
+    //                 span: ident.span.to_owned(),
+    //             };
+    //             self.errors.push(error);
+    //         };
+    //     }
+    //     walk_identifier_expression(self, node);
+    // }
 
-    fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
-        // Push a new local scope for the function
-        // Scope definition should have been defined during the global pass
-        self.symbols.push_scope();
+    // fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+    //     // Push a new local scope for the function
+    //     // Scope definition should have been defined during the global pass
+    //     self.symbols.push_scope();
 
-        // Add function parameters as variables in scope
-        for param in node.params.parameters.iter() {
-            // Resolve Type from Type Annotation
-            let param_name = &param.ident.value;
-            self.symbols.define(
-                param_name.clone(),
-                Symbol::ty(param.type_annotation.ty.clone()),
-            );
-        }
+    //     // Add function parameters as variables in scope
+    //     for param in node.params.parameters.iter() {
+    //         // Resolve Type from Type Annotation
+    //         let param_name = &param.ident.value;
+    //         self.symbols.define(
+    //             param_name.clone(),
+    //             Symbol::ty(param.type_annotation.ty.clone()),
+    //         );
+    //     }
 
-        walk_function_declaration(self, node);
-        self.symbols.pop_scope();
-    }
+    //     walk_function_declaration(self, node);
+    //     self.symbols.pop_scope();
+    // }
 
-    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
-        let name = node.ident.value.clone();
-        self.binding_context = Some(name.to_string());
-        walk_class_declaration(self, node);
-        self.binding_context = None;
-    }
+    // fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
+    //     let name = node.ident.value.clone();
+    //     self.binding_context = Some(name.to_string());
+    //     walk_class_declaration(self, node);
+    //     self.binding_context = None;
+    // }
 
-    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
-        self.symbols.push_scope();
-        // Add function parameters as variables in scope
-        for param in node.params.parameters.iter() {
-            // Resolve Type from Type Annotation
-            let param_name = &param.ident.value;
-            self.symbols.define(
-                param_name.clone(),
-                Symbol::ty(param.type_annotation.ty.clone()),
-            );
-        }
+    // fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+    //     self.symbols.push_scope();
+    //     // Add function parameters as variables in scope
+    //     for param in node.params.parameters.iter() {
+    //         // Resolve Type from Type Annotation
+    //         let param_name = &param.ident.value;
+    //         self.symbols.define(
+    //             param_name.clone(),
+    //             Symbol::ty(param.type_annotation.ty.clone()),
+    //         );
+    //     }
 
-        walk_class_constructor_declaration(self, node);
-        self.symbols.pop_scope();
-    }
+    //     walk_class_constructor_declaration(self, node);
+    //     self.symbols.pop_scope();
+    // }
 
-    fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
-        self.symbols.push_scope();
-        // Add function parameters as variables in scope
-        for param in node.params.parameters.iter() {
-            // Resolve Type from Type Annotation
-            let param_name = &param.ident.value;
-            self.symbols.define(
-                param_name.clone(),
-                Symbol::ty(param.type_annotation.ty.clone()),
-            );
-        }
+    // fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
+    //     self.symbols.push_scope();
+    //     // Add function parameters as variables in scope
+    //     for param in node.params.parameters.iter() {
+    //         // Resolve Type from Type Annotation
+    //         let param_name = &param.ident.value;
+    //         self.symbols.define(
+    //             param_name.clone(),
+    //             Symbol::ty(param.type_annotation.ty.clone()),
+    //         );
+    //     }
 
-        walk_class_method_declaration(self, node);
-        self.symbols.pop_scope();
-    }
+    //     walk_class_method_declaration(self, node);
+    //     self.symbols.pop_scope();
+    // }
 
-    fn visit_member_dot(&mut self, node: &MemberDotExpression) {
-        if let SingleExpression::This(_) = &*node.target {
-            self.in_this_expr = true;
-        }
-        walk_member_dot(self, node);
-        self.in_this_expr = false;
-    }
-
-    fn visit_this_expression(&mut self, node: &ThisExpression) {
-        if self.binding_context.is_none() {
-            self.errors
-                .push(SemanticError::ThisOutsideClass { span: node.span() })
-        }
-        walk_this_expression(self, node);
-    }
-
-    fn visit_new(&mut self, node: &NewExpression) {
-        // println!("{:#?}", node);
-        // TODO check that the expression here is a constructor
-    }
+    // fn visit_member_dot(&mut self, node: &MemberDotExpression) {
+    //     if let SingleExpression::This(_) = &*node.target {
+    //         self.in_this_expr = true;
+    //     }
+    //     walk_member_dot(self, node);
+    //     self.in_this_expr = false;
+    // }
 }
 // impl<'a> StatementVisitor<()> for Resolver<'a> {
 

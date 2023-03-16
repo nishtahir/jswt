@@ -1,7 +1,6 @@
 ---
 source: jswt-semantics/src/globals/class.rs
 expression: resolver
-
 ---
 GlobalSemanticResolver {
     bindings: BindingsTable {
@@ -47,7 +46,9 @@ GlobalSemanticResolver {
     },
     symbols: SymbolTable {
         table: [
-            {},
+            {
+                "Foo": Class,
+            },
         ],
     },
     errors: [],

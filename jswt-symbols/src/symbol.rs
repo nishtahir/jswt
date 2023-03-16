@@ -16,6 +16,8 @@ impl<K: Eq + Hash + Ord, V> SymbolTable<K, V> {
         Self { table }
     }
 
+    // TODO - we could capture the block span here
+    // as a scope identifier
     pub fn push_scope(&mut self) {
         self.table.push(BTreeMap::new());
     }

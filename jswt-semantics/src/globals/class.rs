@@ -1,5 +1,5 @@
 use super::GlobalSemanticResolver;
-use crate::SemanticError;
+use crate::{SemanticError, SymbolTable};
 use jswt_ast::{
     visit::{self, Visitor},
     ClassDeclarationElement,
@@ -10,6 +10,7 @@ use jswt_symbols::{BindingsTable, ClassBinding, FunctionSignature, Method};
 pub struct ClassDeclarationGlobalContext<'a> {
     class_binding: ClassBinding,
     bindings: &'a mut BindingsTable,
+    symbols: &'a mut SymbolTable,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -24,6 +25,7 @@ impl<'a> ClassDeclarationGlobalContext<'a> {
                 methods: vec![],
             },
             bindings: resolver.bindings,
+            symbols: resolver.symbols,
             errors: &mut resolver.errors,
         }
     }
@@ -38,7 +40,10 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
 
         // Add the class binding to the bindings table
         self.bindings
-            .insert(class_name, self.class_binding.to_owned());
+            .insert(class_name.clone(), self.class_binding.to_owned());
+
+        // Add the class to the symbol table  
+        self.symbols.define(class_name, jswt_symbols::Symbol::Class)
     }
 
     fn visit_class_field_declaration(&mut self, node: &jswt_ast::ClassFieldElement) {

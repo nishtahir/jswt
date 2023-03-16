@@ -1,0 +1,36 @@
+---
+source: jswt-semantics/src/locals/variables.rs
+expression: local
+---
+LocalSemanticResolver {
+    symbols: SymbolTable {
+        table: [
+            {
+                "PI": Type(
+                    TypeSignature {
+                        ty: Unknown,
+                    },
+                ),
+                "test": Function(
+                    FunctionSignature {
+                        params: [
+                            Binding(
+                                "i32",
+                            ),
+                            Binding(
+                                "i32",
+                            ),
+                        ],
+                        returns: Binding(
+                            "void",
+                        ),
+                    },
+                ),
+            },
+        ],
+    },
+    bindings: BindingsTable {
+        bindings: {},
+    },
+    errors: [],
+}

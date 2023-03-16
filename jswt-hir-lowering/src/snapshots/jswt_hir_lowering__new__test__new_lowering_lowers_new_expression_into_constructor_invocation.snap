@@ -1,0 +1,362 @@
+---
+source: jswt-hir-lowering/src/new.rs
+expression: lowered
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                    start: 9,
+                    end: 163,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                        start: 9,
+                        end: 163,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                    start: 35,
+                                    end: 51,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        start: 35,
+                                        end: 51,
+                                    },
+                                    value: "Array#constructor",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        start: 46,
+                                        end: 48,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                            module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                            start: 35,
+                                            end: 51,
+                                        },
+                                        ty: Binding(
+                                            "ptr",
+                                        ),
+                                    },
+                                ),
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        start: 49,
+                                        end: 51,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "synthetic",
+                                                        module: "synthetic",
+                                                        start: 0,
+                                                        end: 0,
+                                                    },
+                                                    modifier: Const(
+                                                        Span {
+                                                            file: "synthetic",
+                                                            module: "synthetic",
+                                                            start: 0,
+                                                            end: 0,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "synthetic",
+                                                                module: "synthetic",
+                                                                start: 0,
+                                                                end: 0,
+                                                            },
+                                                            value: "this",
+                                                        },
+                                                    ),
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
+                                                            span: Span {
+                                                                file: "synthetic",
+                                                                module: "synthetic",
+                                                                start: 0,
+                                                                end: 0,
+                                                            },
+                                                            ident: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "synthetic",
+                                                                        module: "synthetic",
+                                                                        start: 0,
+                                                                        end: 0,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "synthetic",
+                                                                            module: "synthetic",
+                                                                            start: 0,
+                                                                            end: 0,
+                                                                        },
+                                                                        value: "malloc",
+                                                                    },
+                                                                    ty: Binding(
+                                                                        "ptr",
+                                                                    ),
+                                                                },
+                                                            ),
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
+                                                                    file: "synthetic",
+                                                                    module: "synthetic",
+                                                                    start: 0,
+                                                                    end: 0,
+                                                                },
+                                                                arguments: [
+                                                                    Literal(
+                                                                        Integer(
+                                                                            IntegerLiteral {
+                                                                                span: Span {
+                                                                                    file: "synthetic",
+                                                                                    module: "synthetic",
+                                                                                    start: 0,
+                                                                                    end: 0,
+                                                                                },
+                                                                                value: 0,
+                                                                                ty: Binding(
+                                                                                    "ptr",
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                            },
+                                                            ty: Binding(
+                                                                "ptr",
+                                                            ),
+                                                        },
+                                                    ),
+                                                    type_annotation: None,
+                                                },
+                                            ),
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "synthetic",
+                                                        module: "synthetic",
+                                                        start: 0,
+                                                        end: 0,
+                                                    },
+                                                    expression: Identifier(
+                                                        IdentifierExpression {
+                                                            span: Span {
+                                                                file: "synthetic",
+                                                                module: "synthetic",
+                                                                start: 0,
+                                                                end: 0,
+                                                            },
+                                                            ident: Identifier {
+                                                                span: Span {
+                                                                    file: "synthetic",
+                                                                    module: "synthetic",
+                                                                    start: 0,
+                                                                    end: 0,
+                                                                },
+                                                                value: "this",
+                                                            },
+                                                            ty: Binding(
+                                                                "ptr",
+                                                            ),
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                    start: 71,
+                                    end: 158,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        start: 80,
+                                        end: 84,
+                                    },
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        start: 84,
+                                        end: 86,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                            module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                            start: 88,
+                                            end: 91,
+                                        },
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ),
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                        start: 92,
+                                        end: 158,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                        start: 106,
+                                                        end: 126,
+                                                    },
+                                                    modifier: Let(
+                                                        Span {
+                                                            file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                            module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                            start: 106,
+                                                            end: 109,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                start: 110,
+                                                                end: 111,
+                                                            },
+                                                            value: "x",
+                                                        },
+                                                    ),
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
+                                                            span: Span {
+                                                                file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                start: 118,
+                                                                end: 125,
+                                                            },
+                                                            ident: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                        start: 118,
+                                                                        end: 123,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                            module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                            start: 118,
+                                                                            end: 123,
+                                                                        },
+                                                                        value: "Array#constructor",
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
+                                                                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                    start: 123,
+                                                                    end: 125,
+                                                                },
+                                                                arguments: [],
+                                                            },
+                                                            ty: Binding(
+                                                                "Array",
+                                                            ),
+                                                        },
+                                                    ),
+                                                    type_annotation: None,
+                                                },
+                                            ),
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                        module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                        start: 146,
+                                                        end: 147,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                    module: "module/test_class_declaration_lowers_new_expression_into_constructor_invocation",
+                                                                    start: 146,
+                                                                    end: 147,
+                                                                },
+                                                                value: 0,
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

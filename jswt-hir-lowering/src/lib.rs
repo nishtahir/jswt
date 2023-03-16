@@ -1,5 +1,6 @@
 mod class;
 mod new;
+// mod this;
 
 use std::borrow::Cow;
 
@@ -7,6 +8,7 @@ use class::HirClassLoweringContext;
 use jswt_ast::{transform::*, *};
 use jswt_symbols::{BindingsTable, Symbol};
 use new::HirNewLoweringContext;
+// use this::ThisExpressionGlobalContext;
 
 type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
 
@@ -49,4 +51,8 @@ impl<'a> TransformVisitor for HirLoweringContext<'a> {
         let mut lowering = HirNewLoweringContext::new(&self.bindings);
         lowering.visit_new(node)
     }
+
+    // fn visit_this_expression(&mut self, node: &ThisExpression) {
+    //     let mut ctx = ThisExpressionGlobalContext::new(self);
+    // }
 }

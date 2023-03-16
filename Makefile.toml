@@ -21,5 +21,5 @@ command = "cargo"
 args = [
     "insta",
     "test",
-    "--delete-unreferenced-snapshots"
+    "--unreferenced=delete"
 ]
