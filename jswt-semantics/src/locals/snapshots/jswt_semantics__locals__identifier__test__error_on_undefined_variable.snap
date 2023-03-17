@@ -1,0 +1,35 @@
+---
+source: jswt-semantics/src/locals/identifier.rs
+expression: local
+
+---
+LocalSemanticResolver {
+    symbols: SymbolTable {
+        table: [
+            {
+                "test": Function(
+                    FunctionSignature {
+                        params: [],
+                        returns: Binding(
+                            "void",
+                        ),
+                    },
+                ),
+            },
+        ],
+    },
+    bindings: BindingsTable {
+        bindings: {},
+    },
+    errors: [
+        VariableNotDefined {
+            name: "x",
+            span: Span {
+                file: "test_error_on_undefined_variable",
+                module: "module/test_error_on_undefined_variable",
+                start: 39,
+                end: 40,
+            },
+        },
+    ],
+}

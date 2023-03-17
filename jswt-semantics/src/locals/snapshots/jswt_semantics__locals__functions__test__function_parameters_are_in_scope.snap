@@ -1,0 +1,32 @@
+---
+source: jswt-semantics/src/locals/functions.rs
+expression: local
+
+---
+LocalSemanticResolver {
+    symbols: SymbolTable {
+        table: [
+            {
+                "test": Function(
+                    FunctionSignature {
+                        params: [
+                            Binding(
+                                "number",
+                            ),
+                            Binding(
+                                "number",
+                            ),
+                        ],
+                        returns: Binding(
+                            "void",
+                        ),
+                    },
+                ),
+            },
+        ],
+    },
+    bindings: BindingsTable {
+        bindings: {},
+    },
+    errors: [],
+}

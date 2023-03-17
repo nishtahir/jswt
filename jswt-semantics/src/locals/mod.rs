@@ -1,10 +1,16 @@
+mod class;
+mod functions;
+mod identifier;
 mod variables;
 
 use crate::{SemanticError, SymbolTable};
 use jswt_ast::{visit::*, *};
 use jswt_symbols::BindingsTable;
 
-use self::variables::VariableDeclarationLocalContext;
+use self::{
+    class::ClassLocalContext, functions::FunctionsLocalContext,
+    identifier::IdentifierExpressionLocalContext, variables::VariableDeclarationLocalContext,
+};
 
 #[derive(Debug)]
 pub struct LocalSemanticResolver<'a> {
@@ -32,13 +38,35 @@ impl<'a> LocalSemanticResolver<'a> {
 impl<'a> Visitor for LocalSemanticResolver<'a> {
     fn visit_block_statement(&mut self, node: &BlockStatement) {
         self.symbols.push_scope();
+
         walk_block_statement(self, node);
+
         self.symbols.pop_scope();
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
         let mut ctx = VariableDeclarationLocalContext::new(self);
         ctx.visit_variable_statement(node);
+    }
+
+    fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
+        let mut ctx = IdentifierExpressionLocalContext::new(self);
+        ctx.visit_identifier_expression(node);
+    }
+
+    fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+        self.symbols.push_scope();
+
+        let mut ctx = FunctionsLocalContext::new(self);
+        ctx.visit_function_declaration(node);
+        walk_function_declaration(self, node);
+
+        self.symbols.pop_scope();
+    }
+
+    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
+        let mut ctx = ClassLocalContext::new(self, node);
+        ctx.visit_class_declaration(&node);
     }
 
     // fn visit_if_statement(&mut self, node: &IfStatement) {

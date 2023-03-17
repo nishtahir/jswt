@@ -1,0 +1,42 @@
+---
+source: jswt-semantics/src/locals/functions.rs
+expression: local
+
+---
+LocalSemanticResolver {
+    symbols: SymbolTable {
+        table: [
+            {
+                "test": Function(
+                    FunctionSignature {
+                        params: [
+                            Binding(
+                                "number",
+                            ),
+                            Binding(
+                                "number",
+                            ),
+                        ],
+                        returns: Binding(
+                            "void",
+                        ),
+                    },
+                ),
+            },
+        ],
+    },
+    bindings: BindingsTable {
+        bindings: {},
+    },
+    errors: [
+        VariableAlreadyDefined {
+            name: "x",
+            span: Span {
+                file: "test_function_parameter_redefinition",
+                module: "module/test_function_parameter_redefinition",
+                start: 34,
+                end: 43,
+            },
+        },
+    ],
+}
