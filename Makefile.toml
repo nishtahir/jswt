@@ -1,7 +1,6 @@
 [tasks.coverage]
 clear = true
 workspace = false
-toolchain = "nightly"
 script = { file = "${CARGO_MAKE_WORKING_DIRECTORY}/scripts/coverage.sh", absolute_path = true }
 
 

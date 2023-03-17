@@ -24,7 +24,6 @@ impl<'a> VariableDeclarationLocalContext<'a> {
 impl<'a> Visitor for VariableDeclarationLocalContext<'a> {
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
         // Check if we're in a local scope
-        println!("{}", self.symbols.depth());
         if self.symbols.depth() > 1 {
             let name = match &node.target {
                 AssignableElement::Identifier(ident) => &ident.value,
