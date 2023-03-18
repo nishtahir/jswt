@@ -212,10 +212,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     let mut global = GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
     global.resolve(&ast);
 
-    let mut semantic_errors = vec![];
-    semantic_errors.append(&mut global.errors());
-
-    for error in semantic_errors {
+    for error in global.errors() {
         has_errors = true;
         print_semantic_error(&error);
     }
@@ -225,13 +222,10 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     }
 
     // Local semantic analysis pass
-    let mut global = LocalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
-    global.resolve(&ast);
+    let mut local = LocalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
+    local.resolve(&ast);
 
-    let mut semantic_errors = vec![];
-    semantic_errors.append(&mut global.errors);
-
-    for error in semantic_errors {
+    for error in local.errors() {
         has_errors = true;
         print_semantic_error(&error);
     }

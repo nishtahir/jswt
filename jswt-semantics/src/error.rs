@@ -48,4 +48,8 @@ pub enum SemanticError {
         name: Cow<'static, str>,
         span: Span,
     },
+    ClassNotDefined {
+        ident: Cow<'static, str>,
+        span: Span,
+    },
 }

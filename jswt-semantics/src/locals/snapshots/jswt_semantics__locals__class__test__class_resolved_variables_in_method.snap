@@ -54,6 +54,8 @@ LocalSemanticResolver {
                             ),
                         },
                     ),
+                    "c": Unknown,
+                    "d": Unknown,
                 },
                 ret: None,
             },

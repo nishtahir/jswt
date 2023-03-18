@@ -5,7 +5,7 @@ mod variables;
 use self::class::ClassDeclarationGlobalContext;
 use self::functions::FunctionDeclarationGlobalContext;
 use self::variables::VariableDeclarationGlobalContext;
-use crate::{SemanticError, SymbolTable};
+use crate::SemanticError;
 use jswt_ast::{visit::Visitor, *};
 use jswt_symbols::BindingsTable;
 use jswt_symbols::ScopedSymbolTable;

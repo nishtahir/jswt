@@ -24,10 +24,10 @@ LocalSemanticResolver {
                         FunctionSignature {
                             params: [
                                 Binding(
-                                    "number",
+                                    "i32",
                                 ),
                                 Binding(
-                                    "number",
+                                    "i32",
                                 ),
                             ],
                             returns: Binding(
@@ -41,21 +41,21 @@ LocalSemanticResolver {
             Span {
                 file: "test_function_parameters_are_in_scope",
                 module: "module/test_function_parameters_are_in_scope",
-                start: 45,
-                end: 71,
+                start: 39,
+                end: 65,
             }: Scope {
                 symbols: {
                     "x": Type(
                         TypeSignature {
                             ty: Binding(
-                                "number",
+                                "i32",
                             ),
                         },
                     ),
                     "y": Type(
                         TypeSignature {
                             ty: Binding(
-                                "number",
+                                "i32",
                             ),
                         },
                     ),

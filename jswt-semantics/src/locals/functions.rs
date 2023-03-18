@@ -62,7 +62,7 @@ mod test {
         tokenizer.enqueue_source_str(
             "test_function_parameters_are_in_scope",
             r"
-        function test(x: number, y: number) {
+        function test(x: i32, y: i32) {
             x;
         }
         ",
@@ -108,8 +108,7 @@ mod test {
         tokenizer.enqueue_source_str(
             "test_function_parameter_redefinition",
             r"
-        function test(x: number, x: number) {
-            x;
+        function test(x: i32, x: i32) {
         }
         ",
         );

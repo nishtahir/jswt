@@ -47,7 +47,6 @@ impl<'a> Visitor for VariableDeclarationLocalContext<'a> {
 
             self.symbols.define(name, declared_type);
         }
-        visit::walk_variable_statement(self, node);
     }
 }
 

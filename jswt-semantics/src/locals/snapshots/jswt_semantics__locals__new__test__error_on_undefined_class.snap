@@ -1,0 +1,59 @@
+---
+source: jswt-semantics/src/locals/new.rs
+expression: local
+---
+LocalSemanticResolver {
+    symbols: ScopedSymbolTable {
+        scopes: [
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
+            },
+        ],
+        table: {
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
+            }: Scope {
+                symbols: {
+                    "test": Function(
+                        FunctionSignature {
+                            params: [],
+                            returns: Binding(
+                                "void",
+                            ),
+                        },
+                    ),
+                },
+                ret: None,
+            },
+            Span {
+                file: "test_error_on_undefined_class",
+                module: "module/test_error_on_undefined_class",
+                start: 25,
+                end: 60,
+            }: Scope {
+                symbols: {},
+                ret: None,
+            },
+        },
+    },
+    bindings: BindingsTable {
+        bindings: {},
+    },
+    errors: [
+        ClassNotDefined {
+            ident: "Test",
+            span: Span {
+                file: "test_error_on_undefined_class",
+                module: "module/test_error_on_undefined_class",
+                start: 43,
+                end: 47,
+            },
+        },
+    ],
+}
