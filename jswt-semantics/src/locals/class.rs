@@ -70,7 +70,7 @@ mod test {
     fn test_class_resolved_variables_in_method() {
         let mut tokenizer = Tokenizer::default();
         tokenizer.enqueue_source_str(
-            "test_function_parameter_redefinition",
+            "test_class_resolved_variables_in_method",
             r"
         class Test { 
             method(a: i32, b: i32) {

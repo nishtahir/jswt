@@ -10,7 +10,7 @@ use jswt_symbols::{BindingsTable, Symbol};
 use new::HirNewLoweringContext;
 // use this::ThisExpressionGlobalContext;
 
-type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
+type SymbolTable = jswt_symbols::SimpleSymbolTable<Cow<'static, str>, Symbol>;
 
 /// HIR lowering focuses on reducing high level calls and constructs into
 /// simpler forms that can be more easily transformed at later stages.

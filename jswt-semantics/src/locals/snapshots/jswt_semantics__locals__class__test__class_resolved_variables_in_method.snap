@@ -1,42 +1,40 @@
 ---
 source: jswt-semantics/src/locals/class.rs
 expression: local
-
 ---
 LocalSemanticResolver {
-    symbols: SymbolTable {
+    symbols: SimpleSymbolTable {
         table: [
             {
-                "test": Function(
-                    FunctionSignature {
-                        params: [
-                            Binding(
-                                "number",
-                            ),
-                            Binding(
-                                "number",
-                            ),
-                        ],
-                        returns: Binding(
-                            "void",
-                        ),
-                    },
-                ),
+                "Test": Class,
             },
         ],
     },
     bindings: BindingsTable {
-        bindings: {},
-    },
-    errors: [
-        VariableAlreadyDefined {
-            name: "x",
-            span: Span {
-                file: "test_function_parameter_redefinition",
-                module: "module/test_function_parameter_redefinition",
-                start: 34,
-                end: 43,
+        bindings: {
+            "Test": ClassBinding {
+                name: "Test",
+                fields: [],
+                methods: [
+                    Method {
+                        name: "method",
+                        signature: FunctionSignature {
+                            params: [
+                                Binding(
+                                    "i32",
+                                ),
+                                Binding(
+                                    "i32",
+                                ),
+                            ],
+                            returns: Binding(
+                                "void",
+                            ),
+                        },
+                    },
+                ],
             },
         },
-    ],
+    },
+    errors: [],
 }

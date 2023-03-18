@@ -4,7 +4,7 @@ use jswt_ast::{transform::TransformVisitor, *};
 use jswt_symbols::{BindingsTable, Symbol};
 use jswt_synthetic::ident_exp;
 
-type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
+type SymbolTable = jswt_symbols::SimpleSymbolTable<Cow<'static, str>, Symbol>;
 
 pub struct MirLoweringContext<'a> {
     bindings: &'a BindingsTable,

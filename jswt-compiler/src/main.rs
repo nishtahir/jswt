@@ -8,7 +8,7 @@ use jswt_mir_lowering::MirLoweringContext;
 use jswt_semantics::GlobalSemanticResolver;
 use jswt_semantics::LocalSemanticResolver;
 use jswt_symbols::BindingsTable;
-use jswt_symbols::SymbolTable;
+use jswt_symbols::SimpleSymbolTable;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
@@ -205,7 +205,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         print_parser_error(&error);
     }
 
-    let mut symbol_table = SymbolTable::default();
+    let mut symbol_table = SimpleSymbolTable::default();
     let mut bindings_table = BindingsTable::default();
 
     // Global Semantic analytis pass
@@ -249,11 +249,11 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     let mut serializer = AstSerializer::default();
     let content = serializer.serialze(&ast);
     fs::write(output.with_extension("hir.jswt"), content).unwrap();
-    
+
     // Mir lowering pass
     let mut mir_lowering = MirLoweringContext::new(&mut bindings_table, &mut symbol_table);
     let ast = mir_lowering.lower(&ast);
-    
+
     if has_errors {
         exit(1);
     }

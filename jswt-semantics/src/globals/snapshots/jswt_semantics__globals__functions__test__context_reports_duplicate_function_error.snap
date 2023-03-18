@@ -1,13 +1,12 @@
 ---
 source: jswt-semantics/src/globals/functions.rs
 expression: resolver
-
 ---
 GlobalSemanticResolver {
     bindings: BindingsTable {
         bindings: {},
     },
-    symbols: SymbolTable {
+    symbols: SimpleSymbolTable {
         table: [
             {
                 "test2": Function(

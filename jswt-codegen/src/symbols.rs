@@ -1,6 +1,7 @@
-use jswt_common::SymbolTable;
-use jswt_wast::ValueType;
 use std::borrow::Cow;
+
+use jswt_symbols::SimpleSymbolTable as SymbolTable;
+use jswt_wast::ValueType;
 
 #[derive(Debug, PartialEq)]
 pub enum WastSymbol {

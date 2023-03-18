@@ -11,6 +11,7 @@ doctest = false
 jswt-ast = {path = "../jswt-ast"}
 jswt-common = {path = "../jswt-common"}
 jswt-parser = {path = "../jswt-parser"}
+jswt-symbols = {path = "../jswt-symbols"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
 jswt-wast = {path = "../jswt-wast"}
 

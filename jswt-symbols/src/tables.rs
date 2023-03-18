@@ -6,12 +6,12 @@ use jswt_common::Type;
 use crate::{FunctionSignature, TypeSignature};
 
 #[derive(Debug)]
-pub struct SymbolTable<K: Eq + Hash + Ord, V> {
+pub struct SimpleSymbolTable<K: Eq + Hash + Ord, V> {
     // BTree map to enforce order in tests
     table: Vec<BTreeMap<K, V>>,
 }
 
-impl<K: Eq + Hash + Ord, V> SymbolTable<K, V> {
+impl<K: Eq + Hash + Ord, V> SimpleSymbolTable<K, V> {
     pub fn new(table: Vec<BTreeMap<K, V>>) -> Self {
         Self { table }
     }
@@ -71,7 +71,7 @@ impl<K: Eq + Hash + Ord, V> SymbolTable<K, V> {
 }
 
 // Default instance will always have 1 scope on it
-impl<K: Eq + Hash + Ord, V> Default for SymbolTable<K, V> {
+impl<K: Eq + Hash + Ord, V> Default for SimpleSymbolTable<K, V> {
     fn default() -> Self {
         Self {
             table: vec![BTreeMap::new()],
@@ -114,7 +114,7 @@ mod test {
 
     #[test]
     fn test_symbol_table_push_pop_scope() {
-        let mut sym: SymbolTable<&'static str, MockSymbol> = Default::default();
+        let mut sym: SimpleSymbolTable<&'static str, MockSymbol> = Default::default();
         sym.push_scope();
         assert_eq!(2, sym.depth());
 
@@ -124,7 +124,7 @@ mod test {
 
     #[test]
     fn test_symbol_lookup_in_local_scope() {
-        let mut sym: SymbolTable<&'static str, MockSymbol> = Default::default();
+        let mut sym: SimpleSymbolTable<&'static str, MockSymbol> = Default::default();
         // Push local scope
         sym.push_scope();
         let x = MockSymbol::new("x");
@@ -141,7 +141,7 @@ mod test {
 
     #[test]
     fn test_symbol_lookup_searches_in_higher_scopes() {
-        let mut sym: SymbolTable<&'static str, MockSymbol> = Default::default();
+        let mut sym: SimpleSymbolTable<&'static str, MockSymbol> = Default::default();
         let x = MockSymbol::new("x");
         sym.define("x", x);
         sym.push_scope();
@@ -153,7 +153,7 @@ mod test {
 
     #[test]
     fn test_symbol_lookup_current_only_searches_current_scope() {
-        let mut sym: SymbolTable<&'static str, MockSymbol> = Default::default();
+        let mut sym: SimpleSymbolTable<&'static str, MockSymbol> = Default::default();
         let x = MockSymbol::new("x");
         sym.define("x", x);
         sym.push_scope();

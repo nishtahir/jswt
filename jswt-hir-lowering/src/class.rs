@@ -233,11 +233,10 @@ mod test {
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
     use jswt_semantics::GlobalSemanticResolver;
-    use jswt_symbols::SymbolTable;
     use jswt_tokenizer::Tokenizer;
 
     use super::*;
-    use crate::HirLoweringContext;
+    use crate::{HirLoweringContext, SymbolTable};
 
     #[test]
     fn test_class_declaration_lowers_class_with_empty_constructor() {

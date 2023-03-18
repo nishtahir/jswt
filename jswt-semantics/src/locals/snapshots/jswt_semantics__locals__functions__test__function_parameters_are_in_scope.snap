@@ -1,10 +1,9 @@
 ---
 source: jswt-semantics/src/locals/functions.rs
 expression: local
-
 ---
 LocalSemanticResolver {
-    symbols: SymbolTable {
+    symbols: SimpleSymbolTable {
         table: [
             {
                 "test": Function(

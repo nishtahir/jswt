@@ -10,4 +10,4 @@ pub use locals::LocalSemanticResolver;
 use jswt_symbols::Symbol;
 use std::borrow::Cow;
 
-type SymbolTable = jswt_symbols::SymbolTable<Cow<'static, str>, Symbol>;
+type SymbolTable = jswt_symbols::SimpleSymbolTable<Cow<'static, str>, Symbol>;

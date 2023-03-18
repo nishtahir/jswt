@@ -707,6 +707,7 @@ dependencies = [
  "jswt-ast",
  "jswt-common",
  "jswt-parser",
+ "jswt-symbols",
  "jswt-tokenizer",
  "jswt-wast",
 ]

@@ -44,7 +44,7 @@ GlobalSemanticResolver {
             },
         },
     },
-    symbols: SymbolTable {
+    symbols: SimpleSymbolTable {
         table: [
             {
                 "Foo": Class,

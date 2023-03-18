@@ -1,13 +1,12 @@
 ---
 source: jswt-semantics/src/globals/variables.rs
 expression: resolver
-
 ---
 GlobalSemanticResolver {
     bindings: BindingsTable {
         bindings: {},
     },
-    symbols: SymbolTable {
+    symbols: SimpleSymbolTable {
         table: [
             {
                 "PI": Type(
