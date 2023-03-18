@@ -8,7 +8,7 @@ use jswt_mir_lowering::MirLoweringContext;
 use jswt_semantics::GlobalSemanticResolver;
 use jswt_semantics::LocalSemanticResolver;
 use jswt_symbols::BindingsTable;
-use jswt_symbols::SimpleSymbolTable;
+use jswt_symbols::ScopedSymbolTable;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
@@ -205,7 +205,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         print_parser_error(&error);
     }
 
-    let mut symbol_table = SimpleSymbolTable::default();
+    let mut symbol_table = ScopedSymbolTable::default();
     let mut bindings_table = BindingsTable::default();
 
     // Global Semantic analytis pass

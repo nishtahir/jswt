@@ -3,26 +3,59 @@ source: jswt-semantics/src/locals/functions.rs
 expression: local
 ---
 LocalSemanticResolver {
-    symbols: SimpleSymbolTable {
-        table: [
-            {
-                "test": Function(
-                    FunctionSignature {
-                        params: [
-                            Binding(
-                                "number",
-                            ),
-                            Binding(
-                                "number",
-                            ),
-                        ],
-                        returns: Binding(
-                            "void",
-                        ),
-                    },
-                ),
+    symbols: ScopedSymbolTable {
+        scopes: [
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
             },
         ],
+        table: {
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
+            }: Scope {
+                symbols: {
+                    "test": Function(
+                        FunctionSignature {
+                            params: [
+                                Binding(
+                                    "number",
+                                ),
+                                Binding(
+                                    "number",
+                                ),
+                            ],
+                            returns: Binding(
+                                "void",
+                            ),
+                        },
+                    ),
+                },
+                ret: None,
+            },
+            Span {
+                file: "test_function_parameter_redefinition",
+                module: "module/test_function_parameter_redefinition",
+                start: 45,
+                end: 71,
+            }: Scope {
+                symbols: {
+                    "x": Type(
+                        TypeSignature {
+                            ty: Binding(
+                                "number",
+                            ),
+                        },
+                    ),
+                },
+                ret: None,
+            },
+        },
     },
     bindings: BindingsTable {
         bindings: {},

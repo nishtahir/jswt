@@ -1,14 +1,14 @@
 use super::LocalSemanticResolver;
-use crate::{SemanticError, SymbolTable};
+use crate::SemanticError;
 use jswt_ast::{
     visit::{self, Visitor},
-    ClassDeclarationElement,
+    ClassBody, ClassDeclarationElement, ClassMethodElement,
 };
 use jswt_common::Spannable;
-use jswt_symbols::Symbol;
+use jswt_symbols::{ScopedSymbolTable, Symbol};
 
 pub struct ClassLocalContext<'a> {
-    symbols: &'a mut SymbolTable,
+    symbols: &'a mut ScopedSymbolTable,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -22,18 +22,20 @@ impl<'a> ClassLocalContext<'a> {
 }
 
 impl<'a> Visitor for ClassLocalContext<'a> {
-    fn visit_class_body(&mut self, node: &jswt_ast::ClassBody) {
-        self.symbols.push_scope();
+    fn visit_class_body(&mut self, node: &ClassBody) {
+        self.symbols.push_scope(node.span());
         visit::walk_class_body(self, node);
         self.symbols.pop_scope();
     }
 
-    fn visit_class_method_declaration(&mut self, node: &jswt_ast::ClassMethodElement) {
-        self.symbols.push_scope();
-        // Redefinition errors are handled by the GlobalSemanticResolver
-        // during clobal symbol resolution
+    fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
+        // The scope of the function parameters is the method body
+        self.symbols.push_scope(node.body.span());
 
-        //  Add function parameters as variables in scope
+        // Note: Redefinition errors are handled by the GlobalSemanticResolver
+        // during global symbol resolution
+
+        //  Add method parameters as variables in scope
         for param in node.params.parameters.iter() {
             // Check to see if the parameter is already defined
             let param_name = &param.ident.value;
@@ -46,10 +48,8 @@ impl<'a> Visitor for ClassLocalContext<'a> {
             }
 
             // Resolve Type from Type Annotation
-            self.symbols.define(
-                param_name.clone(),
-                Symbol::ty(param.type_annotation.ty.clone()),
-            );
+            self.symbols
+                .define(param_name, Symbol::ty(param.type_annotation.ty.clone()));
         }
         self.symbols.pop_scope();
     }
@@ -81,7 +81,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
 
         let mut global = GlobalSemanticResolver::new(&mut bindings, &mut symbols);

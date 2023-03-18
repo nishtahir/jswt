@@ -8,18 +8,19 @@ use self::variables::VariableDeclarationGlobalContext;
 use crate::{SemanticError, SymbolTable};
 use jswt_ast::{visit::Visitor, *};
 use jswt_symbols::BindingsTable;
+use jswt_symbols::ScopedSymbolTable;
 
 /// Global Semantic Resolver to resolve global variables and functions
 /// This should usually be the first pass of the semantic analysis phase
 #[derive(Debug)]
 pub struct GlobalSemanticResolver<'a> {
     bindings: &'a mut BindingsTable,
-    symbols: &'a mut SymbolTable,
+    symbols: &'a mut ScopedSymbolTable,
     errors: Vec<SemanticError>,
 }
 
 impl<'a> GlobalSemanticResolver<'a> {
-    pub fn new(bindings: &'a mut BindingsTable, symbols: &'a mut SymbolTable) -> Self {
+    pub fn new(bindings: &'a mut BindingsTable, symbols: &'a mut ScopedSymbolTable) -> Self {
         Self {
             bindings,
             symbols,
@@ -29,6 +30,7 @@ impl<'a> GlobalSemanticResolver<'a> {
 
     /// Run the global semantic analysis pass
     pub fn resolve(&mut self, ast: &Ast) {
+        self.symbols.push_global_scope();
         self.visit_program(&ast.program);
         // We should have only the global scope left
         // at the end of the pass

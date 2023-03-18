@@ -29,12 +29,28 @@ GlobalSemanticResolver {
             },
         },
     },
-    symbols: SimpleSymbolTable {
-        table: [
-            {
-                "Foo": Class,
+    symbols: ScopedSymbolTable {
+        scopes: [
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
             },
         ],
+        table: {
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
+            }: Scope {
+                symbols: {
+                    "Foo": Class,
+                },
+                ret: None,
+            },
+        },
     },
     errors: [
         FieldAlreadyDefined {

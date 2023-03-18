@@ -6,34 +6,50 @@ GlobalSemanticResolver {
     bindings: BindingsTable {
         bindings: {},
     },
-    symbols: SimpleSymbolTable {
-        table: [
-            {
-                "test": Function(
-                    FunctionSignature {
-                        params: [
-                            Binding(
-                                "i32",
-                            ),
-                            Binding(
-                                "i32",
-                            ),
-                        ],
-                        returns: Binding(
-                            "void",
-                        ),
-                    },
-                ),
-                "test2": Function(
-                    FunctionSignature {
-                        params: [],
-                        returns: Binding(
-                            "Array",
-                        ),
-                    },
-                ),
+    symbols: ScopedSymbolTable {
+        scopes: [
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
             },
         ],
+        table: {
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
+            }: Scope {
+                symbols: {
+                    "test": Function(
+                        FunctionSignature {
+                            params: [
+                                Binding(
+                                    "i32",
+                                ),
+                                Binding(
+                                    "i32",
+                                ),
+                            ],
+                            returns: Binding(
+                                "void",
+                            ),
+                        },
+                    ),
+                    "test2": Function(
+                        FunctionSignature {
+                            params: [],
+                            returns: Binding(
+                                "Array",
+                            ),
+                        },
+                    ),
+                },
+                ret: None,
+            },
+        },
     },
     errors: [],
 }

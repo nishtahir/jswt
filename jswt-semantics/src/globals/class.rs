@@ -1,16 +1,16 @@
 use super::GlobalSemanticResolver;
-use crate::{SemanticError, SymbolTable};
+use crate::SemanticError;
 use jswt_ast::{
     visit::{self, Visitor},
     ClassDeclarationElement,
 };
 use jswt_common::Type;
-use jswt_symbols::{BindingsTable, ClassBinding, FunctionSignature, Method};
+use jswt_symbols::{BindingsTable, ClassBinding, FunctionSignature, Method, ScopedSymbolTable};
 
 pub struct ClassDeclarationGlobalContext<'a> {
     class_binding: ClassBinding,
     bindings: &'a mut BindingsTable,
-    symbols: &'a mut SymbolTable,
+    symbols: &'a mut ScopedSymbolTable,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -42,8 +42,9 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
         self.bindings
             .insert(class_name.clone(), self.class_binding.to_owned());
 
-        // Add the class to the symbol table  
-        self.symbols.define(class_name, jswt_symbols::Symbol::Class)
+        // Add the class to the symbol table
+        self.symbols
+            .define(&class_name, jswt_symbols::Symbol::Class);
     }
 
     fn visit_class_field_declaration(&mut self, node: &jswt_ast::ClassFieldElement) {
@@ -115,8 +116,6 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
 
 #[cfg(test)]
 mod test {
-    use crate::SymbolTable;
-
     use super::*;
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
@@ -139,7 +138,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
         let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
         resolver.resolve(&ast);
@@ -160,7 +159,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
         let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
         resolver.resolve(&ast);

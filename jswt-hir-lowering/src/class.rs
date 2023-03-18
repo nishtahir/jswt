@@ -233,10 +233,11 @@ mod test {
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
     use jswt_semantics::GlobalSemanticResolver;
+    use jswt_symbols::ScopedSymbolTable;
     use jswt_tokenizer::Tokenizer;
 
     use super::*;
-    use crate::{HirLoweringContext, SymbolTable};
+    use crate::HirLoweringContext;
 
     #[test]
     fn test_class_declaration_lowers_class_with_empty_constructor() {
@@ -258,7 +259,7 @@ mod test {
 
         let ast = Parser::new(&mut tokenizer).parse();
 
-        let mut symbol_table = SymbolTable::default();
+        let mut symbol_table = ScopedSymbolTable::default();
         let mut bindings_table = BindingsTable::default();
         let mut global_resolver =
             GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
@@ -287,7 +288,7 @@ mod test {
 
         let ast = Parser::new(&mut tokenizer).parse();
 
-        let mut symbol_table = SymbolTable::default();
+        let mut symbol_table = ScopedSymbolTable::default();
         let mut bindings_table = BindingsTable::default();
         let mut global_resolver =
             GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
@@ -317,7 +318,7 @@ mod test {
 
         let ast = Parser::new(&mut tokenizer).parse();
 
-        let mut symbol_table = SymbolTable::default();
+        let mut symbol_table = ScopedSymbolTable::default();
         let mut bindings_table = BindingsTable::default();
         let mut global_resolver =
             GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
@@ -351,7 +352,7 @@ mod test {
 
         let ast = Parser::new(&mut tokenizer).parse();
 
-        let mut symbol_table = SymbolTable::default();
+        let mut symbol_table = ScopedSymbolTable::default();
         let mut bindings_table = BindingsTable::default();
         let mut global_resolver =
             GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);

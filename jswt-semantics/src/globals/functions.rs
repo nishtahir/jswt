@@ -1,11 +1,11 @@
 use super::GlobalSemanticResolver;
-use crate::{SemanticError, SymbolTable};
+use crate::SemanticError;
 use jswt_ast::{visit::Visitor, FunctionDeclarationElement};
 use jswt_common::Type;
-use jswt_symbols::Symbol;
+use jswt_symbols::{ScopedSymbolTable, Symbol};
 
 pub struct FunctionDeclarationGlobalContext<'a> {
-    symbols: &'a mut SymbolTable,
+    symbols: &'a mut ScopedSymbolTable,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -50,7 +50,7 @@ impl<'a> Visitor for FunctionDeclarationGlobalContext<'a> {
         // name here scoped to the current module, but for now we'll just
         // use the function name
         self.symbols
-            .define(function_name.clone(), Symbol::function(params, returns));
+            .define(function_name, Symbol::function(params, returns));
     }
 }
 
@@ -78,7 +78,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
         let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
         resolver.resolve(&ast);
@@ -101,12 +101,11 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
         let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
         resolver.resolve(&ast);
 
         assert_debug_snapshot!(resolver);
     }
-
 }

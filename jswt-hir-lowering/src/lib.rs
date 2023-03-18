@@ -1,16 +1,10 @@
 mod class;
 mod new;
-// mod this;
-
-use std::borrow::Cow;
 
 use class::HirClassLoweringContext;
 use jswt_ast::{transform::*, *};
-use jswt_symbols::{BindingsTable, Symbol};
+use jswt_symbols::{BindingsTable, ScopedSymbolTable};
 use new::HirNewLoweringContext;
-// use this::ThisExpressionGlobalContext;
-
-type SymbolTable = jswt_symbols::SimpleSymbolTable<Cow<'static, str>, Symbol>;
 
 /// HIR lowering focuses on reducing high level calls and constructs into
 /// simpler forms that can be more easily transformed at later stages.
@@ -19,15 +13,12 @@ type SymbolTable = jswt_symbols::SimpleSymbolTable<Cow<'static, str>, Symbol>;
 #[derive(Debug)]
 pub struct HirLoweringContext<'a> {
     bindings: &'a BindingsTable,
-    _symbols: &'a SymbolTable,
+    symbols: &'a ScopedSymbolTable,
 }
 
 impl<'a> HirLoweringContext<'a> {
-    pub fn new(bindings: &'a BindingsTable, symbols: &'a SymbolTable) -> Self {
-        Self {
-            bindings,
-            _symbols: symbols,
-        }
+    pub fn new(bindings: &'a BindingsTable, symbols: &'a ScopedSymbolTable) -> Self {
+        Self { bindings, symbols }
     }
 
     pub fn lower(&mut self, ast: &Ast) -> Ast {
@@ -51,8 +42,4 @@ impl<'a> TransformVisitor for HirLoweringContext<'a> {
         let mut lowering = HirNewLoweringContext::new(&self.bindings);
         lowering.visit_new(node)
     }
-
-    // fn visit_this_expression(&mut self, node: &ThisExpression) {
-    //     let mut ctx = ThisExpressionGlobalContext::new(self);
-    // }
 }

@@ -6,31 +6,47 @@ GlobalSemanticResolver {
     bindings: BindingsTable {
         bindings: {},
     },
-    symbols: SimpleSymbolTable {
-        table: [
-            {
-                "PI": Type(
-                    TypeSignature {
-                        ty: Unknown,
-                    },
-                ),
-                "test": Function(
-                    FunctionSignature {
-                        params: [
-                            Binding(
-                                "i32",
-                            ),
-                            Binding(
-                                "i32",
-                            ),
-                        ],
-                        returns: Binding(
-                            "void",
-                        ),
-                    },
-                ),
+    symbols: ScopedSymbolTable {
+        scopes: [
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
             },
         ],
+        table: {
+            Span {
+                file: "program",
+                module: "root",
+                start: 0,
+                end: 0,
+            }: Scope {
+                symbols: {
+                    "PI": Type(
+                        TypeSignature {
+                            ty: Unknown,
+                        },
+                    ),
+                    "test": Function(
+                        FunctionSignature {
+                            params: [
+                                Binding(
+                                    "i32",
+                                ),
+                                Binding(
+                                    "i32",
+                                ),
+                            ],
+                            returns: Binding(
+                                "void",
+                            ),
+                        },
+                    ),
+                },
+                ret: None,
+            },
+        },
     },
     errors: [
         VariableAlreadyDefined {

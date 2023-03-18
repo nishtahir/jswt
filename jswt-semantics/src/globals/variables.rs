@@ -1,13 +1,12 @@
+use crate::SemanticError;
 use jswt_ast::{visit::Visitor, AssignableElement};
 use jswt_common::Typeable;
-use jswt_symbols::{Symbol, TypeSignature};
-
-use crate::{SemanticError, SymbolTable};
+use jswt_symbols::{ScopedSymbolTable, Symbol, TypeSignature};
 
 use super::GlobalSemanticResolver;
 
 pub struct VariableDeclarationGlobalContext<'a> {
-    symbols: &'a mut SymbolTable,
+    symbols: &'a mut ScopedSymbolTable,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -25,7 +24,7 @@ impl<'a> Visitor for VariableDeclarationGlobalContext<'a> {
         match &node.target {
             AssignableElement::Identifier(ident) => {
                 let name = &ident.value;
-                // If a variable with the same name already exists 
+                // If a variable with the same name already exists
                 // in the current scope then we have a duplicate variable error
                 if self.symbols.lookup_current(name).is_some() {
                     let error = SemanticError::VariableAlreadyDefined {
@@ -38,7 +37,7 @@ impl<'a> Visitor for VariableDeclarationGlobalContext<'a> {
                 // Add the variable to the symbol table
                 // The type of the symbol is the type of the rhs expression
                 self.symbols.define(
-                    name.clone(),
+                    name,
                     Symbol::Type(TypeSignature {
                         ty: node.expression.ty(),
                     }),
@@ -71,7 +70,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
         let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
         resolver.resolve(&ast);
@@ -94,7 +93,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
         let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
         resolver.resolve(&ast);

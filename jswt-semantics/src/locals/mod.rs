@@ -3,9 +3,10 @@ mod functions;
 mod identifier;
 mod variables;
 
-use crate::{SemanticError, SymbolTable};
+use crate::SemanticError;
 use jswt_ast::{visit::*, *};
-use jswt_symbols::BindingsTable;
+use jswt_common::Spannable;
+use jswt_symbols::{BindingsTable, ScopedSymbolTable};
 
 use self::{
     class::ClassLocalContext, functions::FunctionsLocalContext,
@@ -14,13 +15,13 @@ use self::{
 
 #[derive(Debug)]
 pub struct LocalSemanticResolver<'a> {
-    pub symbols: &'a mut SymbolTable,
+    pub symbols: &'a mut ScopedSymbolTable,
     pub bindings: &'a mut BindingsTable,
     pub errors: Vec<SemanticError>,
 }
 
 impl<'a> LocalSemanticResolver<'a> {
-    pub fn new(bindings: &'a mut BindingsTable, symbols: &'a mut SymbolTable) -> Self {
+    pub fn new(bindings: &'a mut BindingsTable, symbols: &'a mut ScopedSymbolTable) -> Self {
         Self {
             symbols,
             bindings,
@@ -37,10 +38,8 @@ impl<'a> LocalSemanticResolver<'a> {
 
 impl<'a> Visitor for LocalSemanticResolver<'a> {
     fn visit_block_statement(&mut self, node: &BlockStatement) {
-        self.symbols.push_scope();
-
+        self.symbols.push_scope(node.span());
         walk_block_statement(self, node);
-
         self.symbols.pop_scope();
     }
 
@@ -55,13 +54,9 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
     }
 
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
-        self.symbols.push_scope();
-
         let mut ctx = FunctionsLocalContext::new(self);
         ctx.visit_function_declaration(node);
         walk_function_declaration(self, node);
-
-        self.symbols.pop_scope();
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {

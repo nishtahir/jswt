@@ -1,14 +1,14 @@
 use super::LocalSemanticResolver;
-use crate::{SemanticError, SymbolTable};
+use crate::SemanticError;
 use jswt_ast::{
     visit::{self, Visitor},
     AssignableElement, VariableStatement,
 };
 use jswt_common::Spannable;
-use jswt_symbols::Symbol;
+use jswt_symbols::{ScopedSymbolTable, Symbol};
 
 pub struct VariableDeclarationLocalContext<'a> {
-    symbols: &'a mut SymbolTable,
+    symbols: &'a mut ScopedSymbolTable,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -45,7 +45,7 @@ impl<'a> Visitor for VariableDeclarationLocalContext<'a> {
                 .map(|t| Symbol::ty(t.ty.clone()))
                 .unwrap_or(Symbol::Unknown);
 
-            self.symbols.define(name.clone(), declared_type);
+            self.symbols.define(name, declared_type);
         }
         visit::walk_variable_statement(self, node);
     }
@@ -76,7 +76,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
 
         let mut global = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
@@ -100,7 +100,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
         let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
         resolver.resolve(&ast);

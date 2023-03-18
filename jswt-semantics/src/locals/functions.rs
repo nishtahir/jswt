@@ -1,11 +1,11 @@
 use super::LocalSemanticResolver;
-use crate::{SemanticError, SymbolTable};
+use crate::SemanticError;
 use jswt_ast::{visit::Visitor, FunctionDeclarationElement};
 use jswt_common::Spannable;
-use jswt_symbols::Symbol;
+use jswt_symbols::{ScopedSymbolTable, Symbol};
 
 pub struct FunctionsLocalContext<'a> {
-    symbols: &'a mut SymbolTable,
+    symbols: &'a mut ScopedSymbolTable,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -20,6 +20,7 @@ impl<'a> FunctionsLocalContext<'a> {
 
 impl<'a> Visitor for FunctionsLocalContext<'a> {
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+        self.symbols.push_scope(node.body.span());
         // Redefinition errors are handled by the GlobalSemanticResolver
         // during clobal symbol resolution
 
@@ -36,11 +37,11 @@ impl<'a> Visitor for FunctionsLocalContext<'a> {
             }
 
             // Resolve Type from Type Annotation
-            self.symbols.define(
-                param_name.clone(),
-                Symbol::ty(param.type_annotation.ty.clone()),
-            );
+            self.symbols
+                .define(param_name, Symbol::ty(param.type_annotation.ty.clone()));
         }
+
+        self.symbols.pop_scope();
     }
 }
 
@@ -67,7 +68,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
 
         let mut global = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
@@ -90,7 +91,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
 
         let mut global = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
@@ -113,7 +114,7 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
 
         let mut global = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
