@@ -241,7 +241,7 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     fs::write(output.with_extension("hir.ast"), format!("{:#?}", ast)).unwrap();
 
     let mut serializer = AstSerializer::default();
-    let content = serializer.serialze(&ast);
+    let content = serializer.serialize(&ast);
     fs::write(output.with_extension("hir.jswt"), content).unwrap();
 
     // Mir lowering pass
