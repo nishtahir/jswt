@@ -14,3 +14,12 @@ impl Spannable for VariableModifier {
         }
     }
 }
+
+impl VariableModifier {
+    pub fn is_const(&self) -> bool {
+        match self {
+            VariableModifier::Const(_) => true,
+            _ => false,
+        }
+    }
+}

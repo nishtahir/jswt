@@ -1,0 +1,72 @@
+---
+source: jswt-parser/src/variable.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_variable_declaration_with_export",
+                    module: "module/test_variable_declaration_with_export",
+                    start: 0,
+                    end: 19,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_variable_declaration_with_export",
+                        module: "module/test_variable_declaration_with_export",
+                        start: 0,
+                        end: 19,
+                    },
+                    source_elements: [
+                        VariableDeclaration(
+                            VariableDeclarationElement {
+                                annotations: [],
+                                export: true,
+                                span: Span {
+                                    file: "test_variable_declaration_with_export",
+                                    module: "module/test_variable_declaration_with_export",
+                                    start: 7,
+                                    end: 19,
+                                },
+                                modifier: Const(
+                                    Span {
+                                        file: "test_variable_declaration_with_export",
+                                        module: "module/test_variable_declaration_with_export",
+                                        start: 7,
+                                        end: 12,
+                                    },
+                                ),
+                                name: Identifier {
+                                    span: Span {
+                                        file: "test_variable_declaration_with_export",
+                                        module: "module/test_variable_declaration_with_export",
+                                        start: 13,
+                                        end: 14,
+                                    },
+                                    value: "x",
+                                },
+                                expression: Literal(
+                                    Integer(
+                                        IntegerLiteral {
+                                            span: Span {
+                                                file: "test_variable_declaration_with_export",
+                                                module: "module/test_variable_declaration_with_export",
+                                                start: 17,
+                                                end: 18,
+                                            },
+                                            value: 1,
+                                            ty: Unknown,
+                                        },
+                                    ),
+                                ),
+                                type_annotation: None,
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

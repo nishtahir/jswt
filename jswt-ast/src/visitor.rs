@@ -71,7 +71,9 @@ statement_visitor![
     visit_class_body: ClassBody,
     visit_class_constructor_declaration: ClassConstructorElement,
     visit_class_method_declaration: ClassMethodElement,
-    visit_class_field_declaration: ClassFieldElement
+    visit_class_field_declaration: ClassFieldElement,
+    visit_variable_declaration: VariableDeclarationElement,
+    visit_import_declaration: ImportDeclarationElement
 ];
 expression_visitor![
     visit_single_expression: SingleExpression,

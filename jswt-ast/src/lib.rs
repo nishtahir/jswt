@@ -55,12 +55,15 @@ pub struct SourceElements {
 pub enum SourceElement {
     FunctionDeclaration(FunctionDeclarationElement),
     ClassDeclaration(ClassDeclarationElement),
-    Statement(StatementElement),
+    VariableDeclaration(VariableDeclarationElement),
+    ImportDeclaration(ImportDeclarationElement),
 }
 
 #[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ClassDeclarationElement {
     pub span: Span,
+    pub annotations: Vec<Annotation>,
+    pub export: bool,
     pub ident: Identifier,
     pub body: ClassBody,
 }
@@ -143,6 +146,22 @@ pub struct FormalParameterArg {
 pub struct FunctionBody {
     pub span: Span,
     pub source_elements: SourceElements,
+}
+
+#[derive(Debug, PartialEq, Spannable, Clone)]
+pub struct VariableDeclarationElement {
+    pub annotations: Vec<Annotation>,
+    pub export: bool,
+    pub span: Span,
+    pub modifier: VariableModifier,
+    pub name: Identifier,
+    pub expression: SingleExpression,
+    pub type_annotation: Option<TypeAnnotation>,
+}
+
+#[derive(Debug, PartialEq, Spannable, Clone)]
+pub struct ImportDeclarationElement {
+    pub span: Span,
 }
 
 #[derive(Debug, PartialEq, Clone)]

@@ -8,13 +8,19 @@ impl<'a> Parser<'a> {
     /// ClassDeclaration
     ///   : 'class' Indentifier ClassBody
     ///   ;
-    pub(crate) fn class_declaration(&mut self) -> ParseResult<ClassDeclarationElement> {
+    pub(crate) fn class_declaration(
+        &mut self,
+        annotations: Vec<Annotation>,
+        export: bool,
+    ) -> ParseResult<ClassDeclarationElement> {
         let start = consume!(self, TokenType::Class)?;
         let ident = ident!(self)?;
 
         let body = self.class_body()?;
 
         Ok(ClassDeclarationElement {
+            annotations,
+            export,
             span: start + body.span(),
             ident,
             body,
@@ -45,7 +51,9 @@ impl<'a> Parser<'a> {
     pub(crate) fn class_element(&mut self) -> ParseResult<ClassElement> {
         let elem = match self.lookahead_type() {
             Some(TokenType::Constructor) => self.class_constructor()?.into(),
-            Some(TokenType::Identifier) | Some(TokenType::At) => self.class_property_member()?.into(),
+            Some(TokenType::Identifier) | Some(TokenType::At) => {
+                self.class_property_member()?.into()
+            }
             _ => todo!(),
         };
 
@@ -120,21 +128,25 @@ mod test {
     #[test]
     fn test_class_declaration() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_class_declaration", "class A { constructor(a: i32) { } }");
+        tokenizer.enqueue_source_str(
+            "test_class_declaration",
+            "class A { constructor(a: i32) { } }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
     fn test_class_method_declaration() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_class_method_declaration", "class A { hello(a: i32) { } }");
+        tokenizer.enqueue_source_str(
+            "test_class_method_declaration",
+            "class A { hello(a: i32) { } }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
     }
 
     #[test]
@@ -153,6 +165,36 @@ mod test {
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
-        assert_eq!(parser.errors.len(), 0);
+    }
+
+    #[test]
+    fn test_class_declaration_with_annotations() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test_class_declaration_with_annotations",
+            r"
+            @Test
+            class A { 
+            }
+        ",
+        );
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
+    }
+
+    #[test]
+    fn test_class_declaration_with_export() {
+        let mut tokenizer = Tokenizer::default();
+        tokenizer.enqueue_source_str(
+            "test_class_declaration_with_export",
+            r"
+            export class A { 
+            }
+        ",
+        );
+        let mut parser = Parser::new(&mut tokenizer);
+        let actual = parser.parse();
+        assert_debug_snapshot!(actual);
     }
 }

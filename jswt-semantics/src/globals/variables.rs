@@ -1,6 +1,6 @@
 use crate::SemanticError;
 use jswt_ast::{visit::Visitor, AssignableElement};
-use jswt_common::Typeable;
+use jswt_common::{Spannable, Typeable};
 use jswt_symbols::{ScopedSymbolTable, Symbol, TypeSignature};
 
 use super::GlobalSemanticResolver;
@@ -20,30 +20,26 @@ impl<'a> VariableDeclarationGlobalContext<'a> {
 }
 
 impl<'a> Visitor for VariableDeclarationGlobalContext<'a> {
-    fn visit_variable_statement(&mut self, node: &jswt_ast::VariableStatement) {
-        match &node.target {
-            AssignableElement::Identifier(ident) => {
-                let name = &ident.value;
-                // If a variable with the same name already exists
-                // in the current scope then we have a duplicate variable error
-                if self.symbols.lookup_current(name).is_some() {
-                    let error = SemanticError::VariableAlreadyDefined {
-                        name: name.clone(),
-                        span: ident.span.to_owned(),
-                    };
-                    self.errors.push(error);
-                }
-
-                // Add the variable to the symbol table
-                // The type of the symbol is the type of the rhs expression
-                self.symbols.define(
-                    name,
-                    Symbol::Type(TypeSignature {
-                        ty: node.expression.ty(),
-                    }),
-                );
-            }
+    fn visit_variable_declaration(&mut self, node: &jswt_ast::VariableDeclarationElement) {
+        let name = &node.name.value;
+        // If a variable with the same name already exists
+        // in the current scope then we have a duplicate variable error
+        if self.symbols.lookup_current(name).is_some() {
+            let error = SemanticError::VariableAlreadyDefined {
+                name: name.clone(),
+                span: node.name.span(),
+            };
+            self.errors.push(error);
         }
+
+        // Add the variable to the symbol table
+        // The type of the symbol is the type of the rhs expression
+        self.symbols.define(
+            name,
+            Symbol::Type(TypeSignature {
+                ty: node.expression.ty(),
+            }),
+        );
     }
 }
 

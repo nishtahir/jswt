@@ -2,23 +2,20 @@ use jswt_ast::*;
 use jswt_common::{Span, Spannable};
 use jswt_tokenizer::TokenType;
 
-use crate::{consume, consume_unchecked, ident, maybe_consume};
+use crate::{consume, ident};
 use crate::{ParseError, ParseResult, Parser};
 
 impl<'a> Parser<'a> {
     /// FunctionDeclaration
-    ///   :  Annotation? 'export'? 'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
+    ///   :  'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
     ///   ;
-    pub(crate) fn function_declaration(&mut self) -> ParseResult<FunctionDeclarationElement> {
-        let mut annotations = vec![];
-        while self.lookahead_is(TokenType::At) {
-            annotations.push(self.annotation()?);
-        }
-
-        let export_span = maybe_consume!(self, TokenType::Export);
+    pub(crate) fn function_declaration(
+        &mut self,
+        // How do I pass the start span of the annotations/export keyword?
+        annotations: Vec<Annotation>,
+        export: bool,
+    ) -> ParseResult<FunctionDeclarationElement> {
         let function_span = consume!(self, TokenType::Function)?;
-        let start_span = export_span.to_owned().unwrap_or(function_span);
-
         let ident = ident!(self)?;
         let params = self.formal_parameter_list()?;
 
@@ -32,10 +29,10 @@ impl<'a> Parser<'a> {
 
         let decorators = FunctionDecorators {
             annotations,
-            export: export_span.is_some(),
+            export,
         };
         Ok(FunctionDeclarationElement {
-            span: start_span + body.span(),
+            span: function_span + body.span(),
             decorators,
             ident,
             params,
@@ -64,7 +61,10 @@ mod test {
     #[test]
     fn test_function_declaration_statement_with_one_param() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_function_declaration_statement_with_one_param", "function name(a: i32) { }");
+        tokenizer.enqueue_source_str(
+            "test_function_declaration_statement_with_one_param",
+            "function name(a: i32) { }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -74,7 +74,10 @@ mod test {
     #[test]
     fn test_function_declaration_statement_with_two_params() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_function_declaration_statement_with_two_params", "function name(a: i32, b: f32) { }");
+        tokenizer.enqueue_source_str(
+            "test_function_declaration_statement_with_two_params",
+            "function name(a: i32, b: f32) { }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -84,7 +87,10 @@ mod test {
     #[test]
     fn test_function_declaration_statement_with_export_decorator() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_function_declaration_statement_with_export_decorator", "export function test() { }");
+        tokenizer.enqueue_source_str(
+            "test_function_declaration_statement_with_export_decorator",
+            "export function test() { }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -94,7 +100,10 @@ mod test {
     #[test]
     fn test_function_declaration_statement_with_return_value() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_function_declaration_statement_with_return_value", "function test(): i32 { }");
+        tokenizer.enqueue_source_str(
+            "test_function_declaration_statement_with_return_value",
+            "function test(): i32 { }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -104,7 +113,10 @@ mod test {
     #[test]
     fn test_parse_function_declaration_statement_with_two_params_and_return_value() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_function_declaration_statement_with_two_params_and_return_value", "function test(a: i32, b: i32): i32 { }");
+        tokenizer.enqueue_source_str(
+            "test_parse_function_declaration_statement_with_two_params_and_return_value",
+            "function test(a: i32, b: i32): i32 { }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -114,7 +126,10 @@ mod test {
     #[test]
     fn test_function_declaration_statement_with_block_body() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_function_declaration_statement_with_block_body", "function test() { {} }");
+        tokenizer.enqueue_source_str(
+            "test_function_declaration_statement_with_block_body",
+            "function test() { {} }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
@@ -124,7 +139,10 @@ mod test {
     #[test]
     fn test_parse_function_with_multiple_annotations() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_function_with_multiple_annotations", "@inline @wast(\"test\") function a() {}");
+        tokenizer.enqueue_source_str(
+            "test_parse_function_with_multiple_annotations",
+            "@inline @wast(\"test\") function a() {}",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_eq!(parser.errors.len(), 0);

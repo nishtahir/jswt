@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -21,51 +20,49 @@ Ast {
                         end: 22,
                     },
                     source_elements: [
-                        Statement(
-                            Variable(
-                                VariableStatement {
-                                    span: Span {
+                        VariableDeclaration(
+                            VariableDeclarationElement {
+                                annotations: [],
+                                export: false,
+                                span: Span {
+                                    file: "test_parse_variable_statement_with_string",
+                                    module: "module/test_parse_variable_statement_with_string",
+                                    start: 0,
+                                    end: 22,
+                                },
+                                modifier: Let(
+                                    Span {
                                         file: "test_parse_variable_statement_with_string",
                                         module: "module/test_parse_variable_statement_with_string",
                                         start: 0,
-                                        end: 22,
+                                        end: 3,
                                     },
-                                    modifier: Let(
-                                        Span {
-                                            file: "test_parse_variable_statement_with_string",
-                                            module: "module/test_parse_variable_statement_with_string",
-                                            start: 0,
-                                            end: 3,
-                                        },
-                                    ),
-                                    target: Identifier(
-                                        Identifier {
+                                ),
+                                name: Identifier {
+                                    span: Span {
+                                        file: "test_parse_variable_statement_with_string",
+                                        module: "module/test_parse_variable_statement_with_string",
+                                        start: 4,
+                                        end: 5,
+                                    },
+                                    value: "x",
+                                },
+                                expression: Literal(
+                                    String(
+                                        StringLiteral {
                                             span: Span {
                                                 file: "test_parse_variable_statement_with_string",
                                                 module: "module/test_parse_variable_statement_with_string",
-                                                start: 4,
-                                                end: 5,
+                                                start: 8,
+                                                end: 21,
                                             },
-                                            value: "x",
+                                            value: "Hello World",
+                                            ty: Unknown,
                                         },
                                     ),
-                                    expression: Literal(
-                                        String(
-                                            StringLiteral {
-                                                span: Span {
-                                                    file: "test_parse_variable_statement_with_string",
-                                                    module: "module/test_parse_variable_statement_with_string",
-                                                    start: 8,
-                                                    end: 21,
-                                                },
-                                                value: "Hello World",
-                                                ty: Unknown,
-                                            },
-                                        ),
-                                    ),
-                                    type_annotation: None,
-                                },
-                            ),
+                                ),
+                                type_annotation: None,
+                            },
                         ),
                     ],
                 },

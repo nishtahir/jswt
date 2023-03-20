@@ -25,6 +25,10 @@ pub trait TransformVisitor: Sized {
         walk_class_declaration(self, node)
     }
 
+    fn visit_import_declaration(&mut self, node: &ImportDeclarationElement) -> SourceElements {
+        walk_import_declaration(self, node)
+    }
+
     fn visit_class_body(&mut self, node: &ClassBody) -> SourceElements {
         walk_class_body(self, node)
     }
@@ -42,6 +46,10 @@ pub trait TransformVisitor: Sized {
 
     fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) -> SourceElements {
         walk_class_field_declaration(self, node)
+    }
+
+    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) -> SourceElements {
+        walk_variable_declaration(self, node)
     }
 
     fn visit_statement_element(&mut self, node: &StatementElement) -> StatementList {
@@ -172,16 +180,9 @@ pub fn walk_source_element<V: TransformVisitor>(
 ) -> SourceElements {
     match node {
         SourceElement::FunctionDeclaration(elem) => visitor.visit_function_declaration(elem),
-        SourceElement::Statement(elem) => SourceElements {
-            span: node.span(),
-            source_elements: vec![SourceElement::Statement(StatementElement::Block(
-                BlockStatement {
-                    span: elem.span(),
-                    statements: visitor.visit_statement_element(elem),
-                },
-            ))],
-        },
+        SourceElement::VariableDeclaration(elem) => visitor.visit_variable_declaration(elem),
         SourceElement::ClassDeclaration(elem) => visitor.visit_class_declaration(elem),
+        SourceElement::ImportDeclaration(elem) => visitor.visit_import_declaration(elem),
     }
 }
 
@@ -336,6 +337,36 @@ pub fn walk_class_declaration<V: TransformVisitor>(
     node: &ClassDeclarationElement,
 ) -> SourceElements {
     visitor.visit_class_body(&node.body)
+}
+
+pub fn walk_variable_declaration<V: TransformVisitor>(
+    visitor: &mut V,
+    node: &VariableDeclarationElement,
+) -> SourceElements {
+    SourceElements {
+        span: node.span(),
+        source_elements: vec![SourceElement::VariableDeclaration(
+            VariableDeclarationElement {
+                annotations: node.annotations.clone(),
+                export: node.export,
+                span: node.span(),
+                modifier: node.modifier.clone(),
+                name: node.name.clone(),
+                expression: visitor.visit_single_expression(&node.expression),
+                type_annotation: node.type_annotation.clone(),
+            },
+        )],
+    }
+}
+
+pub fn walk_import_declaration<V: TransformVisitor>(
+    _visitor: &mut V,
+    node: &ImportDeclarationElement,
+) -> SourceElements {
+    SourceElements {
+        span: node.span(),
+        source_elements: vec![],
+    }
 }
 
 pub fn walk_class_body<V: TransformVisitor>(visitor: &mut V, node: &ClassBody) -> SourceElements {

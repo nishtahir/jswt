@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -20,37 +19,7 @@ Ast {
                         start: 0,
                         end: 6,
                     },
-                    source_elements: [
-                        Statement(
-                            Block(
-                                BlockStatement {
-                                    span: Span {
-                                        file: "test_parse_nested_empty_blocks",
-                                        module: "module/test_parse_nested_empty_blocks",
-                                        start: 0,
-                                        end: 6,
-                                    },
-                                    statements: StatementList {
-                                        statements: [
-                                            Block(
-                                                BlockStatement {
-                                                    span: Span {
-                                                        file: "test_parse_nested_empty_blocks",
-                                                        module: "module/test_parse_nested_empty_blocks",
-                                                        start: 2,
-                                                        end: 4,
-                                                    },
-                                                    statements: StatementList {
-                                                        statements: [],
-                                                    },
-                                                },
-                                            ),
-                                        ],
-                                    },
-                                },
-                            ),
-                        ),
-                    ],
+                    source_elements: [],
                 },
             },
         ],

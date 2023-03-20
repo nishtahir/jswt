@@ -1,0 +1,77 @@
+---
+source: jswt-parser/src/class.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_class_declaration_with_annotations",
+                    module: "module/test_class_declaration_with_annotations",
+                    start: 13,
+                    end: 64,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_class_declaration_with_annotations",
+                        module: "module/test_class_declaration_with_annotations",
+                        start: 13,
+                        end: 64,
+                    },
+                    source_elements: [
+                        ClassDeclaration(
+                            ClassDeclarationElement {
+                                span: Span {
+                                    file: "test_class_declaration_with_annotations",
+                                    module: "module/test_class_declaration_with_annotations",
+                                    start: 31,
+                                    end: 55,
+                                },
+                                annotations: [
+                                    Annotation {
+                                        span: Span {
+                                            file: "test_class_declaration_with_annotations",
+                                            module: "module/test_class_declaration_with_annotations",
+                                            start: 13,
+                                            end: 18,
+                                        },
+                                        name: Identifier {
+                                            span: Span {
+                                                file: "test_class_declaration_with_annotations",
+                                                module: "module/test_class_declaration_with_annotations",
+                                                start: 14,
+                                                end: 18,
+                                            },
+                                            value: "Test",
+                                        },
+                                        expr: None,
+                                    },
+                                ],
+                                export: false,
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_class_declaration_with_annotations",
+                                        module: "module/test_class_declaration_with_annotations",
+                                        start: 37,
+                                        end: 38,
+                                    },
+                                    value: "A",
+                                },
+                                body: ClassBody {
+                                    span: Span {
+                                        file: "test_class_declaration_with_annotations",
+                                        module: "module/test_class_declaration_with_annotations",
+                                        start: 39,
+                                        end: 55,
+                                    },
+                                    class_elements: [],
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

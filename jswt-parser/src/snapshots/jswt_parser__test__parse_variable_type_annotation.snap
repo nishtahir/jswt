@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -21,63 +20,61 @@ Ast {
                         end: 16,
                     },
                     source_elements: [
-                        Statement(
-                            Variable(
-                                VariableStatement {
-                                    span: Span {
+                        VariableDeclaration(
+                            VariableDeclarationElement {
+                                annotations: [],
+                                export: false,
+                                span: Span {
+                                    file: "parse_variable_type_annotation",
+                                    module: "module/parse_variable_type_annotation",
+                                    start: 0,
+                                    end: 16,
+                                },
+                                modifier: Let(
+                                    Span {
                                         file: "parse_variable_type_annotation",
                                         module: "module/parse_variable_type_annotation",
                                         start: 0,
-                                        end: 16,
+                                        end: 3,
                                     },
-                                    modifier: Let(
-                                        Span {
+                                ),
+                                name: Identifier {
+                                    span: Span {
+                                        file: "parse_variable_type_annotation",
+                                        module: "module/parse_variable_type_annotation",
+                                        start: 4,
+                                        end: 5,
+                                    },
+                                    value: "x",
+                                },
+                                expression: Literal(
+                                    Integer(
+                                        IntegerLiteral {
+                                            span: Span {
+                                                file: "parse_variable_type_annotation",
+                                                module: "module/parse_variable_type_annotation",
+                                                start: 13,
+                                                end: 15,
+                                            },
+                                            value: 99,
+                                            ty: Unknown,
+                                        },
+                                    ),
+                                ),
+                                type_annotation: Some(
+                                    TypeAnnotation {
+                                        span: Span {
                                             file: "parse_variable_type_annotation",
                                             module: "module/parse_variable_type_annotation",
-                                            start: 0,
-                                            end: 3,
+                                            start: 7,
+                                            end: 10,
                                         },
-                                    ),
-                                    target: Identifier(
-                                        Identifier {
-                                            span: Span {
-                                                file: "parse_variable_type_annotation",
-                                                module: "module/parse_variable_type_annotation",
-                                                start: 4,
-                                                end: 5,
-                                            },
-                                            value: "x",
-                                        },
-                                    ),
-                                    expression: Literal(
-                                        Integer(
-                                            IntegerLiteral {
-                                                span: Span {
-                                                    file: "parse_variable_type_annotation",
-                                                    module: "module/parse_variable_type_annotation",
-                                                    start: 13,
-                                                    end: 15,
-                                                },
-                                                value: 99,
-                                                ty: Unknown,
-                                            },
+                                        ty: Binding(
+                                            "i32",
                                         ),
-                                    ),
-                                    type_annotation: Some(
-                                        TypeAnnotation {
-                                            span: Span {
-                                                file: "parse_variable_type_annotation",
-                                                module: "module/parse_variable_type_annotation",
-                                                start: 7,
-                                                end: 10,
-                                            },
-                                            ty: Binding(
-                                                "i32",
-                                            ),
-                                        },
-                                    ),
-                                },
-                            ),
+                                    },
+                                ),
+                            },
                         ),
                     ],
                 },

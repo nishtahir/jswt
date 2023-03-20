@@ -116,7 +116,8 @@ impl ProgramVisitor<()> for CodeGenerator {
         match node {
             SourceElement::FunctionDeclaration(elem) => self.visit_function_declaration(elem),
             SourceElement::ClassDeclaration(elem) => self.visit_class_declaration(elem),
-            SourceElement::Statement(elem) => self.visit_statement_element(elem),
+            SourceElement::VariableDeclaration(elem) => self.visit_variable_declaration(elem),
+            SourceElement::ImportDeclaration(elem) => self.visit_import_declaration(elem),
         }
     }
 }
@@ -379,6 +380,29 @@ impl StatementVisitor<()> for CodeGenerator {
 
     fn visit_class_field_declaration(&mut self, _: &ClassFieldElement) {
         unreachable!("This should have been desugared out of the AST")
+    }
+
+    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) -> () {
+        // Declarations are always in the global scope
+        let name = node.name.value.clone();
+        let exp = self.visit_single_expression(&node.expression);
+
+        // Add the variable to the symbol table
+        self.symbols
+            .define(name.clone(), WastSymbol::Global(ValueType::I32));
+
+        // Add the variable to the list of global variables
+        // TODO: This needs to be namespaced to avoid collisions
+        self.push_global(GlobalType {
+            name,
+            ty: ValueType::I32,
+            mutable: !node.modifier.is_const(),
+            initializer: exp,
+        });
+    }
+
+    fn visit_import_declaration(&mut self, node: &ImportDeclarationElement) {
+        // No-op
     }
 }
 

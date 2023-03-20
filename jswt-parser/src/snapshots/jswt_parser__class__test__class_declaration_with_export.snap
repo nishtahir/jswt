@@ -1,0 +1,58 @@
+---
+source: jswt-parser/src/class.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_class_declaration_with_export",
+                    module: "module/test_class_declaration_with_export",
+                    start: 13,
+                    end: 53,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_class_declaration_with_export",
+                        module: "module/test_class_declaration_with_export",
+                        start: 13,
+                        end: 53,
+                    },
+                    source_elements: [
+                        ClassDeclaration(
+                            ClassDeclarationElement {
+                                span: Span {
+                                    file: "test_class_declaration_with_export",
+                                    module: "module/test_class_declaration_with_export",
+                                    start: 20,
+                                    end: 44,
+                                },
+                                annotations: [],
+                                export: true,
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_class_declaration_with_export",
+                                        module: "module/test_class_declaration_with_export",
+                                        start: 26,
+                                        end: 27,
+                                    },
+                                    value: "A",
+                                },
+                                body: ClassBody {
+                                    span: Span {
+                                        file: "test_class_declaration_with_export",
+                                        module: "module/test_class_declaration_with_export",
+                                        start: 28,
+                                        end: 44,
+                                    },
+                                    class_elements: [],
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

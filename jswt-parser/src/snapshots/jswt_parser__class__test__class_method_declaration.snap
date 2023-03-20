@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/class.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -29,6 +28,8 @@ Ast {
                                     start: 0,
                                     end: 29,
                                 },
+                                annotations: [],
+                                export: false,
                                 ident: Identifier {
                                     span: Span {
                                         file: "test_class_method_declaration",

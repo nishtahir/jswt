@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -10,83 +9,126 @@ Ast {
                 span: Span {
                     file: "test_parse_arguments_expression",
                     module: "module/test_parse_arguments_expression",
-                    start: 0,
-                    end: 9,
+                    start: 1,
+                    end: 30,
                 },
                 source_elements: SourceElements {
                     span: Span {
                         file: "test_parse_arguments_expression",
                         module: "module/test_parse_arguments_expression",
-                        start: 0,
-                        end: 9,
+                        start: 1,
+                        end: 30,
                     },
                     source_elements: [
-                        Statement(
-                            Expression(
-                                ExpressionStatement {
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_arguments_expression",
+                                    module: "module/test_parse_arguments_expression",
+                                    start: 1,
+                                    end: 30,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
                                     span: Span {
                                         file: "test_parse_arguments_expression",
                                         module: "module/test_parse_arguments_expression",
-                                        start: 0,
-                                        end: 9,
+                                        start: 10,
+                                        end: 14,
                                     },
-                                    expression: Arguments(
-                                        ArgumentsExpression {
-                                            span: Span {
-                                                file: "test_parse_arguments_expression",
-                                                module: "module/test_parse_arguments_expression",
-                                                start: 0,
-                                                end: 8,
-                                            },
-                                            ident: Identifier(
-                                                IdentifierExpression {
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_arguments_expression",
+                                        module: "module/test_parse_arguments_expression",
+                                        start: 14,
+                                        end: 16,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_arguments_expression",
+                                        module: "module/test_parse_arguments_expression",
+                                        start: 17,
+                                        end: 30,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Expression(
+                                                ExpressionStatement {
                                                     span: Span {
                                                         file: "test_parse_arguments_expression",
                                                         module: "module/test_parse_arguments_expression",
-                                                        start: 0,
-                                                        end: 5,
+                                                        start: 19,
+                                                        end: 28,
                                                     },
-                                                    ident: Identifier {
-                                                        span: Span {
-                                                            file: "test_parse_arguments_expression",
-                                                            module: "module/test_parse_arguments_expression",
-                                                            start: 0,
-                                                            end: 5,
-                                                        },
-                                                        value: "print",
-                                                    },
-                                                    ty: Unknown,
-                                                },
-                                            ),
-                                            arguments: ArgumentsList {
-                                                span: Span {
-                                                    file: "test_parse_arguments_expression",
-                                                    module: "module/test_parse_arguments_expression",
-                                                    start: 5,
-                                                    end: 8,
-                                                },
-                                                arguments: [
-                                                    Literal(
-                                                        Integer(
-                                                            IntegerLiteral {
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
+                                                            span: Span {
+                                                                file: "test_parse_arguments_expression",
+                                                                module: "module/test_parse_arguments_expression",
+                                                                start: 19,
+                                                                end: 27,
+                                                            },
+                                                            ident: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "test_parse_arguments_expression",
+                                                                        module: "module/test_parse_arguments_expression",
+                                                                        start: 19,
+                                                                        end: 24,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "test_parse_arguments_expression",
+                                                                            module: "module/test_parse_arguments_expression",
+                                                                            start: 19,
+                                                                            end: 24,
+                                                                        },
+                                                                        value: "print",
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            arguments: ArgumentsList {
                                                                 span: Span {
                                                                     file: "test_parse_arguments_expression",
                                                                     module: "module/test_parse_arguments_expression",
-                                                                    start: 6,
-                                                                    end: 7,
+                                                                    start: 24,
+                                                                    end: 27,
                                                                 },
-                                                                value: 6,
-                                                                ty: Unknown,
+                                                                arguments: [
+                                                                    Literal(
+                                                                        Integer(
+                                                                            IntegerLiteral {
+                                                                                span: Span {
+                                                                                    file: "test_parse_arguments_expression",
+                                                                                    module: "module/test_parse_arguments_expression",
+                                                                                    start: 25,
+                                                                                    end: 26,
+                                                                                },
+                                                                                value: 6,
+                                                                                ty: Unknown,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ],
                                                             },
-                                                        ),
+                                                            ty: Unknown,
+                                                        },
                                                     ),
-                                                ],
-                                            },
-                                            ty: Unknown,
-                                        },
-                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
                                 },
-                            ),
+                            },
                         ),
                     ],
                 },

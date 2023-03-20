@@ -214,12 +214,12 @@ impl Tokenizer {
                         // Push the source where we found the import to the queue
                         self.enqueue_source_file(&relative_source_path);
                     }
-                    DirectiveType::Skip => {}
+                    DirectiveType::Skip => {
+                        // Skip the tokenizer directive by advancing the cursor.
+                        source.advance_cursor(match_text.len());
+                        return self.next_token();
+                    }
                 }
-
-                // Skip the tokenizer directive by advancing the cursor.
-                source.advance_cursor(match_text.len());
-                return self.next_token();
             }
         }
 
@@ -265,20 +265,18 @@ impl Tokenizer {
     }
 
     pub fn enqueue_source_file(&mut self, path: &Path) {
-        let path = fs::canonicalize(path).unwrap();
-        if !path.exists() {
-            // TODO handle gracefully
-            println!("No such file '{:?}'", path.to_str());
-            process::exit(1);
+        if let Ok(canonical_path) = fs::canonicalize(path) {
+            if canonical_path.exists() {
+                let qualified_path = canonical_path.to_str().unwrap();
+                if !fs::is_cached(qualified_path) {
+                    // No need to cache the content up front.
+                    // As long as it exists it will be loaded lazily
+                    self.enqueue_source(qualified_path)
+                }
+                return;
+            }
         }
-
-        let path = fs::canonicalize(path).unwrap();
-        let qualified_path = path.to_str().unwrap();
-        if !fs::is_cached(qualified_path) {
-            // No need to cache the content up front.
-            // As long as it exists it will be loaded lazily
-            self.enqueue_source(qualified_path)
-        }
+        println!("No such file '{:?}'", path.to_str());
     }
 
     /// Add a source to the queue to be parsed
@@ -501,7 +499,10 @@ mod test {
     #[test]
     fn test_tokenize_if_statement() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_tokenize_if_statement", "if(x == y) { return 0; } else { return 1; }");
+        tokenizer.enqueue_source_str(
+            "test_tokenize_if_statement",
+            "if(x == y) { return 0; } else { return 1; }",
+        );
         let actual = tokenizer.tokenize();
         assert!(tokenizer.errors().is_empty());
         assert_debug_snapshot!(actual);
@@ -510,7 +511,10 @@ mod test {
     #[test]
     fn test_tokenize_if_else_if_statement() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_tokenize_if_else_if_statement", "if(x == y) { return 0; } else { return 1; }");
+        tokenizer.enqueue_source_str(
+            "test_tokenize_if_else_if_statement",
+            "if(x == y) { return 0; } else { return 1; }",
+        );
         let actual = tokenizer.tokenize();
         assert!(tokenizer.errors().is_empty());
         assert_debug_snapshot!(actual);
@@ -519,7 +523,10 @@ mod test {
     #[test]
     fn test_tokenize_while_loop() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_tokenize_while_loop", "while(x == 99) { print(\"test\"); }");
+        tokenizer.enqueue_source_str(
+            "test_tokenize_while_loop",
+            "while(x == 99) { print(\"test\"); }",
+        );
         let actual = tokenizer.tokenize();
         assert!(tokenizer.errors().is_empty());
         assert_debug_snapshot!(actual);
@@ -576,7 +583,10 @@ mod test {
     #[test]
     fn test_tokenize_class_declaration() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_tokenize_class_declaration", "class A { constructor(b: i32) {} }");
+        tokenizer.enqueue_source_str(
+            "test_tokenize_class_declaration",
+            "class A { constructor(b: i32) {} }",
+        );
         let actual = tokenizer.tokenize();
         assert!(tokenizer.errors().is_empty());
         assert_debug_snapshot!(actual);

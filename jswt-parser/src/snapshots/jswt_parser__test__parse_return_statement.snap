@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -11,41 +10,84 @@ Ast {
                     file: "test_parse_return_statement",
                     module: "module/test_parse_return_statement",
                     start: 0,
-                    end: 10,
+                    end: 30,
                 },
                 source_elements: SourceElements {
                     span: Span {
                         file: "test_parse_return_statement",
                         module: "module/test_parse_return_statement",
                         start: 0,
-                        end: 10,
+                        end: 30,
                     },
                     source_elements: [
-                        Statement(
-                            Return(
-                                ReturnStatement {
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_return_statement",
+                                    module: "module/test_parse_return_statement",
+                                    start: 0,
+                                    end: 30,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
                                     span: Span {
                                         file: "test_parse_return_statement",
                                         module: "module/test_parse_return_statement",
-                                        start: 0,
-                                        end: 10,
+                                        start: 9,
+                                        end: 13,
                                     },
-                                    expression: Literal(
-                                        Integer(
-                                            IntegerLiteral {
-                                                span: Span {
-                                                    file: "test_parse_return_statement",
-                                                    module: "module/test_parse_return_statement",
-                                                    start: 7,
-                                                    end: 9,
-                                                },
-                                                value: 99,
-                                                ty: Unknown,
-                                            },
-                                        ),
-                                    ),
+                                    value: "test",
                                 },
-                            ),
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_return_statement",
+                                        module: "module/test_parse_return_statement",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_return_statement",
+                                        module: "module/test_parse_return_statement",
+                                        start: 16,
+                                        end: 30,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "test_parse_return_statement",
+                                                        module: "module/test_parse_return_statement",
+                                                        start: 18,
+                                                        end: 28,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_parse_return_statement",
+                                                                    module: "module/test_parse_return_statement",
+                                                                    start: 25,
+                                                                    end: 27,
+                                                                },
+                                                                value: 99,
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
                         ),
                     ],
                 },

@@ -81,6 +81,14 @@ pub trait MutVisitor: Sized {
         walk_class_field_declaration(self, node);
     }
 
+    fn visit_variable_declaration(&mut self, node: &mut VariableDeclarationElement) {
+        walk_variable_declaration(self, node);
+    }
+
+    fn visit_import_declaration(&mut self, node: &mut ImportDeclarationElement) {
+        walk_import_declaration(self, node);
+    }
+
     fn visit_single_expression(&mut self, node: &mut SingleExpression) {
         walk_single_expression(self, node);
     }
@@ -149,8 +157,9 @@ pub fn walk_source_elements<V: MutVisitor>(visitor: &mut V, node: &mut SourceEle
 pub fn walk_source_element<V: MutVisitor>(visitor: &mut V, node: &mut SourceElement) {
     match node {
         SourceElement::FunctionDeclaration(elem) => visitor.visit_function_declaration(elem),
-        SourceElement::Statement(elem) => visitor.visit_statement_element(elem),
+        SourceElement::VariableDeclaration(elem) => visitor.visit_variable_declaration(elem),
         SourceElement::ClassDeclaration(elem) => visitor.visit_class_declaration(elem),
+        SourceElement::ImportDeclaration(elem) => visitor.visit_import_declaration(elem),
     }
 }
 
@@ -253,6 +262,20 @@ pub fn walk_class_method_declaration<V: MutVisitor>(
 pub fn walk_class_field_declaration<V: MutVisitor>(
     _visitor: &mut V,
     _node: &mut ClassFieldElement,
+) {
+    // TODO
+}
+
+pub fn walk_variable_declaration<V: MutVisitor>(
+    visitor: &mut V,
+    node: &mut VariableDeclarationElement,
+) {
+    visitor.visit_single_expression(&mut node.expression);
+}
+
+pub fn walk_import_declaration<V: MutVisitor>(
+    _visitor: &mut V,
+    _node: &mut ImportDeclarationElement,
 ) {
     // TODO
 }

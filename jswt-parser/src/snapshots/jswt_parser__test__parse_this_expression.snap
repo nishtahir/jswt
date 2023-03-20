@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -11,38 +10,81 @@ Ast {
                     file: "parse_this_expression",
                     module: "module/parse_this_expression",
                     start: 0,
-                    end: 5,
+                    end: 25,
                 },
                 source_elements: SourceElements {
                     span: Span {
                         file: "parse_this_expression",
                         module: "module/parse_this_expression",
                         start: 0,
-                        end: 5,
+                        end: 25,
                     },
                     source_elements: [
-                        Statement(
-                            Expression(
-                                ExpressionStatement {
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "parse_this_expression",
+                                    module: "module/parse_this_expression",
+                                    start: 0,
+                                    end: 25,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
                                     span: Span {
                                         file: "parse_this_expression",
                                         module: "module/parse_this_expression",
-                                        start: 0,
-                                        end: 5,
+                                        start: 9,
+                                        end: 13,
                                     },
-                                    expression: This(
-                                        ThisExpression {
-                                            span: Span {
-                                                file: "parse_this_expression",
-                                                module: "module/parse_this_expression",
-                                                start: 0,
-                                                end: 4,
-                                            },
-                                            ty: Unknown,
-                                        },
-                                    ),
+                                    value: "main",
                                 },
-                            ),
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "parse_this_expression",
+                                        module: "module/parse_this_expression",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "parse_this_expression",
+                                        module: "module/parse_this_expression",
+                                        start: 16,
+                                        end: 25,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "parse_this_expression",
+                                                        module: "module/parse_this_expression",
+                                                        start: 18,
+                                                        end: 23,
+                                                    },
+                                                    expression: This(
+                                                        ThisExpression {
+                                                            span: Span {
+                                                                file: "parse_this_expression",
+                                                                module: "module/parse_this_expression",
+                                                                start: 18,
+                                                                end: 22,
+                                                            },
+                                                            ty: Unknown,
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
                         ),
                     ],
                 },

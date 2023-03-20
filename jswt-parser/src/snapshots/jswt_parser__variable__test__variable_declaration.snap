@@ -1,5 +1,5 @@
 ---
-source: jswt-parser/src/lib.rs
+source: jswt-parser/src/variable.rs
 expression: actual
 ---
 Ast {
@@ -7,17 +7,17 @@ Ast {
         files: [
             File {
                 span: Span {
-                    file: "test_parse_variable_statement_with_number",
-                    module: "module/test_parse_variable_statement_with_number",
+                    file: "test_variable_declaration",
+                    module: "module/test_variable_declaration",
                     start: 0,
-                    end: 11,
+                    end: 12,
                 },
                 source_elements: SourceElements {
                     span: Span {
-                        file: "test_parse_variable_statement_with_number",
-                        module: "module/test_parse_variable_statement_with_number",
+                        file: "test_variable_declaration",
+                        module: "module/test_variable_declaration",
                         start: 0,
-                        end: 11,
+                        end: 12,
                     },
                     source_elements: [
                         VariableDeclaration(
@@ -25,25 +25,25 @@ Ast {
                                 annotations: [],
                                 export: false,
                                 span: Span {
-                                    file: "test_parse_variable_statement_with_number",
-                                    module: "module/test_parse_variable_statement_with_number",
+                                    file: "test_variable_declaration",
+                                    module: "module/test_variable_declaration",
                                     start: 0,
-                                    end: 11,
+                                    end: 12,
                                 },
-                                modifier: Let(
+                                modifier: Const(
                                     Span {
-                                        file: "test_parse_variable_statement_with_number",
-                                        module: "module/test_parse_variable_statement_with_number",
+                                        file: "test_variable_declaration",
+                                        module: "module/test_variable_declaration",
                                         start: 0,
-                                        end: 3,
+                                        end: 5,
                                     },
                                 ),
                                 name: Identifier {
                                     span: Span {
-                                        file: "test_parse_variable_statement_with_number",
-                                        module: "module/test_parse_variable_statement_with_number",
-                                        start: 4,
-                                        end: 5,
+                                        file: "test_variable_declaration",
+                                        module: "module/test_variable_declaration",
+                                        start: 6,
+                                        end: 7,
                                     },
                                     value: "x",
                                 },
@@ -51,12 +51,12 @@ Ast {
                                     Integer(
                                         IntegerLiteral {
                                             span: Span {
-                                                file: "test_parse_variable_statement_with_number",
-                                                module: "module/test_parse_variable_statement_with_number",
-                                                start: 8,
-                                                end: 10,
+                                                file: "test_variable_declaration",
+                                                module: "module/test_variable_declaration",
+                                                start: 10,
+                                                end: 11,
                                             },
-                                            value: 42,
+                                            value: 1,
                                             ty: Unknown,
                                         },
                                     ),

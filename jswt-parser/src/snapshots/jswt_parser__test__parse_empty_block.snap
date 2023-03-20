@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -20,23 +19,7 @@ Ast {
                         start: 0,
                         end: 2,
                     },
-                    source_elements: [
-                        Statement(
-                            Block(
-                                BlockStatement {
-                                    span: Span {
-                                        file: "test_parse_empty_block",
-                                        module: "module/test_parse_empty_block",
-                                        start: 0,
-                                        end: 2,
-                                    },
-                                    statements: StatementList {
-                                        statements: [],
-                                    },
-                                },
-                            ),
-                        ),
-                    ],
+                    source_elements: [],
                 },
             },
         ],

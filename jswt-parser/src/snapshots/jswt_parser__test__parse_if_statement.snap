@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -11,164 +10,207 @@ Ast {
                     file: "test_parse_if_statement",
                     module: "module/test_parse_if_statement",
                     start: 0,
-                    end: 43,
+                    end: 63,
                 },
                 source_elements: SourceElements {
                     span: Span {
                         file: "test_parse_if_statement",
                         module: "module/test_parse_if_statement",
                         start: 0,
-                        end: 43,
+                        end: 63,
                     },
                     source_elements: [
-                        Statement(
-                            If(
-                                IfStatement {
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_if_statement",
+                                    module: "module/test_parse_if_statement",
+                                    start: 0,
+                                    end: 63,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
                                     span: Span {
                                         file: "test_parse_if_statement",
                                         module: "module/test_parse_if_statement",
-                                        start: 0,
-                                        end: 43,
+                                        start: 9,
+                                        end: 13,
                                     },
-                                    condition: Equality(
-                                        BinaryExpression {
-                                            span: Span {
-                                                file: "test_parse_if_statement",
-                                                module: "module/test_parse_if_statement",
-                                                start: 3,
-                                                end: 9,
-                                            },
-                                            left: Identifier(
-                                                IdentifierExpression {
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_if_statement",
+                                        module: "module/test_parse_if_statement",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_if_statement",
+                                        module: "module/test_parse_if_statement",
+                                        start: 16,
+                                        end: 63,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            If(
+                                                IfStatement {
                                                     span: Span {
                                                         file: "test_parse_if_statement",
                                                         module: "module/test_parse_if_statement",
-                                                        start: 3,
-                                                        end: 4,
+                                                        start: 18,
+                                                        end: 61,
                                                     },
-                                                    ident: Identifier {
-                                                        span: Span {
-                                                            file: "test_parse_if_statement",
-                                                            module: "module/test_parse_if_statement",
-                                                            start: 3,
-                                                            end: 4,
-                                                        },
-                                                        value: "x",
-                                                    },
-                                                    ty: Unknown,
-                                                },
-                                            ),
-                                            op: Equal(
-                                                Span {
-                                                    file: "test_parse_if_statement",
-                                                    module: "module/test_parse_if_statement",
-                                                    start: 5,
-                                                    end: 7,
-                                                },
-                                            ),
-                                            right: Identifier(
-                                                IdentifierExpression {
-                                                    span: Span {
-                                                        file: "test_parse_if_statement",
-                                                        module: "module/test_parse_if_statement",
-                                                        start: 8,
-                                                        end: 9,
-                                                    },
-                                                    ident: Identifier {
-                                                        span: Span {
-                                                            file: "test_parse_if_statement",
-                                                            module: "module/test_parse_if_statement",
-                                                            start: 8,
-                                                            end: 9,
-                                                        },
-                                                        value: "y",
-                                                    },
-                                                    ty: Unknown,
-                                                },
-                                            ),
-                                            ty: Unknown,
-                                        },
-                                    ),
-                                    consequence: Block(
-                                        BlockStatement {
-                                            span: Span {
-                                                file: "test_parse_if_statement",
-                                                module: "module/test_parse_if_statement",
-                                                start: 11,
-                                                end: 24,
-                                            },
-                                            statements: StatementList {
-                                                statements: [
-                                                    Return(
-                                                        ReturnStatement {
+                                                    condition: Equality(
+                                                        BinaryExpression {
                                                             span: Span {
                                                                 file: "test_parse_if_statement",
                                                                 module: "module/test_parse_if_statement",
-                                                                start: 13,
-                                                                end: 22,
+                                                                start: 21,
+                                                                end: 27,
                                                             },
-                                                            expression: Literal(
-                                                                Integer(
-                                                                    IntegerLiteral {
+                                                            left: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "test_parse_if_statement",
+                                                                        module: "module/test_parse_if_statement",
+                                                                        start: 21,
+                                                                        end: 22,
+                                                                    },
+                                                                    ident: Identifier {
                                                                         span: Span {
                                                                             file: "test_parse_if_statement",
                                                                             module: "module/test_parse_if_statement",
-                                                                            start: 20,
-                                                                            end: 21,
+                                                                            start: 21,
+                                                                            end: 22,
                                                                         },
-                                                                        value: 0,
-                                                                        ty: Unknown,
+                                                                        value: "x",
                                                                     },
-                                                                ),
+                                                                    ty: Unknown,
+                                                                },
                                                             ),
-                                                        },
-                                                    ),
-                                                ],
-                                            },
-                                        },
-                                    ),
-                                    alternative: Some(
-                                        Block(
-                                            BlockStatement {
-                                                span: Span {
-                                                    file: "test_parse_if_statement",
-                                                    module: "module/test_parse_if_statement",
-                                                    start: 30,
-                                                    end: 43,
-                                                },
-                                                statements: StatementList {
-                                                    statements: [
-                                                        Return(
-                                                            ReturnStatement {
-                                                                span: Span {
+                                                            op: Equal(
+                                                                Span {
                                                                     file: "test_parse_if_statement",
                                                                     module: "module/test_parse_if_statement",
-                                                                    start: 32,
-                                                                    end: 41,
+                                                                    start: 23,
+                                                                    end: 25,
                                                                 },
-                                                                expression: Literal(
-                                                                    Integer(
-                                                                        IntegerLiteral {
+                                                            ),
+                                                            right: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "test_parse_if_statement",
+                                                                        module: "module/test_parse_if_statement",
+                                                                        start: 26,
+                                                                        end: 27,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "test_parse_if_statement",
+                                                                            module: "module/test_parse_if_statement",
+                                                                            start: 26,
+                                                                            end: 27,
+                                                                        },
+                                                                        value: "y",
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            ty: Unknown,
+                                                        },
+                                                    ),
+                                                    consequence: Block(
+                                                        BlockStatement {
+                                                            span: Span {
+                                                                file: "test_parse_if_statement",
+                                                                module: "module/test_parse_if_statement",
+                                                                start: 29,
+                                                                end: 42,
+                                                            },
+                                                            statements: StatementList {
+                                                                statements: [
+                                                                    Return(
+                                                                        ReturnStatement {
                                                                             span: Span {
                                                                                 file: "test_parse_if_statement",
                                                                                 module: "module/test_parse_if_statement",
-                                                                                start: 39,
+                                                                                start: 31,
                                                                                 end: 40,
                                                                             },
-                                                                            value: 1,
-                                                                            ty: Unknown,
+                                                                            expression: Literal(
+                                                                                Integer(
+                                                                                    IntegerLiteral {
+                                                                                        span: Span {
+                                                                                            file: "test_parse_if_statement",
+                                                                                            module: "module/test_parse_if_statement",
+                                                                                            start: 38,
+                                                                                            end: 39,
+                                                                                        },
+                                                                                        value: 0,
+                                                                                        ty: Unknown,
+                                                                                    },
+                                                                                ),
+                                                                            ),
                                                                         },
                                                                     ),
-                                                                ),
+                                                                ],
+                                                            },
+                                                        },
+                                                    ),
+                                                    alternative: Some(
+                                                        Block(
+                                                            BlockStatement {
+                                                                span: Span {
+                                                                    file: "test_parse_if_statement",
+                                                                    module: "module/test_parse_if_statement",
+                                                                    start: 48,
+                                                                    end: 61,
+                                                                },
+                                                                statements: StatementList {
+                                                                    statements: [
+                                                                        Return(
+                                                                            ReturnStatement {
+                                                                                span: Span {
+                                                                                    file: "test_parse_if_statement",
+                                                                                    module: "module/test_parse_if_statement",
+                                                                                    start: 50,
+                                                                                    end: 59,
+                                                                                },
+                                                                                expression: Literal(
+                                                                                    Integer(
+                                                                                        IntegerLiteral {
+                                                                                            span: Span {
+                                                                                                file: "test_parse_if_statement",
+                                                                                                module: "module/test_parse_if_statement",
+                                                                                                start: 57,
+                                                                                                end: 58,
+                                                                                            },
+                                                                                            value: 1,
+                                                                                            ty: Unknown,
+                                                                                        },
+                                                                                    ),
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                },
                                                             },
                                                         ),
-                                                    ],
+                                                    ),
                                                 },
-                                            },
-                                        ),
-                                    ),
+                                            ),
+                                        ],
+                                    },
                                 },
-                            ),
+                            },
                         ),
                     ],
                 },

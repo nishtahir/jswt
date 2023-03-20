@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -21,84 +20,82 @@ Ast {
                         end: 14,
                     },
                     source_elements: [
-                        Statement(
-                            Variable(
-                                VariableStatement {
-                                    span: Span {
+                        VariableDeclaration(
+                            VariableDeclarationElement {
+                                annotations: [],
+                                export: false,
+                                span: Span {
+                                    file: "test_parse_multiplicative_expression",
+                                    module: "module/test_parse_multiplicative_expression",
+                                    start: 0,
+                                    end: 14,
+                                },
+                                modifier: Let(
+                                    Span {
                                         file: "test_parse_multiplicative_expression",
                                         module: "module/test_parse_multiplicative_expression",
                                         start: 0,
-                                        end: 14,
+                                        end: 3,
                                     },
-                                    modifier: Let(
-                                        Span {
+                                ),
+                                name: Identifier {
+                                    span: Span {
+                                        file: "test_parse_multiplicative_expression",
+                                        module: "module/test_parse_multiplicative_expression",
+                                        start: 4,
+                                        end: 5,
+                                    },
+                                    value: "x",
+                                },
+                                expression: Multiplicative(
+                                    BinaryExpression {
+                                        span: Span {
                                             file: "test_parse_multiplicative_expression",
                                             module: "module/test_parse_multiplicative_expression",
-                                            start: 0,
-                                            end: 3,
+                                            start: 8,
+                                            end: 13,
                                         },
-                                    ),
-                                    target: Identifier(
-                                        Identifier {
-                                            span: Span {
-                                                file: "test_parse_multiplicative_expression",
-                                                module: "module/test_parse_multiplicative_expression",
-                                                start: 4,
-                                                end: 5,
-                                            },
-                                            value: "x",
-                                        },
-                                    ),
-                                    expression: Multiplicative(
-                                        BinaryExpression {
-                                            span: Span {
-                                                file: "test_parse_multiplicative_expression",
-                                                module: "module/test_parse_multiplicative_expression",
-                                                start: 8,
-                                                end: 13,
-                                            },
-                                            left: Literal(
-                                                Integer(
-                                                    IntegerLiteral {
-                                                        span: Span {
-                                                            file: "test_parse_multiplicative_expression",
-                                                            module: "module/test_parse_multiplicative_expression",
-                                                            start: 8,
-                                                            end: 9,
-                                                        },
-                                                        value: 3,
-                                                        ty: Unknown,
+                                        left: Literal(
+                                            Integer(
+                                                IntegerLiteral {
+                                                    span: Span {
+                                                        file: "test_parse_multiplicative_expression",
+                                                        module: "module/test_parse_multiplicative_expression",
+                                                        start: 8,
+                                                        end: 9,
                                                     },
-                                                ),
-                                            ),
-                                            op: Mult(
-                                                Span {
-                                                    file: "test_parse_multiplicative_expression",
-                                                    module: "module/test_parse_multiplicative_expression",
-                                                    start: 10,
-                                                    end: 11,
+                                                    value: 3,
+                                                    ty: Unknown,
                                                 },
                                             ),
-                                            right: Literal(
-                                                Integer(
-                                                    IntegerLiteral {
-                                                        span: Span {
-                                                            file: "test_parse_multiplicative_expression",
-                                                            module: "module/test_parse_multiplicative_expression",
-                                                            start: 12,
-                                                            end: 13,
-                                                        },
-                                                        value: 2,
-                                                        ty: Unknown,
+                                        ),
+                                        op: Mult(
+                                            Span {
+                                                file: "test_parse_multiplicative_expression",
+                                                module: "module/test_parse_multiplicative_expression",
+                                                start: 10,
+                                                end: 11,
+                                            },
+                                        ),
+                                        right: Literal(
+                                            Integer(
+                                                IntegerLiteral {
+                                                    span: Span {
+                                                        file: "test_parse_multiplicative_expression",
+                                                        module: "module/test_parse_multiplicative_expression",
+                                                        start: 12,
+                                                        end: 13,
                                                     },
-                                                ),
+                                                    value: 2,
+                                                    ty: Unknown,
+                                                },
                                             ),
-                                            ty: Unknown,
-                                        },
-                                    ),
-                                    type_annotation: None,
-                                },
-                            ),
+                                        ),
+                                        ty: Unknown,
+                                    },
+                                ),
+                                type_annotation: None,
+                            },
                         ),
                     ],
                 },

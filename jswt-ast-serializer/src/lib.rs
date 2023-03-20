@@ -10,6 +10,9 @@ pub struct AstSerializer {
     indent: usize,
 }
 
+/// A Naive AST Serializer to serialize the AST to a string
+/// This is used for debugging purposes and is not guaranteed to be
+/// a valid code.
 impl AstSerializer {
     fn indent(&mut self) {
         self.content += &" ".repeat(self.indent * 4);
@@ -115,6 +118,21 @@ impl Visitor for AstSerializer {
     fn visit_member_dot(&mut self, node: &MemberDotExpression) {
         self.visit_single_expression(&node.target);
         self.content += ".";
+        self.visit_single_expression(&node.expression);
+    }
+
+    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) {
+        let modifier = match node.modifier {
+            VariableModifier::Let(_) => "let",
+            VariableModifier::Const(_) => "const",
+        };
+
+        self.content += modifier;
+        self.content += " ";
+        self.content += &node.name.value;
+        self.content += ": ";
+        self.content += &node.expression.ty().to_string();
+        self.content += " = ";
         self.visit_single_expression(&node.expression);
     }
 

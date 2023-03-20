@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -21,153 +20,149 @@ Ast {
                         end: 31,
                     },
                     source_elements: [
-                        Statement(
-                            Variable(
-                                VariableStatement {
-                                    span: Span {
+                        VariableDeclaration(
+                            VariableDeclarationElement {
+                                annotations: [],
+                                export: false,
+                                span: Span {
+                                    file: "parse_postfix_unary_expression",
+                                    module: "module/parse_postfix_unary_expression",
+                                    start: 0,
+                                    end: 18,
+                                },
+                                modifier: Let(
+                                    Span {
                                         file: "parse_postfix_unary_expression",
                                         module: "module/parse_postfix_unary_expression",
                                         start: 0,
-                                        end: 18,
+                                        end: 3,
                                     },
-                                    modifier: Let(
-                                        Span {
-                                            file: "parse_postfix_unary_expression",
-                                            module: "module/parse_postfix_unary_expression",
-                                            start: 0,
-                                            end: 3,
-                                        },
-                                    ),
-                                    target: Identifier(
-                                        Identifier {
-                                            span: Span {
-                                                file: "parse_postfix_unary_expression",
-                                                module: "module/parse_postfix_unary_expression",
-                                                start: 4,
-                                                end: 5,
-                                            },
-                                            value: "x",
-                                        },
-                                    ),
-                                    expression: Unary(
-                                        UnaryExpression {
-                                            span: Span {
-                                                file: "parse_postfix_unary_expression",
-                                                module: "module/parse_postfix_unary_expression",
-                                                start: 15,
-                                                end: 15,
-                                            },
-                                            op: PostDecrement(
-                                                Span {
-                                                    file: "parse_postfix_unary_expression",
-                                                    module: "module/parse_postfix_unary_expression",
-                                                    start: 15,
-                                                    end: 17,
-                                                },
-                                            ),
-                                            expr: Literal(
-                                                Integer(
-                                                    IntegerLiteral {
-                                                        span: Span {
-                                                            file: "parse_postfix_unary_expression",
-                                                            module: "module/parse_postfix_unary_expression",
-                                                            start: 13,
-                                                            end: 15,
-                                                        },
-                                                        value: 99,
-                                                        ty: Unknown,
-                                                    },
-                                                ),
-                                            ),
-                                            ty: Unknown,
-                                        },
-                                    ),
-                                    type_annotation: Some(
-                                        TypeAnnotation {
-                                            span: Span {
-                                                file: "parse_postfix_unary_expression",
-                                                module: "module/parse_postfix_unary_expression",
-                                                start: 7,
-                                                end: 10,
-                                            },
-                                            ty: Binding(
-                                                "i32",
-                                            ),
-                                        },
-                                    ),
-                                },
-                            ),
-                        ),
-                        Statement(
-                            Variable(
-                                VariableStatement {
+                                ),
+                                name: Identifier {
                                     span: Span {
                                         file: "parse_postfix_unary_expression",
                                         module: "module/parse_postfix_unary_expression",
-                                        start: 19,
-                                        end: 31,
+                                        start: 4,
+                                        end: 5,
                                     },
-                                    modifier: Let(
-                                        Span {
+                                    value: "x",
+                                },
+                                expression: Unary(
+                                    UnaryExpression {
+                                        span: Span {
                                             file: "parse_postfix_unary_expression",
                                             module: "module/parse_postfix_unary_expression",
-                                            start: 19,
-                                            end: 22,
+                                            start: 15,
+                                            end: 15,
                                         },
-                                    ),
-                                    target: Identifier(
-                                        Identifier {
-                                            span: Span {
+                                        op: PostDecrement(
+                                            Span {
                                                 file: "parse_postfix_unary_expression",
                                                 module: "module/parse_postfix_unary_expression",
-                                                start: 23,
-                                                end: 24,
+                                                start: 15,
+                                                end: 17,
                                             },
-                                            value: "y",
+                                        ),
+                                        expr: Literal(
+                                            Integer(
+                                                IntegerLiteral {
+                                                    span: Span {
+                                                        file: "parse_postfix_unary_expression",
+                                                        module: "module/parse_postfix_unary_expression",
+                                                        start: 13,
+                                                        end: 15,
+                                                    },
+                                                    value: 99,
+                                                    ty: Unknown,
+                                                },
+                                            ),
+                                        ),
+                                        ty: Unknown,
+                                    },
+                                ),
+                                type_annotation: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "parse_postfix_unary_expression",
+                                            module: "module/parse_postfix_unary_expression",
+                                            start: 7,
+                                            end: 10,
                                         },
-                                    ),
-                                    expression: Unary(
-                                        UnaryExpression {
-                                            span: Span {
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ),
+                            },
+                        ),
+                        VariableDeclaration(
+                            VariableDeclarationElement {
+                                annotations: [],
+                                export: false,
+                                span: Span {
+                                    file: "parse_postfix_unary_expression",
+                                    module: "module/parse_postfix_unary_expression",
+                                    start: 19,
+                                    end: 31,
+                                },
+                                modifier: Let(
+                                    Span {
+                                        file: "parse_postfix_unary_expression",
+                                        module: "module/parse_postfix_unary_expression",
+                                        start: 19,
+                                        end: 22,
+                                    },
+                                ),
+                                name: Identifier {
+                                    span: Span {
+                                        file: "parse_postfix_unary_expression",
+                                        module: "module/parse_postfix_unary_expression",
+                                        start: 23,
+                                        end: 24,
+                                    },
+                                    value: "y",
+                                },
+                                expression: Unary(
+                                    UnaryExpression {
+                                        span: Span {
+                                            file: "parse_postfix_unary_expression",
+                                            module: "module/parse_postfix_unary_expression",
+                                            start: 28,
+                                            end: 28,
+                                        },
+                                        op: PostIncrement(
+                                            Span {
                                                 file: "parse_postfix_unary_expression",
                                                 module: "module/parse_postfix_unary_expression",
                                                 start: 28,
-                                                end: 28,
+                                                end: 30,
                                             },
-                                            op: PostIncrement(
-                                                Span {
+                                        ),
+                                        expr: Identifier(
+                                            IdentifierExpression {
+                                                span: Span {
                                                     file: "parse_postfix_unary_expression",
                                                     module: "module/parse_postfix_unary_expression",
-                                                    start: 28,
-                                                    end: 30,
+                                                    start: 27,
+                                                    end: 28,
                                                 },
-                                            ),
-                                            expr: Identifier(
-                                                IdentifierExpression {
+                                                ident: Identifier {
                                                     span: Span {
                                                         file: "parse_postfix_unary_expression",
                                                         module: "module/parse_postfix_unary_expression",
                                                         start: 27,
                                                         end: 28,
                                                     },
-                                                    ident: Identifier {
-                                                        span: Span {
-                                                            file: "parse_postfix_unary_expression",
-                                                            module: "module/parse_postfix_unary_expression",
-                                                            start: 27,
-                                                            end: 28,
-                                                        },
-                                                        value: "i",
-                                                    },
-                                                    ty: Unknown,
+                                                    value: "i",
                                                 },
-                                            ),
-                                            ty: Unknown,
-                                        },
-                                    ),
-                                    type_annotation: None,
-                                },
-                            ),
+                                                ty: Unknown,
+                                            },
+                                        ),
+                                        ty: Unknown,
+                                    },
+                                ),
+                                type_annotation: None,
+                            },
                         ),
                     ],
                 },

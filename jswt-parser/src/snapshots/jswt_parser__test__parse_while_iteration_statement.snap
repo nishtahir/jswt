@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -11,159 +10,202 @@ Ast {
                     file: "test_parse_while_iteration_statement",
                     module: "module/test_parse_while_iteration_statement",
                     start: 0,
-                    end: 38,
+                    end: 58,
                 },
                 source_elements: SourceElements {
                     span: Span {
                         file: "test_parse_while_iteration_statement",
                         module: "module/test_parse_while_iteration_statement",
                         start: 0,
-                        end: 38,
+                        end: 58,
                     },
                     source_elements: [
-                        Statement(
-                            Iteration(
-                                While(
-                                    WhileIterationElement {
-                                        span: Span {
-                                            file: "test_parse_while_iteration_statement",
-                                            module: "module/test_parse_while_iteration_statement",
-                                            start: 0,
-                                            end: 38,
-                                        },
-                                        expression: Relational(
-                                            BinaryExpression {
-                                                span: Span {
-                                                    file: "test_parse_while_iteration_statement",
-                                                    module: "module/test_parse_while_iteration_statement",
-                                                    start: 6,
-                                                    end: 12,
-                                                },
-                                                left: Identifier(
-                                                    IdentifierExpression {
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_while_iteration_statement",
+                                    module: "module/test_parse_while_iteration_statement",
+                                    start: 0,
+                                    end: 58,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_parse_while_iteration_statement",
+                                        module: "module/test_parse_while_iteration_statement",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_while_iteration_statement",
+                                        module: "module/test_parse_while_iteration_statement",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_while_iteration_statement",
+                                        module: "module/test_parse_while_iteration_statement",
+                                        start: 16,
+                                        end: 58,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Iteration(
+                                                While(
+                                                    WhileIterationElement {
                                                         span: Span {
                                                             file: "test_parse_while_iteration_statement",
                                                             module: "module/test_parse_while_iteration_statement",
-                                                            start: 6,
-                                                            end: 7,
+                                                            start: 18,
+                                                            end: 56,
                                                         },
-                                                        ident: Identifier {
-                                                            span: Span {
-                                                                file: "test_parse_while_iteration_statement",
-                                                                module: "module/test_parse_while_iteration_statement",
-                                                                start: 6,
-                                                                end: 7,
-                                                            },
-                                                            value: "x",
-                                                        },
-                                                        ty: Unknown,
-                                                    },
-                                                ),
-                                                op: Less(
-                                                    Span {
-                                                        file: "test_parse_while_iteration_statement",
-                                                        module: "module/test_parse_while_iteration_statement",
-                                                        start: 8,
-                                                        end: 9,
-                                                    },
-                                                ),
-                                                right: Literal(
-                                                    Integer(
-                                                        IntegerLiteral {
-                                                            span: Span {
-                                                                file: "test_parse_while_iteration_statement",
-                                                                module: "module/test_parse_while_iteration_statement",
-                                                                start: 10,
-                                                                end: 12,
-                                                            },
-                                                            value: 99,
-                                                            ty: Unknown,
-                                                        },
-                                                    ),
-                                                ),
-                                                ty: Unknown,
-                                            },
-                                        ),
-                                        block: BlockStatement {
-                                            span: Span {
-                                                file: "test_parse_while_iteration_statement",
-                                                module: "module/test_parse_while_iteration_statement",
-                                                start: 14,
-                                                end: 38,
-                                            },
-                                            statements: StatementList {
-                                                statements: [
-                                                    Expression(
-                                                        ExpressionStatement {
-                                                            span: Span {
-                                                                file: "test_parse_while_iteration_statement",
-                                                                module: "module/test_parse_while_iteration_statement",
-                                                                start: 16,
-                                                                end: 36,
-                                                            },
-                                                            expression: Arguments(
-                                                                ArgumentsExpression {
-                                                                    span: Span {
-                                                                        file: "test_parse_while_iteration_statement",
-                                                                        module: "module/test_parse_while_iteration_statement",
-                                                                        start: 16,
-                                                                        end: 35,
-                                                                    },
-                                                                    ident: Identifier(
-                                                                        IdentifierExpression {
-                                                                            span: Span {
-                                                                                file: "test_parse_while_iteration_statement",
-                                                                                module: "module/test_parse_while_iteration_statement",
-                                                                                start: 16,
-                                                                                end: 23,
-                                                                            },
-                                                                            ident: Identifier {
-                                                                                span: Span {
-                                                                                    file: "test_parse_while_iteration_statement",
-                                                                                    module: "module/test_parse_while_iteration_statement",
-                                                                                    start: 16,
-                                                                                    end: 23,
-                                                                                },
-                                                                                value: "println",
-                                                                            },
-                                                                            ty: Unknown,
-                                                                        },
-                                                                    ),
-                                                                    arguments: ArgumentsList {
+                                                        expression: Relational(
+                                                            BinaryExpression {
+                                                                span: Span {
+                                                                    file: "test_parse_while_iteration_statement",
+                                                                    module: "module/test_parse_while_iteration_statement",
+                                                                    start: 24,
+                                                                    end: 30,
+                                                                },
+                                                                left: Identifier(
+                                                                    IdentifierExpression {
                                                                         span: Span {
                                                                             file: "test_parse_while_iteration_statement",
                                                                             module: "module/test_parse_while_iteration_statement",
-                                                                            start: 23,
-                                                                            end: 35,
+                                                                            start: 24,
+                                                                            end: 25,
                                                                         },
-                                                                        arguments: [
-                                                                            Literal(
-                                                                                String(
-                                                                                    StringLiteral {
+                                                                        ident: Identifier {
+                                                                            span: Span {
+                                                                                file: "test_parse_while_iteration_statement",
+                                                                                module: "module/test_parse_while_iteration_statement",
+                                                                                start: 24,
+                                                                                end: 25,
+                                                                            },
+                                                                            value: "x",
+                                                                        },
+                                                                        ty: Unknown,
+                                                                    },
+                                                                ),
+                                                                op: Less(
+                                                                    Span {
+                                                                        file: "test_parse_while_iteration_statement",
+                                                                        module: "module/test_parse_while_iteration_statement",
+                                                                        start: 26,
+                                                                        end: 27,
+                                                                    },
+                                                                ),
+                                                                right: Literal(
+                                                                    Integer(
+                                                                        IntegerLiteral {
+                                                                            span: Span {
+                                                                                file: "test_parse_while_iteration_statement",
+                                                                                module: "module/test_parse_while_iteration_statement",
+                                                                                start: 28,
+                                                                                end: 30,
+                                                                            },
+                                                                            value: 99,
+                                                                            ty: Unknown,
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                        block: BlockStatement {
+                                                            span: Span {
+                                                                file: "test_parse_while_iteration_statement",
+                                                                module: "module/test_parse_while_iteration_statement",
+                                                                start: 32,
+                                                                end: 56,
+                                                            },
+                                                            statements: StatementList {
+                                                                statements: [
+                                                                    Expression(
+                                                                        ExpressionStatement {
+                                                                            span: Span {
+                                                                                file: "test_parse_while_iteration_statement",
+                                                                                module: "module/test_parse_while_iteration_statement",
+                                                                                start: 34,
+                                                                                end: 54,
+                                                                            },
+                                                                            expression: Arguments(
+                                                                                ArgumentsExpression {
+                                                                                    span: Span {
+                                                                                        file: "test_parse_while_iteration_statement",
+                                                                                        module: "module/test_parse_while_iteration_statement",
+                                                                                        start: 34,
+                                                                                        end: 53,
+                                                                                    },
+                                                                                    ident: Identifier(
+                                                                                        IdentifierExpression {
+                                                                                            span: Span {
+                                                                                                file: "test_parse_while_iteration_statement",
+                                                                                                module: "module/test_parse_while_iteration_statement",
+                                                                                                start: 34,
+                                                                                                end: 41,
+                                                                                            },
+                                                                                            ident: Identifier {
+                                                                                                span: Span {
+                                                                                                    file: "test_parse_while_iteration_statement",
+                                                                                                    module: "module/test_parse_while_iteration_statement",
+                                                                                                    start: 34,
+                                                                                                    end: 41,
+                                                                                                },
+                                                                                                value: "println",
+                                                                                            },
+                                                                                            ty: Unknown,
+                                                                                        },
+                                                                                    ),
+                                                                                    arguments: ArgumentsList {
                                                                                         span: Span {
                                                                                             file: "test_parse_while_iteration_statement",
                                                                                             module: "module/test_parse_while_iteration_statement",
-                                                                                            start: 24,
-                                                                                            end: 34,
+                                                                                            start: 41,
+                                                                                            end: 53,
                                                                                         },
-                                                                                        value: "hey taco",
-                                                                                        ty: Unknown,
+                                                                                        arguments: [
+                                                                                            Literal(
+                                                                                                String(
+                                                                                                    StringLiteral {
+                                                                                                        span: Span {
+                                                                                                            file: "test_parse_while_iteration_statement",
+                                                                                                            module: "module/test_parse_while_iteration_statement",
+                                                                                                            start: 42,
+                                                                                                            end: 52,
+                                                                                                        },
+                                                                                                        value: "hey taco",
+                                                                                                        ty: Unknown,
+                                                                                                    },
+                                                                                                ),
+                                                                                            ),
+                                                                                        ],
                                                                                     },
-                                                                                ),
+                                                                                    ty: Unknown,
+                                                                                },
                                                                             ),
-                                                                        ],
-                                                                    },
-                                                                    ty: Unknown,
-                                                                },
-                                                            ),
+                                                                        },
+                                                                    ),
+                                                                ],
+                                                            },
                                                         },
-                                                    ),
-                                                ],
-                                            },
-                                        },
+                                                    },
+                                                ),
+                                            ),
+                                        ],
                                     },
-                                ),
-                            ),
+                                },
+                            },
                         ),
                     ],
                 },

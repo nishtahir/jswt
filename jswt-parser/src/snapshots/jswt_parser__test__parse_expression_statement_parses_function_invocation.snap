@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -26,7 +25,7 @@ Ast {
                                 span: Span {
                                     file: "test_parse_expression_statement_parses_function_invocation",
                                     module: "module/test_parse_expression_statement_parses_function_invocation",
-                                    start: 0,
+                                    start: 7,
                                     end: 34,
                                 },
                                 decorators: FunctionDecorators {

@@ -48,9 +48,9 @@ impl<'a> Visitor for GlobalSemanticResolver<'a> {
         ctx.visit_function_declaration(node);
     }
 
-    fn visit_variable_statement(&mut self, node: &VariableStatement) {
+    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) {
         let mut ctx = VariableDeclarationGlobalContext::new(self);
-        ctx.visit_variable_statement(node);
+        ctx.visit_variable_declaration(node);
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {

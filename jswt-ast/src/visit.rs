@@ -65,6 +65,14 @@ pub trait Visitor: Sized {
         walk_class_declaration(self, node);
     }
 
+    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) {
+        walk_variable_declaration(self, node);
+    }
+
+    fn visit_import_declaration(&mut self, node: &ImportDeclarationElement) {
+        walk_import_declaration(self, node);
+    }
+
     fn visit_class_body(&mut self, node: &ClassBody) {
         walk_class_body(self, node);
     }
@@ -149,8 +157,9 @@ pub fn walk_source_elements<V: Visitor>(visitor: &mut V, node: &SourceElements) 
 pub fn walk_source_element<V: Visitor>(visitor: &mut V, node: &SourceElement) {
     match node {
         SourceElement::FunctionDeclaration(elem) => visitor.visit_function_declaration(elem),
-        SourceElement::Statement(elem) => visitor.visit_statement_element(elem),
+        SourceElement::VariableDeclaration(elem) => visitor.visit_variable_declaration(elem),
         SourceElement::ClassDeclaration(elem) => visitor.visit_class_declaration(elem),
+        SourceElement::ImportDeclaration(elem) => visitor.visit_import_declaration(elem),
     }
 }
 
@@ -218,6 +227,14 @@ pub fn walk_function_declaration<V: Visitor>(visitor: &mut V, node: &FunctionDec
 
 pub fn walk_class_declaration<V: Visitor>(visitor: &mut V, node: &ClassDeclarationElement) {
     visitor.visit_class_body(&node.body);
+}
+
+pub fn walk_variable_declaration<V: Visitor>(visitor: &mut V, node: &VariableDeclarationElement) {
+    visitor.visit_single_expression(&node.expression);
+}
+
+pub fn walk_import_declaration<V: Visitor>(_visitor: &mut V, _node: &ImportDeclarationElement) {
+    // TODO
 }
 
 pub fn walk_class_body<V: Visitor>(visitor: &mut V, node: &ClassBody) {
