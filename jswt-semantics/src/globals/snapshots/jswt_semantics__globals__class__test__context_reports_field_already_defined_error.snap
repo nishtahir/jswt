@@ -1,6 +1,7 @@
 ---
 source: jswt-semantics/src/globals/class.rs
 expression: resolver
+
 ---
 GlobalSemanticResolver {
     bindings: BindingsTable {

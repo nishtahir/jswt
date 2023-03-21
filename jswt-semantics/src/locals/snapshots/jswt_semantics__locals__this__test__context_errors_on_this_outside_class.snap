@@ -1,7 +1,6 @@
 ---
-source: jswt-semantics/src/locals/new.rs
-expression: local
-
+source: jswt-semantics/src/locals/this.rs
+expression: resolver
 ---
 LocalSemanticResolver {
     symbols: ScopedSymbolTable {
@@ -21,7 +20,7 @@ LocalSemanticResolver {
                 end: 0,
             }: Scope {
                 symbols: {
-                    "test": Function(
+                    "foo": Function(
                         FunctionSignature {
                             params: [],
                             returns: Binding(
@@ -33,10 +32,10 @@ LocalSemanticResolver {
                 ret: None,
             },
             Span {
-                file: "test_error_on_undefined_variable",
-                module: "module/test_error_on_undefined_variable",
-                start: 25,
-                end: 51,
+                file: "test_context_errors_on_this_outside_class",
+                module: "module/test_context_errors_on_this_outside_class",
+                start: 28,
+                end: 65,
             }: Scope {
                 symbols: {},
                 ret: None,
@@ -47,13 +46,12 @@ LocalSemanticResolver {
         bindings: {},
     },
     errors: [
-        VariableNotDefined {
-            name: "x",
+        ThisOutsideClass {
             span: Span {
-                file: "test_error_on_undefined_variable",
-                module: "module/test_error_on_undefined_variable",
-                start: 39,
-                end: 40,
+                file: "test_context_errors_on_this_outside_class",
+                module: "module/test_context_errors_on_this_outside_class",
+                start: 46,
+                end: 50,
             },
         },
     ],

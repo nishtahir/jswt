@@ -2,7 +2,7 @@ use super::LocalSemanticResolver;
 use crate::SemanticError;
 use jswt_ast::{
     visit::{self, Visitor},
-    ClassBody, ClassDeclarationElement, ClassMethodElement,
+    ClassBody, ClassMethodElement,
 };
 use jswt_common::Spannable;
 use jswt_symbols::{ScopedSymbolTable, Symbol};
@@ -13,7 +13,7 @@ pub struct ClassLocalContext<'a> {
 }
 
 impl<'a> ClassLocalContext<'a> {
-    pub fn new(resolver: &'a mut LocalSemanticResolver, class: &ClassDeclarationElement) -> Self {
+    pub fn new(resolver: &'a mut LocalSemanticResolver) -> Self {
         Self {
             symbols: resolver.symbols,
             errors: &mut resolver.errors,

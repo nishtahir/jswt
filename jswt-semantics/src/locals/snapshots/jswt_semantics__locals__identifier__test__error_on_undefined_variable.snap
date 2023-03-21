@@ -1,6 +1,7 @@
 ---
 source: jswt-semantics/src/locals/identifier.rs
 expression: local
+
 ---
 LocalSemanticResolver {
     symbols: ScopedSymbolTable {

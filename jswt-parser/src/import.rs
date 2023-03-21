@@ -1,8 +1,8 @@
-use jswt_ast::{Annotation, ImportDeclarationElement};
-use jswt_common::{Span, Spannable};
+use jswt_ast::ImportDeclarationElement;
+use jswt_common::Span;
 use jswt_tokenizer::TokenType;
 
-use crate::{consume, ident, Identifier, ParseError, ParseResult, Parser};
+use crate::{consume, ParseError, ParseResult, Parser};
 
 impl<'a> Parser<'a> {
     ///VariableDeclaration
@@ -33,7 +33,11 @@ mod test {
     fn test_parse_import_declaration() {
         let mut tokenizer = Tokenizer::default();
         fs::write("./target/test.jswt", "const x = 0;").unwrap();
-        fs::write("./target/test_parse_import_declaration.jswt", "import \"./test.jswt\";").unwrap();
+        fs::write(
+            "./target/test_parse_import_declaration.jswt",
+            "import \"./test.jswt\";",
+        )
+        .unwrap();
         tokenizer.enqueue_source("./target/test_parse_import_declaration.jswt");
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();

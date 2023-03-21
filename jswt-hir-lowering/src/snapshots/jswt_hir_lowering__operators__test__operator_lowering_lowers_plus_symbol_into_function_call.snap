@@ -1,0 +1,483 @@
+---
+source: jswt-hir-lowering/src/operators.rs
+expression: lowered
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                    start: 9,
+                    end: 257,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                        start: 9,
+                        end: 257,
+                    },
+                    source_elements: [
+                        ClassDeclaration(
+                            ClassDeclarationElement {
+                                span: Span {
+                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                    start: 9,
+                                    end: 105,
+                                },
+                                annotations: [],
+                                export: false,
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        start: 15,
+                                        end: 18,
+                                    },
+                                    value: "i32",
+                                },
+                                body: ClassBody {
+                                    span: Span {
+                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        start: 19,
+                                        end: 105,
+                                    },
+                                    class_elements: [
+                                        Method(
+                                            ClassMethodElement {
+                                                span: Span {
+                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                    start: 33,
+                                                    end: 95,
+                                                },
+                                                annotations: [],
+                                                ident: Identifier {
+                                                    span: Span {
+                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        start: 33,
+                                                        end: 36,
+                                                    },
+                                                    value: "add",
+                                                },
+                                                params: FormalParameterList {
+                                                    span: Span {
+                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        start: 36,
+                                                        end: 48,
+                                                    },
+                                                    parameters: [
+                                                        FormalParameterArg {
+                                                            span: Span {
+                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                start: 37,
+                                                                end: 47,
+                                                            },
+                                                            ident: Identifier {
+                                                                span: Span {
+                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    start: 37,
+                                                                    end: 42,
+                                                                },
+                                                                value: "other",
+                                                            },
+                                                            type_annotation: TypeAnnotation {
+                                                                span: Span {
+                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    start: 44,
+                                                                    end: 47,
+                                                                },
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                                returns: Some(
+                                                    TypeAnnotation {
+                                                        span: Span {
+                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                            start: 50,
+                                                            end: 53,
+                                                        },
+                                                        ty: Binding(
+                                                            "i32",
+                                                        ),
+                                                    },
+                                                ),
+                                                body: BlockStatement {
+                                                    span: Span {
+                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        start: 54,
+                                                        end: 95,
+                                                    },
+                                                    statements: StatementList {
+                                                        statements: [
+                                                            Return(
+                                                                ReturnStatement {
+                                                                    span: Span {
+                                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                        start: 72,
+                                                                        end: 81,
+                                                                    },
+                                                                    expression: Literal(
+                                                                        Integer(
+                                                                            IntegerLiteral {
+                                                                                span: Span {
+                                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                    start: 79,
+                                                                                    end: 80,
+                                                                                },
+                                                                                value: 0,
+                                                                                ty: Unknown,
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                },
+                                                            ),
+                                                        ],
+                                                    },
+                                                },
+                                            },
+                                        ),
+                                    ],
+                                },
+                            },
+                        ),
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                    start: 115,
+                                    end: 252,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        start: 124,
+                                        end: 128,
+                                    },
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        start: 128,
+                                        end: 130,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: Some(
+                                    TypeAnnotation {
+                                        span: Span {
+                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                            start: 132,
+                                            end: 135,
+                                        },
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ),
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                        start: 136,
+                                        end: 252,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        start: 150,
+                                                        end: 165,
+                                                    },
+                                                    modifier: Let(
+                                                        Span {
+                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                            start: 150,
+                                                            end: 153,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                start: 154,
+                                                                end: 155,
+                                                            },
+                                                            value: "a",
+                                                        },
+                                                    ),
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    start: 163,
+                                                                    end: 164,
+                                                                },
+                                                                value: 1,
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    type_annotation: Some(
+                                                        TypeAnnotation {
+                                                            span: Span {
+                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                start: 157,
+                                                                end: 160,
+                                                            },
+                                                            ty: Binding(
+                                                                "i32",
+                                                            ),
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        start: 178,
+                                                        end: 193,
+                                                    },
+                                                    modifier: Let(
+                                                        Span {
+                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                            start: 178,
+                                                            end: 181,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                start: 182,
+                                                                end: 183,
+                                                            },
+                                                            value: "b",
+                                                        },
+                                                    ),
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    start: 191,
+                                                                    end: 192,
+                                                                },
+                                                                value: 2,
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                    ),
+                                                    type_annotation: Some(
+                                                        TypeAnnotation {
+                                                            span: Span {
+                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                start: 185,
+                                                                end: 188,
+                                                            },
+                                                            ty: Binding(
+                                                                "i32",
+                                                            ),
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        start: 206,
+                                                        end: 220,
+                                                    },
+                                                    modifier: Let(
+                                                        Span {
+                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                            start: 206,
+                                                            end: 209,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                start: 210,
+                                                                end: 211,
+                                                            },
+                                                            value: "x",
+                                                        },
+                                                    ),
+                                                    expression: MemberDot(
+                                                        MemberDotExpression {
+                                                            span: Span {
+                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                start: 214,
+                                                                end: 219,
+                                                            },
+                                                            target: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                        start: 214,
+                                                                        end: 215,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                            start: 214,
+                                                                            end: 215,
+                                                                        },
+                                                                        value: "a",
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            expression: Arguments(
+                                                                ArgumentsExpression {
+                                                                    span: Span {
+                                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                        start: 214,
+                                                                        end: 219,
+                                                                    },
+                                                                    ident: Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                start: 214,
+                                                                                end: 219,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                    start: 214,
+                                                                                    end: 219,
+                                                                                },
+                                                                                value: "plus",
+                                                                            },
+                                                                            ty: Binding(
+                                                                                "ptr",
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    arguments: ArgumentsList {
+                                                                        span: Span {
+                                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                            start: 214,
+                                                                            end: 219,
+                                                                        },
+                                                                        arguments: [
+                                                                            Identifier(
+                                                                                IdentifierExpression {
+                                                                                    span: Span {
+                                                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                        start: 218,
+                                                                                        end: 219,
+                                                                                    },
+                                                                                    ident: Identifier {
+                                                                                        span: Span {
+                                                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                            start: 218,
+                                                                                            end: 219,
+                                                                                        },
+                                                                                        value: "b",
+                                                                                    },
+                                                                                    ty: Unknown,
+                                                                                },
+                                                                            ),
+                                                                        ],
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            ty: Unknown,
+                                                        },
+                                                    ),
+                                                    type_annotation: None,
+                                                },
+                                            ),
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                        start: 240,
+                                                        end: 241,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    start: 240,
+                                                                    end: 241,
+                                                                },
+                                                                value: 0,
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

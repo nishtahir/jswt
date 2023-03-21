@@ -1,7 +1,6 @@
-use std::borrow::Cow;
-
 use jswt_symbols::SimpleSymbolTable as SymbolTable;
 use jswt_wast::ValueType;
+use std::borrow::Cow;
 
 #[derive(Debug, PartialEq)]
 pub enum WastSymbol {
@@ -61,10 +60,6 @@ impl WastSymbolTable {
 
     pub fn lookup<T: Into<Cow<'static, str>>>(&self, name: T) -> Option<&WastSymbol> {
         self.inner.lookup(&name.into())
-    }
-
-    pub fn lookup_current<T: Into<Cow<'static, str>>>(&self, name: T) -> Option<&WastSymbol> {
-        self.inner.lookup_current(&name.into())
     }
 
     pub fn lookup_global<T: Into<Cow<'static, str>>>(&self, name: T) -> Option<&WastSymbol> {

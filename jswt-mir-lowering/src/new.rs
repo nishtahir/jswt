@@ -3,17 +3,17 @@ use jswt_common::Type;
 use jswt_symbols::BindingsTable;
 
 #[derive(Debug)]
-pub struct HirNewLoweringContext<'a> {
+pub struct MirNewLoweringContext<'a> {
     bindings: &'a BindingsTable,
 }
 
-impl<'a> HirNewLoweringContext<'a> {
+impl<'a> MirNewLoweringContext<'a> {
     pub fn new(bindings: &'a BindingsTable) -> Self {
         Self { bindings }
     }
 }
 
-impl<'a> TransformVisitor for HirNewLoweringContext<'a> {
+impl<'a> TransformVisitor for MirNewLoweringContext<'a> {
     fn visit_new(&mut self, node: &NewExpression) -> SingleExpression {
         // New expressions are desugared to a call to a constructor function.
         // visit the arguments to ensure that they are lowered if necessary
@@ -50,7 +50,7 @@ mod test {
     use jswt_tokenizer::Tokenizer;
 
     use super::*;
-    use crate::HirLoweringContext;
+    use crate::MirLoweringContext;
 
     #[test]
     fn test_new_lowering_lowers_new_expression_into_constructor_invocation() {
@@ -80,7 +80,7 @@ mod test {
         // No errors in global resolver
         assert!(global_resolver.errors().len() == 0);
 
-        let mut lowering = HirLoweringContext::new(&bindings_table, &symbol_table);
+        let mut lowering = MirLoweringContext::new(&bindings_table, &symbol_table);
         let lowered = lowering.lower(&ast);
         assert_debug_snapshot!(lowered);
     }

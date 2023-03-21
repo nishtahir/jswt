@@ -401,7 +401,7 @@ impl StatementVisitor<()> for CodeGenerator {
         });
     }
 
-    fn visit_import_declaration(&mut self, node: &ImportDeclarationElement) {
+    fn visit_import_declaration(&mut self, _node: &ImportDeclarationElement) {
         // No-op
     }
 }

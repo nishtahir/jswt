@@ -5,12 +5,12 @@ use jswt_common::Spannable;
 use jswt_symbols::{BindingsTable, ClassBinding};
 use jswt_synthetic::*;
 
-pub struct HirClassLoweringContext<'a> {
+pub struct MirClassLoweringContext<'a> {
     class_name: Cow<'static, str>,
     class_binding: &'a ClassBinding,
 }
 
-impl<'a> HirClassLoweringContext<'a> {
+impl<'a> MirClassLoweringContext<'a> {
     pub fn new(class: &'a ClassDeclarationElement, bindings: &'a BindingsTable) -> Self {
         let class_name = class.ident.value.clone();
         let class_binding = bindings.lookup(&class_name).expect(&format!(
@@ -25,7 +25,7 @@ impl<'a> HirClassLoweringContext<'a> {
 }
 
 /// Minimum tree walker
-impl<'a> TransformVisitor for HirClassLoweringContext<'a> {
+impl<'a> TransformVisitor for MirClassLoweringContext<'a> {
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) -> SourceElements {
         transform::walk_class_declaration(self, node)
     }
@@ -46,7 +46,7 @@ impl<'a> TransformVisitor for HirClassLoweringContext<'a> {
 
         // Allocate the class instance
         let this = variable_decl_stmt("this".into(), malloc(class_size));
-        let returns = return_stmt(ident_exp("this".into()));
+        let returns = return_stmt(ident_exp("this".into(), node.span()));
 
         // Insert the class allocation at the beginning of the constructor body
         body.statements.insert(0, this);
@@ -174,7 +174,7 @@ impl<'a> TransformVisitor for HirClassLoweringContext<'a> {
             // and the target is a this expression. We want to desurar the call
             // into a call to the class member function.
             let target = &*member_dot.target;
-            if let SingleExpression::This(_) = target {
+            if let SingleExpression::This(this) = target {
                 // The rhs should be an identifier targetting the member function
                 let expr = member_dot
                     .expression
@@ -191,7 +191,7 @@ impl<'a> TransformVisitor for HirClassLoweringContext<'a> {
                 // this as the first argument and the node args as the rest.
                 let function_name = format!("{}#{}", self.class_name, method_name);
                 // insert this as the first argument of the arguments list
-                arguments.insert(0, ident_exp("this".into()));
+                arguments.insert(0, ident_exp("this".into(), this.span()));
                 return function_call(
                     function_name.into(),
                     arguments,
@@ -237,7 +237,7 @@ mod test {
     use jswt_tokenizer::Tokenizer;
 
     use super::*;
-    use crate::HirLoweringContext;
+    use crate::MirLoweringContext;
 
     #[test]
     fn test_class_declaration_lowers_class_with_empty_constructor() {
@@ -268,7 +268,7 @@ mod test {
         // No errors in global resolver
         assert!(global_resolver.errors().len() == 0);
 
-        let mut lowering = HirLoweringContext::new(&mut bindings_table, &symbol_table);
+        let mut lowering = MirLoweringContext::new(&mut bindings_table, &symbol_table);
         let lowered = lowering.lower(&ast);
         assert_debug_snapshot!(lowered);
     }
@@ -297,7 +297,7 @@ mod test {
         // No errors in global resolver
         assert!(global_resolver.errors().len() == 0);
 
-        let mut lowering = HirLoweringContext::new(&bindings_table, &symbol_table);
+        let mut lowering = MirLoweringContext::new(&bindings_table, &symbol_table);
         let lowered = lowering.lower(&ast);
         assert_debug_snapshot!(lowered);
     }
@@ -327,7 +327,7 @@ mod test {
         // No errors in global resolver
         assert!(global_resolver.errors().len() == 0);
 
-        let mut lowering = HirLoweringContext::new(&bindings_table, &symbol_table);
+        let mut lowering = MirLoweringContext::new(&bindings_table, &symbol_table);
         let lowered = lowering.lower(&ast);
         assert_debug_snapshot!(lowered);
     }
@@ -361,7 +361,7 @@ mod test {
         // No errors in global resolver
         assert!(global_resolver.errors().len() == 0);
 
-        let mut lowering = HirLoweringContext::new(&bindings_table, &symbol_table);
+        let mut lowering = MirLoweringContext::new(&bindings_table, &symbol_table);
         let lowered = lowering.lower(&ast);
         assert_debug_snapshot!(lowered);
     }

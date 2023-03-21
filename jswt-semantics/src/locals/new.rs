@@ -2,11 +2,10 @@ use super::LocalSemanticResolver;
 use crate::SemanticError;
 use jswt_ast::{visit::Visitor, NewExpression};
 use jswt_common::Spannable;
-use jswt_symbols::{BindingsTable, ScopedSymbolTable};
+use jswt_symbols::BindingsTable;
 
 pub struct NewExpressionLocalContext<'a> {
     bindings: &'a BindingsTable,
-    symbols: &'a mut ScopedSymbolTable,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -14,7 +13,6 @@ impl<'a> NewExpressionLocalContext<'a> {
     pub fn new(resolver: &'a mut LocalSemanticResolver) -> Self {
         Self {
             bindings: resolver.bindings,
-            symbols: resolver.symbols,
             errors: &mut resolver.errors,
         }
     }
@@ -46,7 +44,7 @@ mod test {
     use super::*;
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_symbols::BindingsTable;
+    use jswt_symbols::{BindingsTable, ScopedSymbolTable};
     use jswt_tokenizer::Tokenizer;
 
     #[test]

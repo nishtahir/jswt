@@ -2,12 +2,13 @@ mod class;
 mod functions;
 mod identifier;
 mod new;
+mod this;
 mod variables;
 
 use self::{
     class::ClassLocalContext, functions::FunctionsLocalContext,
     identifier::IdentifierExpressionLocalContext, new::NewExpressionLocalContext,
-    variables::VariableDeclarationLocalContext,
+    this::ThisExpressionLocalContext, variables::VariableDeclarationLocalContext,
 };
 use crate::SemanticError;
 use jswt_ast::{visit::*, *};
@@ -67,7 +68,7 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
     }
 
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
-        let mut ctx = ClassLocalContext::new(self, node);
+        let mut ctx = ClassLocalContext::new(self);
         ctx.visit_class_declaration(&node);
         walk_class_declaration(self, node);
     }
@@ -75,6 +76,11 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
     fn visit_new(&mut self, node: &NewExpression) {
         let mut ctx = NewExpressionLocalContext::new(self);
         ctx.visit_new(node);
+    }
+
+    fn visit_this_expression(&mut self, node: &ThisExpression) {
+        let mut ctx = ThisExpressionLocalContext::new(self);
+        ctx.visit_this_expression(node);
     }
 
     // fn visit_new(&mut self, node: &NewExpression) {

@@ -111,11 +111,11 @@ pub fn return_stmt(expression: SingleExpression) -> StatementElement {
     })
 }
 
-pub fn ident_exp(ident: Cow<'static, str>) -> SingleExpression {
+pub fn ident_exp(ident: Cow<'static, str>, span: Span) -> SingleExpression {
     SingleExpression::Identifier(IdentifierExpression {
-        span: Span::synthetic(),
+        span: span.clone(),
         ident: Identifier {
-            span: Span::synthetic(),
+            span,
             value: ident,
         },
         ty: type_ptr(),

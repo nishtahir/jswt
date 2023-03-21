@@ -1,0 +1,253 @@
+---
+source: jswt-hir-lowering/src/index.rs
+expression: lowered
+
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_member_index_get_is_lowered_into_get_call",
+                    module: "module/test_member_index_get_is_lowered_into_get_call",
+                    start: 13,
+                    end: 112,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_member_index_get_is_lowered_into_get_call",
+                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                        start: 13,
+                        end: 112,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_member_index_get_is_lowered_into_get_call",
+                                    module: "module/test_member_index_get_is_lowered_into_get_call",
+                                    start: 13,
+                                    end: 103,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_member_index_get_is_lowered_into_get_call",
+                                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                                        start: 22,
+                                        end: 26,
+                                    },
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_member_index_get_is_lowered_into_get_call",
+                                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                                        start: 26,
+                                        end: 28,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_member_index_get_is_lowered_into_get_call",
+                                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                                        start: 29,
+                                        end: 103,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "test_member_index_get_is_lowered_into_get_call",
+                                                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                        start: 47,
+                                                        end: 67,
+                                                    },
+                                                    modifier: Let(
+                                                        Span {
+                                                            file: "test_member_index_get_is_lowered_into_get_call",
+                                                            module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                            start: 47,
+                                                            end: 50,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "test_member_index_get_is_lowered_into_get_call",
+                                                                module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                start: 51,
+                                                                end: 52,
+                                                            },
+                                                            value: "x",
+                                                        },
+                                                    ),
+                                                    expression: New(
+                                                        NewExpression {
+                                                            span: Span {
+                                                                file: "test_member_index_get_is_lowered_into_get_call",
+                                                                module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                start: 55,
+                                                                end: 66,
+                                                            },
+                                                            expression: Arguments(
+                                                                ArgumentsExpression {
+                                                                    span: Span {
+                                                                        file: "test_member_index_get_is_lowered_into_get_call",
+                                                                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                        start: 59,
+                                                                        end: 66,
+                                                                    },
+                                                                    ident: Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "test_member_index_get_is_lowered_into_get_call",
+                                                                                module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                                start: 59,
+                                                                                end: 64,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test_member_index_get_is_lowered_into_get_call",
+                                                                                    module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                                    start: 59,
+                                                                                    end: 64,
+                                                                                },
+                                                                                value: "Array",
+                                                                            },
+                                                                            ty: Unknown,
+                                                                        },
+                                                                    ),
+                                                                    arguments: ArgumentsList {
+                                                                        span: Span {
+                                                                            file: "test_member_index_get_is_lowered_into_get_call",
+                                                                            module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                            start: 64,
+                                                                            end: 66,
+                                                                        },
+                                                                        arguments: [],
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            ty: Unknown,
+                                                        },
+                                                    ),
+                                                    type_annotation: None,
+                                                },
+                                            ),
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_member_index_get_is_lowered_into_get_call",
+                                                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                        start: 84,
+                                                        end: 88,
+                                                    },
+                                                    expression: MemberDot(
+                                                        MemberDotExpression {
+                                                            span: Span {
+                                                                file: "test_member_index_get_is_lowered_into_get_call",
+                                                                module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                start: 84,
+                                                                end: 88,
+                                                            },
+                                                            target: Identifier(
+                                                                IdentifierExpression {
+                                                                    span: Span {
+                                                                        file: "test_member_index_get_is_lowered_into_get_call",
+                                                                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                        start: 84,
+                                                                        end: 85,
+                                                                    },
+                                                                    ident: Identifier {
+                                                                        span: Span {
+                                                                            file: "test_member_index_get_is_lowered_into_get_call",
+                                                                            module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                            start: 84,
+                                                                            end: 85,
+                                                                        },
+                                                                        value: "x",
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            expression: Arguments(
+                                                                ArgumentsExpression {
+                                                                    span: Span {
+                                                                        file: "test_member_index_get_is_lowered_into_get_call",
+                                                                        module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                        start: 86,
+                                                                        end: 87,
+                                                                    },
+                                                                    ident: Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "test_member_index_get_is_lowered_into_get_call",
+                                                                                module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                                start: 84,
+                                                                                end: 88,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test_member_index_get_is_lowered_into_get_call",
+                                                                                    module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                                    start: 84,
+                                                                                    end: 88,
+                                                                                },
+                                                                                value: "get",
+                                                                            },
+                                                                            ty: Binding(
+                                                                                "ptr",
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                    arguments: ArgumentsList {
+                                                                        span: Span {
+                                                                            file: "test_member_index_get_is_lowered_into_get_call",
+                                                                            module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                            start: 86,
+                                                                            end: 87,
+                                                                        },
+                                                                        arguments: [
+                                                                            Literal(
+                                                                                Integer(
+                                                                                    IntegerLiteral {
+                                                                                        span: Span {
+                                                                                            file: "test_member_index_get_is_lowered_into_get_call",
+                                                                                            module: "module/test_member_index_get_is_lowered_into_get_call",
+                                                                                            start: 86,
+                                                                                            end: 87,
+                                                                                        },
+                                                                                        value: 0,
+                                                                                        ty: Unknown,
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        ],
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            ty: Unknown,
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

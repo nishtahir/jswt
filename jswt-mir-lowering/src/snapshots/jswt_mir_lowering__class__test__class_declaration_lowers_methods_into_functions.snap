@@ -1,5 +1,5 @@
 ---
-source: jswt-hir-lowering/src/class.rs
+source: jswt-mir-lowering/src/class.rs
 expression: lowered
 
 ---

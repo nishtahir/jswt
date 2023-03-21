@@ -1,5 +1,5 @@
 use crate::SemanticError;
-use jswt_ast::{visit::Visitor, AssignableElement};
+use jswt_ast::visit::Visitor;
 use jswt_common::{Spannable, Typeable};
 use jswt_symbols::{ScopedSymbolTable, Symbol, TypeSignature};
 

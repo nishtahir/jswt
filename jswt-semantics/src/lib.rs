@@ -6,8 +6,4 @@ mod types;
 pub use error::SemanticError;
 pub use globals::GlobalSemanticResolver;
 pub use locals::LocalSemanticResolver;
-
-use jswt_symbols::Symbol;
-use std::borrow::Cow;
-
-type SymbolTable = jswt_symbols::SimpleSymbolTable<Cow<'static, str>, Symbol>;
+pub use types::TypeResolver;

@@ -1,9 +1,6 @@
 use super::LocalSemanticResolver;
 use crate::SemanticError;
-use jswt_ast::{
-    visit::{self, Visitor},
-    AssignableElement, VariableStatement,
-};
+use jswt_ast::{visit::Visitor, AssignableElement, VariableStatement};
 use jswt_common::Spannable;
 use jswt_symbols::{ScopedSymbolTable, Symbol};
 

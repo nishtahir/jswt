@@ -1,6 +1,7 @@
 ---
 source: jswt-parser/src/class.rs
 expression: actual
+
 ---
 Ast {
     program: Program {

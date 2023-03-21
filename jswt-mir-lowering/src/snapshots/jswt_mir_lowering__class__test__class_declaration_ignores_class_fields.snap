@@ -1,6 +1,6 @@
 ---
-source: jswt-ast-lowering/src/lib.rs
-expression: ast
+source: jswt-mir-lowering/src/class.rs
+expression: lowered
 
 ---
 Ast {
@@ -8,15 +8,15 @@ Ast {
         files: [
             File {
                 span: Span {
-                    file: "test_class_declaration_lowers_class_fields",
-                    module: "module/test_class_declaration_lowers_class_fields",
+                    file: "test_class_declaration_ignores_class_fields",
+                    module: "module/test_class_declaration_ignores_class_fields",
                     start: 9,
                     end: 86,
                 },
                 source_elements: SourceElements {
                     span: Span {
-                        file: "test_class_declaration_lowers_class_fields",
-                        module: "module/test_class_declaration_lowers_class_fields",
+                        file: "test_class_declaration_ignores_class_fields",
+                        module: "module/test_class_declaration_ignores_class_fields",
                         start: 9,
                         end: 86,
                     },

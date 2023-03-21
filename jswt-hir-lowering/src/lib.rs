@@ -1,24 +1,30 @@
-mod class;
-mod new;
+mod index;
+mod operators;
 
-use class::HirClassLoweringContext;
-use jswt_ast::{transform::*, *};
+use index::HirMemberIndexContext;
+use jswt_ast::{
+    transform::TransformVisitor, Ast, BinaryExpression, ClassDeclarationElement,
+    MemberIndexExpression, SingleExpression, SourceElement, SourceElements,
+};
+use jswt_common::Spannable;
 use jswt_symbols::{BindingsTable, ScopedSymbolTable};
-use new::HirNewLoweringContext;
+use operators::HirOperatorsLoweringContext;
 
-/// HIR lowering focuses on reducing high level calls and constructs into
-/// simpler forms that can be more easily transformed at later stages.
-/// At this stage we expect global bindings to be resolved and basic type checking
-/// to have been performed.
+/// High level desugarings are performed here such as
+/// Lowering operators into function calls. This simplifies the process
+/// of type checking and symbol resolution in later passes.
 #[derive(Debug)]
 pub struct HirLoweringContext<'a> {
-    bindings: &'a BindingsTable,
-    symbols: &'a ScopedSymbolTable,
+    _bindings: &'a BindingsTable,
+    _symbols: &'a ScopedSymbolTable,
 }
 
 impl<'a> HirLoweringContext<'a> {
     pub fn new(bindings: &'a BindingsTable, symbols: &'a ScopedSymbolTable) -> Self {
-        Self { bindings, symbols }
+        Self {
+            _bindings: bindings,
+            _symbols: symbols,
+        }
     }
 
     pub fn lower(&mut self, ast: &Ast) -> Ast {
@@ -28,18 +34,31 @@ impl<'a> HirLoweringContext<'a> {
 }
 
 impl<'a> TransformVisitor for HirLoweringContext<'a> {
-    fn visit_program(&mut self, node: &Program) -> Program {
-        transform::walk_program(self, node)
-    }
-
-    /// Lower class declarations into a series of functions
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) -> SourceElements {
-        let mut lowering = HirClassLoweringContext::new(node, &self.bindings);
-        lowering.visit_class_declaration(node)
+        // TODO - fix this
+        // Looks like this has come back to be a problem.
+        // We need to visit the class declaration element in order to desugar correctly
+        // but we also need to return a SourceElements type.
+        // The solution here is probably to have a class specific rewrite visitor that we
+        // use to lower the class in later passes.
+        SourceElements {
+            span: node.span(),
+            source_elements: vec![SourceElement::ClassDeclaration(node.clone())],
+        }
+    }
+    fn visit_member_index(&mut self, node: &MemberIndexExpression) -> SingleExpression {
+        let mut ctx = HirMemberIndexContext::new();
+        ctx.visit_member_index(node)
     }
 
-    fn visit_new(&mut self, node: &NewExpression) -> SingleExpression {
-        let mut lowering = HirNewLoweringContext::new(&self.bindings);
-        lowering.visit_new(node)
+    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
+        // TODO - Move this into an assignment context visitor
+        let mut ctx = HirMemberIndexContext::new();
+        ctx.visit_assignment_expression(node)
+    }
+
+    fn visit_binary_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
+        let mut ctx = HirOperatorsLoweringContext::new();
+        ctx.visit_binary_expression(node)
     }
 }

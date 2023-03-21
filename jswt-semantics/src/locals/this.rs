@@ -1,21 +1,21 @@
 use jswt_ast::{visit::Visitor, ThisExpression};
 use jswt_common::Spannable;
 
-use crate::{GlobalSemanticResolver, SemanticError};
+use crate::{LocalSemanticResolver, SemanticError};
 
-pub struct ThisExpressionGlobalContext<'a> {
+pub struct ThisExpressionLocalContext<'a> {
     errors: &'a mut Vec<SemanticError>,
 }
 
-impl<'a> ThisExpressionGlobalContext<'a> {
-    pub fn new(resolver: &'a mut GlobalSemanticResolver) -> Self {
+impl<'a> ThisExpressionLocalContext<'a> {
+    pub fn new(resolver: &'a mut LocalSemanticResolver) -> Self {
         Self {
             errors: &mut resolver.errors,
         }
     }
 }
 
-impl<'a> Visitor for ThisExpressionGlobalContext<'a> {
+impl<'a> Visitor for ThisExpressionLocalContext<'a> {
     fn visit_this_expression(&mut self, node: &ThisExpression) {
         // Here we assume that we're not in class declaration context.
         // That's handled by class::ClassDeclarationGlobalContext. So
@@ -27,12 +27,12 @@ impl<'a> Visitor for ThisExpressionGlobalContext<'a> {
 
 #[cfg(test)]
 mod test {
-    use crate::SymbolTable;
+    use crate::GlobalSemanticResolver;
 
     use super::*;
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_symbols::BindingsTable;
+    use jswt_symbols::{BindingsTable, ScopedSymbolTable};
     use jswt_tokenizer::Tokenizer;
 
     #[test]
@@ -47,9 +47,11 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = SymbolTable::default();
+        let mut symbols = ScopedSymbolTable::default();
         let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut global = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        global.resolve(&ast);
+        let mut resolver = LocalSemanticResolver::new(&mut bindings, &mut symbols);
         resolver.resolve(&ast);
 
         assert_debug_snapshot!(resolver);
