@@ -20,7 +20,7 @@ impl AstSerializer {
 }
 
 impl AstSerializer {
-    pub fn serialze(&mut self, ast: &Ast) -> &String {
+    pub fn serialize(&mut self, ast: &Ast) -> &String {
         self.content += "// @ts-nocheck\n";
 
         self.visit_program(&ast.program);
