@@ -1,4 +1,5 @@
 mod class;
+mod dot;
 mod functions;
 mod identifier;
 mod new;
@@ -10,7 +11,7 @@ use self::{
     identifier::IdentifierExpressionLocalContext, new::NewExpressionLocalContext,
     this::ThisExpressionLocalContext, variables::VariableDeclarationLocalContext,
 };
-use crate::SemanticError;
+use crate::{locals::dot::MemberDotExpressionLocalContext, SemanticError};
 use jswt_ast::{visit::*, *};
 use jswt_common::Spannable;
 use jswt_symbols::{BindingsTable, ScopedSymbolTable};
@@ -81,6 +82,22 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
     fn visit_this_expression(&mut self, node: &ThisExpression) {
         let mut ctx = ThisExpressionLocalContext::new(self);
         ctx.visit_this_expression(node);
+    }
+
+    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {
+        // If the argument is a member dot expression, we need to check if the
+        // member dot expression is a valid method access.
+
+        // We should know the type of the object that the method is being called
+        // on. If the object is a class, then we should check if the method
+        // exists on the class.
+
+        if let SingleExpression::MemberDot(ref dot) = &*node.ident {
+            let mut ctx = MemberDotExpressionLocalContext::new(self);
+            ctx.visit_member_dot_arguments_call(dot);
+        }
+
+        println!("{:#?}", node);
     }
 
     // fn visit_new(&mut self, node: &NewExpression) {
@@ -184,17 +201,6 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
 //                 .map(|s| s.as_type())
 //                 .unwrap_or(Type::Unknown),
 //         }
-//     }
-
-//     fn visit_member_index(&mut self, node: &MemberIndexExpression) -> Type {
-//         let target_ty = self.visit_single_expression(&node.target);
-//         if let Type::Object(ObjectType::Reference(exp)) = target_ty {
-//             let binding = self.symbols.lookup(exp);
-//             let index = self.visit_single_expression(&node.index);
-//             // TODO Check for get method. return type is the return type of get
-//         }
-
-//         Type::Unknown
 //     }
 
 //     fn visit_argument_expression(&mut self, node: &ArgumentsExpression) -> Type {

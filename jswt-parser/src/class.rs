@@ -5,9 +5,11 @@ use jswt_common::{Span, Spannable};
 use jswt_tokenizer::TokenType;
 
 impl<'a> Parser<'a> {
-    /// ClassDeclaration
-    ///   : 'class' Indentifier ClassBody
-    ///   ;
+    ////
+    //// ClassDeclaration
+    ////   : 'class' Indentifier ClassBody
+    ////   ;
+    ////
     pub(crate) fn class_declaration(
         &mut self,
         annotations: Vec<Annotation>,
@@ -15,9 +17,7 @@ impl<'a> Parser<'a> {
     ) -> ParseResult<ClassDeclarationElement> {
         let start = consume!(self, TokenType::Class)?;
         let ident = ident!(self)?;
-
         let body = self.class_body()?;
-
         Ok(ClassDeclarationElement {
             annotations,
             export,
@@ -27,17 +27,17 @@ impl<'a> Parser<'a> {
         })
     }
 
-    /// ClassBody
-    ///   : '{' ClassElement* '}'
-    ///   ;
+    ////
+    //// ClassBody
+    ////   : '{' ClassElement* '}'
+    ////   ;
+    ////
     pub(crate) fn class_body(&mut self) -> ParseResult<ClassBody> {
         let start = consume!(self, TokenType::LeftBrace)?;
-
         let mut class_elements = vec![];
         while !self.lookahead_is(TokenType::RightBrace) {
             class_elements.push(self.class_element()?);
         }
-
         let end = consume!(self, TokenType::RightBrace)?;
         Ok(ClassBody {
             span: start + end,
@@ -45,9 +45,11 @@ impl<'a> Parser<'a> {
         })
     }
 
-    /// ClassElement
-    ///   : ClassConstructor
-    ///   ;
+    ////
+    //// ClassElement
+    ////   : ClassConstructor
+    ////   ;
+    ////
     pub(crate) fn class_element(&mut self) -> ParseResult<ClassElement> {
         let elem = match self.lookahead_type() {
             Some(TokenType::Constructor) => self.class_constructor()?.into(),
@@ -60,15 +62,15 @@ impl<'a> Parser<'a> {
         Ok(elem)
     }
 
-    /// ClassConstructor
-    ///   : 'constructor' FormalParameterList Block
-    ///   ;
+    ////
+    //// ClassConstructor
+    ////   : 'constructor' FormalParameterList Block
+    ////   ;
+    ////
     pub(crate) fn class_constructor(&mut self) -> ParseResult<ClassConstructorElement> {
         let start = consume!(self, TokenType::Constructor)?;
-
         let params = self.formal_parameter_list()?;
-        let body = self.block()?;
-
+        let body = self.block_statement()?;
         Ok(ClassConstructorElement {
             span: start + body.span(),
             params,
@@ -76,10 +78,12 @@ impl<'a> Parser<'a> {
         })
     }
 
-    /// ClassPropertyMember
-    ///   : Annotation? Identifier '(' FormalParameterList ')' ':' TypeAnnotation Block    #ClassMethod
-    ///   : Annotation? Identifier ':' TypeAnnotaiton     #ClassField
-    ///   ;
+    ////
+    //// ClassPropertyMember
+    ////   : Annotation? Identifier '(' FormalParameterList ')' ':' TypeAnnotation Block    #ClassMethod
+    ////   : Annotation? Identifier ':' TypeAnnotaiton     #ClassField
+    ////   ;
+    ////
     pub(crate) fn class_property_member(&mut self) -> ParseResult<ClassElement> {
         let mut annotations = vec![];
         while self.lookahead_is(TokenType::At) {
@@ -95,7 +99,7 @@ impl<'a> Parser<'a> {
                 returns = Some(self.type_annotation()?);
             }
 
-            let body = self.block()?;
+            let body = self.block_statement()?;
 
             return Ok(ClassElement::Method(ClassMethodElement {
                 span: ident.span() + body.span(),
@@ -135,6 +139,7 @@ mod test {
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0, "{:#?}", parser.errors);
     }
 
     #[test]
@@ -147,6 +152,7 @@ mod test {
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0, "{:#?}", parser.errors);
     }
 
     #[test]
@@ -165,6 +171,7 @@ mod test {
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0, "{:#?}", parser.errors);
     }
 
     #[test]
@@ -181,6 +188,7 @@ mod test {
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0, "{:#?}", parser.errors);
     }
 
     #[test]
@@ -196,5 +204,6 @@ mod test {
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);
+        assert_eq!(parser.errors.len(), 0, "{:#?}", parser.errors);
     }
 }

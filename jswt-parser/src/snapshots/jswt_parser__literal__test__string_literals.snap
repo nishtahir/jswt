@@ -1,0 +1,99 @@
+---
+source: jswt-parser/src/literal.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_string_literals",
+                    module: "module/test_string_literals",
+                    start: 0,
+                    end: 28,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_string_literals",
+                        module: "module/test_string_literals",
+                        start: 0,
+                        end: 28,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_string_literals",
+                                    module: "module/test_string_literals",
+                                    start: 0,
+                                    end: 28,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_string_literals",
+                                        module: "module/test_string_literals",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_string_literals",
+                                        module: "module/test_string_literals",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_string_literals",
+                                        module: "module/test_string_literals",
+                                        start: 16,
+                                        end: 28,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_string_literals",
+                                                        module: "module/test_string_literals",
+                                                        start: 18,
+                                                        end: 26,
+                                                    },
+                                                    expression: Literal(
+                                                        String(
+                                                            StringLiteral {
+                                                                span: Span {
+                                                                    file: "test_string_literals",
+                                                                    module: "module/test_string_literals",
+                                                                    start: 18,
+                                                                    end: 25,
+                                                                },
+                                                                value: "hello",
+                                                                ty: Binding(
+                                                                    "String",
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

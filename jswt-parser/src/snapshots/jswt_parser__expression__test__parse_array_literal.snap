@@ -1,0 +1,222 @@
+---
+source: jswt-parser/src/expression.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_parse_array_literal",
+                    module: "module/test_parse_array_literal",
+                    start: 0,
+                    end: 49,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_array_literal",
+                        module: "module/test_parse_array_literal",
+                        start: 0,
+                        end: 49,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_array_literal",
+                                    module: "module/test_parse_array_literal",
+                                    start: 0,
+                                    end: 49,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_parse_array_literal",
+                                        module: "module/test_parse_array_literal",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_array_literal",
+                                        module: "module/test_parse_array_literal",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_array_literal",
+                                        module: "module/test_parse_array_literal",
+                                        start: 16,
+                                        end: 49,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Variable(
+                                                VariableStatement {
+                                                    span: Span {
+                                                        file: "test_parse_array_literal",
+                                                        module: "module/test_parse_array_literal",
+                                                        start: 18,
+                                                        end: 47,
+                                                    },
+                                                    modifier: Let(
+                                                        Span {
+                                                            file: "test_parse_array_literal",
+                                                            module: "module/test_parse_array_literal",
+                                                            start: 18,
+                                                            end: 21,
+                                                        },
+                                                    ),
+                                                    target: Identifier(
+                                                        Identifier {
+                                                            span: Span {
+                                                                file: "test_parse_array_literal",
+                                                                module: "module/test_parse_array_literal",
+                                                                start: 22,
+                                                                end: 23,
+                                                            },
+                                                            value: "x",
+                                                        },
+                                                    ),
+                                                    expression: Literal(
+                                                        Array(
+                                                            ArrayLiteral {
+                                                                span: Span {
+                                                                    file: "test_parse_array_literal",
+                                                                    module: "module/test_parse_array_literal",
+                                                                    start: 26,
+                                                                    end: 46,
+                                                                },
+                                                                elements: [
+                                                                    Unary(
+                                                                        UnaryExpression {
+                                                                            span: Span {
+                                                                                file: "test_parse_array_literal",
+                                                                                module: "module/test_parse_array_literal",
+                                                                                start: 27,
+                                                                                end: 29,
+                                                                            },
+                                                                            op: Minus(
+                                                                                Span {
+                                                                                    file: "test_parse_array_literal",
+                                                                                    module: "module/test_parse_array_literal",
+                                                                                    start: 27,
+                                                                                    end: 28,
+                                                                                },
+                                                                            ),
+                                                                            expr: Literal(
+                                                                                Integer(
+                                                                                    IntegerLiteral {
+                                                                                        span: Span {
+                                                                                            file: "test_parse_array_literal",
+                                                                                            module: "module/test_parse_array_literal",
+                                                                                            start: 28,
+                                                                                            end: 29,
+                                                                                        },
+                                                                                        value: 1,
+                                                                                        ty: Binding(
+                                                                                            "i32",
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                            ty: Unknown,
+                                                                        },
+                                                                    ),
+                                                                    Literal(
+                                                                        Integer(
+                                                                            IntegerLiteral {
+                                                                                span: Span {
+                                                                                    file: "test_parse_array_literal",
+                                                                                    module: "module/test_parse_array_literal",
+                                                                                    start: 31,
+                                                                                    end: 33,
+                                                                                },
+                                                                                value: 10,
+                                                                                ty: Binding(
+                                                                                    "i32",
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                    Unary(
+                                                                        UnaryExpression {
+                                                                            span: Span {
+                                                                                file: "test_parse_array_literal",
+                                                                                module: "module/test_parse_array_literal",
+                                                                                start: 35,
+                                                                                end: 37,
+                                                                            },
+                                                                            op: Minus(
+                                                                                Span {
+                                                                                    file: "test_parse_array_literal",
+                                                                                    module: "module/test_parse_array_literal",
+                                                                                    start: 35,
+                                                                                    end: 36,
+                                                                                },
+                                                                            ),
+                                                                            expr: Literal(
+                                                                                Integer(
+                                                                                    IntegerLiteral {
+                                                                                        span: Span {
+                                                                                            file: "test_parse_array_literal",
+                                                                                            module: "module/test_parse_array_literal",
+                                                                                            start: 36,
+                                                                                            end: 37,
+                                                                                        },
+                                                                                        value: 5,
+                                                                                        ty: Binding(
+                                                                                            "i32",
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                            ty: Unknown,
+                                                                        },
+                                                                    ),
+                                                                    Literal(
+                                                                        String(
+                                                                            StringLiteral {
+                                                                                span: Span {
+                                                                                    file: "test_parse_array_literal",
+                                                                                    module: "module/test_parse_array_literal",
+                                                                                    start: 39,
+                                                                                    end: 45,
+                                                                                },
+                                                                                value: "test",
+                                                                                ty: Binding(
+                                                                                    "String",
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                                ty: Binding(
+                                                                    "Array",
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ),
+                                                    type_annotation: None,
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

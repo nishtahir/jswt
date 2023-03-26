@@ -1,7 +1,6 @@
 ---
-source: jswt-parser/src/lib.rs
+source: jswt-parser/src/statement.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -156,7 +155,9 @@ Ast {
                                                                                             end: 39,
                                                                                         },
                                                                                         value: 0,
-                                                                                        ty: Unknown,
+                                                                                        ty: Binding(
+                                                                                            "i32",
+                                                                                        ),
                                                                                     },
                                                                                 ),
                                                                             ),
@@ -262,7 +263,9 @@ Ast {
                                                                                                         end: 69,
                                                                                                     },
                                                                                                     value: 1,
-                                                                                                    ty: Unknown,
+                                                                                                    ty: Binding(
+                                                                                                        "i32",
+                                                                                                    ),
                                                                                                 },
                                                                                             ),
                                                                                         ),
@@ -317,7 +320,9 @@ Ast {
                                                                                                                     end: 89,
                                                                                                                 },
                                                                                                                 value: 1,
-                                                                                                                ty: Unknown,
+                                                                                                                ty: Binding(
+                                                                                                                    "i32",
+                                                                                                                ),
                                                                                                             },
                                                                                                         ),
                                                                                                     ),

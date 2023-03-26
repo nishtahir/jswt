@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 
 cargo install grcov --version 0.8.4

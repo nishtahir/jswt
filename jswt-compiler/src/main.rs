@@ -3,22 +3,22 @@ mod env;
 use clap::Parser;
 use jswt_ast::Ast;
 use jswt_ast_serializer::AstSerializer;
+use jswt_codegen::CodeGenerator;
+use jswt_errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
 use jswt_hir_lowering::HirLoweringContext;
 use jswt_mir_lowering::MirLoweringContext;
+use jswt_parser::Parser as JswtParser;
 use jswt_semantics::GlobalSemanticResolver;
 use jswt_semantics::LocalSemanticResolver;
+use jswt_semantics::TypeInferenceResolver;
 use jswt_symbols::BindingsTable;
 use jswt_symbols::ScopedSymbolTable;
+use jswt_tokenizer::Tokenizer;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::exit;
 use wasmer::{imports, Function, Instance, MemoryView, Module as WasmerModule, Store};
-
-use jswt_codegen::CodeGenerator;
-use jswt_errors::{print_parser_error, print_semantic_error, print_tokenizer_error};
-use jswt_parser::Parser as JswtParser;
-use jswt_tokenizer::Tokenizer;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about)]
@@ -120,51 +120,61 @@ fn main() {
     // Assume main is a function that accepts no args and returns an i32
     // The returned i32 is the exit code
     // function main(): i32 { return 0; } // OK
-    let main = instance.exports.get_function("main").unwrap();
-    let result = match main.call(&mut store, &mut []) {
-        Ok(result) => result,
+    match instance.exports.get_function("main") {
+        Err(wasmer::ExportError::Missing(_)) => {
+            println!("Missing main function. Did you forget to export it?");
+            exit(1);
+        }
         Err(e) => {
             panic!("{}", e);
         }
-    };
+        Ok(main) => {
+            let result = match main.call(&mut store, &mut []) {
+                Ok(result) => result,
+                Err(e) => {
+                    panic!("{}", e);
+                }
+            };
 
-    if log_mem {
-        // Log memory contents to a file
-        let memory = instance.exports.get_memory("memory").unwrap();
+            if log_mem {
+                // Log memory contents to a file
+                let memory = instance.exports.get_memory("memory").unwrap();
 
-        let view: MemoryView = memory.view(&store);
-        let mut slice = vec![];
+                let view: MemoryView = memory.view(&store);
+                let mut slice = vec![];
 
-        for i in 0..view.data_size() {
-            slice.push(view.read_u8(i).unwrap());
-        }
+                for i in 0..view.data_size() {
+                    slice.push(view.read_u8(i).unwrap());
+                }
 
-        let mem = slice
-            // log the memory with 16 bytes per row
-            // This will give us 4096 rows per page
-            .chunks(16)
-            .map(|chunk| {
-                chunk
-                    .iter()
-                    .map(|val| format!("{:02x?}", val))
+                let mem = slice
+                    // log the memory with 16 bytes per row
+                    // This will give us 4096 rows per page
+                    .chunks(16)
+                    .map(|chunk| {
+                        chunk
+                            .iter()
+                            .map(|val| format!("{:02x?}", val))
+                            .collect::<Vec<String>>()
+                            .join(" ")
+                    })
+                    .enumerate()
+                    .map(|(i, line)| format!("{:04X?}0  {}", i, line))
                     .collect::<Vec<String>>()
-                    .join(" ")
-            })
-            .enumerate()
-            .map(|(i, line)| format!("{:04X?}0  {}", i, line))
-            .collect::<Vec<String>>()
-            .join("\n");
+                    .join("\n");
 
-        fs::write(output.with_extension("mem"), &mem).unwrap();
-    }
+                fs::write(output.with_extension("mem"), &mem).unwrap();
+            }
 
-    if result.len() > 0 {
-        let exit_code = result[0].i32().unwrap_or(1);
-        exit(exit_code);
+            if result.len() > 0 {
+                let exit_code = result[0].i32().unwrap_or(1);
+                exit(exit_code);
+            }
+            // No exit code will panic during the validation but for safety
+            // if no exit code was given assume there was a problem
+            exit(1);
+        }
     }
-    // No exit code will panic during the validation but for safety
-    // if no exit code was given assume there was a problem
-    exit(1);
 }
 
 fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast {
@@ -224,12 +234,13 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
 
     // Hir lowering pass to desugar operators.
     let mut lowering = HirLoweringContext::new(&mut bindings_table, &mut symbol_table);
-    let ast = lowering.lower(&ast);
+    let mut ast = lowering.lower(&ast);
     fs::write(output.with_extension("hir.ast"), format!("{:#?}", ast)).unwrap();
 
-    let mut serializer = AstSerializer::default();
-    let content = serializer.serialze(&ast);
-    fs::write(output.with_extension("hir.jswt"), content).unwrap();
+    // Perform type checking and inference
+    // annotate the AST with resolved and inferred types
+    let mut types = TypeInferenceResolver::new(&mut bindings_table, &mut symbol_table);
+    types.resolve(&mut ast);
 
     // Local semantic analysis pass to resolve local variables
     // and perform deeper type checking
@@ -245,6 +256,10 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         exit(1);
     }
 
+    let mut serializer = AstSerializer::default();
+    let content = serializer.serialze(&ast);
+    fs::write(output.with_extension("hir.jswt"), content).unwrap();
+
     // Mir lowering pass to generate the lower intermediate representation
     let mut mir_lowering = MirLoweringContext::new(&mut bindings_table, &mut symbol_table);
     let ast = mir_lowering.lower(&ast);
@@ -252,6 +267,10 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     if has_errors {
         exit(1);
     }
+
+    let mut serializer = AstSerializer::default();
+    let content = serializer.serialze(&ast);
+    fs::write(output.with_extension("mir.jswt"), content).unwrap();
 
     ast
 }

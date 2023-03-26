@@ -1,13 +1,15 @@
-use jswt_ast::{Annotation, VariableDeclarationElement};
+use jswt_ast::{Annotation, VariableDeclarationElement, VariableModifier};
 use jswt_common::{Span, Spannable};
 use jswt_tokenizer::TokenType;
 
-use crate::{consume, ident, Identifier, ParseError, ParseResult, Parser};
+use crate::{consume, consume_unchecked, ident, Identifier, ParseError, ParseResult, Parser};
 
 impl<'a> Parser<'a> {
-    ///VariableDeclaration
-    ///  :  VariableModifier? Identifier TypeAnnotation? '=' SingleExpression ';'
-    ///  ;
+    ////
+    //// VariableDeclaration
+    ////  :  VariableModifier? Identifier TypeAnnotation? '=' SingleExpression ';'
+    ////  ;
+    ////
     pub(crate) fn variable_declaration(
         &mut self,
         annotations: Vec<Annotation>,
@@ -35,6 +37,31 @@ impl<'a> Parser<'a> {
             expression,
             type_annotation,
         })
+    }
+
+    ////
+    //// VariableModifier
+    ////   : 'let'
+    ////   | 'const'
+    ////   ;
+    ////
+    pub(crate) fn variable_modifier(&mut self) -> ParseResult<VariableModifier> {
+        let modifier = match self.lookahead_type().unwrap() {
+            TokenType::Let => VariableModifier::Let,
+            TokenType::Const => VariableModifier::Const,
+            // it should never be anything but these
+            _ => {
+                let lookahead = self.lookahead.as_ref().unwrap();
+                return Err(ParseError::NoViableAlternative {
+                    expected: vec![TokenType::Let, TokenType::Const],
+                    actual: lookahead.kind,
+                    span: lookahead.span.clone(),
+                });
+            }
+        };
+        // Eat the modifier token
+        let span = consume_unchecked!(self);
+        Ok(modifier(span))
     }
 }
 
@@ -68,7 +95,10 @@ mod test {
     #[test]
     fn test_variable_declaration_with_export() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_variable_declaration_with_export", "export const x = 1;");
+        tokenizer.enqueue_source_str(
+            "test_variable_declaration_with_export",
+            "export const x = 1;",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

@@ -1,0 +1,157 @@
+---
+source: jswt-parser/src/expression.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_parse_nested_member_index_expression",
+                    module: "module/test_parse_nested_member_index_expression",
+                    start: 0,
+                    end: 28,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_nested_member_index_expression",
+                        module: "module/test_parse_nested_member_index_expression",
+                        start: 0,
+                        end: 28,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_nested_member_index_expression",
+                                    module: "module/test_parse_nested_member_index_expression",
+                                    start: 0,
+                                    end: 28,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_parse_nested_member_index_expression",
+                                        module: "module/test_parse_nested_member_index_expression",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_nested_member_index_expression",
+                                        module: "module/test_parse_nested_member_index_expression",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_nested_member_index_expression",
+                                        module: "module/test_parse_nested_member_index_expression",
+                                        start: 16,
+                                        end: 28,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_parse_nested_member_index_expression",
+                                                        module: "module/test_parse_nested_member_index_expression",
+                                                        start: 18,
+                                                        end: 26,
+                                                    },
+                                                    expression: MemberIndex(
+                                                        MemberIndexExpression {
+                                                            span: Span {
+                                                                file: "test_parse_nested_member_index_expression",
+                                                                module: "module/test_parse_nested_member_index_expression",
+                                                                start: 18,
+                                                                end: 25,
+                                                            },
+                                                            target: MemberIndex(
+                                                                MemberIndexExpression {
+                                                                    span: Span {
+                                                                        file: "test_parse_nested_member_index_expression",
+                                                                        module: "module/test_parse_nested_member_index_expression",
+                                                                        start: 18,
+                                                                        end: 22,
+                                                                    },
+                                                                    target: Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "test_parse_nested_member_index_expression",
+                                                                                module: "module/test_parse_nested_member_index_expression",
+                                                                                start: 18,
+                                                                                end: 19,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test_parse_nested_member_index_expression",
+                                                                                    module: "module/test_parse_nested_member_index_expression",
+                                                                                    start: 18,
+                                                                                    end: 19,
+                                                                                },
+                                                                                value: "a",
+                                                                            },
+                                                                            ty: Unknown,
+                                                                        },
+                                                                    ),
+                                                                    index: Literal(
+                                                                        Integer(
+                                                                            IntegerLiteral {
+                                                                                span: Span {
+                                                                                    file: "test_parse_nested_member_index_expression",
+                                                                                    module: "module/test_parse_nested_member_index_expression",
+                                                                                    start: 20,
+                                                                                    end: 21,
+                                                                                },
+                                                                                value: 0,
+                                                                                ty: Binding(
+                                                                                    "i32",
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            index: Literal(
+                                                                Integer(
+                                                                    IntegerLiteral {
+                                                                        span: Span {
+                                                                            file: "test_parse_nested_member_index_expression",
+                                                                            module: "module/test_parse_nested_member_index_expression",
+                                                                            start: 23,
+                                                                            end: 24,
+                                                                        },
+                                                                        value: 1,
+                                                                        ty: Binding(
+                                                                            "i32",
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            ),
+                                                            ty: Unknown,
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

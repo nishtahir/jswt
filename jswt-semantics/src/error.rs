@@ -52,4 +52,8 @@ pub enum SemanticError {
         ident: Cow<'static, str>,
         span: Span,
     },
+    UnknownType {
+        ident: Cow<'static, str>,
+        span: Span,
+    },
 }

@@ -1,6 +1,8 @@
+mod arguments;
 mod class;
 mod new;
 
+use arguments::MirArgumentsLoweringContext;
 use class::MirClassLoweringContext;
 use jswt_ast::{transform::*, *};
 use jswt_symbols::{BindingsTable, ScopedSymbolTable};
@@ -44,5 +46,14 @@ impl<'a> TransformVisitor for MirLoweringContext<'a> {
     fn visit_new(&mut self, node: &NewExpression) -> SingleExpression {
         let mut lowering = MirNewLoweringContext::new(&self.bindings);
         lowering.visit_new(node)
+    }
+
+    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) -> SingleExpression {
+        if let SingleExpression::MemberDot(ref dot) = &*node.ident {
+            let mut ctx = MirArgumentsLoweringContext::new(self.bindings);
+            return ctx.visit_argument_expression(node);
+        }
+
+        walk_argument_expression(self, node)
     }
 }

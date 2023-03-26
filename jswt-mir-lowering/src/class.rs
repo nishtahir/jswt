@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use jswt_ast::{transform::TransformVisitor, *};
-use jswt_common::Spannable;
+use jswt_common::{Spannable, Type};
 use jswt_symbols::{BindingsTable, ClassBinding};
 use jswt_synthetic::*;
 
@@ -46,7 +46,7 @@ impl<'a> TransformVisitor for MirClassLoweringContext<'a> {
 
         // Allocate the class instance
         let this = variable_decl_stmt("this".into(), malloc(class_size));
-        let returns = return_stmt(ident_exp("this".into(), node.span()));
+        let returns = return_stmt(ident_exp("this".into(), Type::PTR, node.span()));
 
         // Insert the class allocation at the beginning of the constructor body
         body.statements.insert(0, this);
@@ -191,7 +191,7 @@ impl<'a> TransformVisitor for MirClassLoweringContext<'a> {
                 // this as the first argument and the node args as the rest.
                 let function_name = format!("{}#{}", self.class_name, method_name);
                 // insert this as the first argument of the arguments list
-                arguments.insert(0, ident_exp("this".into(), this.span()));
+                arguments.insert(0, ident_exp("this".into(), Type::PTR, this.span()));
                 return function_call(
                     function_name.into(),
                     arguments,

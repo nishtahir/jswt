@@ -65,6 +65,7 @@ pub struct MemberDotExpression {
 #[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
 pub struct ArgumentsExpression {
     pub span: Span,
+    // TODO - rename this to expression
     pub ident: Box<SingleExpression>,
     pub arguments: ArgumentsList,
     pub ty: Type,
@@ -85,6 +86,7 @@ pub struct ThisExpression {
 #[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
 pub struct MemberIndexExpression {
     pub span: Span,
+    // TODO - rename this to expression
     pub target: Box<SingleExpression>,
     pub index: Box<SingleExpression>,
     pub ty: Type,

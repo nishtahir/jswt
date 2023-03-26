@@ -1,0 +1,125 @@
+---
+source: jswt-parser/src/literal.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_integer_literals",
+                    module: "module/test_integer_literals",
+                    start: 0,
+                    end: 27,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_integer_literals",
+                        module: "module/test_integer_literals",
+                        start: 0,
+                        end: 27,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_integer_literals",
+                                    module: "module/test_integer_literals",
+                                    start: 0,
+                                    end: 27,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_integer_literals",
+                                        module: "module/test_integer_literals",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_integer_literals",
+                                        module: "module/test_integer_literals",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_integer_literals",
+                                        module: "module/test_integer_literals",
+                                        start: 16,
+                                        end: 27,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_integer_literals",
+                                                        module: "module/test_integer_literals",
+                                                        start: 18,
+                                                        end: 20,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_integer_literals",
+                                                                    module: "module/test_integer_literals",
+                                                                    start: 18,
+                                                                    end: 19,
+                                                                },
+                                                                value: 1,
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_integer_literals",
+                                                        module: "module/test_integer_literals",
+                                                        start: 21,
+                                                        end: 25,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_integer_literals",
+                                                                    module: "module/test_integer_literals",
+                                                                    start: 21,
+                                                                    end: 24,
+                                                                },
+                                                                value: 1,
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

@@ -3,8 +3,8 @@
 // import "./memory.jswt";
 import "../stdlib/math.jswt"; 
 
-let maxAddr = 65536;
-let isInit = false;
+const maxAddr: i32 = 65536;
+let isInit:boolean = false;
 
 function init() {
     // Setup header

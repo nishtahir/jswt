@@ -4,11 +4,11 @@
 class i32 {
 
     @wast("(i32.add (local.get $this) (local.get $other))")
-    add(other: i32): i32 {
+    plus(other: i32): i32 {
     }
 
     @wast("(i32.sub (local.get $this) (local.get $other))")
-    sub(other: i32): i32 {
+    minus(other: i32): i32 {
     }
 
 }

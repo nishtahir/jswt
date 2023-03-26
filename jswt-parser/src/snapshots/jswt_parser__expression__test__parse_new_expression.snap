@@ -1,0 +1,134 @@
+---
+source: jswt-parser/src/expression.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_parse_new_expression",
+                    module: "module/test_parse_new_expression",
+                    start: 0,
+                    end: 32,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_new_expression",
+                        module: "module/test_parse_new_expression",
+                        start: 0,
+                        end: 32,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_new_expression",
+                                    module: "module/test_parse_new_expression",
+                                    start: 0,
+                                    end: 32,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_parse_new_expression",
+                                        module: "module/test_parse_new_expression",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_new_expression",
+                                        module: "module/test_parse_new_expression",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_new_expression",
+                                        module: "module/test_parse_new_expression",
+                                        start: 16,
+                                        end: 32,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_parse_new_expression",
+                                                        module: "module/test_parse_new_expression",
+                                                        start: 18,
+                                                        end: 30,
+                                                    },
+                                                    expression: New(
+                                                        NewExpression {
+                                                            span: Span {
+                                                                file: "test_parse_new_expression",
+                                                                module: "module/test_parse_new_expression",
+                                                                start: 18,
+                                                                end: 29,
+                                                            },
+                                                            expression: Arguments(
+                                                                ArgumentsExpression {
+                                                                    span: Span {
+                                                                        file: "test_parse_new_expression",
+                                                                        module: "module/test_parse_new_expression",
+                                                                        start: 22,
+                                                                        end: 29,
+                                                                    },
+                                                                    ident: Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "test_parse_new_expression",
+                                                                                module: "module/test_parse_new_expression",
+                                                                                start: 22,
+                                                                                end: 27,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test_parse_new_expression",
+                                                                                    module: "module/test_parse_new_expression",
+                                                                                    start: 22,
+                                                                                    end: 27,
+                                                                                },
+                                                                                value: "Class",
+                                                                            },
+                                                                            ty: Unknown,
+                                                                        },
+                                                                    ),
+                                                                    arguments: ArgumentsList {
+                                                                        span: Span {
+                                                                            file: "test_parse_new_expression",
+                                                                            module: "module/test_parse_new_expression",
+                                                                            start: 27,
+                                                                            end: 29,
+                                                                        },
+                                                                        arguments: [],
+                                                                    },
+                                                                    ty: Unknown,
+                                                                },
+                                                            ),
+                                                            ty: Unknown,
+                                                        },
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

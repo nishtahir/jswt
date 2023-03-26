@@ -5,9 +5,9 @@ use jswt_tokenizer::TokenType;
 use crate::{consume, ParseError, ParseResult, Parser};
 
 impl<'a> Parser<'a> {
-    ///VariableDeclaration
-    ///  :  VariableModifier? Identifier TypeAnnotation? '=' SingleExpression ';'
-    ///  ;
+    //// ImportDeclaration
+    ////  :  'import' string ';'
+    ////  ;
     pub(crate) fn import_declaration(&mut self) -> ParseResult<ImportDeclarationElement> {
         // Consume the import token
         let modifier = consume!(self, TokenType::Import)?;

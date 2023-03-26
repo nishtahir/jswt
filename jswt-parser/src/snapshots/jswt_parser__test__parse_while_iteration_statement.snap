@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -116,7 +115,9 @@ Ast {
                                                                                 end: 30,
                                                                             },
                                                                             value: 99,
-                                                                            ty: Unknown,
+                                                                            ty: Binding(
+                                                                                "i32",
+                                                                            ),
                                                                         },
                                                                     ),
                                                                 ),
@@ -186,7 +187,9 @@ Ast {
                                                                                                             end: 52,
                                                                                                         },
                                                                                                         value: "hey taco",
-                                                                                                        ty: Unknown,
+                                                                                                        ty: Binding(
+                                                                                                            "String",
+                                                                                                        ),
                                                                                                     },
                                                                                                 ),
                                                                                             ),

@@ -1,7 +1,6 @@
 ---
 source: jswt-semantics/src/locals/variables.rs
 expression: local
-
 ---
 LocalSemanticResolver {
     symbols: ScopedSymbolTable {
@@ -23,7 +22,9 @@ LocalSemanticResolver {
                 symbols: {
                     "PI": Type(
                         TypeSignature {
-                            ty: Unknown,
+                            ty: Binding(
+                                "f32",
+                            ),
                         },
                     ),
                     "test": Function(

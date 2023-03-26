@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -79,7 +78,9 @@ Ast {
                                                                     end: 27,
                                                                 },
                                                                 value: 99,
-                                                                ty: Unknown,
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
                                                             },
                                                         ),
                                                     ),

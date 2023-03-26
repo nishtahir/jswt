@@ -33,7 +33,7 @@ impl TransformVisitor for HirMemberIndexContext {
                     span: expression.span(),
                     arguments: vec![expression],
                 },
-                ident: Box::new(ident_exp("get".into(), node.span())),
+                ident: Box::new(ident_exp("get".into(), node.ty(), node.span())),
             })),
             ty: node.ty(),
         })
@@ -56,7 +56,7 @@ impl TransformVisitor for HirMemberIndexContext {
                         span: expression.span(),
                         arguments: vec![expression, self.visit_single_expression(&node.right)],
                     },
-                    ident: Box::new(ident_exp("set".into(), node.span())),
+                    ident: Box::new(ident_exp("set".into(), node.ty(), node.span())),
                 })),
                 ty: node.ty(),
             });

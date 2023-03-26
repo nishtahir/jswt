@@ -194,6 +194,7 @@ pub fn walk_if_statement<V: MutVisitor>(visitor: &mut V, node: &mut IfStatement)
 pub fn walk_iteration_statement<V: MutVisitor>(visitor: &mut V, node: &mut IterationStatement) {
     match node {
         IterationStatement::While(elem) => visitor.visit_while_iteration_element(elem),
+        IterationStatement::For(_) => todo!(),
     }
 }
 

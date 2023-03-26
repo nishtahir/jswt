@@ -243,6 +243,7 @@ pub fn walk_iteration_statement<V: TransformVisitor>(
 ) -> StatementList {
     match node {
         IterationStatement::While(elem) => visitor.visit_while_iteration_element(elem),
+        IterationStatement::For(_) => todo!(),
     }
 }
 

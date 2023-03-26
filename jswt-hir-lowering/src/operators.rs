@@ -32,7 +32,10 @@ impl TransformVisitor for HirOperatorsLoweringContext {
             | BinaryOperator::Less(_)
             | BinaryOperator::LessEqual(_)
             | BinaryOperator::And(_)
-            | BinaryOperator::Or(_) => return walk_binary_expression(self, node),
+            | BinaryOperator::Or(_) => {
+                // TODO implement comparison operators
+                return walk_binary_expression(self, node);
+            }
             // Assignment operators
             BinaryOperator::Assign(_) => {
                 // We can't rewrite assignment expressions into function calls
@@ -40,19 +43,19 @@ impl TransformVisitor for HirOperatorsLoweringContext {
             }
         };
 
-        SingleExpression::MemberDot(MemberDotExpression {
+        SingleExpression::Arguments(ArgumentsExpression {
             span: node.span(),
-            target: Box::new(left),
-            expression: Box::new(SingleExpression::Arguments(ArgumentsExpression {
-                span: node.span(),
-                ty: node.ty(),
-                arguments: ArgumentsList {
-                    span: node.span(),
-                    arguments: vec![right],
-                },
-                ident: Box::new(ident_exp(ident.into(), node.span())),
-            })),
             ty: node.ty(),
+            arguments: ArgumentsList {
+                span: node.span(),
+                arguments: vec![right],
+            },
+            ident: Box::new(SingleExpression::MemberDot(MemberDotExpression {
+                span: node.span(),
+                target: Box::new(left),
+                expression: Box::new(ident_exp(ident.into(), node.ty(), node.span())),
+                ty: node.ty(),
+            })),
         })
     }
 }

@@ -1,22 +1,21 @@
 ---
-source: jswt-parser/src/lib.rs
+source: jswt-parser/src/expression.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
         files: [
             File {
                 span: Span {
-                    file: "parse_member_dot_arguments_expression",
-                    module: "module/parse_member_dot_arguments_expression",
+                    file: "test_parse_member_dot_arguments_expression",
+                    module: "module/test_parse_member_dot_arguments_expression",
                     start: 0,
                     end: 33,
                 },
                 source_elements: SourceElements {
                     span: Span {
-                        file: "parse_member_dot_arguments_expression",
-                        module: "module/parse_member_dot_arguments_expression",
+                        file: "test_parse_member_dot_arguments_expression",
+                        module: "module/test_parse_member_dot_arguments_expression",
                         start: 0,
                         end: 33,
                     },
@@ -24,8 +23,8 @@ Ast {
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "parse_member_dot_arguments_expression",
-                                    module: "module/parse_member_dot_arguments_expression",
+                                    file: "test_parse_member_dot_arguments_expression",
+                                    module: "module/test_parse_member_dot_arguments_expression",
                                     start: 0,
                                     end: 33,
                                 },
@@ -35,8 +34,8 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "parse_member_dot_arguments_expression",
-                                        module: "module/parse_member_dot_arguments_expression",
+                                        file: "test_parse_member_dot_arguments_expression",
+                                        module: "module/test_parse_member_dot_arguments_expression",
                                         start: 9,
                                         end: 13,
                                     },
@@ -44,8 +43,8 @@ Ast {
                                 },
                                 params: FormalParameterList {
                                     span: Span {
-                                        file: "parse_member_dot_arguments_expression",
-                                        module: "module/parse_member_dot_arguments_expression",
+                                        file: "test_parse_member_dot_arguments_expression",
+                                        module: "module/test_parse_member_dot_arguments_expression",
                                         start: 13,
                                         end: 15,
                                     },
@@ -54,8 +53,8 @@ Ast {
                                 returns: None,
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "parse_member_dot_arguments_expression",
-                                        module: "module/parse_member_dot_arguments_expression",
+                                        file: "test_parse_member_dot_arguments_expression",
+                                        module: "module/test_parse_member_dot_arguments_expression",
                                         start: 16,
                                         end: 33,
                                     },
@@ -64,50 +63,52 @@ Ast {
                                             Expression(
                                                 ExpressionStatement {
                                                     span: Span {
-                                                        file: "parse_member_dot_arguments_expression",
-                                                        module: "module/parse_member_dot_arguments_expression",
+                                                        file: "test_parse_member_dot_arguments_expression",
+                                                        module: "module/test_parse_member_dot_arguments_expression",
                                                         start: 18,
                                                         end: 31,
                                                     },
                                                     expression: Arguments(
                                                         ArgumentsExpression {
                                                             span: Span {
-                                                                file: "parse_member_dot_arguments_expression",
-                                                                module: "module/parse_member_dot_arguments_expression",
+                                                                file: "test_parse_member_dot_arguments_expression",
+                                                                module: "module/test_parse_member_dot_arguments_expression",
                                                                 start: 18,
                                                                 end: 30,
                                                             },
                                                             ident: MemberDot(
                                                                 MemberDotExpression {
                                                                     span: Span {
-                                                                        file: "parse_member_dot_arguments_expression",
-                                                                        module: "module/parse_member_dot_arguments_expression",
+                                                                        file: "test_parse_member_dot_arguments_expression",
+                                                                        module: "module/test_parse_member_dot_arguments_expression",
                                                                         start: 18,
                                                                         end: 26,
                                                                     },
                                                                     target: This(
                                                                         ThisExpression {
                                                                             span: Span {
-                                                                                file: "parse_member_dot_arguments_expression",
-                                                                                module: "module/parse_member_dot_arguments_expression",
+                                                                                file: "test_parse_member_dot_arguments_expression",
+                                                                                module: "module/test_parse_member_dot_arguments_expression",
                                                                                 start: 18,
                                                                                 end: 22,
                                                                             },
-                                                                            ty: Unknown,
+                                                                            ty: Binding(
+                                                                                "ptr",
+                                                                            ),
                                                                         },
                                                                     ),
                                                                     expression: Identifier(
                                                                         IdentifierExpression {
                                                                             span: Span {
-                                                                                file: "parse_member_dot_arguments_expression",
-                                                                                module: "module/parse_member_dot_arguments_expression",
+                                                                                file: "test_parse_member_dot_arguments_expression",
+                                                                                module: "module/test_parse_member_dot_arguments_expression",
                                                                                 start: 23,
                                                                                 end: 26,
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
-                                                                                    file: "parse_member_dot_arguments_expression",
-                                                                                    module: "module/parse_member_dot_arguments_expression",
+                                                                                    file: "test_parse_member_dot_arguments_expression",
+                                                                                    module: "module/test_parse_member_dot_arguments_expression",
                                                                                     start: 23,
                                                                                     end: 26,
                                                                                 },
@@ -121,8 +122,8 @@ Ast {
                                                             ),
                                                             arguments: ArgumentsList {
                                                                 span: Span {
-                                                                    file: "parse_member_dot_arguments_expression",
-                                                                    module: "module/parse_member_dot_arguments_expression",
+                                                                    file: "test_parse_member_dot_arguments_expression",
+                                                                    module: "module/test_parse_member_dot_arguments_expression",
                                                                     start: 26,
                                                                     end: 30,
                                                                 },
@@ -131,13 +132,15 @@ Ast {
                                                                         Integer(
                                                                             IntegerLiteral {
                                                                                 span: Span {
-                                                                                    file: "parse_member_dot_arguments_expression",
-                                                                                    module: "module/parse_member_dot_arguments_expression",
+                                                                                    file: "test_parse_member_dot_arguments_expression",
+                                                                                    module: "module/test_parse_member_dot_arguments_expression",
                                                                                     start: 27,
                                                                                     end: 29,
                                                                                 },
                                                                                 value: 10,
-                                                                                ty: Unknown,
+                                                                                ty: Binding(
+                                                                                    "i32",
+                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),

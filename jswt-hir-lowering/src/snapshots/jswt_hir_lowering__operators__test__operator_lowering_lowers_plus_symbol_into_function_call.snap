@@ -143,7 +143,9 @@ Ast {
                                                                                     end: 80,
                                                                                 },
                                                                                 value: 0,
-                                                                                ty: Unknown,
+                                                                                ty: Binding(
+                                                                                    "i32",
+                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
@@ -247,7 +249,9 @@ Ast {
                                                                     end: 164,
                                                                 },
                                                                 value: 1,
-                                                                ty: Unknown,
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
                                                             },
                                                         ),
                                                     ),
@@ -303,7 +307,9 @@ Ast {
                                                                     end: 192,
                                                                 },
                                                                 value: 2,
-                                                                ty: Unknown,
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
                                                             },
                                                         ),
                                                     ),
@@ -349,43 +355,43 @@ Ast {
                                                             value: "x",
                                                         },
                                                     ),
-                                                    expression: MemberDot(
-                                                        MemberDotExpression {
+                                                    expression: Arguments(
+                                                        ArgumentsExpression {
                                                             span: Span {
                                                                 file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
                                                                 module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
                                                                 start: 214,
                                                                 end: 219,
                                                             },
-                                                            target: Identifier(
-                                                                IdentifierExpression {
-                                                                    span: Span {
-                                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                        start: 214,
-                                                                        end: 215,
-                                                                    },
-                                                                    ident: Identifier {
-                                                                        span: Span {
-                                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                            start: 214,
-                                                                            end: 215,
-                                                                        },
-                                                                        value: "a",
-                                                                    },
-                                                                    ty: Unknown,
-                                                                },
-                                                            ),
-                                                            expression: Arguments(
-                                                                ArgumentsExpression {
+                                                            ident: MemberDot(
+                                                                MemberDotExpression {
                                                                     span: Span {
                                                                         file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
                                                                         module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
                                                                         start: 214,
                                                                         end: 219,
                                                                     },
-                                                                    ident: Identifier(
+                                                                    target: Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                start: 214,
+                                                                                end: 215,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                    start: 214,
+                                                                                    end: 215,
+                                                                                },
+                                                                                value: "a",
+                                                                            },
+                                                                            ty: Unknown,
+                                                                        },
+                                                                    ),
+                                                                    expression: Identifier(
                                                                         IdentifierExpression {
                                                                             span: Span {
                                                                                 file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
@@ -402,44 +408,42 @@ Ast {
                                                                                 },
                                                                                 value: "plus",
                                                                             },
-                                                                            ty: Binding(
-                                                                                "ptr",
-                                                                            ),
+                                                                            ty: Unknown,
                                                                         },
                                                                     ),
-                                                                    arguments: ArgumentsList {
-                                                                        span: Span {
-                                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                            start: 214,
-                                                                            end: 219,
-                                                                        },
-                                                                        arguments: [
-                                                                            Identifier(
-                                                                                IdentifierExpression {
-                                                                                    span: Span {
-                                                                                        file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                                        module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                                        start: 218,
-                                                                                        end: 219,
-                                                                                    },
-                                                                                    ident: Identifier {
-                                                                                        span: Span {
-                                                                                            file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                                            module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
-                                                                                            start: 218,
-                                                                                            end: 219,
-                                                                                        },
-                                                                                        value: "b",
-                                                                                    },
-                                                                                    ty: Unknown,
-                                                                                },
-                                                                            ),
-                                                                        ],
-                                                                    },
                                                                     ty: Unknown,
                                                                 },
                                                             ),
+                                                            arguments: ArgumentsList {
+                                                                span: Span {
+                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                    start: 214,
+                                                                    end: 219,
+                                                                },
+                                                                arguments: [
+                                                                    Identifier(
+                                                                        IdentifierExpression {
+                                                                            span: Span {
+                                                                                file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                start: 218,
+                                                                                end: 219,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                    module: "module/test_operator_lowering_lowers_plus_symbol_into_function_call",
+                                                                                    start: 218,
+                                                                                    end: 219,
+                                                                                },
+                                                                                value: "b",
+                                                                            },
+                                                                            ty: Unknown,
+                                                                        },
+                                                                    ),
+                                                                ],
+                                                            },
                                                             ty: Unknown,
                                                         },
                                                     ),
@@ -464,7 +468,9 @@ Ast {
                                                                     end: 241,
                                                                 },
                                                                 value: 0,
-                                                                ty: Unknown,
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
                                                             },
                                                         ),
                                                     ),

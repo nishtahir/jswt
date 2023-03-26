@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/class.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -135,7 +134,9 @@ Ast {
                                                                                                 start: 83,
                                                                                                 end: 87,
                                                                                             },
-                                                                                            ty: Unknown,
+                                                                                            ty: Binding(
+                                                                                                "ptr",
+                                                                                            ),
                                                                                         },
                                                                                     ),
                                                                                     expression: Identifier(

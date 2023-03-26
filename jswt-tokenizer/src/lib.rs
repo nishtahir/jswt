@@ -89,6 +89,7 @@ lazy_static! {
         r"^\blet\b" => TokenType::Let,
         r"^\bconst\b" => TokenType::Const,
         r"^\bwhile\b" => TokenType::While,
+        r"^\bfor\b" => TokenType::For,
         r"^\bclass\b" => TokenType::Class,
         r"^\bconstructor\b" => TokenType::Constructor,
         r"^\bthis\b" => TokenType::This,

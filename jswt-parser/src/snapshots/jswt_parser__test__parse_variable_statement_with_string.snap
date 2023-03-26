@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -58,7 +57,9 @@ Ast {
                                                 end: 21,
                                             },
                                             value: "Hello World",
-                                            ty: Unknown,
+                                            ty: Binding(
+                                                "String",
+                                            ),
                                         },
                                     ),
                                 ),

@@ -1,0 +1,18 @@
+// @ts-nocheck
+
+class i32 {
+    
+    @wast("(i32.add (local.get $this) (local.get $other))")
+    plus(other: i32): i32 {
+    }
+    
+}
+
+let b = 55;
+
+export function main(): i32 {
+    q(0);
+    a.b(c);
+    const a = b + 2;
+    return a;
+}

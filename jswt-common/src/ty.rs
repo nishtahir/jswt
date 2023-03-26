@@ -10,6 +10,19 @@ pub enum Type {
     Unknown,
 }
 
+impl Type {
+    // Primitive type bindings
+    pub const PTR: Type = Type::Binding(Cow::Borrowed("ptr"));
+    pub const I32: Type = Type::Binding(Cow::Borrowed("i32"));
+    pub const F32: Type = Type::Binding(Cow::Borrowed("f32"));
+    pub const BOOLEAN: Type = Type::Binding(Cow::Borrowed("boolean"));
+    pub const VOID: Type = Type::Binding(Cow::Borrowed("void"));
+
+    // Reference type bindings
+    pub const STRING: Type = Type::Binding(Cow::Borrowed("String"));
+    pub const ARRAY: Type = Type::Binding(Cow::Borrowed("Array"));
+}
+
 pub trait Typeable {
     fn ty(&self) -> Type;
     fn binding(&self) -> Option<Cow<'static, str>>;

@@ -1,0 +1,99 @@
+---
+source: jswt-parser/src/literal.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_float_literals",
+                    module: "module/test_float_literals",
+                    start: 0,
+                    end: 24,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_float_literals",
+                        module: "module/test_float_literals",
+                        start: 0,
+                        end: 24,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_float_literals",
+                                    module: "module/test_float_literals",
+                                    start: 0,
+                                    end: 24,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_float_literals",
+                                        module: "module/test_float_literals",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_float_literals",
+                                        module: "module/test_float_literals",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_float_literals",
+                                        module: "module/test_float_literals",
+                                        start: 16,
+                                        end: 24,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_float_literals",
+                                                        module: "module/test_float_literals",
+                                                        start: 18,
+                                                        end: 22,
+                                                    },
+                                                    expression: Literal(
+                                                        Float(
+                                                            FloatingPointLiteral {
+                                                                span: Span {
+                                                                    file: "test_float_literals",
+                                                                    module: "module/test_float_literals",
+                                                                    start: 18,
+                                                                    end: 21,
+                                                                },
+                                                                value: 1.0,
+                                                                ty: Binding(
+                                                                    "f32",
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

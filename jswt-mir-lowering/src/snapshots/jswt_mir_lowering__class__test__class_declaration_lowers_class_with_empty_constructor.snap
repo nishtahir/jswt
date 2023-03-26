@@ -1,7 +1,6 @@
 ---
 source: jswt-mir-lowering/src/class.rs
 expression: lowered
-
 ---
 Ast {
     program: Program {
@@ -279,7 +278,9 @@ Ast {
                                                                                     end: 129,
                                                                                 },
                                                                                 value: 0,
-                                                                                ty: Unknown,
+                                                                                ty: Binding(
+                                                                                    "i32",
+                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
@@ -407,7 +408,9 @@ Ast {
                                                                                     end: 164,
                                                                                 },
                                                                                 value: 0,
-                                                                                ty: Unknown,
+                                                                                ty: Binding(
+                                                                                    "i32",
+                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),

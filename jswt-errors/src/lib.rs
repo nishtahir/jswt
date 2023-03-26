@@ -119,6 +119,12 @@ pub fn print_semantic_error(error: &SemanticError) {
             message: format!("Method '{}' was already defined in this scope", name).into(),
             hint: None,
         },
+        SemanticError::UnknownType { ident, span } => DiagnosticMessage {
+            level: Level::Error,
+            span: span.clone(),
+            message: format!("Unable to determine type for '{}'", ident).into(),
+            hint: None,
+        },
     };
 
     let emitter = ErrorEmitter::new();

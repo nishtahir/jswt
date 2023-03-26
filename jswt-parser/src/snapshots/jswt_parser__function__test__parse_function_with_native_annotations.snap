@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/function.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -58,7 +57,9 @@ Ast {
                                                                 end: 152,
                                                             },
                                                             value: "env",
-                                                            ty: Unknown,
+                                                            ty: Binding(
+                                                                "String",
+                                                            ),
                                                         },
                                                     ),
                                                 ),
@@ -165,7 +166,9 @@ Ast {
                                                                 end: 334,
                                                             },
                                                             value: "env",
-                                                            ty: Unknown,
+                                                            ty: Binding(
+                                                                "String",
+                                                            ),
                                                         },
                                                     ),
                                                 ),

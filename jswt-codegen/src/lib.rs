@@ -168,6 +168,7 @@ impl StatementVisitor<()> for CodeGenerator {
     fn visit_iteration_statement(&mut self, node: &IterationStatement) {
         match node {
             IterationStatement::While(elem) => self.visit_while_iteration_element(elem),
+            IterationStatement::For(_) => todo!(),
         }
     }
 

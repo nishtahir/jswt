@@ -1,0 +1,125 @@
+---
+source: jswt-parser/src/literal.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_boolean_literals",
+                    module: "module/test_boolean_literals",
+                    start: 0,
+                    end: 32,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_boolean_literals",
+                        module: "module/test_boolean_literals",
+                        start: 0,
+                        end: 32,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_boolean_literals",
+                                    module: "module/test_boolean_literals",
+                                    start: 0,
+                                    end: 32,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_boolean_literals",
+                                        module: "module/test_boolean_literals",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "test",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_boolean_literals",
+                                        module: "module/test_boolean_literals",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_boolean_literals",
+                                        module: "module/test_boolean_literals",
+                                        start: 16,
+                                        end: 32,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_boolean_literals",
+                                                        module: "module/test_boolean_literals",
+                                                        start: 18,
+                                                        end: 23,
+                                                    },
+                                                    expression: Literal(
+                                                        Boolean(
+                                                            BooleanLiteral {
+                                                                span: Span {
+                                                                    file: "test_boolean_literals",
+                                                                    module: "module/test_boolean_literals",
+                                                                    start: 18,
+                                                                    end: 22,
+                                                                },
+                                                                value: true,
+                                                                ty: Binding(
+                                                                    "boolean",
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                            Expression(
+                                                ExpressionStatement {
+                                                    span: Span {
+                                                        file: "test_boolean_literals",
+                                                        module: "module/test_boolean_literals",
+                                                        start: 24,
+                                                        end: 30,
+                                                    },
+                                                    expression: Literal(
+                                                        Boolean(
+                                                            BooleanLiteral {
+                                                                span: Span {
+                                                                    file: "test_boolean_literals",
+                                                                    module: "module/test_boolean_literals",
+                                                                    start: 24,
+                                                                    end: 29,
+                                                                },
+                                                                value: false,
+                                                                ty: Binding(
+                                                                    "boolean",
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

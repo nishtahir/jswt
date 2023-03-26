@@ -22,3 +22,8 @@ args = [
     "test",
     "--unreferenced=delete"
 ]
+
+[tasks.clean]
+clear = true
+workspace = false
+script = { file = "${CARGO_MAKE_WORKING_DIRECTORY}/scripts/clean.sh", absolute_path = true }

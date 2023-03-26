@@ -6,9 +6,9 @@ use crate::{consume, ident};
 use crate::{ParseError, ParseResult, Parser};
 
 impl<'a> Parser<'a> {
-    /// FunctionDeclaration
-    ///   :  'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
-    ///   ;
+    //// FunctionDeclaration
+    ////   :  'function' Identifier ( FormalParameterList? ) TypeAnnotation? FunctionBody
+    ////   ;
     pub(crate) fn function_declaration(
         &mut self,
         // How do I pass the start span of the annotations/export keyword?
@@ -25,7 +25,7 @@ impl<'a> Parser<'a> {
             returns = Some(self.type_annotation()?);
         }
 
-        let body = self.block()?;
+        let body = self.block_statement()?;
 
         let decorators = FunctionDecorators {
             annotations,

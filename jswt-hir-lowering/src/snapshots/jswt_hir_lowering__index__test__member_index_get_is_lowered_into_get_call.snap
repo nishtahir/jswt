@@ -1,7 +1,6 @@
 ---
 source: jswt-hir-lowering/src/index.rs
 expression: lowered
-
 ---
 Ast {
     program: Program {
@@ -203,9 +202,7 @@ Ast {
                                                                                 },
                                                                                 value: "get",
                                                                             },
-                                                                            ty: Binding(
-                                                                                "ptr",
-                                                                            ),
+                                                                            ty: Unknown,
                                                                         },
                                                                     ),
                                                                     arguments: ArgumentsList {
@@ -226,13 +223,17 @@ Ast {
                                                                                             end: 87,
                                                                                         },
                                                                                         value: 0,
-                                                                                        ty: Unknown,
+                                                                                        ty: Binding(
+                                                                                            "i32",
+                                                                                        ),
                                                                                     },
                                                                                 ),
                                                                             ),
                                                                         ],
                                                                     },
-                                                                    ty: Unknown,
+                                                                    ty: Binding(
+                                                                        "i32",
+                                                                    ),
                                                                 },
                                                             ),
                                                             ty: Unknown,

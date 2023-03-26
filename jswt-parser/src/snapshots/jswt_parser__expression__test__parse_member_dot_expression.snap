@@ -1,33 +1,32 @@
 ---
-source: jswt-parser/src/lib.rs
+source: jswt-parser/src/expression.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
         files: [
             File {
                 span: Span {
-                    file: "parse_member_dot_expression",
-                    module: "module/parse_member_dot_expression",
+                    file: "test_parse_member_dot_expression",
+                    module: "module/test_parse_member_dot_expression",
                     start: 0,
-                    end: 36,
+                    end: 29,
                 },
                 source_elements: SourceElements {
                     span: Span {
-                        file: "parse_member_dot_expression",
-                        module: "module/parse_member_dot_expression",
+                        file: "test_parse_member_dot_expression",
+                        module: "module/test_parse_member_dot_expression",
                         start: 0,
-                        end: 36,
+                        end: 29,
                     },
                     source_elements: [
                         FunctionDeclaration(
                             FunctionDeclarationElement {
                                 span: Span {
-                                    file: "parse_member_dot_expression",
-                                    module: "module/parse_member_dot_expression",
+                                    file: "test_parse_member_dot_expression",
+                                    module: "module/test_parse_member_dot_expression",
                                     start: 0,
-                                    end: 36,
+                                    end: 29,
                                 },
                                 decorators: FunctionDecorators {
                                     annotations: [],
@@ -35,8 +34,8 @@ Ast {
                                 },
                                 ident: Identifier {
                                     span: Span {
-                                        file: "parse_member_dot_expression",
-                                        module: "module/parse_member_dot_expression",
+                                        file: "test_parse_member_dot_expression",
+                                        module: "module/test_parse_member_dot_expression",
                                         start: 9,
                                         end: 13,
                                     },
@@ -44,8 +43,8 @@ Ast {
                                 },
                                 params: FormalParameterList {
                                     span: Span {
-                                        file: "parse_member_dot_expression",
-                                        module: "module/parse_member_dot_expression",
+                                        file: "test_parse_member_dot_expression",
+                                        module: "module/test_parse_member_dot_expression",
                                         start: 13,
                                         end: 15,
                                     },
@@ -54,44 +53,53 @@ Ast {
                                 returns: None,
                                 body: BlockStatement {
                                     span: Span {
-                                        file: "parse_member_dot_expression",
-                                        module: "module/parse_member_dot_expression",
+                                        file: "test_parse_member_dot_expression",
+                                        module: "module/test_parse_member_dot_expression",
                                         start: 16,
-                                        end: 36,
+                                        end: 29,
                                     },
                                     statements: StatementList {
                                         statements: [
                                             Expression(
                                                 ExpressionStatement {
                                                     span: Span {
-                                                        file: "parse_member_dot_expression",
-                                                        module: "module/parse_member_dot_expression",
+                                                        file: "test_parse_member_dot_expression",
+                                                        module: "module/test_parse_member_dot_expression",
                                                         start: 18,
-                                                        end: 34,
+                                                        end: 27,
                                                     },
                                                     expression: Assignment(
                                                         BinaryExpression {
                                                             span: Span {
-                                                                file: "parse_member_dot_expression",
-                                                                module: "module/parse_member_dot_expression",
+                                                                file: "test_parse_member_dot_expression",
+                                                                module: "module/test_parse_member_dot_expression",
                                                                 start: 18,
-                                                                end: 33,
+                                                                end: 26,
                                                             },
                                                             left: MemberDot(
                                                                 MemberDotExpression {
                                                                     span: Span {
-                                                                        file: "parse_member_dot_expression",
-                                                                        module: "module/parse_member_dot_expression",
+                                                                        file: "test_parse_member_dot_expression",
+                                                                        module: "module/test_parse_member_dot_expression",
                                                                         start: 18,
-                                                                        end: 28,
+                                                                        end: 21,
                                                                     },
-                                                                    target: This(
-                                                                        ThisExpression {
+                                                                    target: Identifier(
+                                                                        IdentifierExpression {
                                                                             span: Span {
-                                                                                file: "parse_member_dot_expression",
-                                                                                module: "module/parse_member_dot_expression",
+                                                                                file: "test_parse_member_dot_expression",
+                                                                                module: "module/test_parse_member_dot_expression",
                                                                                 start: 18,
-                                                                                end: 22,
+                                                                                end: 19,
+                                                                            },
+                                                                            ident: Identifier {
+                                                                                span: Span {
+                                                                                    file: "test_parse_member_dot_expression",
+                                                                                    module: "module/test_parse_member_dot_expression",
+                                                                                    start: 18,
+                                                                                    end: 19,
+                                                                                },
+                                                                                value: "a",
                                                                             },
                                                                             ty: Unknown,
                                                                         },
@@ -99,19 +107,19 @@ Ast {
                                                                     expression: Identifier(
                                                                         IdentifierExpression {
                                                                             span: Span {
-                                                                                file: "parse_member_dot_expression",
-                                                                                module: "module/parse_member_dot_expression",
-                                                                                start: 23,
-                                                                                end: 28,
+                                                                                file: "test_parse_member_dot_expression",
+                                                                                module: "module/test_parse_member_dot_expression",
+                                                                                start: 20,
+                                                                                end: 21,
                                                                             },
                                                                             ident: Identifier {
                                                                                 span: Span {
-                                                                                    file: "parse_member_dot_expression",
-                                                                                    module: "module/parse_member_dot_expression",
-                                                                                    start: 23,
-                                                                                    end: 28,
+                                                                                    file: "test_parse_member_dot_expression",
+                                                                                    module: "module/test_parse_member_dot_expression",
+                                                                                    start: 20,
+                                                                                    end: 21,
                                                                                 },
-                                                                                value: "index",
+                                                                                value: "b",
                                                                             },
                                                                             ty: Unknown,
                                                                         },
@@ -121,23 +129,25 @@ Ast {
                                                             ),
                                                             op: Assign(
                                                                 Span {
-                                                                    file: "parse_member_dot_expression",
-                                                                    module: "module/parse_member_dot_expression",
-                                                                    start: 29,
-                                                                    end: 30,
+                                                                    file: "test_parse_member_dot_expression",
+                                                                    module: "module/test_parse_member_dot_expression",
+                                                                    start: 22,
+                                                                    end: 23,
                                                                 },
                                                             ),
                                                             right: Literal(
                                                                 Integer(
                                                                     IntegerLiteral {
                                                                         span: Span {
-                                                                            file: "parse_member_dot_expression",
-                                                                            module: "module/parse_member_dot_expression",
-                                                                            start: 31,
-                                                                            end: 33,
+                                                                            file: "test_parse_member_dot_expression",
+                                                                            module: "module/test_parse_member_dot_expression",
+                                                                            start: 24,
+                                                                            end: 26,
                                                                         },
                                                                         value: 10,
-                                                                        ty: Unknown,
+                                                                        ty: Binding(
+                                                                            "i32",
+                                                                        ),
                                                                     },
                                                                 ),
                                                             ),

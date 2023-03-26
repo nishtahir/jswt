@@ -1,0 +1,327 @@
+---
+source: jswt-parser/src/statement.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_parse_for_statement",
+                    module: "module/test_parse_for_statement",
+                    start: 0,
+                    end: 63,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_for_statement",
+                        module: "module/test_parse_for_statement",
+                        start: 0,
+                        end: 63,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_for_statement",
+                                    module: "module/test_parse_for_statement",
+                                    start: 0,
+                                    end: 63,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_parse_for_statement",
+                                        module: "module/test_parse_for_statement",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_for_statement",
+                                        module: "module/test_parse_for_statement",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_for_statement",
+                                        module: "module/test_parse_for_statement",
+                                        start: 16,
+                                        end: 63,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Iteration(
+                                                For(
+                                                    ForIterationElement {
+                                                        span: Span {
+                                                            file: "test_parse_for_statement",
+                                                            module: "module/test_parse_for_statement",
+                                                            start: 18,
+                                                            end: 61,
+                                                        },
+                                                        initializer: Assignment(
+                                                            BinaryExpression {
+                                                                span: Span {
+                                                                    file: "test_parse_for_statement",
+                                                                    module: "module/test_parse_for_statement",
+                                                                    start: 22,
+                                                                    end: 27,
+                                                                },
+                                                                left: Identifier(
+                                                                    IdentifierExpression {
+                                                                        span: Span {
+                                                                            file: "test_parse_for_statement",
+                                                                            module: "module/test_parse_for_statement",
+                                                                            start: 22,
+                                                                            end: 23,
+                                                                        },
+                                                                        ident: Identifier {
+                                                                            span: Span {
+                                                                                file: "test_parse_for_statement",
+                                                                                module: "module/test_parse_for_statement",
+                                                                                start: 22,
+                                                                                end: 23,
+                                                                            },
+                                                                            value: "i",
+                                                                        },
+                                                                        ty: Unknown,
+                                                                    },
+                                                                ),
+                                                                op: Assign(
+                                                                    Span {
+                                                                        file: "test_parse_for_statement",
+                                                                        module: "module/test_parse_for_statement",
+                                                                        start: 24,
+                                                                        end: 25,
+                                                                    },
+                                                                ),
+                                                                right: Literal(
+                                                                    Integer(
+                                                                        IntegerLiteral {
+                                                                            span: Span {
+                                                                                file: "test_parse_for_statement",
+                                                                                module: "module/test_parse_for_statement",
+                                                                                start: 26,
+                                                                                end: 27,
+                                                                            },
+                                                                            value: 0,
+                                                                            ty: Binding(
+                                                                                "i32",
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                        condition: Relational(
+                                                            BinaryExpression {
+                                                                span: Span {
+                                                                    file: "test_parse_for_statement",
+                                                                    module: "module/test_parse_for_statement",
+                                                                    start: 29,
+                                                                    end: 35,
+                                                                },
+                                                                left: Identifier(
+                                                                    IdentifierExpression {
+                                                                        span: Span {
+                                                                            file: "test_parse_for_statement",
+                                                                            module: "module/test_parse_for_statement",
+                                                                            start: 29,
+                                                                            end: 30,
+                                                                        },
+                                                                        ident: Identifier {
+                                                                            span: Span {
+                                                                                file: "test_parse_for_statement",
+                                                                                module: "module/test_parse_for_statement",
+                                                                                start: 29,
+                                                                                end: 30,
+                                                                            },
+                                                                            value: "i",
+                                                                        },
+                                                                        ty: Unknown,
+                                                                    },
+                                                                ),
+                                                                op: Less(
+                                                                    Span {
+                                                                        file: "test_parse_for_statement",
+                                                                        module: "module/test_parse_for_statement",
+                                                                        start: 31,
+                                                                        end: 32,
+                                                                    },
+                                                                ),
+                                                                right: Literal(
+                                                                    Integer(
+                                                                        IntegerLiteral {
+                                                                            span: Span {
+                                                                                file: "test_parse_for_statement",
+                                                                                module: "module/test_parse_for_statement",
+                                                                                start: 33,
+                                                                                end: 35,
+                                                                            },
+                                                                            value: 10,
+                                                                            ty: Binding(
+                                                                                "i32",
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                ),
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                        update: Assignment(
+                                                            BinaryExpression {
+                                                                span: Span {
+                                                                    file: "test_parse_for_statement",
+                                                                    module: "module/test_parse_for_statement",
+                                                                    start: 37,
+                                                                    end: 46,
+                                                                },
+                                                                left: Identifier(
+                                                                    IdentifierExpression {
+                                                                        span: Span {
+                                                                            file: "test_parse_for_statement",
+                                                                            module: "module/test_parse_for_statement",
+                                                                            start: 37,
+                                                                            end: 38,
+                                                                        },
+                                                                        ident: Identifier {
+                                                                            span: Span {
+                                                                                file: "test_parse_for_statement",
+                                                                                module: "module/test_parse_for_statement",
+                                                                                start: 37,
+                                                                                end: 38,
+                                                                            },
+                                                                            value: "i",
+                                                                        },
+                                                                        ty: Unknown,
+                                                                    },
+                                                                ),
+                                                                op: Assign(
+                                                                    Span {
+                                                                        file: "test_parse_for_statement",
+                                                                        module: "module/test_parse_for_statement",
+                                                                        start: 39,
+                                                                        end: 40,
+                                                                    },
+                                                                ),
+                                                                right: Additive(
+                                                                    BinaryExpression {
+                                                                        span: Span {
+                                                                            file: "test_parse_for_statement",
+                                                                            module: "module/test_parse_for_statement",
+                                                                            start: 41,
+                                                                            end: 46,
+                                                                        },
+                                                                        left: Identifier(
+                                                                            IdentifierExpression {
+                                                                                span: Span {
+                                                                                    file: "test_parse_for_statement",
+                                                                                    module: "module/test_parse_for_statement",
+                                                                                    start: 41,
+                                                                                    end: 42,
+                                                                                },
+                                                                                ident: Identifier {
+                                                                                    span: Span {
+                                                                                        file: "test_parse_for_statement",
+                                                                                        module: "module/test_parse_for_statement",
+                                                                                        start: 41,
+                                                                                        end: 42,
+                                                                                    },
+                                                                                    value: "i",
+                                                                                },
+                                                                                ty: Unknown,
+                                                                            },
+                                                                        ),
+                                                                        op: Plus(
+                                                                            Span {
+                                                                                file: "test_parse_for_statement",
+                                                                                module: "module/test_parse_for_statement",
+                                                                                start: 43,
+                                                                                end: 44,
+                                                                            },
+                                                                        ),
+                                                                        right: Literal(
+                                                                            Integer(
+                                                                                IntegerLiteral {
+                                                                                    span: Span {
+                                                                                        file: "test_parse_for_statement",
+                                                                                        module: "module/test_parse_for_statement",
+                                                                                        start: 45,
+                                                                                        end: 46,
+                                                                                    },
+                                                                                    value: 1,
+                                                                                    ty: Binding(
+                                                                                        "i32",
+                                                                                    ),
+                                                                                },
+                                                                            ),
+                                                                        ),
+                                                                        ty: Unknown,
+                                                                    },
+                                                                ),
+                                                                ty: Unknown,
+                                                            },
+                                                        ),
+                                                        block: BlockStatement {
+                                                            span: Span {
+                                                                file: "test_parse_for_statement",
+                                                                module: "module/test_parse_for_statement",
+                                                                start: 48,
+                                                                end: 61,
+                                                            },
+                                                            statements: StatementList {
+                                                                statements: [
+                                                                    Return(
+                                                                        ReturnStatement {
+                                                                            span: Span {
+                                                                                file: "test_parse_for_statement",
+                                                                                module: "module/test_parse_for_statement",
+                                                                                start: 50,
+                                                                                end: 59,
+                                                                            },
+                                                                            expression: Literal(
+                                                                                Integer(
+                                                                                    IntegerLiteral {
+                                                                                        span: Span {
+                                                                                            file: "test_parse_for_statement",
+                                                                                            module: "module/test_parse_for_statement",
+                                                                                            start: 57,
+                                                                                            end: 58,
+                                                                                        },
+                                                                                        value: 0,
+                                                                                        ty: Binding(
+                                                                                            "i32",
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        },
+                                                                    ),
+                                                                ],
+                                                            },
+                                                        },
+                                                    },
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}

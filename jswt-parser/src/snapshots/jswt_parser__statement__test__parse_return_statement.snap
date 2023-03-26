@@ -1,0 +1,99 @@
+---
+source: jswt-parser/src/statement.rs
+expression: actual
+---
+Ast {
+    program: Program {
+        files: [
+            File {
+                span: Span {
+                    file: "test_parse_return_statement",
+                    module: "module/test_parse_return_statement",
+                    start: 0,
+                    end: 29,
+                },
+                source_elements: SourceElements {
+                    span: Span {
+                        file: "test_parse_return_statement",
+                        module: "module/test_parse_return_statement",
+                        start: 0,
+                        end: 29,
+                    },
+                    source_elements: [
+                        FunctionDeclaration(
+                            FunctionDeclarationElement {
+                                span: Span {
+                                    file: "test_parse_return_statement",
+                                    module: "module/test_parse_return_statement",
+                                    start: 0,
+                                    end: 29,
+                                },
+                                decorators: FunctionDecorators {
+                                    annotations: [],
+                                    export: false,
+                                },
+                                ident: Identifier {
+                                    span: Span {
+                                        file: "test_parse_return_statement",
+                                        module: "module/test_parse_return_statement",
+                                        start: 9,
+                                        end: 13,
+                                    },
+                                    value: "main",
+                                },
+                                params: FormalParameterList {
+                                    span: Span {
+                                        file: "test_parse_return_statement",
+                                        module: "module/test_parse_return_statement",
+                                        start: 13,
+                                        end: 15,
+                                    },
+                                    parameters: [],
+                                },
+                                returns: None,
+                                body: BlockStatement {
+                                    span: Span {
+                                        file: "test_parse_return_statement",
+                                        module: "module/test_parse_return_statement",
+                                        start: 16,
+                                        end: 29,
+                                    },
+                                    statements: StatementList {
+                                        statements: [
+                                            Return(
+                                                ReturnStatement {
+                                                    span: Span {
+                                                        file: "test_parse_return_statement",
+                                                        module: "module/test_parse_return_statement",
+                                                        start: 18,
+                                                        end: 27,
+                                                    },
+                                                    expression: Literal(
+                                                        Integer(
+                                                            IntegerLiteral {
+                                                                span: Span {
+                                                                    file: "test_parse_return_statement",
+                                                                    module: "module/test_parse_return_statement",
+                                                                    start: 25,
+                                                                    end: 26,
+                                                                },
+                                                                value: 0,
+                                                                ty: Binding(
+                                                                    "i32",
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ),
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ],
+    },
+}
