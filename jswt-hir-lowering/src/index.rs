@@ -2,7 +2,7 @@ use jswt_ast::{
     transform::{walk_assignment_expression, TransformVisitor},
     *,
 };
-use jswt_common::{Spannable, Typeable};
+use jswt_common::{Spannable};
 use jswt_synthetic::ident_exp;
 
 // lowering context for member index expressions
@@ -28,14 +28,12 @@ impl TransformVisitor for HirMemberIndexContext {
             target: Box::new(target),
             expression: Box::new(SingleExpression::Arguments(ArgumentsExpression {
                 span: expression.span(),
-                ty: expression.ty(),
                 arguments: ArgumentsList {
                     span: expression.span(),
                     arguments: vec![expression],
                 },
-                ident: Box::new(ident_exp("get".into(), node.ty(), node.span())),
+                ident: Box::new(ident_exp("get".into(), node.span())),
             })),
-            ty: node.ty(),
         })
     }
 
@@ -51,14 +49,12 @@ impl TransformVisitor for HirMemberIndexContext {
                 target: Box::new(target),
                 expression: Box::new(SingleExpression::Arguments(ArgumentsExpression {
                     span: expression.span(),
-                    ty: expression.ty(),
                     arguments: ArgumentsList {
                         span: expression.span(),
                         arguments: vec![expression, self.visit_single_expression(&node.right)],
                     },
-                    ident: Box::new(ident_exp("set".into(), node.ty(), node.span())),
+                    ident: Box::new(ident_exp("set".into(), node.span())),
                 })),
-                ty: node.ty(),
             });
         }
         walk_assignment_expression(self, node)
@@ -70,7 +66,7 @@ mod test {
     use crate::HirLoweringContext;
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_symbols::{BindingsTable, ScopedSymbolTable};
+    use jswt_symbols::SemanticEnvironment;
     use jswt_tokenizer::Tokenizer;
 
     #[test]
@@ -87,11 +83,8 @@ mod test {
         );
 
         let ast = Parser::new(&mut tokenizer).parse();
-
-        let symbol_table = ScopedSymbolTable::default();
-        let bindings_table = BindingsTable::default();
-
-        let mut lowering = HirLoweringContext::new(&bindings_table, &symbol_table);
+        let environment = SemanticEnvironment::default();
+        let mut lowering = HirLoweringContext::new(&environment);
         let lowered = lowering.lower(&ast);
         assert_debug_snapshot!(lowered);
     }

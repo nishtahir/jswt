@@ -2,17 +2,17 @@ use jswt_ast::{
     transform::{walk_argument_expression, TransformVisitor},
     ArgumentsExpression, SingleExpression,
 };
-use jswt_common::Typeable;
-use jswt_symbols::BindingsTable;
+use jswt_common::{Spannable};
+use jswt_symbols::{SemanticEnvironment, TypesTable};
 use jswt_synthetic::function_call;
 
 pub struct MirArgumentsLoweringContext<'a> {
-    bindings: &'a BindingsTable,
+    environment: &'a SemanticEnvironment,
 }
 
 impl<'a> MirArgumentsLoweringContext<'a> {
-    pub fn new(bindings: &'a BindingsTable) -> Self {
-        Self { bindings }
+    pub fn new(environment: &'a SemanticEnvironment) -> Self {
+        Self { environment }
     }
 }
 
@@ -22,33 +22,24 @@ impl TransformVisitor for MirArgumentsLoweringContext<'_> {
             // We want to rewrite function calls like `foo.bar(baz)` into
             // ty#bar(foo, baz)
 
-            let lhs = self.visit_single_expression(&dot.target);
-            let target_type = dot.target.ty();
-            let type_name = target_type.to_string();
+            let expr_ty = self.environment.get_type(&dot.span());
+            let type_name = expr_ty.to_string();
 
             let ident_exp = dot.expression.as_identifier().unwrap();
-
             let ident_name = ident_exp.ident.value.clone();
 
             // format as type#function(args)
-            let function_name = format!("{}#{}", target_type.to_string(), ident_name).into();
+            let function_name = format!("{}#{}", type_name.to_string(), ident_name).into();
 
-            // lhs is the first param 
+            // lhs is the first param
+            let lhs = self.visit_single_expression(&dot.target);
             let mut args = vec![lhs];
             for arg in &node.arguments.arguments {
                 args.push(self.visit_single_expression(&arg));
             }
 
             // get the return type of the method from the bindings table
-            println!("Looking up method {} in class {}", ident_name, type_name);
-            let class_binding = self.bindings.lookup(&type_name).unwrap();
-            let method_binding = class_binding.method(&ident_name).unwrap();
-
-            let f = function_call(
-                function_name,
-                args,
-                method_binding.signature.returns.to_owned(),
-            );
+            let f = function_call(function_name, args);
 
             return f;
             // let args = node.arguments;

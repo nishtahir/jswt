@@ -101,7 +101,6 @@ Ast {
                                                                                 },
                                                                                 value: "a",
                                                                             },
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
                                                                     arguments: ArgumentsList {
@@ -113,7 +112,6 @@ Ast {
                                                                         },
                                                                         arguments: [],
                                                                     },
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -125,7 +123,6 @@ Ast {
                                                                 },
                                                                 arguments: [],
                                                             },
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

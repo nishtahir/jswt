@@ -8,11 +8,8 @@ use jswt_errors::{print_parser_error, print_semantic_error, print_tokenizer_erro
 use jswt_hir_lowering::HirLoweringContext;
 use jswt_mir_lowering::MirLoweringContext;
 use jswt_parser::Parser as JswtParser;
-use jswt_semantics::GlobalSemanticResolver;
-use jswt_semantics::LocalSemanticResolver;
-use jswt_semantics::TypeInferenceResolver;
-use jswt_symbols::BindingsTable;
-use jswt_symbols::ScopedSymbolTable;
+use jswt_semantics::{GlobalSemanticResolver, LocalSemanticResolver};
+use jswt_symbols::SemanticEnvironment;
 use jswt_tokenizer::Tokenizer;
 use std::fs;
 use std::path::Path;
@@ -215,12 +212,11 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         print_parser_error(&error);
     }
 
-    let mut symbol_table = ScopedSymbolTable::default();
-    let mut bindings_table = BindingsTable::default();
+    let mut environment = SemanticEnvironment::default();
 
     // Global Semantic analytis pass
     // This pass resolves classes, functions, variables and imports
-    let mut global = GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
+    let mut global = GlobalSemanticResolver::new(&mut environment);
     global.resolve(&ast);
 
     for error in global.errors() {
@@ -233,18 +229,17 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
     }
 
     // Hir lowering pass to desugar operators.
-    let mut lowering = HirLoweringContext::new(&mut bindings_table, &mut symbol_table);
-    let mut ast = lowering.lower(&ast);
+    let mut lowering = HirLoweringContext::new(&mut environment);
+    let ast = lowering.lower(&ast);
     fs::write(output.with_extension("hir.ast"), format!("{:#?}", ast)).unwrap();
 
-    // Perform type checking and inference
-    // annotate the AST with resolved and inferred types
-    let mut types = TypeInferenceResolver::new(&mut bindings_table, &mut symbol_table);
-    types.resolve(&mut ast);
+    let mut hir_serializer = AstSerializer::new(&environment);
+    let content = hir_serializer.serialze(&ast);
+    fs::write(output.with_extension("hir.jswt"), content).unwrap();
 
     // Local semantic analysis pass to resolve local variables
     // and perform deeper type checking
-    let mut local = LocalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
+    let mut local = LocalSemanticResolver::new(&mut environment);
     local.resolve(&ast);
 
     for error in local.errors() {
@@ -256,20 +251,20 @@ fn compile_module(input: &Path, output: &Path, runtime: Option<&PathBuf>) -> Ast
         exit(1);
     }
 
-    let mut serializer = AstSerializer::default();
-    let content = serializer.serialze(&ast);
-    fs::write(output.with_extension("hir.jswt"), content).unwrap();
+    let mut hir_serializer = AstSerializer::new(&environment);
+    let content = hir_serializer.serialze(&ast);
+    fs::write(output.with_extension("hirp.jswt"), content).unwrap();
 
     // Mir lowering pass to generate the lower intermediate representation
-    let mut mir_lowering = MirLoweringContext::new(&mut bindings_table, &mut symbol_table);
+    let mut mir_lowering = MirLoweringContext::new(&environment);
     let ast = mir_lowering.lower(&ast);
 
     if has_errors {
         exit(1);
     }
 
-    let mut serializer = AstSerializer::default();
-    let content = serializer.serialze(&ast);
+    let mut mir_serializer = AstSerializer::new(&environment);
+    let content = mir_serializer.serialze(&ast);
     fs::write(output.with_extension("mir.jswt"), content).unwrap();
 
     ast

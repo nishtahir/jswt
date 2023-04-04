@@ -78,9 +78,6 @@ Ast {
                                                                     end: 26,
                                                                 },
                                                                 value: 0,
-                                                                ty: Binding(
-                                                                    "i32",
-                                                                ),
                                                             },
                                                         ),
                                                     ),

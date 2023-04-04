@@ -7,34 +7,31 @@ use self::functions::FunctionDeclarationGlobalContext;
 use self::variables::VariableDeclarationGlobalContext;
 use crate::SemanticError;
 use jswt_ast::{visit::Visitor, *};
-use jswt_symbols::BindingsTable;
-use jswt_symbols::ScopedSymbolTable;
+use jswt_symbols::{SemanticEnvironment, SymbolTable};
 
 /// Global Semantic Resolver to resolve global variables and functions
 /// This should usually be the first pass of the semantic analysis phase
 #[derive(Debug)]
 pub struct GlobalSemanticResolver<'a> {
-    bindings: &'a mut BindingsTable,
-    symbols: &'a mut ScopedSymbolTable,
+    environment: &'a mut SemanticEnvironment,
     errors: Vec<SemanticError>,
 }
 
 impl<'a> GlobalSemanticResolver<'a> {
-    pub fn new(bindings: &'a mut BindingsTable, symbols: &'a mut ScopedSymbolTable) -> Self {
+    pub fn new(environment: &'a mut SemanticEnvironment) -> Self {
         Self {
-            bindings,
-            symbols,
+            environment,
             errors: vec![],
         }
     }
 
     /// Run the global semantic analysis pass
     pub fn resolve(&mut self, ast: &Ast) {
-        self.symbols.push_global_scope();
+        self.environment.push_global_symbol_scope();
         self.visit_program(&ast.program);
         // We should have only the global scope left
         // at the end of the pass
-        debug_assert!(self.symbols.depth() == 1);
+        debug_assert!(self.environment.symbol_scope_depth() == 1);
     }
 
     pub fn errors(&mut self) -> &mut Vec<SemanticError> {
@@ -43,6 +40,12 @@ impl<'a> GlobalSemanticResolver<'a> {
 }
 
 impl<'a> Visitor for GlobalSemanticResolver<'a> {
+    // fn visit_file(&mut self, node: &File) {
+    //     self.symbols.push_scope(node.span());
+    //     visit::walk_file(self, node);
+    //     self.symbols.pop_scope();
+    // }
+
     fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
         let mut ctx = FunctionDeclarationGlobalContext::new(self);
         ctx.visit_function_declaration(node);

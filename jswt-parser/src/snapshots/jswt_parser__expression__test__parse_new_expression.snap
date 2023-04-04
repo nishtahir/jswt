@@ -101,7 +101,6 @@ Ast {
                                                                                 },
                                                                                 value: "Class",
                                                                             },
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
                                                                     arguments: ArgumentsList {
@@ -113,10 +112,8 @@ Ast {
                                                                         },
                                                                         arguments: [],
                                                                     },
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

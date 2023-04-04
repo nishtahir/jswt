@@ -3,7 +3,7 @@ use jswt_ast::{
     ArgumentsExpression, ArgumentsList, BinaryExpression, BinaryOperator, MemberDotExpression,
     SingleExpression,
 };
-use jswt_common::{Spannable, Typeable};
+use jswt_common::{Spannable};
 use jswt_synthetic::ident_exp;
 
 pub struct HirOperatorsLoweringContext {}
@@ -24,9 +24,9 @@ impl TransformVisitor for HirOperatorsLoweringContext {
             BinaryOperator::Minus(_) => "minus",
             BinaryOperator::Mult(_) => "mult",
             BinaryOperator::Div(_) => "div",
+            BinaryOperator::Equal(_) => "eq",
             // Comparison operators
-            BinaryOperator::Equal(_)
-            | BinaryOperator::NotEqual(_)
+            BinaryOperator::NotEqual(_)
             | BinaryOperator::Greater(_)
             | BinaryOperator::GreaterEqual(_)
             | BinaryOperator::Less(_)
@@ -45,7 +45,6 @@ impl TransformVisitor for HirOperatorsLoweringContext {
 
         SingleExpression::Arguments(ArgumentsExpression {
             span: node.span(),
-            ty: node.ty(),
             arguments: ArgumentsList {
                 span: node.span(),
                 arguments: vec![right],
@@ -53,8 +52,7 @@ impl TransformVisitor for HirOperatorsLoweringContext {
             ident: Box::new(SingleExpression::MemberDot(MemberDotExpression {
                 span: node.span(),
                 target: Box::new(left),
-                expression: Box::new(ident_exp(ident.into(), node.ty(), node.span())),
-                ty: node.ty(),
+                expression: Box::new(ident_exp(ident.into(), node.span())),
             })),
         })
     }
@@ -66,7 +64,7 @@ mod test {
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
     use jswt_semantics::GlobalSemanticResolver;
-    use jswt_symbols::{BindingsTable, ScopedSymbolTable};
+    use jswt_symbols::SemanticEnvironment;
     use jswt_tokenizer::Tokenizer;
 
     use crate::HirLoweringContext;
@@ -94,16 +92,18 @@ mod test {
 
         let ast = Parser::new(&mut tokenizer).parse();
 
-        let mut symbol_table = ScopedSymbolTable::default();
-        let mut bindings_table = BindingsTable::default();
-        let mut global_resolver =
-            GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
+        let mut environment = SemanticEnvironment::default();
+        let mut global_resolver = GlobalSemanticResolver::new(&mut environment);
         global_resolver.resolve(&ast);
 
         // No errors in global resolver
-        assert!(global_resolver.errors().len() == 0);
+        assert!(
+            global_resolver.errors().len() == 0,
+            "{:?}",
+            global_resolver.errors()
+        );
 
-        let mut lowering = HirLoweringContext::new(&bindings_table, &symbol_table);
+        let mut lowering = HirLoweringContext::new(&environment);
         let lowered = lowering.lower(&ast);
         assert_debug_snapshot!(lowered);
     }

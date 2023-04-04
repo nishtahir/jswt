@@ -1,56 +1,62 @@
 ---
 source: jswt-semantics/src/globals/class.rs
 expression: resolver
-
 ---
 GlobalSemanticResolver {
-    bindings: BindingsTable {
-        bindings: {
-            "Foo": ClassBinding {
-                name: "Foo",
-                fields: [
-                    Field {
-                        name: "bar",
-                        index: 0,
-                        size: 4,
-                        ty: Binding(
-                            "i32",
-                        ),
-                    },
-                    Field {
-                        name: "bar",
-                        index: 1,
-                        size: 4,
-                        ty: Binding(
-                            "i32",
-                        ),
-                    },
-                ],
-                methods: [],
+    environment: SemanticEnvironment {
+        bindings: SemanticBindingsTable {
+            bindings: {
+                "Foo": ClassBinding {
+                    name: "Foo",
+                    constructors: [],
+                    fields: [
+                        Field {
+                            name: "bar",
+                            index: 0,
+                            size: 4,
+                            ty: Binding(
+                                "i32",
+                            ),
+                        },
+                        Field {
+                            name: "bar",
+                            index: 1,
+                            size: 4,
+                            ty: Binding(
+                                "i32",
+                            ),
+                        },
+                    ],
+                    methods: [],
+                },
             },
         },
-    },
-    symbols: ScopedSymbolTable {
-        scopes: [
-            Span {
-                file: "program",
-                module: "root",
-                start: 0,
-                end: 0,
-            },
-        ],
-        table: {
-            Span {
-                file: "program",
-                module: "root",
-                start: 0,
-                end: 0,
-            }: Scope {
-                symbols: {
-                    "Foo": Class,
+        symbols: ScopedSymbolTable {
+            scopes: [
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
                 },
-                ret: None,
+            ],
+            files: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "Foo": Class,
+                    },
+                    ret: None,
+                },
             },
+        },
+        types: TypeMap {
+            types: {},
         },
     },
     errors: [

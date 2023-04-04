@@ -3,51 +3,71 @@ source: jswt-semantics/src/globals/variables.rs
 expression: resolver
 ---
 GlobalSemanticResolver {
-    bindings: BindingsTable {
-        bindings: {},
-    },
-    symbols: ScopedSymbolTable {
-        scopes: [
-            Span {
-                file: "program",
-                module: "root",
-                start: 0,
-                end: 0,
-            },
-        ],
-        table: {
-            Span {
-                file: "program",
-                module: "root",
-                start: 0,
-                end: 0,
-            }: Scope {
-                symbols: {
-                    "PI": Type(
-                        TypeSignature {
-                            ty: Binding(
-                                "f32",
-                            ),
-                        },
-                    ),
-                    "test": Function(
-                        FunctionSignature {
-                            params: [
-                                Binding(
-                                    "i32",
-                                ),
-                                Binding(
-                                    "i32",
-                                ),
-                            ],
-                            returns: Binding(
-                                "void",
-                            ),
-                        },
-                    ),
+    environment: SemanticEnvironment {
+        bindings: SemanticBindingsTable {
+            bindings: {},
+        },
+        symbols: ScopedSymbolTable {
+            scopes: [
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
                 },
-                ret: None,
+            ],
+            files: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "PI": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_context_resolves_duplicate_variable_error",
+                                    module: "module/test_context_resolves_duplicate_variable_error",
+                                    start: 34,
+                                    end: 50,
+                                },
+                                initialization: None,
+                                name: "PI",
+                                ty: Unknown,
+                                is_mutable: false,
+                            },
+                        ),
+                        "test": Function(
+                            Function {
+                                name: "test",
+                                params: [
+                                    Parameter {
+                                        name: "a",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                    Parameter {
+                                        name: "b",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ],
+                                ret: Binding(
+                                    "void",
+                                ),
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
             },
+        },
+        types: TypeMap {
+            types: {},
         },
     },
     errors: [

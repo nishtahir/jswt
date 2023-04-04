@@ -1,7 +1,6 @@
 ---
 source: jswt-parser/src/lib.rs
 expression: actual
-
 ---
 Ast {
     program: Program {
@@ -94,7 +93,6 @@ Ast {
                                                                         },
                                                                         value: "test",
                                                                     },
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -106,7 +104,6 @@ Ast {
                                                                 },
                                                                 arguments: [],
                                                             },
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

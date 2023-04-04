@@ -24,10 +24,10 @@ pub enum Level {
 
 pub fn print_semantic_error(error: &SemanticError) {
     let diagnostic = match error {
-        SemanticError::VariableNotDefined { name, span } => DiagnosticMessage {
+        SemanticError::SymbolNotDefined { name, span } => DiagnosticMessage {
             level: Level::Error,
             span: span.clone(),
-            message: format!("Variable '{}' was not defined in this scope", name).into(),
+            message: format!("Symbol '{}' was not defined in this scope", name).into(),
             hint: None,
         },
         SemanticError::VariableAlreadyDefined { name, span } => DiagnosticMessage {
@@ -123,6 +123,12 @@ pub fn print_semantic_error(error: &SemanticError) {
             level: Level::Error,
             span: span.clone(),
             message: format!("Unable to determine type for '{}'", ident).into(),
+            hint: None,
+        },
+        SemanticError::InvalidNewCall { span } => DiagnosticMessage {
+            level: Level::Error,
+            span: span.clone(),
+            message: format!("'new' can only be used with a class.").into(),
             hint: None,
         },
     };

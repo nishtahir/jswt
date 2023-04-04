@@ -57,9 +57,6 @@ Ast {
                                                                 end: 152,
                                                             },
                                                             value: "env",
-                                                            ty: Binding(
-                                                                "String",
-                                                            ),
                                                         },
                                                     ),
                                                 ),
@@ -166,9 +163,6 @@ Ast {
                                                                 end: 334,
                                                             },
                                                             value: "env",
-                                                            ty: Binding(
-                                                                "String",
-                                                            ),
                                                         },
                                                     ),
                                                 ),

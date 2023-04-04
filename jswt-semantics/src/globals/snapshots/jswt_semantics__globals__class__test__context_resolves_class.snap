@@ -1,71 +1,76 @@
 ---
 source: jswt-semantics/src/globals/class.rs
 expression: resolver
-
 ---
 GlobalSemanticResolver {
-    bindings: BindingsTable {
-        bindings: {
-            "Foo": ClassBinding {
-                name: "Foo",
-                fields: [
-                    Field {
-                        name: "bar",
-                        index: 0,
-                        size: 4,
-                        ty: Binding(
-                            "i32",
-                        ),
-                    },
-                ],
-                methods: [
-                    Method {
-                        name: "baz",
-                        signature: FunctionSignature {
-                            params: [
-                                Binding(
-                                    "i32",
-                                ),
-                            ],
-                            returns: Binding(
+    environment: SemanticEnvironment {
+        bindings: SemanticBindingsTable {
+            bindings: {
+                "Foo": ClassBinding {
+                    name: "Foo",
+                    constructors: [],
+                    fields: [
+                        Field {
+                            name: "bar",
+                            index: 0,
+                            size: 4,
+                            ty: Binding(
                                 "i32",
                             ),
                         },
-                    },
-                    Method {
-                        name: "empty",
-                        signature: FunctionSignature {
+                    ],
+                    methods: [
+                        Method {
+                            name: "baz",
+                            params: [
+                                Parameter {
+                                    name: "a",
+                                    ty: Binding(
+                                        "i32",
+                                    ),
+                                },
+                            ],
+                            ret: Binding(
+                                "i32",
+                            ),
+                        },
+                        Method {
+                            name: "empty",
                             params: [],
-                            returns: Binding(
+                            ret: Binding(
                                 "void",
                             ),
                         },
-                    },
-                ],
+                    ],
+                },
             },
         },
-    },
-    symbols: ScopedSymbolTable {
-        scopes: [
-            Span {
-                file: "program",
-                module: "root",
-                start: 0,
-                end: 0,
-            },
-        ],
-        table: {
-            Span {
-                file: "program",
-                module: "root",
-                start: 0,
-                end: 0,
-            }: Scope {
-                symbols: {
-                    "Foo": Class,
+        symbols: ScopedSymbolTable {
+            scopes: [
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
                 },
-                ret: None,
+            ],
+            files: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "Foo": Class,
+                    },
+                    ret: None,
+                },
             },
+        },
+        types: TypeMap {
+            types: {},
         },
     },
     errors: [],

@@ -28,6 +28,7 @@ Ast {
                                     start: 0,
                                     end: 21,
                                 },
+                                path: "\"./test.jswt\"",
                             },
                         ),
                     ],
@@ -85,9 +86,6 @@ Ast {
                                                 end: 11,
                                             },
                                             value: 0,
-                                            ty: Binding(
-                                                "i32",
-                                            ),
                                         },
                                     ),
                                 ),

@@ -12,11 +12,12 @@ impl<'a> Parser<'a> {
         // Consume the import token
         let modifier = consume!(self, TokenType::Import)?;
         // Consume the import path string
-        let _ = consume!(self, TokenType::String)?;
+        let path = consume!(self, TokenType::String)?;
         // Consume the semicolon
         let end = consume!(self, TokenType::Semi)?;
         Ok(ImportDeclarationElement {
             span: modifier + end,
+            path: path.lexme().into(),
         })
     }
 }

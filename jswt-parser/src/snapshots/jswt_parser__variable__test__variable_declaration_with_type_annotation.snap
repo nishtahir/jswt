@@ -76,9 +76,6 @@ Ast {
                                                 end: 22,
                                             },
                                             value: 1,
-                                            ty: Binding(
-                                                "i32",
-                                            ),
                                         },
                                     ),
                                 ),

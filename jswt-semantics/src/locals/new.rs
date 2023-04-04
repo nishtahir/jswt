@@ -1,18 +1,18 @@
 use super::LocalSemanticResolver;
 use crate::SemanticError;
-use jswt_ast::{visit::Visitor, NewExpression};
-use jswt_common::Spannable;
-use jswt_symbols::BindingsTable;
+use jswt_ast::{visit::Visitor, NewExpression, SingleExpression};
+use jswt_common::{Spannable, Type};
+use jswt_symbols::{SemanticEnvironment, Symbol, SymbolTable, TypesTable};
 
 pub struct NewExpressionLocalContext<'a> {
-    bindings: &'a BindingsTable,
+    environment: &'a mut SemanticEnvironment,
     errors: &'a mut Vec<SemanticError>,
 }
 
 impl<'a> NewExpressionLocalContext<'a> {
     pub fn new(resolver: &'a mut LocalSemanticResolver) -> Self {
         Self {
-            bindings: resolver.bindings,
+            environment: resolver.environment,
             errors: &mut resolver.errors,
         }
     }
@@ -20,19 +20,8 @@ impl<'a> NewExpressionLocalContext<'a> {
 
 impl<'a> Visitor for NewExpressionLocalContext<'a> {
     fn visit_new(&mut self, node: &NewExpression) {
-        // This should always be an arguments expression
-        // TODO - Update the AST to make this more clear
-        let arguments_exp = node.expression.as_arguments().unwrap();
-        let ident_exp = arguments_exp.ident.as_identifier().unwrap();
-        let ident = &ident_exp.ident.value;
-
-        if let None = self.bindings.lookup(ident) {
-            self.errors.push(SemanticError::ClassNotDefined {
-                ident: ident.clone(),
-                span: ident_exp.span(),
-            });
-        }
-        // Check to see if the class is defined in the bindings table
+        // The inner expression should be an arguments expression
+        
     }
 }
 
@@ -44,7 +33,7 @@ mod test {
     use super::*;
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_symbols::{BindingsTable, ScopedSymbolTable};
+    use jswt_symbols::SemanticEnvironment;
     use jswt_tokenizer::Tokenizer;
 
     #[test]
@@ -59,12 +48,11 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = ScopedSymbolTable::default();
-        let mut bindings = BindingsTable::default();
+        let mut environment = SemanticEnvironment::default();
 
-        let mut global = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut global = GlobalSemanticResolver::new(&mut environment);
         global.resolve(&ast);
-        let mut local = LocalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut local = LocalSemanticResolver::new(&mut environment);
         local.resolve(&ast);
 
         assert_debug_snapshot!(local);
@@ -82,12 +70,11 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = ScopedSymbolTable::default();
-        let mut bindings = BindingsTable::default();
+        let mut environment = SemanticEnvironment::default();
 
-        let mut global = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut global = GlobalSemanticResolver::new(&mut environment);
         global.resolve(&ast);
-        let mut local = LocalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut local = LocalSemanticResolver::new(&mut environment);
         local.resolve(&ast);
 
         assert_debug_snapshot!(local);

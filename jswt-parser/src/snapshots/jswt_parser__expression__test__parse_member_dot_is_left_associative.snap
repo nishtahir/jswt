@@ -92,9 +92,6 @@ Ast {
                                                                                 start: 18,
                                                                                 end: 22,
                                                                             },
-                                                                            ty: Binding(
-                                                                                "ptr",
-                                                                            ),
                                                                         },
                                                                     ),
                                                                     expression: Identifier(
@@ -114,10 +111,8 @@ Ast {
                                                                                 },
                                                                                 value: "data",
                                                                             },
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             op: Plus(
@@ -138,13 +133,9 @@ Ast {
                                                                             end: 31,
                                                                         },
                                                                         value: 1,
-                                                                        ty: Binding(
-                                                                            "i32",
-                                                                        ),
                                                                     },
                                                                 ),
                                                             ),
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

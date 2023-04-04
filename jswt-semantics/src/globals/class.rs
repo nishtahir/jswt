@@ -2,15 +2,17 @@ use super::GlobalSemanticResolver;
 use crate::SemanticError;
 use jswt_ast::{
     visit::{self, Visitor},
-    ClassDeclarationElement,
+    ClassConstructorElement, ClassDeclarationElement, ClassFieldElement,
 };
-use jswt_common::Type;
-use jswt_symbols::{BindingsTable, ClassBinding, FunctionSignature, Method, ScopedSymbolTable};
+use jswt_common::{Spannable, Type};
+use jswt_symbols::{
+    BindingsTable, ClassBinding, Constructor, Field, Method, Parameter, SemanticEnvironment,
+    Symbol, SymbolTable,
+};
 
 pub struct ClassDeclarationGlobalContext<'a> {
     class_binding: ClassBinding,
-    bindings: &'a mut BindingsTable,
-    symbols: &'a mut ScopedSymbolTable,
+    environment: &'a mut SemanticEnvironment,
     errors: &'a mut Vec<SemanticError>,
 }
 
@@ -23,9 +25,9 @@ impl<'a> ClassDeclarationGlobalContext<'a> {
                 name: node.ident.value.clone(),
                 fields: vec![],
                 methods: vec![],
+                constructors: vec![],
             },
-            bindings: resolver.bindings,
-            symbols: resolver.symbols,
+            environment: resolver.environment,
             errors: &mut resolver.errors,
         }
     }
@@ -39,15 +41,41 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
         visit::walk_class_declaration(self, &node);
 
         // Add the class binding to the bindings table
-        self.bindings
-            .insert(class_name.clone(), self.class_binding.to_owned());
+        self.environment
+            .insert_binding(class_name.clone(), self.class_binding.to_owned());
 
         // Add the class to the symbol table
-        self.symbols
-            .define(&class_name, jswt_symbols::Symbol::Class);
+        self.environment.insert_symbol(&class_name, Symbol::Class);
     }
 
-    fn visit_class_field_declaration(&mut self, node: &jswt_ast::ClassFieldElement) {
+    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+        // TODO - Check if the constructor already exists
+        // Get the parameters
+        let mut params = vec![];
+        for param in node.params.parameters.iter() {
+            // Check if the parameter already exists
+            if params
+                .iter()
+                .any(|p: &Parameter| p.name == param.ident.value)
+            {
+                let error = SemanticError::VariableAlreadyDefined {
+                    name: param.ident.value.clone(),
+                    span: param.span(),
+                };
+                self.errors.push(error);
+            }
+
+            params.push(Parameter {
+                name: param.ident.value.clone(),
+                ty: param.type_annotation.ty.clone(),
+            });
+        }
+        // Add the constructor to the class binding
+        self.class_binding.constructors.push(Constructor { params });
+        visit::walk_class_constructor_declaration(self, node);
+    }
+
+    fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) {
         let field_name = node.ident.value.clone();
 
         // Check if the field already exists
@@ -64,14 +92,15 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
             self.errors.push(error);
         }
 
-        self.class_binding.fields.push(jswt_symbols::Field {
+        let field_type = node.type_annotation.ty.clone();
+        self.class_binding.fields.push(Field {
             name: field_name,
             // Fields are aligned in the order they are declared
             index: self.class_binding.fields.len(),
             // We need to get the type of the field
             // from the symbol table to compute the size
             size: 4, // TODO compute type size
-            ty: node.type_annotation.ty.clone(),
+            ty: field_type,
         });
         visit::walk_class_field_declaration(self, node);
     }
@@ -93,13 +122,28 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
             self.errors.push(error);
         }
 
-        // Get the parameters and return type
-        let params = node
-            .params
-            .parameters
-            .iter()
-            .map(|param| param.type_annotation.ty.clone())
-            .collect();
+        let mut params = vec![];
+        for param in &node.params.parameters {
+            // Check if the parameter already exists
+            if params
+                .iter()
+                .any(|p: &Parameter| p.name == param.ident.value)
+            {
+                // TODO - rename this to parameter already defined
+                let error = SemanticError::VariableAlreadyDefined {
+                    name: param.ident.value.clone(),
+                    span: param.ident.span.to_owned(),
+                };
+                self.errors.push(error);
+            }
+
+            params.push(Parameter {
+                name: param.ident.value.clone(),
+                ty: param.type_annotation.ty.clone(),
+            });
+        }
+
+        // TODO - check that the return type is valid
         let returns = node
             .returns
             .as_ref()
@@ -109,7 +153,8 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
         // Add the method to the class binding
         self.class_binding.methods.push(Method {
             name: method_name,
-            signature: FunctionSignature { params, returns },
+            params,
+            ret: returns,
         });
     }
 }
@@ -119,7 +164,7 @@ mod test {
     use super::*;
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_symbols::BindingsTable;
+    use jswt_symbols::SemanticEnvironment;
     use jswt_tokenizer::Tokenizer;
 
     #[test]
@@ -138,9 +183,8 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = ScopedSymbolTable::default();
-        let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut environment = SemanticEnvironment::default();
+        let mut resolver = GlobalSemanticResolver::new(&mut environment);
         resolver.resolve(&ast);
 
         assert_debug_snapshot!(resolver);
@@ -159,9 +203,8 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = ScopedSymbolTable::default();
-        let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut environment = SemanticEnvironment::default();
+        let mut resolver = GlobalSemanticResolver::new(&mut environment);
         resolver.resolve(&ast);
 
         assert_debug_snapshot!(resolver);

@@ -124,9 +124,6 @@ Ast {
                                                                         },
                                                                         value: "malloc",
                                                                     },
-                                                                    ty: Binding(
-                                                                        "ptr",
-                                                                    ),
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -147,17 +144,11 @@ Ast {
                                                                                     end: 0,
                                                                                 },
                                                                                 value: 0,
-                                                                                ty: Binding(
-                                                                                    "ptr",
-                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
                                                                 ],
                                                             },
-                                                            ty: Binding(
-                                                                "ptr",
-                                                            ),
                                                         },
                                                     ),
                                                     type_annotation: None,
@@ -188,9 +179,6 @@ Ast {
                                                                 },
                                                                 value: "this",
                                                             },
-                                                            ty: Binding(
-                                                                "ptr",
-                                                            ),
                                                         },
                                                     ),
                                                 },
@@ -304,7 +292,6 @@ Ast {
                                                                         },
                                                                         value: "Array#constructor",
                                                                     },
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -316,9 +303,6 @@ Ast {
                                                                 },
                                                                 arguments: [],
                                                             },
-                                                            ty: Binding(
-                                                                "Array",
-                                                            ),
                                                         },
                                                     ),
                                                     type_annotation: None,
@@ -342,9 +326,6 @@ Ast {
                                                                     end: 147,
                                                                 },
                                                                 value: 0,
-                                                                ty: Binding(
-                                                                    "i32",
-                                                                ),
                                                             },
                                                         ),
                                                     ),

@@ -101,7 +101,6 @@ Ast {
                                                                                 },
                                                                                 value: "a",
                                                                             },
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
                                                                     index: Literal(
@@ -114,13 +113,9 @@ Ast {
                                                                                     end: 21,
                                                                                 },
                                                                                 value: 0,
-                                                                                ty: Binding(
-                                                                                    "i32",
-                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             index: Literal(
@@ -133,13 +128,9 @@ Ast {
                                                                             end: 24,
                                                                         },
                                                                         value: 1,
-                                                                        ty: Binding(
-                                                                            "i32",
-                                                                        ),
                                                                     },
                                                                 ),
                                                             ),
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

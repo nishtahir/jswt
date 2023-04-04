@@ -101,7 +101,6 @@ Ast {
                                                                                 },
                                                                                 value: "a",
                                                                             },
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
                                                                     expression: Identifier(
@@ -121,10 +120,8 @@ Ast {
                                                                                 },
                                                                                 value: "b",
                                                                             },
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             op: Assign(
@@ -145,13 +142,9 @@ Ast {
                                                                             end: 26,
                                                                         },
                                                                         value: 10,
-                                                                        ty: Binding(
-                                                                            "i32",
-                                                                        ),
                                                                     },
                                                                 ),
                                                             ),
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

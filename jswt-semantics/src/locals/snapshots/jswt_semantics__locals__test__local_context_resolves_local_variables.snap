@@ -1,0 +1,198 @@
+---
+source: jswt-semantics/src/locals/mod.rs
+expression: local
+---
+LocalSemanticResolver {
+    environment: SemanticEnvironment {
+        bindings: SemanticBindingsTable {
+            bindings: {},
+        },
+        symbols: ScopedSymbolTable {
+            scopes: [
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                },
+            ],
+            files: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "PI": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_local_context_resolves_local_variables",
+                                    module: "module/test_local_context_resolves_local_variables",
+                                    start: 9,
+                                    end: 25,
+                                },
+                                initialization: Some(
+                                    Span {
+                                        file: "test_local_context_resolves_local_variables",
+                                        module: "module/test_local_context_resolves_local_variables",
+                                        start: 20,
+                                        end: 24,
+                                    },
+                                ),
+                                name: "PI",
+                                ty: Binding(
+                                    "f32",
+                                ),
+                                is_mutable: false,
+                            },
+                        ),
+                        "test": Function(
+                            Function {
+                                name: "test",
+                                params: [
+                                    Parameter {
+                                        name: "a",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                    Parameter {
+                                        name: "b",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ],
+                                ret: Binding(
+                                    "void",
+                                ),
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+                Span {
+                    file: "test_local_context_resolves_local_variables",
+                    module: "module/test_local_context_resolves_local_variables",
+                    start: 65,
+                    end: 100,
+                }: Scope {
+                    symbols: {
+                        "a": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_local_context_resolves_local_variables",
+                                    module: "module/test_local_context_resolves_local_variables",
+                                    start: 49,
+                                    end: 55,
+                                },
+                                initialization: None,
+                                name: "a",
+                                ty: Binding(
+                                    "i32",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                        "b": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_local_context_resolves_local_variables",
+                                    module: "module/test_local_context_resolves_local_variables",
+                                    start: 57,
+                                    end: 63,
+                                },
+                                initialization: None,
+                                name: "b",
+                                ty: Binding(
+                                    "i32",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                        "x": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_local_context_resolves_local_variables",
+                                    module: "module/test_local_context_resolves_local_variables",
+                                    start: 79,
+                                    end: 90,
+                                },
+                                initialization: Some(
+                                    Span {
+                                        file: "test_local_context_resolves_local_variables",
+                                        module: "module/test_local_context_resolves_local_variables",
+                                        start: 87,
+                                        end: 89,
+                                    },
+                                ),
+                                name: "x",
+                                ty: Binding(
+                                    "i32",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+            },
+        },
+        types: TypeMap {
+            types: {
+                Span {
+                    file: "test_local_context_resolves_local_variables",
+                    module: "module/test_local_context_resolves_local_variables",
+                    start: 9,
+                    end: 25,
+                }: Binding(
+                    "f32",
+                ),
+                Span {
+                    file: "test_local_context_resolves_local_variables",
+                    module: "module/test_local_context_resolves_local_variables",
+                    start: 20,
+                    end: 24,
+                }: Binding(
+                    "f32",
+                ),
+                Span {
+                    file: "test_local_context_resolves_local_variables",
+                    module: "module/test_local_context_resolves_local_variables",
+                    start: 49,
+                    end: 55,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_local_context_resolves_local_variables",
+                    module: "module/test_local_context_resolves_local_variables",
+                    start: 57,
+                    end: 63,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_local_context_resolves_local_variables",
+                    module: "module/test_local_context_resolves_local_variables",
+                    start: 79,
+                    end: 90,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_local_context_resolves_local_variables",
+                    module: "module/test_local_context_resolves_local_variables",
+                    start: 87,
+                    end: 89,
+                }: Binding(
+                    "i32",
+                ),
+            },
+        },
+    },
+    errors: [],
+    class: None,
+}

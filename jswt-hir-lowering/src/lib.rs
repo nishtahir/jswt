@@ -7,7 +7,7 @@ use jswt_ast::{
     MemberIndexExpression, SingleExpression, SourceElement, SourceElements,
 };
 use jswt_common::Spannable;
-use jswt_symbols::{BindingsTable, ScopedSymbolTable};
+use jswt_symbols::SemanticEnvironment;
 use operators::HirOperatorsLoweringContext;
 
 /// High level desugarings are performed here such as
@@ -15,15 +15,13 @@ use operators::HirOperatorsLoweringContext;
 /// of type checking and symbol resolution in later passes.
 #[derive(Debug)]
 pub struct HirLoweringContext<'a> {
-    _bindings: &'a BindingsTable,
-    _symbols: &'a ScopedSymbolTable,
+    _environment: &'a SemanticEnvironment,
 }
 
 impl<'a> HirLoweringContext<'a> {
-    pub fn new(bindings: &'a BindingsTable, symbols: &'a ScopedSymbolTable) -> Self {
+    pub fn new(environment: &'a SemanticEnvironment) -> Self {
         Self {
-            _bindings: bindings,
-            _symbols: symbols,
+            _environment: environment,
         }
     }
 

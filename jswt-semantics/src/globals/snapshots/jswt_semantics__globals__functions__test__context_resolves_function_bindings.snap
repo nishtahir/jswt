@@ -1,55 +1,68 @@
 ---
 source: jswt-semantics/src/globals/functions.rs
 expression: resolver
-
 ---
 GlobalSemanticResolver {
-    bindings: BindingsTable {
-        bindings: {},
-    },
-    symbols: ScopedSymbolTable {
-        scopes: [
-            Span {
-                file: "program",
-                module: "root",
-                start: 0,
-                end: 0,
-            },
-        ],
-        table: {
-            Span {
-                file: "program",
-                module: "root",
-                start: 0,
-                end: 0,
-            }: Scope {
-                symbols: {
-                    "test": Function(
-                        FunctionSignature {
-                            params: [
-                                Binding(
-                                    "i32",
-                                ),
-                                Binding(
-                                    "i32",
-                                ),
-                            ],
-                            returns: Binding(
-                                "void",
-                            ),
-                        },
-                    ),
-                    "test2": Function(
-                        FunctionSignature {
-                            params: [],
-                            returns: Binding(
-                                "Array",
-                            ),
-                        },
-                    ),
+    environment: SemanticEnvironment {
+        bindings: SemanticBindingsTable {
+            bindings: {},
+        },
+        symbols: ScopedSymbolTable {
+            scopes: [
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
                 },
-                ret: None,
+            ],
+            files: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "test": Function(
+                            Function {
+                                name: "test",
+                                params: [
+                                    Parameter {
+                                        name: "a",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                    Parameter {
+                                        name: "b",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ],
+                                ret: Binding(
+                                    "void",
+                                ),
+                            },
+                        ),
+                        "test2": Function(
+                            Function {
+                                name: "test2",
+                                params: [],
+                                ret: Binding(
+                                    "Array",
+                                ),
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
             },
+        },
+        types: TypeMap {
+            types: {},
         },
     },
     errors: [],

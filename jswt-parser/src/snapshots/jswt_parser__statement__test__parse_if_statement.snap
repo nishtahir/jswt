@@ -93,7 +93,6 @@ Ast {
                                                                         },
                                                                         value: "x",
                                                                     },
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             op: Equal(
@@ -121,10 +120,8 @@ Ast {
                                                                         },
                                                                         value: "y",
                                                                     },
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                     consequence: Block(
@@ -155,9 +152,6 @@ Ast {
                                                                                             end: 39,
                                                                                         },
                                                                                         value: 0,
-                                                                                        ty: Binding(
-                                                                                            "i32",
-                                                                                        ),
                                                                                     },
                                                                                 ),
                                                                             ),
@@ -196,9 +190,6 @@ Ast {
                                                                                                 end: 58,
                                                                                             },
                                                                                             value: 1,
-                                                                                            ty: Binding(
-                                                                                                "i32",
-                                                                                            ),
                                                                                         },
                                                                                     ),
                                                                                 ),

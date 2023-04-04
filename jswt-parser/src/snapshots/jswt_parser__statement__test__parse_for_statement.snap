@@ -94,7 +94,6 @@ Ast {
                                                                             },
                                                                             value: "i",
                                                                         },
-                                                                        ty: Unknown,
                                                                     },
                                                                 ),
                                                                 op: Assign(
@@ -115,13 +114,9 @@ Ast {
                                                                                 end: 27,
                                                                             },
                                                                             value: 0,
-                                                                            ty: Binding(
-                                                                                "i32",
-                                                                            ),
                                                                         },
                                                                     ),
                                                                 ),
-                                                                ty: Unknown,
                                                             },
                                                         ),
                                                         condition: Relational(
@@ -149,7 +144,6 @@ Ast {
                                                                             },
                                                                             value: "i",
                                                                         },
-                                                                        ty: Unknown,
                                                                     },
                                                                 ),
                                                                 op: Less(
@@ -170,13 +164,9 @@ Ast {
                                                                                 end: 35,
                                                                             },
                                                                             value: 10,
-                                                                            ty: Binding(
-                                                                                "i32",
-                                                                            ),
                                                                         },
                                                                     ),
                                                                 ),
-                                                                ty: Unknown,
                                                             },
                                                         ),
                                                         update: Assignment(
@@ -204,7 +194,6 @@ Ast {
                                                                             },
                                                                             value: "i",
                                                                         },
-                                                                        ty: Unknown,
                                                                     },
                                                                 ),
                                                                 op: Assign(
@@ -240,7 +229,6 @@ Ast {
                                                                                     },
                                                                                     value: "i",
                                                                                 },
-                                                                                ty: Unknown,
                                                                             },
                                                                         ),
                                                                         op: Plus(
@@ -261,16 +249,11 @@ Ast {
                                                                                         end: 46,
                                                                                     },
                                                                                     value: 1,
-                                                                                    ty: Binding(
-                                                                                        "i32",
-                                                                                    ),
                                                                                 },
                                                                             ),
                                                                         ),
-                                                                        ty: Unknown,
                                                                     },
                                                                 ),
-                                                                ty: Unknown,
                                                             },
                                                         ),
                                                         block: BlockStatement {
@@ -300,9 +283,6 @@ Ast {
                                                                                             end: 58,
                                                                                         },
                                                                                         value: 0,
-                                                                                        ty: Binding(
-                                                                                            "i32",
-                                                                                        ),
                                                                                     },
                                                                                 ),
                                                                             ),

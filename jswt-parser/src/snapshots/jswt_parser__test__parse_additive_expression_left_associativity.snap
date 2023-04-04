@@ -81,9 +81,6 @@ Ast {
                                                                         end: 9,
                                                                     },
                                                                     value: 3,
-                                                                    ty: Binding(
-                                                                        "i32",
-                                                                    ),
                                                                 },
                                                             ),
                                                         ),
@@ -105,13 +102,9 @@ Ast {
                                                                         end: 13,
                                                                     },
                                                                     value: 2,
-                                                                    ty: Binding(
-                                                                        "i32",
-                                                                    ),
                                                                 },
                                                             ),
                                                         ),
-                                                        ty: Unknown,
                                                     },
                                                 ),
                                                 op: Plus(
@@ -132,13 +125,9 @@ Ast {
                                                                 end: 17,
                                                             },
                                                             value: 1,
-                                                            ty: Binding(
-                                                                "i32",
-                                                            ),
                                                         },
                                                     ),
                                                 ),
-                                                ty: Unknown,
                                             },
                                         ),
                                         op: Plus(
@@ -159,13 +148,9 @@ Ast {
                                                         end: 21,
                                                     },
                                                     value: 0,
-                                                    ty: Binding(
-                                                        "i32",
-                                                    ),
                                                 },
                                             ),
                                         ),
-                                        ty: Unknown,
                                     },
                                 ),
                                 type_annotation: None,

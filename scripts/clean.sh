@@ -13,3 +13,6 @@ do
     find . -name "*$ext" -type f -delete
 done
 
+# delete coverage metadata files that begin with default_
+find . -name "default_*" -type f -delete
+

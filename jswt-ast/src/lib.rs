@@ -11,6 +11,8 @@ pub mod mut_visit;
 pub mod transform;
 pub mod visit;
 
+use std::borrow::Cow;
+
 pub use expression::*;
 pub use ident::*;
 pub use iteration::*;
@@ -20,7 +22,7 @@ pub use types::*;
 pub use variable::*;
 pub use visitor::*;
 
-use jswt_common::{Span, Spannable, Typeable};
+use jswt_common::{Span, Spannable};
 use jswt_derive::{FromEnumVariant, Spannable};
 
 #[derive(Debug)]
@@ -162,6 +164,7 @@ pub struct VariableDeclarationElement {
 #[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ImportDeclarationElement {
     pub span: Span,
+    pub path: Cow<'static, str>,
 }
 
 #[derive(Debug, PartialEq, Clone)]

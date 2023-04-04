@@ -1,9 +1,9 @@
-use jswt_common::{Span, Type};
-use jswt_derive::{FromEnumVariant, Spannable, Typeable};
+use jswt_common::Span;
+use jswt_derive::{FromEnumVariant, Spannable};
 
 use crate::SingleExpression;
 
-#[derive(Debug, PartialEq, FromEnumVariant, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, FromEnumVariant, Spannable, Clone)]
 pub enum Literal {
     Array(ArrayLiteral),
     String(StringLiteral),
@@ -12,37 +12,32 @@ pub enum Literal {
     Boolean(BooleanLiteral),
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct BooleanLiteral {
     pub span: Span,
     pub value: bool,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct IntegerLiteral {
     pub span: Span,
     pub value: i32,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct FloatingPointLiteral {
     pub span: Span,
     pub value: f32,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct StringLiteral {
     pub span: Span,
     pub value: &'static str,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ArrayLiteral {
     pub span: Span,
     pub elements: Vec<SingleExpression>,
-    pub ty: Type,
 }

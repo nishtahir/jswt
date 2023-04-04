@@ -61,6 +61,14 @@ pub trait Visitor: Sized {
         walk_function_declaration(self, node);
     }
 
+    fn visit_formal_parameter_list(&mut self, node: &FormalParameterList) {
+        walk_formal_parameter_list(self, node);
+    }
+
+    fn visit_formal_parameter_arg(&mut self, node: &FormalParameterArg) {
+        walk_formal_parameter_arg(self, node);
+    }
+
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
         walk_class_declaration(self, node);
     }
@@ -223,7 +231,18 @@ pub fn walk_statement_list<V: Visitor>(visitor: &mut V, node: &StatementList) {
 }
 
 pub fn walk_function_declaration<V: Visitor>(visitor: &mut V, node: &FunctionDeclarationElement) {
+    visitor.visit_formal_parameter_list(&node.params);
     visitor.visit_block_statement(&node.body);
+}
+
+pub fn walk_formal_parameter_list<V: Visitor>(visitor: &mut V, node: &FormalParameterList) {
+    for parameter in &node.parameters {
+        visitor.visit_formal_parameter_arg(parameter);
+    }
+}
+
+pub fn walk_formal_parameter_arg<V: Visitor>(_: &mut V, _: &FormalParameterArg) {
+    // No-op
 }
 
 pub fn walk_class_declaration<V: Visitor>(visitor: &mut V, node: &ClassDeclarationElement) {
@@ -252,10 +271,12 @@ pub fn walk_class_constructor_declaration<V: Visitor>(
     visitor: &mut V,
     node: &ClassConstructorElement,
 ) {
+    visitor.visit_formal_parameter_list(&node.params);
     visitor.visit_block_statement(&node.body);
 }
 
 pub fn walk_class_method_declaration<V: Visitor>(visitor: &mut V, node: &ClassMethodElement) {
+    visitor.visit_formal_parameter_list(&node.params);
     visitor.visit_block_statement(&node.body);
 }
 

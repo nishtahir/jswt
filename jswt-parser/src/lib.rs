@@ -163,6 +163,18 @@ impl<'a> Parser<'a> {
         })
     }
 
+    //// AnnotationList
+    ////  : Annotation
+    //// | AnnotationList Annotation
+    //// ;
+    // fn annotation_list(&mut self) -> ParseResult<AnnotationList> {
+    //     let mut annotations = vec![];
+    //     while self.lookahead_is(TokenType::At) {
+    //         annotations.push(self.annotation()?);
+    //     }
+    //     Ok(AnnotationList { annotations })
+    // }
+
     //// Annotation
     ////   : '@' Identifier ('(' SingleExpression ')')?
     ////   ;
@@ -433,5 +445,4 @@ mod test {
         assert_debug_snapshot!(actual);
         assert_eq!(parser.errors.len(), 0);
     }
-
 }

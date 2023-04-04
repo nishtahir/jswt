@@ -1,15 +1,15 @@
 use jswt_ast::{transform::TransformVisitor, NewExpression, SingleExpression};
-use jswt_common::Type;
-use jswt_symbols::BindingsTable;
+
+use jswt_symbols::{BindingsTable, SemanticEnvironment};
 
 #[derive(Debug)]
 pub struct MirNewLoweringContext<'a> {
-    bindings: &'a BindingsTable,
+    environment: &'a SemanticEnvironment,
 }
 
 impl<'a> MirNewLoweringContext<'a> {
-    pub fn new(bindings: &'a BindingsTable) -> Self {
-        Self { bindings }
+    pub fn new(environment: &'a SemanticEnvironment) -> Self {
+        Self { environment }
     }
 }
 
@@ -29,13 +29,12 @@ impl<'a> TransformVisitor for MirNewLoweringContext<'a> {
         let ident_name = ident_exp.ident.value.clone();
 
         // find the class binding for the identifier
-        let _ = self.bindings.lookup(&ident_name).expect(&format!(
+        let _ = self.environment.get_binding(&ident_name).expect(&format!(
             "Could not find class binding for identifier {}",
             ident_name
         ));
 
         ident_exp.ident.value = format!("{}#constructor", ident_name).into();
-        args_exp.ty = Type::Binding(ident_name);
         SingleExpression::Arguments(args_exp)
     }
 }
@@ -45,8 +44,8 @@ mod test {
 
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_semantics::GlobalSemanticResolver;
-    use jswt_symbols::ScopedSymbolTable;
+    use jswt_semantics::{GlobalSemanticResolver, LocalSemanticResolver};
+    
     use jswt_tokenizer::Tokenizer;
 
     use super::*;
@@ -71,16 +70,19 @@ mod test {
 
         let ast = Parser::new(&mut tokenizer).parse();
 
-        let mut symbol_table = ScopedSymbolTable::default();
-        let mut bindings_table = BindingsTable::default();
-        let mut global_resolver =
-            GlobalSemanticResolver::new(&mut bindings_table, &mut symbol_table);
-        global_resolver.resolve(&ast);
+        let mut environment = SemanticEnvironment::default();
+
+        let mut global = GlobalSemanticResolver::new(&mut environment);
+        global.resolve(&ast);
+        assert!(global.errors().is_empty(), "{:?}", global.errors());
+
+        let mut local = LocalSemanticResolver::new(&mut environment);
+        local.resolve(&ast);
+        assert!(local.errors().is_empty(), "{:?}", local.errors());
 
         // No errors in global resolver
-        assert!(global_resolver.errors().len() == 0);
 
-        let mut lowering = MirLoweringContext::new(&bindings_table, &symbol_table);
+        let mut lowering = MirLoweringContext::new(&environment);
         let lowered = lowering.lower(&ast);
         assert_debug_snapshot!(lowered);
     }

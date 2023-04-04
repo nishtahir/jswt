@@ -2,4 +2,8 @@
 
 class boolean {
 
+    @wast("(i32.eq (local.get $this) (local.get $other))")
+    eq(other: boolean): boolean {
+    }
+
 }

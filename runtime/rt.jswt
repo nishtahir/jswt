@@ -3,6 +3,7 @@
 // primitives
 import "i32.jswt";
 import "f32.jswt";
+import "boolean.jswt";
 import "ptr.jswt";
 
 import "env.jswt";

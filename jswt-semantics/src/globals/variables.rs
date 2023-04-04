@@ -1,30 +1,30 @@
 use crate::SemanticError;
-use jswt_ast::visit::Visitor;
-use jswt_common::{Spannable, Typeable};
-use jswt_symbols::{ScopedSymbolTable, Symbol, TypeSignature};
+use jswt_ast::{visit::Visitor, VariableDeclarationElement, VariableModifier};
+use jswt_common::{Spannable, Type};
+use jswt_symbols::{SemanticEnvironment, Symbol, SymbolTable, Variable};
 
 use super::GlobalSemanticResolver;
 
 pub struct VariableDeclarationGlobalContext<'a> {
-    symbols: &'a mut ScopedSymbolTable,
+    environment: &'a mut SemanticEnvironment,
     errors: &'a mut Vec<SemanticError>,
 }
 
 impl<'a> VariableDeclarationGlobalContext<'a> {
     pub fn new(resolver: &'a mut GlobalSemanticResolver) -> Self {
         Self {
-            symbols: resolver.symbols,
+            environment: resolver.environment,
             errors: &mut resolver.errors,
         }
     }
 }
 
 impl<'a> Visitor for VariableDeclarationGlobalContext<'a> {
-    fn visit_variable_declaration(&mut self, node: &jswt_ast::VariableDeclarationElement) {
+    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) {
         let name = &node.name.value;
         // If a variable with the same name already exists
         // in the current scope then we have a duplicate variable error
-        if self.symbols.lookup_current(name).is_some() {
+        if let Some(_) = self.environment.get_symbol(name) {
             let error = SemanticError::VariableAlreadyDefined {
                 name: name.clone(),
                 span: node.name.span(),
@@ -32,12 +32,23 @@ impl<'a> Visitor for VariableDeclarationGlobalContext<'a> {
             self.errors.push(error);
         }
 
+        let is_mutable = match node.modifier {
+            VariableModifier::Let(_) => true,
+            VariableModifier::Const(_) => false,
+        };
+
         // Add the variable to the symbol table
         // The type of the symbol is the type of the rhs expression
-        self.symbols.define(
+        // We only care about the declaration of the variable at this stage
+        // The initialization of the variable is handled by the local resolver
+        self.environment.insert_symbol(
             name,
-            Symbol::Type(TypeSignature {
-                ty: node.expression.ty(),
+            Symbol::Variable(Variable {
+                ty: Type::Unknown,
+                declaration: node.span(),
+                initialization: None,
+                name: name.clone(),
+                is_mutable,
             }),
         );
     }
@@ -49,7 +60,7 @@ mod test {
     use super::*;
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_symbols::BindingsTable;
+    use jswt_symbols::SemanticEnvironment;
     use jswt_tokenizer::Tokenizer;
 
     #[test]
@@ -66,9 +77,8 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = ScopedSymbolTable::default();
-        let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut environment = SemanticEnvironment::default();
+        let mut resolver = GlobalSemanticResolver::new(&mut environment);
         resolver.resolve(&ast);
 
         assert_debug_snapshot!(resolver);
@@ -89,9 +99,8 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = ScopedSymbolTable::default();
-        let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut environment = SemanticEnvironment::default();
+        let mut resolver = GlobalSemanticResolver::new(&mut environment);
         resolver.resolve(&ast);
 
         assert_debug_snapshot!(resolver);

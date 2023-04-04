@@ -93,7 +93,6 @@ Ast {
                                                                         },
                                                                         value: "print",
                                                                     },
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -114,15 +113,11 @@ Ast {
                                                                                     end: 26,
                                                                                 },
                                                                                 value: 6,
-                                                                                ty: Binding(
-                                                                                    "i32",
-                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
                                                                 ],
                                                             },
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

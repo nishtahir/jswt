@@ -20,7 +20,6 @@ impl<'a> Parser<'a> {
     ////   ;
     ////
     pub(crate) fn statement(&mut self) -> ParseResult<StatementElement> {
-        println!("statement: {:?}", self.lookahead_type());
         let elem = match self.lookahead_type() {
             Some(TokenType::LeftBrace) => self.block_statement()?.into(),
             Some(TokenType::Semi) => self.empty_statement()?.into(),

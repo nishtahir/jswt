@@ -123,13 +123,9 @@ Ast {
                                                                                             end: 29,
                                                                                         },
                                                                                         value: 1,
-                                                                                        ty: Binding(
-                                                                                            "i32",
-                                                                                        ),
                                                                                     },
                                                                                 ),
                                                                             ),
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
                                                                     Literal(
@@ -142,9 +138,6 @@ Ast {
                                                                                     end: 33,
                                                                                 },
                                                                                 value: 10,
-                                                                                ty: Binding(
-                                                                                    "i32",
-                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
@@ -174,13 +167,9 @@ Ast {
                                                                                             end: 37,
                                                                                         },
                                                                                         value: 5,
-                                                                                        ty: Binding(
-                                                                                            "i32",
-                                                                                        ),
                                                                                     },
                                                                                 ),
                                                                             ),
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
                                                                     Literal(
@@ -193,16 +182,10 @@ Ast {
                                                                                     end: 45,
                                                                                 },
                                                                                 value: "test",
-                                                                                ty: Binding(
-                                                                                    "String",
-                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
                                                                 ],
-                                                                ty: Binding(
-                                                                    "Array",
-                                                                ),
                                                             },
                                                         ),
                                                     ),

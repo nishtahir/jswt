@@ -1,0 +1,192 @@
+---
+source: jswt-semantics/src/locals/mod.rs
+expression: local
+---
+LocalSemanticResolver {
+    environment: SemanticEnvironment {
+        bindings: SemanticBindingsTable {
+            bindings: {
+                "Test": ClassBinding {
+                    name: "Test",
+                    constructors: [
+                        Constructor {
+                            params: [
+                                Parameter {
+                                    name: "a",
+                                    ty: Binding(
+                                        "i32",
+                                    ),
+                                },
+                                Parameter {
+                                    name: "a",
+                                    ty: Binding(
+                                        "i32",
+                                    ),
+                                },
+                            ],
+                        },
+                    ],
+                    fields: [],
+                    methods: [],
+                },
+            },
+        },
+        symbols: ScopedSymbolTable {
+            scopes: [
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                },
+            ],
+            files: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "Test": Class,
+                        "main": Function(
+                            Function {
+                                name: "main",
+                                params: [],
+                                ret: Binding(
+                                    "void",
+                                ),
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+                Span {
+                    file: "test_function_parameter_redefinition_error_in_constructors",
+                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                    start: 20,
+                    end: 105,
+                }: Scope {
+                    symbols: {},
+                    ret: None,
+                },
+                Span {
+                    file: "test_function_parameter_redefinition_error_in_constructors",
+                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                    start: 63,
+                    end: 95,
+                }: Scope {
+                    symbols: {
+                        "a": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_function_parameter_redefinition_error_in_constructors",
+                                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                                    start: 47,
+                                    end: 53,
+                                },
+                                initialization: None,
+                                name: "a",
+                                ty: Binding(
+                                    "i32",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+                Span {
+                    file: "test_function_parameter_redefinition_error_in_constructors",
+                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                    start: 131,
+                    end: 181,
+                }: Scope {
+                    symbols: {
+                        "test": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_function_parameter_redefinition_error_in_constructors",
+                                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                                    start: 145,
+                                    end: 171,
+                                },
+                                initialization: Some(
+                                    Span {
+                                        file: "test_function_parameter_redefinition_error_in_constructors",
+                                        module: "module/test_function_parameter_redefinition_error_in_constructors",
+                                        start: 156,
+                                        end: 170,
+                                    },
+                                ),
+                                name: "test",
+                                ty: Binding(
+                                    "Test",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+            },
+        },
+        types: TypeMap {
+            types: {
+                Span {
+                    file: "test_function_parameter_redefinition_error_in_constructors",
+                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                    start: 47,
+                    end: 53,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_function_parameter_redefinition_error_in_constructors",
+                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                    start: 145,
+                    end: 171,
+                }: Binding(
+                    "Test",
+                ),
+                Span {
+                    file: "test_function_parameter_redefinition_error_in_constructors",
+                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                    start: 156,
+                    end: 170,
+                }: Binding(
+                    "Test",
+                ),
+                Span {
+                    file: "test_function_parameter_redefinition_error_in_constructors",
+                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                    start: 165,
+                    end: 166,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_function_parameter_redefinition_error_in_constructors",
+                    module: "module/test_function_parameter_redefinition_error_in_constructors",
+                    start: 168,
+                    end: 169,
+                }: Binding(
+                    "i32",
+                ),
+            },
+        },
+    },
+    errors: [
+        VariableAlreadyDefined {
+            name: "a",
+            span: Span {
+                file: "test_function_parameter_redefinition_error_in_constructors",
+                module: "module/test_function_parameter_redefinition_error_in_constructors",
+                start: 55,
+                end: 61,
+            },
+        },
+    ],
+    class: None,
+}

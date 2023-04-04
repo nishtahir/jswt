@@ -1,9 +1,9 @@
 use crate::{ident::Identifier, Literal};
 
-use jswt_common::{Span, Type};
-use jswt_derive::{Spannable, Typeable};
+use jswt_common::Span;
+use jswt_derive::Spannable;
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub enum SingleExpression {
     Unary(UnaryExpression),
     MemberIndex(MemberIndexExpression),
@@ -47,28 +47,25 @@ impl SingleExpression {
     }
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct NewExpression {
     pub span: Span,
     pub expression: Box<SingleExpression>,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct MemberDotExpression {
     pub span: Span,
     pub target: Box<SingleExpression>,
     pub expression: Box<SingleExpression>,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ArgumentsExpression {
     pub span: Span,
     // TODO - rename this to expression
     pub ident: Box<SingleExpression>,
     pub arguments: ArgumentsList,
-    pub ty: Type,
 }
 
 #[derive(Debug, PartialEq, Spannable, Clone)]
@@ -77,43 +74,38 @@ pub struct ArgumentsList {
     pub arguments: Vec<SingleExpression>,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct ThisExpression {
     pub span: Span,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct MemberIndexExpression {
     pub span: Span,
     // TODO - rename this to expression
     pub target: Box<SingleExpression>,
     pub index: Box<SingleExpression>,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct UnaryExpression {
     pub span: Span,
     pub op: UnaryOperator,
     pub expr: Box<SingleExpression>,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct BinaryExpression {
     pub span: Span,
     pub left: Box<SingleExpression>,
     pub op: BinaryOperator,
     pub right: Box<SingleExpression>,
-    pub ty: Type,
 }
 
-#[derive(Debug, PartialEq, Spannable, Typeable, Clone)]
+#[derive(Debug, PartialEq, Spannable, Clone)]
 pub struct IdentifierExpression {
     pub span: Span,
     pub ident: Identifier,
-    pub ty: Type,
 }
 
 #[derive(Debug, PartialEq, Clone)]

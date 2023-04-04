@@ -93,7 +93,6 @@ Ast {
                                                                         },
                                                                         value: "x",
                                                                     },
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             op: Assign(
@@ -114,13 +113,9 @@ Ast {
                                                                             end: 23,
                                                                         },
                                                                         value: 0,
-                                                                        ty: Binding(
-                                                                            "i32",
-                                                                        ),
                                                                     },
                                                                 ),
                                                             ),
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

@@ -4,7 +4,7 @@ use jswt_common::Span;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum SemanticError {
-    VariableNotDefined {
+    SymbolNotDefined {
         name: Cow<'static, str>,
         span: Span,
     },
@@ -54,6 +54,9 @@ pub enum SemanticError {
     },
     UnknownType {
         ident: Cow<'static, str>,
+        span: Span,
+    },
+    InvalidNewCall {
         span: Span,
     },
 }

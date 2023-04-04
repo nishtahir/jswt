@@ -1,6 +1,6 @@
 use crate::{consume, consume_unchecked, ident, ParseError, ParseResult, Parser};
 use jswt_ast::*;
-use jswt_common::{Span, Spannable, Type};
+use jswt_common::{Span, Spannable};
 use jswt_tokenizer::TokenType;
 
 macro_rules! binary_expression {
@@ -18,7 +18,6 @@ macro_rules! binary_expression {
                                 left: Box::new(left),
                                 op: BinaryOperator::$op(op_span),
                                 right: Box::new(right),
-                                ty: jswt_common::Type::Unknown,
                             });
                         }
                     )*
@@ -66,11 +65,10 @@ impl<'a> Parser<'a> {
         if self.lookahead_is(TokenType::New) {
             // Consume new token
             let start = consume_unchecked!(self);
-            let expression = self.single_expression()?;
+            let expression = self.arguments_expression()?;
             return Ok(SingleExpression::New(NewExpression {
                 span: start + expression.span(),
                 expression: Box::new(expression),
-                ty: Type::Unknown,
             }));
         }
 
@@ -92,7 +90,6 @@ impl<'a> Parser<'a> {
                 left: Box::new(left),
                 op: BinaryOperator::Assign(op_span),
                 right: Box::new(right),
-                ty: Type::Unknown,
             }));
         }
         Ok(left)
@@ -183,7 +180,6 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::PostIncrement(op),
                 expr: Box::new(expr),
-                ty: Type::Unknown,
             }));
         }
         if self.lookahead_is(TokenType::MinusMinus) {
@@ -192,7 +188,6 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::PostDecrement(op),
                 expr: Box::new(expr),
-                ty: Type::Unknown,
             }));
         }
         Ok(expr)
@@ -213,7 +208,6 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Plus(op),
                 expr: Box::new(expr),
-                ty: Type::Unknown,
             }));
         }
 
@@ -224,7 +218,6 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Minus(op),
                 expr: Box::new(expr),
-                ty: Type::Unknown,
             }));
         }
 
@@ -235,7 +228,6 @@ impl<'a> Parser<'a> {
                 span: op.to_owned() + expr.span(),
                 op: UnaryOperator::Not(op),
                 expr: Box::new(expr),
-                ty: Type::Unknown,
             }));
         }
 
@@ -255,7 +247,6 @@ impl<'a> Parser<'a> {
                 span: expr.span() + args.span(),
                 ident: Box::new(expr),
                 arguments: args,
-                ty: Type::Unknown,
             });
         }
         Ok(expr)
@@ -300,7 +291,6 @@ impl<'a> Parser<'a> {
                 span: target.span() + end,
                 index: Box::new(expression),
                 target: Box::new(target),
-                ty: Type::Unknown,
             });
         }
         Ok(target)
@@ -320,7 +310,6 @@ impl<'a> Parser<'a> {
                 span: target.span() + expression.span(),
                 expression: Box::new(expression),
                 target: Box::new(target),
-                ty: Type::Unknown,
             }));
         }
         Ok(target)
@@ -334,10 +323,7 @@ impl<'a> Parser<'a> {
     pub(crate) fn this_expression(&mut self) -> ParseResult<SingleExpression> {
         if self.lookahead_is(TokenType::This) {
             let span = consume!(self, TokenType::This)?;
-            return Ok(SingleExpression::This(ThisExpression {
-                span,
-                ty: Type::PTR,
-            }));
+            return Ok(SingleExpression::This(ThisExpression { span }));
         }
         self.identifier_expression()
     }
@@ -351,7 +337,6 @@ impl<'a> Parser<'a> {
         if self.lookahead_is(TokenType::Identifier) {
             let ident = ident!(self)?;
             return Ok(SingleExpression::Identifier(IdentifierExpression {
-                ty: Type::Unknown,
                 span: ident.span.to_owned(),
                 ident,
             }));
@@ -384,7 +369,6 @@ impl<'a> Parser<'a> {
             return Ok(SingleExpression::Literal(Literal::Array(ArrayLiteral {
                 span: start + end,
                 elements,
-                ty: Type::ARRAY,
             })));
         };
 
@@ -469,7 +453,6 @@ mod test {
         );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
-        println!("{:#?}", parser.errors);
         assert_debug_snapshot!(actual);
         assert_eq!(parser.errors.len(), 0, "{:#?}", parser.errors);
     }
@@ -483,7 +466,6 @@ mod test {
         );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
-        println!("{:#?}", parser.errors);
         assert_debug_snapshot!(actual);
         assert_eq!(parser.errors.len(), 0, "{:#?}", parser.errors);
     }
@@ -543,7 +525,10 @@ mod test {
     #[test]
     fn test_parse_unary_expression() {
         let mut tokenizer = Tokenizer::default();
-        tokenizer.enqueue_source_str("test_parse_unary_expression", "function test() { let x = -1 * 10 + -5; }");
+        tokenizer.enqueue_source_str(
+            "test_parse_unary_expression",
+            "function test() { let x = -1 * 10 + -5; }",
+        );
         let mut parser = Parser::new(&mut tokenizer);
         let actual = parser.parse();
         assert_debug_snapshot!(actual);

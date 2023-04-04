@@ -92,9 +92,6 @@ Ast {
                                                                                 start: 18,
                                                                                 end: 22,
                                                                             },
-                                                                            ty: Binding(
-                                                                                "ptr",
-                                                                            ),
                                                                         },
                                                                     ),
                                                                     expression: Identifier(
@@ -114,10 +111,8 @@ Ast {
                                                                                 },
                                                                                 value: "set",
                                                                             },
-                                                                            ty: Unknown,
                                                                         },
                                                                     ),
-                                                                    ty: Unknown,
                                                                 },
                                                             ),
                                                             arguments: ArgumentsList {
@@ -138,15 +133,11 @@ Ast {
                                                                                     end: 29,
                                                                                 },
                                                                                 value: 10,
-                                                                                ty: Binding(
-                                                                                    "i32",
-                                                                                ),
                                                                             },
                                                                         ),
                                                                     ),
                                                                 ],
                                                             },
-                                                            ty: Unknown,
                                                         },
                                                     ),
                                                 },

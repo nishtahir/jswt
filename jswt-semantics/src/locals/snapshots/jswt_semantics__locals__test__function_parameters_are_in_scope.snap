@@ -1,0 +1,128 @@
+---
+source: jswt-semantics/src/locals/mod.rs
+expression: local
+---
+LocalSemanticResolver {
+    environment: SemanticEnvironment {
+        bindings: SemanticBindingsTable {
+            bindings: {},
+        },
+        symbols: ScopedSymbolTable {
+            scopes: [
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                },
+            ],
+            files: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "test": Function(
+                            Function {
+                                name: "test",
+                                params: [
+                                    Parameter {
+                                        name: "x",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                    Parameter {
+                                        name: "y",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ],
+                                ret: Binding(
+                                    "void",
+                                ),
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+                Span {
+                    file: "test_function_parameters_are_in_scope",
+                    module: "module/test_function_parameters_are_in_scope",
+                    start: 39,
+                    end: 65,
+                }: Scope {
+                    symbols: {
+                        "x": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_function_parameters_are_in_scope",
+                                    module: "module/test_function_parameters_are_in_scope",
+                                    start: 23,
+                                    end: 29,
+                                },
+                                initialization: None,
+                                name: "x",
+                                ty: Binding(
+                                    "i32",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                        "y": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_function_parameters_are_in_scope",
+                                    module: "module/test_function_parameters_are_in_scope",
+                                    start: 31,
+                                    end: 37,
+                                },
+                                initialization: None,
+                                name: "y",
+                                ty: Binding(
+                                    "i32",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+            },
+        },
+        types: TypeMap {
+            types: {
+                Span {
+                    file: "test_function_parameters_are_in_scope",
+                    module: "module/test_function_parameters_are_in_scope",
+                    start: 23,
+                    end: 29,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_function_parameters_are_in_scope",
+                    module: "module/test_function_parameters_are_in_scope",
+                    start: 31,
+                    end: 37,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_function_parameters_are_in_scope",
+                    module: "module/test_function_parameters_are_in_scope",
+                    start: 53,
+                    end: 54,
+                }: Binding(
+                    "i32",
+                ),
+            },
+        },
+    },
+    errors: [],
+    class: None,
+}

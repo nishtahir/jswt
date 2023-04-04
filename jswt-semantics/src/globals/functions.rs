@@ -2,17 +2,17 @@ use super::GlobalSemanticResolver;
 use crate::SemanticError;
 use jswt_ast::{visit::Visitor, FunctionDeclarationElement};
 use jswt_common::Type;
-use jswt_symbols::{ScopedSymbolTable, Symbol};
+use jswt_symbols::{Function, Parameter, SemanticEnvironment, Symbol, SymbolTable};
 
 pub struct FunctionDeclarationGlobalContext<'a> {
-    symbols: &'a mut ScopedSymbolTable,
+    environment: &'a mut SemanticEnvironment,
     errors: &'a mut Vec<SemanticError>,
 }
 
 impl<'a> FunctionDeclarationGlobalContext<'a> {
     pub fn new(resolver: &'a mut GlobalSemanticResolver) -> Self {
         Self {
-            symbols: resolver.symbols,
+            environment: resolver.environment,
             errors: &mut resolver.errors,
         }
     }
@@ -23,7 +23,7 @@ impl<'a> Visitor for FunctionDeclarationGlobalContext<'a> {
         let ident = &node.ident;
         let function_name = &ident.value;
 
-        if self.symbols.lookup_current(function_name).is_some() {
+        if self.environment.get_symbol(function_name).is_some() {
             let error = SemanticError::FunctionAlreadyDefined {
                 name: function_name.clone(),
                 span: ident.span.to_owned(),
@@ -32,25 +32,44 @@ impl<'a> Visitor for FunctionDeclarationGlobalContext<'a> {
         }
 
         // Determine the return type of the function
+        // TODO - check that the return type is valid
         let returns = node
             .returns
             .as_ref()
             .map(|it| it.ty.clone())
             .unwrap_or(Type::Binding("void".into()));
 
-        // Determine the types of the function parameters
-        let params = node
-            .params
-            .parameters
-            .iter()
-            .map(|param| param.type_annotation.ty.clone())
-            .collect();
+        let mut params = vec![];
+        for param in &node.params.parameters {
+            // Check if the parameter already exists
+            if params
+                .iter()
+                .any(|p: &Parameter| p.name == param.ident.value)
+            {
+                // TODO - rename this to parameter already defined
+                let error = SemanticError::VariableAlreadyDefined {
+                    name: param.ident.value.clone(),
+                    span: param.ident.span.to_owned(),
+                };
+                self.errors.push(error);
+            }
+            params.push(Parameter {
+                name: param.ident.value.clone(),
+                ty: param.type_annotation.ty.clone(),
+            });
+        }
 
         // TODO - we're eventually going to want to qualify the full function
         // name here scoped to the current module, but for now we'll just
         // use the function name
-        self.symbols
-            .define(function_name, Symbol::function(params, returns));
+        self.environment.insert_symbol(
+            function_name,
+            Symbol::Function(Function {
+                name: function_name.clone(),
+                params,
+                ret: returns,
+            }),
+        );
     }
 }
 
@@ -59,7 +78,6 @@ mod test {
     use super::*;
     use jswt_assert::assert_debug_snapshot;
     use jswt_parser::Parser;
-    use jswt_symbols::BindingsTable;
     use jswt_tokenizer::Tokenizer;
 
     #[test]
@@ -78,9 +96,8 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = ScopedSymbolTable::default();
-        let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut environment = SemanticEnvironment::default();
+        let mut resolver = GlobalSemanticResolver::new(&mut environment);
         resolver.resolve(&ast);
 
         assert_debug_snapshot!(resolver);
@@ -101,9 +118,8 @@ mod test {
         ",
         );
         let ast = Parser::new(&mut tokenizer).parse();
-        let mut symbols = ScopedSymbolTable::default();
-        let mut bindings = BindingsTable::default();
-        let mut resolver = GlobalSemanticResolver::new(&mut bindings, &mut symbols);
+        let mut environment = SemanticEnvironment::default();
+        let mut resolver = GlobalSemanticResolver::new(&mut environment);
         resolver.resolve(&ast);
 
         assert_debug_snapshot!(resolver);

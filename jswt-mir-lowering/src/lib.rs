@@ -5,7 +5,7 @@ mod new;
 use arguments::MirArgumentsLoweringContext;
 use class::MirClassLoweringContext;
 use jswt_ast::{transform::*, *};
-use jswt_symbols::{BindingsTable, ScopedSymbolTable};
+use jswt_symbols::SemanticEnvironment;
 use new::MirNewLoweringContext;
 
 /// Mir lowering focuses on reducing high level calls and constructs into
@@ -14,16 +14,12 @@ use new::MirNewLoweringContext;
 /// to have been performed.
 #[derive(Debug)]
 pub struct MirLoweringContext<'a> {
-    bindings: &'a BindingsTable,
-    _symbols: &'a ScopedSymbolTable,
+    environment: &'a SemanticEnvironment,
 }
 
 impl<'a> MirLoweringContext<'a> {
-    pub fn new(bindings: &'a BindingsTable, symbols: &'a ScopedSymbolTable) -> Self {
-        Self {
-            bindings,
-            _symbols: symbols,
-        }
+    pub fn new(environment: &'a SemanticEnvironment) -> Self {
+        Self { environment }
     }
 
     pub fn lower(&mut self, ast: &Ast) -> Ast {
@@ -39,18 +35,18 @@ impl<'a> TransformVisitor for MirLoweringContext<'a> {
 
     /// Lower class declarations into a series of functions
     fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) -> SourceElements {
-        let mut lowering = MirClassLoweringContext::new(node, &self.bindings);
+        let mut lowering = MirClassLoweringContext::new(node, &self.environment);
         lowering.visit_class_declaration(node)
     }
 
     fn visit_new(&mut self, node: &NewExpression) -> SingleExpression {
-        let mut lowering = MirNewLoweringContext::new(&self.bindings);
+        let mut lowering = MirNewLoweringContext::new(&self.environment);
         lowering.visit_new(node)
     }
 
     fn visit_argument_expression(&mut self, node: &ArgumentsExpression) -> SingleExpression {
-        if let SingleExpression::MemberDot(ref dot) = &*node.ident {
-            let mut ctx = MirArgumentsLoweringContext::new(self.bindings);
+        if let SingleExpression::MemberDot(_) = &*node.ident {
+            let mut ctx = MirArgumentsLoweringContext::new(&self.environment);
             return ctx.visit_argument_expression(node);
         }
 

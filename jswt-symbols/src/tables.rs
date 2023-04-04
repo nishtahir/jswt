@@ -80,6 +80,7 @@ impl<K: Eq + Hash + Ord, V> Default for SimpleSymbolTable<K, V> {
 #[derive(Debug, Default)]
 pub struct ScopedSymbolTable {
     scopes: Vec<Span>,
+    files: Vec<Span>,
     table: BTreeMap<Span, Scope>,
 }
 
@@ -91,13 +92,16 @@ impl ScopedSymbolTable {
         self.push_scope(Span::new("program".into(), "root".into(), 0, 0));
     }
 
+    pub fn push_file_scope(&mut self, key: Span) {
+        self.files.push(key.clone());
+        self.table.entry(key).or_insert_with(|| Scope::new(None));
+    }
+
     // Pushing a scope adds it to the scope stack
     // and defines a new key in our global symbol map
     pub fn push_scope(&mut self, key: Span) {
         self.scopes.push(key.clone());
-        self.table
-            .entry(key)
-            .or_insert_with(|| Scope::new(None));
+        self.table.entry(key).or_insert_with(|| Scope::new(None));
     }
 
     pub fn push_scope_with_return(&mut self, key: Span, returns: Option<Type>) {
@@ -137,18 +141,9 @@ impl ScopedSymbolTable {
         scope.symbols.insert(name.clone(), symbol)
     }
 
-    // pub fn update_type(&mut self, name: &Cow<'static, str>, ty: Type) {
-    //     debug_assert!(self.scopes.len() > 0);
-    //     let key = self.scopes.last().unwrap();
-    //     let scope = self.table.get_mut(key).unwrap();
-    //     if let Some(symbol) = scope.symbols.get_mut(name) {
-    //         symbol.ty = ty;
-    //     }
-    // }
-
     /// Lookup a Symbol based on symbols in the current active scope
     /// as well as scopes lower in the stack
-    pub fn lookup(&mut self, name: &str) -> Option<&Symbol> {
+    pub fn lookup(&self, name: &str) -> Option<&Symbol> {
         // Apparently descending ranges aren't a thing.
         // as of 1.53, trying to use one doesn't generate a warning
         // https://github.com/rust-lang/rust/issues/70925
@@ -191,6 +186,15 @@ impl ScopedSymbolTable {
         let key = &self.scopes.last().unwrap();
         let scope = self.table.get_mut(key).unwrap();
         scope.ret.as_ref()
+    }
+
+    /// Add symbols frome the given scope into the current scope
+    pub fn merge_scope(&mut self, key: Span) {
+        debug_assert!(self.scopes.len() > 0);
+        let current = self.scopes.last().unwrap();
+        let target = self.table.get(&key).unwrap().symbols.clone();
+        let scope = &mut self.table.get_mut(current).unwrap().symbols;
+        scope.extend(target);
     }
 }
 

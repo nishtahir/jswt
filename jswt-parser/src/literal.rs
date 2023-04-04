@@ -1,10 +1,8 @@
+use crate::{consume_unchecked, ParseError, ParseResult, Parser};
 use jswt_ast::{
     BooleanLiteral, FloatingPointLiteral, IntegerLiteral, Literal, SingleExpression, StringLiteral,
 };
-use jswt_common::Type;
 use jswt_tokenizer::TokenType;
-
-use crate::{consume_unchecked, ParseError, ParseResult, Parser};
 
 impl<'a> Parser<'a> {
     ////
@@ -18,21 +16,11 @@ impl<'a> Parser<'a> {
         let literal: Literal = match self.lookahead_type() {
             Some(TokenType::True) => {
                 let span = consume_unchecked!(self);
-                BooleanLiteral {
-                    span,
-                    value: true,
-                    ty: Type::BOOLEAN,
-                }
-                .into()
+                BooleanLiteral { span, value: true }.into()
             }
             Some(TokenType::False) => {
                 let span = consume_unchecked!(self);
-                BooleanLiteral {
-                    span,
-                    value: false,
-                    ty: Type::BOOLEAN,
-                }
-                .into()
+                BooleanLiteral { span, value: false }.into()
             }
             Some(TokenType::String) => {
                 let span = consume_unchecked!(self);
@@ -41,7 +29,6 @@ impl<'a> Parser<'a> {
                     span,
                     // Drop quoute characters from value
                     value: &lexme[1..lexme.len() - 1],
-                    ty: Type::STRING,
                 }
                 .into()
             }
@@ -53,7 +40,6 @@ impl<'a> Parser<'a> {
                     // Should be safe to unwrap since
                     // the tokenizer matched this
                     value: lexme.parse().unwrap(),
-                    ty: Type::I32,
                 }
                 .into()
             }
@@ -64,7 +50,6 @@ impl<'a> Parser<'a> {
                     span,
                     // Allow integer overflows in this specific instance
                     value: u32::from_str_radix(without_prefix, 16).unwrap() as i32,
-                    ty: Type::I32,
                 }
                 .into()
             }
@@ -74,7 +59,6 @@ impl<'a> Parser<'a> {
                 FloatingPointLiteral {
                     span,
                     value: lexme.parse::<f32>().unwrap(),
-                    ty: Type::F32,
                 }
                 .into()
             }

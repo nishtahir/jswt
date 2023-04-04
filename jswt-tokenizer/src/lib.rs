@@ -7,6 +7,7 @@ use regex::Regex;
 use std::{
     cell::RefCell,
     path::{Path, PathBuf},
+    process::exit,
     rc::Rc,
 };
 
@@ -276,7 +277,8 @@ impl Tokenizer {
                 return;
             }
         }
-        println!("No such file '{:?}'", path.to_str());
+        println!("No such file {:?}", path.to_path_buf());
+        exit(1);
     }
 
     /// Add a source to the queue to be parsed
@@ -288,6 +290,10 @@ impl Tokenizer {
     }
 
     pub fn enqueue_source(&mut self, path: &str) {
+        // Don't enqueue the same source twice
+        if self.contains_source(path) {
+            return;
+        }
         // Compute the module name based on the given source roots
         // and module prefix or use defaults
         let default_source_root = &std::env::current_dir().unwrap();
@@ -325,6 +331,10 @@ impl Tokenizer {
 
     fn has_more_sources(&self) -> bool {
         !self.sources.is_empty()
+    }
+
+    fn contains_source(&self, path: &str) -> bool {
+        self.sources.iter().any(|s| s.borrow().path == path)
     }
 }
 

@@ -11,4 +11,11 @@ class i32 {
     minus(other: i32): i32 {
     }
 
+    @wast("(i32.mul (local.get $this) (local.get $other))")
+    mult(other: i32): i32 {
+    }
+
+    @wast("(i32.eq (local.get $this) (local.get $other))")
+    eq(other: i32): boolean {
+    }
 }

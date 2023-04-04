@@ -46,7 +46,9 @@ pub fn cache(key: &str, value: String) {
 /// Returns string slice for the given span
 pub fn from_span(span: &Span) -> &'static str {
     let cache = &FILE_CACHE.lock().unwrap();
-    let source = cache.get(span.file.as_ref()).unwrap();
+    let source = cache
+        .get(span.file.as_ref())
+        .expect(format!("File not found in cache: {}", span.file).as_str());
     &source[span.start..span.end]
 }
 

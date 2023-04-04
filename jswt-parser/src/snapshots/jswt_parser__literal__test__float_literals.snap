@@ -78,9 +78,6 @@ Ast {
                                                                     end: 21,
                                                                 },
                                                                 value: 1.0,
-                                                                ty: Binding(
-                                                                    "f32",
-                                                                ),
                                                             },
                                                         ),
                                                     ),

@@ -94,7 +94,6 @@ Ast {
                                                                             },
                                                                             value: "x",
                                                                         },
-                                                                        ty: Unknown,
                                                                     },
                                                                 ),
                                                                 op: Equal(
@@ -122,10 +121,8 @@ Ast {
                                                                             },
                                                                             value: "y",
                                                                         },
-                                                                        ty: Unknown,
                                                                     },
                                                                 ),
-                                                                ty: Unknown,
                                                             },
                                                         ),
                                                         block: BlockStatement {
@@ -155,9 +152,6 @@ Ast {
                                                                                             end: 42,
                                                                                         },
                                                                                         value: 0,
-                                                                                        ty: Binding(
-                                                                                            "i32",
-                                                                                        ),
                                                                                     },
                                                                                 ),
                                                                             ),

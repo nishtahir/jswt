@@ -1,4 +1,4 @@
-use crate::FunctionSignature;
+use crate::Parameter;
 use jswt_common::Type;
 use std::{borrow::Cow, collections::BTreeMap};
 
@@ -7,11 +7,11 @@ use std::{borrow::Cow, collections::BTreeMap};
 // We're keeping these definitions out of the symbol table
 // to make it easier to track all the class instances we've discovered
 #[derive(Default, Debug)]
-pub struct BindingsTable {
+pub struct SemanticBindingsTable {
     bindings: BTreeMap<Cow<'static, str>, ClassBinding>,
 }
 
-impl BindingsTable {
+impl SemanticBindingsTable {
     pub fn insert(&mut self, name: Cow<'static, str>, binding: ClassBinding) {
         self.bindings.insert(name, binding);
     }
@@ -24,6 +24,7 @@ impl BindingsTable {
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct ClassBinding {
     pub name: Cow<'static, str>,
+    pub constructors: Vec<Constructor>,
     pub fields: Vec<Field>,
     pub methods: Vec<Method>,
 }
@@ -56,5 +57,11 @@ pub struct Field {
 #[derive(Debug, PartialEq, Clone)]
 pub struct Method {
     pub name: Cow<'static, str>,
-    pub signature: FunctionSignature,
+    pub params: Vec<Parameter>,
+    pub ret: Type,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct Constructor {
+    pub params: Vec<Parameter>,
 }

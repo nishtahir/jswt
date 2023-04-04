@@ -94,7 +94,6 @@ Ast {
                                                                             },
                                                                             value: "x",
                                                                         },
-                                                                        ty: Unknown,
                                                                     },
                                                                 ),
                                                                 op: Less(
@@ -115,13 +114,9 @@ Ast {
                                                                                 end: 30,
                                                                             },
                                                                             value: 99,
-                                                                            ty: Binding(
-                                                                                "i32",
-                                                                            ),
                                                                         },
                                                                     ),
                                                                 ),
-                                                                ty: Unknown,
                                                             },
                                                         ),
                                                         block: BlockStatement {
@@ -166,7 +161,6 @@ Ast {
                                                                                                 },
                                                                                                 value: "println",
                                                                                             },
-                                                                                            ty: Unknown,
                                                                                         },
                                                                                     ),
                                                                                     arguments: ArgumentsList {
@@ -187,15 +181,11 @@ Ast {
                                                                                                             end: 52,
                                                                                                         },
                                                                                                         value: "hey taco",
-                                                                                                        ty: Binding(
-                                                                                                            "String",
-                                                                                                        ),
                                                                                                     },
                                                                                                 ),
                                                                                             ),
                                                                                         ],
                                                                                     },
-                                                                                    ty: Unknown,
                                                                                 },
                                                                             ),
                                                                         },

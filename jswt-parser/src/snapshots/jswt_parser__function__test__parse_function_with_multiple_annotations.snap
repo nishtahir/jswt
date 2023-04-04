@@ -75,9 +75,6 @@ Ast {
                                                                 end: 20,
                                                             },
                                                             value: "test",
-                                                            ty: Binding(
-                                                                "String",
-                                                            ),
                                                         },
                                                     ),
                                                 ),

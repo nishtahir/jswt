@@ -78,9 +78,6 @@ Ast {
                                                                     end: 25,
                                                                 },
                                                                 value: "hello",
-                                                                ty: Binding(
-                                                                    "String",
-                                                                ),
                                                             },
                                                         ),
                                                     ),

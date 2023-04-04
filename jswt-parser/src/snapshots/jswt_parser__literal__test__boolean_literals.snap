@@ -78,9 +78,6 @@ Ast {
                                                                     end: 22,
                                                                 },
                                                                 value: true,
-                                                                ty: Binding(
-                                                                    "boolean",
-                                                                ),
                                                             },
                                                         ),
                                                     ),
@@ -104,9 +101,6 @@ Ast {
                                                                     end: 29,
                                                                 },
                                                                 value: false,
-                                                                ty: Binding(
-                                                                    "boolean",
-                                                                ),
                                                             },
                                                         ),
                                                     ),

@@ -76,9 +76,6 @@ Ast {
                                                                 start: 18,
                                                                 end: 22,
                                                             },
-                                                            ty: Binding(
-                                                                "ptr",
-                                                            ),
                                                         },
                                                     ),
                                                 },

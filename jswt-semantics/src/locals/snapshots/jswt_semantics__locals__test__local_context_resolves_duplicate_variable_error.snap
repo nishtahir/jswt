@@ -1,0 +1,153 @@
+---
+source: jswt-semantics/src/locals/mod.rs
+expression: local
+---
+LocalSemanticResolver {
+    environment: SemanticEnvironment {
+        bindings: SemanticBindingsTable {
+            bindings: {},
+        },
+        symbols: ScopedSymbolTable {
+            scopes: [
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                },
+            ],
+            files: [],
+            table: {
+                Span {
+                    file: "program",
+                    module: "root",
+                    start: 0,
+                    end: 0,
+                }: Scope {
+                    symbols: {
+                        "test": Function(
+                            Function {
+                                name: "test",
+                                params: [
+                                    Parameter {
+                                        name: "a",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                    Parameter {
+                                        name: "b",
+                                        ty: Binding(
+                                            "i32",
+                                        ),
+                                    },
+                                ],
+                                ret: Binding(
+                                    "void",
+                                ),
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+                Span {
+                    file: "test_local_context_resolves_duplicate_variable_error",
+                    module: "module/test_local_context_resolves_duplicate_variable_error",
+                    start: 39,
+                    end: 74,
+                }: Scope {
+                    symbols: {
+                        "a": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_local_context_resolves_duplicate_variable_error",
+                                    module: "module/test_local_context_resolves_duplicate_variable_error",
+                                    start: 53,
+                                    end: 64,
+                                },
+                                initialization: Some(
+                                    Span {
+                                        file: "test_local_context_resolves_duplicate_variable_error",
+                                        module: "module/test_local_context_resolves_duplicate_variable_error",
+                                        start: 61,
+                                        end: 63,
+                                    },
+                                ),
+                                name: "a",
+                                ty: Binding(
+                                    "i32",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                        "b": Variable(
+                            Variable {
+                                declaration: Span {
+                                    file: "test_local_context_resolves_duplicate_variable_error",
+                                    module: "module/test_local_context_resolves_duplicate_variable_error",
+                                    start: 31,
+                                    end: 37,
+                                },
+                                initialization: None,
+                                name: "b",
+                                ty: Binding(
+                                    "i32",
+                                ),
+                                is_mutable: true,
+                            },
+                        ),
+                    },
+                    ret: None,
+                },
+            },
+        },
+        types: TypeMap {
+            types: {
+                Span {
+                    file: "test_local_context_resolves_duplicate_variable_error",
+                    module: "module/test_local_context_resolves_duplicate_variable_error",
+                    start: 23,
+                    end: 29,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_local_context_resolves_duplicate_variable_error",
+                    module: "module/test_local_context_resolves_duplicate_variable_error",
+                    start: 31,
+                    end: 37,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_local_context_resolves_duplicate_variable_error",
+                    module: "module/test_local_context_resolves_duplicate_variable_error",
+                    start: 53,
+                    end: 64,
+                }: Binding(
+                    "i32",
+                ),
+                Span {
+                    file: "test_local_context_resolves_duplicate_variable_error",
+                    module: "module/test_local_context_resolves_duplicate_variable_error",
+                    start: 61,
+                    end: 63,
+                }: Binding(
+                    "i32",
+                ),
+            },
+        },
+    },
+    errors: [
+        VariableAlreadyDefined {
+            name: "a",
+            span: Span {
+                file: "test_local_context_resolves_duplicate_variable_error",
+                module: "module/test_local_context_resolves_duplicate_variable_error",
+                start: 57,
+                end: 58,
+            },
+        },
+    ],
+    class: None,
+}

@@ -1,8 +1,8 @@
 ---
-source: jswt-semantics/src/globals/functions.rs
-expression: resolver
+source: jswt-semantics/src/locals/mod.rs
+expression: local
 ---
-GlobalSemanticResolver {
+LocalSemanticResolver {
     environment: SemanticEnvironment {
         bindings: SemanticBindingsTable {
             bindings: {},
@@ -25,16 +25,25 @@ GlobalSemanticResolver {
                     end: 0,
                 }: Scope {
                     symbols: {
-                        "test2": Function(
+                        "test": Function(
                             Function {
-                                name: "test2",
+                                name: "test",
                                 params: [],
                                 ret: Binding(
-                                    "Array",
+                                    "void",
                                 ),
                             },
                         ),
                     },
+                    ret: None,
+                },
+                Span {
+                    file: "test_local_context_error_on_undefined_variable",
+                    module: "module/test_local_context_error_on_undefined_variable",
+                    start: 25,
+                    end: 51,
+                }: Scope {
+                    symbols: {},
                     ret: None,
                 },
             },
@@ -44,14 +53,15 @@ GlobalSemanticResolver {
         },
     },
     errors: [
-        FunctionAlreadyDefined {
-            name: "test2",
+        SymbolNotDefined {
+            name: "x",
             span: Span {
-                file: "test_context_reports_duplicate_function_error",
-                module: "module/test_context_reports_duplicate_function_error",
-                start: 63,
-                end: 68,
+                file: "test_local_context_error_on_undefined_variable",
+                module: "module/test_local_context_error_on_undefined_variable",
+                start: 39,
+                end: 40,
             },
         },
     ],
+    class: None,
 }
