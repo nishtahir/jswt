@@ -3,7 +3,7 @@ use jswt_ast::{
     ArgumentsExpression, ArgumentsList, BinaryExpression, BinaryOperator, MemberDotExpression,
     SingleExpression,
 };
-use jswt_common::{Spannable};
+use jswt_common::Spannable;
 use jswt_synthetic::ident_exp;
 
 pub struct HirOperatorsLoweringContext {}
@@ -90,7 +90,13 @@ mod test {
     ",
         );
 
-        let ast = Parser::new(&mut tokenizer).parse();
+        let mut parser = Parser::new(&mut tokenizer);
+        let ast = parser.parse();
+        assert!(
+            parser.parse_errors().is_empty(),
+            "{:#?}",
+            parser.parse_errors()
+        );
 
         let mut environment = SemanticEnvironment::default();
         let mut global_resolver = GlobalSemanticResolver::new(&mut environment);

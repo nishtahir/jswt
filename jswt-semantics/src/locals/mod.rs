@@ -1,6 +1,6 @@
 use crate::SemanticError;
 use core::panic;
-use jswt_ast::{visit::Visitor, *};
+use jswt_ast::*;
 use jswt_common::{Spannable, Type};
 use jswt_symbols::{
     BindingsTable, ClassBinding, SemanticEnvironment, Symbol, SymbolTable, TypesTable, Variable,
@@ -34,18 +34,12 @@ impl<'a> LocalSemanticResolver<'a> {
 }
 
 impl<'a> Visitor for LocalSemanticResolver<'a> {
-    // fn visit_file(&mut self, node: &File) {
-    //     self.symbols().push_scope(node.span());
-    //     visit::walk_file(self, node);
-    //     self.symbols().pop_scope();
-    // }
-
-    fn visit_import_declaration(&mut self, _node: &ImportDeclarationElement) {
+    fn visit_import_declaration_element(&mut self, _node: &ImportDeclarationElement) {
         // self.symbols_mut().merge_scope(node.span());
     }
 
-    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) {
-        visit::walk_variable_declaration(self, node);
+    fn visit_variable_declaration_element(&mut self, node: &VariableDeclarationElement) {
+        ast::walk_variable_declaration_element(self, node);
         let name = &node.name.value;
         // Redefition errors are handled during the global pass
 
@@ -87,7 +81,7 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
     }
 
     fn visit_variable_statement(&mut self, node: &VariableStatement) {
-        visit::walk_variable_statement(self, node);
+        ast::walk_variable_statement(self, node);
         // Check if we're in a local scope
         if self.environment.symbol_scope_depth() > 1 {
             let name = match &node.target {
@@ -144,7 +138,7 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
     }
 
     fn visit_identifier_expression(&mut self, node: &IdentifierExpression) {
-        visit::walk_identifier_expression(self, node);
+        ast::walk_identifier_expression(self, node);
         let ident = &node.ident;
         let name = &ident.value;
         match self.environment.get_symbol(name) {
@@ -166,39 +160,39 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
         }
     }
 
-    fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+    fn visit_function_declaration_element(&mut self, node: &FunctionDeclarationElement) {
         // Redefinition errors are handled by the GlobalSemanticResolver
         // during clobal symbol resolution
         self.environment.push_symbol_scope(node.body.span());
-        visit::walk_function_declaration(self, node);
+        ast::walk_function_declaration_element(self, node);
         self.environment.pop_symbol_scope();
     }
 
-    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
+    fn visit_class_declaration_element(&mut self, node: &ClassDeclarationElement) {
         self.class = self.environment.get_binding(&node.ident.value).cloned();
-        visit::walk_class_declaration(self, node);
+        ast::walk_class_declaration_element(self, node);
         self.class = None;
     }
 
     fn visit_class_body(&mut self, node: &ClassBody) {
         self.environment.push_symbol_scope(node.span());
-        visit::walk_class_body(self, node);
+        ast::walk_class_body(self, node);
         self.environment.pop_symbol_scope();
     }
 
-    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+    fn visit_class_constructor_element(&mut self, node: &ClassConstructorElement) {
         self.environment.push_symbol_scope(node.body.span());
-        visit::walk_class_constructor_declaration(self, node);
+        ast::walk_class_constructor_element(self, node);
         self.environment.pop_symbol_scope();
     }
 
-    fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
+    fn visit_class_method_element(&mut self, node: &ClassMethodElement) {
         self.environment.push_symbol_scope(node.body.span());
-        visit::walk_class_method_declaration(self, node);
+        ast::walk_class_method_element(self, node);
         self.environment.pop_symbol_scope();
     }
 
-    fn visit_new(&mut self, node: &NewExpression) {
+    fn visit_new_expression(&mut self, node: &NewExpression) {
         match &*node.expression {
             SingleExpression::Arguments(args) => {
                 // The inner expression should be an identifier expression
@@ -260,11 +254,11 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
         }
     }
 
-    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {
+    fn visit_arguments_expression(&mut self, node: &ArgumentsExpression) {
         match &*node.ident {
             SingleExpression::Arguments(exp) => {
                 // This is a nested function call a()()
-                self.visit_argument_expression(exp);
+                self.visit_arguments_expression(exp);
                 // check the type of args and validate the params
             }
             SingleExpression::Identifier(exp) => {
@@ -369,7 +363,7 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
         }
     }
     fn visit_formal_parameter_arg(&mut self, node: &FormalParameterArg) {
-        visit::walk_formal_parameter_arg(self, node);
+        ast::walk_formal_parameter_arg(self, node);
         let name = &node.ident.value;
         let ty = node.type_annotation.ty.clone();
 
@@ -398,13 +392,12 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
         }
     }
 
-    fn visit_member_dot(&mut self, node: &MemberDotExpression) {
-        println!("Member dot expression {}", node.span().lexme());
-        // if the left side is a this
+    fn visit_member_dot_expression(&mut self, node: &MemberDotExpression) {
+        // TODO - check that the member expression is valid
     }
 
     fn visit_literal(&mut self, node: &Literal) {
-        visit::walk_literal(self, node);
+        ast::walk_literal(self, node);
         let ty = match node {
             Literal::Array(_) => todo!(),
             Literal::String(_) => Type::STRING,
@@ -415,10 +408,10 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
         self.environment.insert_owned_type(node.span(), ty);
     }
 
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) {
-        visit::walk_assignment_expression(self, node);
-        let lhs = &node.left;
-        let rhs = &node.right;
+    fn visit_assignment_expression(&mut self, node: &AssignmentExpression) {
+        ast::walk_assignment_expression(self, node);
+        let lhs = &node.target;
+        let rhs = &node.expression;
 
         // Visit the left hand side of the assignment
         self.visit_single_expression(lhs);
@@ -471,10 +464,10 @@ impl<'a> Visitor for LocalSemanticResolver<'a> {
         }
 
         // Get the inferred type of the left hand side
-        let lhs_ty = self.environment.get_type(&lhs.span());
+        let lhs_ty = self.environment.get_type(&node.target.span());
 
         // Get the inferred type of the right hand side
-        let _rhs_ty = self.environment.get_type(&rhs.span());
+        let _rhs_ty = self.environment.get_type(&node.expression.span());
 
         // Check if the types are compatible
         // if !lhs_ty.is_compatible(&rhs_ty) {

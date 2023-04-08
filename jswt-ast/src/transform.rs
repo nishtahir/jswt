@@ -17,7 +17,10 @@ pub trait TransformVisitor: Sized {
         walk_source_element(self, node)
     }
 
-    fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) -> SourceElements {
+    fn visit_function_declaration_element(
+        &mut self,
+        node: &FunctionDeclarationElement,
+    ) -> SourceElements {
         walk_function_declaration(self, node)
     }
 
@@ -120,7 +123,7 @@ pub trait TransformVisitor: Sized {
         walk_unary_expression(self, node)
     }
 
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
+    fn visit_assignment_expression(&mut self, node: &AssignmentExpression) -> SingleExpression {
         walk_assignment_expression(self, node)
     }
 
@@ -179,7 +182,9 @@ pub fn walk_source_element<V: TransformVisitor>(
     node: &SourceElement,
 ) -> SourceElements {
     match node {
-        SourceElement::FunctionDeclaration(elem) => visitor.visit_function_declaration(elem),
+        SourceElement::FunctionDeclaration(elem) => {
+            visitor.visit_function_declaration_element(elem)
+        }
         SourceElement::VariableDeclaration(elem) => visitor.visit_variable_declaration(elem),
         SourceElement::ClassDeclaration(elem) => visitor.visit_class_declaration(elem),
         SourceElement::ImportDeclaration(elem) => visitor.visit_import_declaration(elem),
@@ -509,16 +514,14 @@ pub fn walk_unary_expression<V: TransformVisitor>(
 
 pub fn walk_assignment_expression<V: TransformVisitor>(
     visitor: &mut V,
-    node: &BinaryExpression,
+    node: &AssignmentExpression,
 ) -> SingleExpression {
-    let left = Box::new(visitor.visit_single_expression(&node.left));
-    let right = Box::new(visitor.visit_single_expression(&node.right));
-    let op = node.op.clone();
-    SingleExpression::Assignment(BinaryExpression {
+    let target = Box::new(visitor.visit_single_expression(&node.target));
+    let expression = Box::new(visitor.visit_single_expression(&node.expression));
+    SingleExpression::Assignment(AssignmentExpression {
         span: node.span(),
-        left,
-        op,
-        right,
+        target,
+        expression,
     })
 }
 
@@ -572,11 +575,10 @@ pub fn walk_binary_expression<V: TransformVisitor>(
                 right,
             })
         }
-        BinaryOperator::Assign(_) => SingleExpression::Assignment(BinaryExpression {
+        BinaryOperator::Assign(_) => SingleExpression::Assignment(AssignmentExpression {
             span,
-            left,
-            op,
-            right,
+            target: left,
+            expression: right,
         }),
     }
 }

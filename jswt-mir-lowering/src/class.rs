@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use jswt_ast::{transform::TransformVisitor, *};
-use jswt_common::{Spannable};
+use jswt_common::Spannable;
 use jswt_symbols::{BindingsTable, ClassBinding, SemanticEnvironment};
 use jswt_synthetic::*;
 
@@ -133,13 +133,13 @@ impl<'a> TransformVisitor for MirClassLoweringContext<'a> {
         }
     }
 
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
-        if let SingleExpression::MemberDot(dot) = &*node.left {
+    fn visit_assignment_expression(&mut self, node: &AssignmentExpression) -> SingleExpression {
+        if let SingleExpression::MemberDot(dot) = &*node.target {
             if let SingleExpression::This(_) = &*dot.target {
                 // Handle this.field = value assignments inside of class methods
                 // The member dot target should always be an identifier
                 let lhs = dot.expression.as_identifier().unwrap();
-                let rhs = &*node.right;
+                let rhs = &*node.expression;
                 let field_name = &lhs.ident.value;
 
                 let field = self.class_binding.field(field_name).expect(&format!(

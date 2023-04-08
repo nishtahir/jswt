@@ -22,14 +22,14 @@ Ast {
                     source_elements: [
                         VariableDeclaration(
                             VariableDeclarationElement {
-                                annotations: [],
-                                export: true,
                                 span: Span {
                                     file: "test_variable_declaration_with_export",
                                     module: "module/test_variable_declaration_with_export",
                                     start: 7,
                                     end: 19,
                                 },
+                                annotations: [],
+                                export: true,
                                 modifier: Const(
                                     Span {
                                         file: "test_variable_declaration_with_export",

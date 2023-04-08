@@ -1,8 +1,5 @@
-use jswt_ast::{
-    transform::{walk_assignment_expression, TransformVisitor},
-    *,
-};
-use jswt_common::{Spannable};
+use jswt_ast::{transform::*, *};
+use jswt_common::Spannable;
 use jswt_synthetic::ident_exp;
 
 // lowering context for member index expressions
@@ -37,10 +34,10 @@ impl TransformVisitor for HirMemberIndexContext {
         })
     }
 
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
+    fn visit_assignment_expression(&mut self, node: &AssignmentExpression) -> SingleExpression {
         // if the target is a member index expression we need to rewrite it
         // into a member dot expression with a function call
-        if let SingleExpression::MemberIndex(index) = &*node.left {
+        if let SingleExpression::MemberIndex(index) = &*node.target {
             let target = self.visit_single_expression(&index.target);
             let expression = self.visit_single_expression(&index.index);
 
@@ -51,13 +48,13 @@ impl TransformVisitor for HirMemberIndexContext {
                     span: expression.span(),
                     arguments: ArgumentsList {
                         span: expression.span(),
-                        arguments: vec![expression, self.visit_single_expression(&node.right)],
+                        arguments: vec![expression, self.visit_single_expression(&node.expression)],
                     },
                     ident: Box::new(ident_exp("set".into(), node.span())),
                 })),
             });
         }
-        walk_assignment_expression(self, node)
+        transform::walk_assignment_expression(self, node)
     }
 }
 

@@ -36,7 +36,7 @@ impl<'a> MutVisitor for TypeChecker<'a> {
         self.binding_context = None;
     }
 
-    fn visit_function_declaration(&mut self, node: &mut FunctionDeclarationElement) {
+    fn visit_function_declaration_element(&mut self, node: &mut FunctionDeclarationElement) {
         // Push a new local scope for the function
         // Scope definition should have been defined during the global pass
         self.symbols.push_scope();

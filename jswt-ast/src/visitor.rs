@@ -84,7 +84,7 @@ expression_visitor![
     visit_identifier_expression: IdentifierExpression,
     visit_argument_expression: ArgumentsExpression,
     visit_unary_expression: UnaryExpression,
-    visit_assignment_expression: BinaryExpression,
+    visit_assignment_expression: AssignmentExpression,
     visit_binary_expression: BinaryExpression,
     visit_this_expression: ThisExpression,
     visit_literal: Literal

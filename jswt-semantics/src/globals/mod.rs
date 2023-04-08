@@ -6,7 +6,7 @@ use self::class::ClassDeclarationGlobalContext;
 use self::functions::FunctionDeclarationGlobalContext;
 use self::variables::VariableDeclarationGlobalContext;
 use crate::SemanticError;
-use jswt_ast::{visit::Visitor, *};
+use jswt_ast::*;
 use jswt_symbols::{SemanticEnvironment, SymbolTable};
 
 /// Global Semantic Resolver to resolve global variables and functions
@@ -46,18 +46,18 @@ impl<'a> Visitor for GlobalSemanticResolver<'a> {
     //     self.symbols.pop_scope();
     // }
 
-    fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+    fn visit_function_declaration_element(&mut self, node: &FunctionDeclarationElement) {
         let mut ctx = FunctionDeclarationGlobalContext::new(self);
-        ctx.visit_function_declaration(node);
+        ctx.visit_function_declaration_element(node);
     }
 
-    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) {
+    fn visit_variable_declaration_element(&mut self, node: &VariableDeclarationElement) {
         let mut ctx = VariableDeclarationGlobalContext::new(self);
-        ctx.visit_variable_declaration(node);
+        ctx.visit_variable_declaration_element(node);
     }
 
-    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
+    fn visit_class_declaration_element(&mut self, node: &ClassDeclarationElement) {
         let mut ctx = ClassDeclarationGlobalContext::new(self, node);
-        ctx.visit_class_declaration(node);
+        ctx.visit_class_declaration_element(node);
     }
 }

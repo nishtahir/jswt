@@ -22,14 +22,14 @@ Ast {
                     source_elements: [
                         VariableDeclaration(
                             VariableDeclarationElement {
-                                annotations: [],
-                                export: false,
                                 span: Span {
                                     file: "test_parse_additive_expression",
                                     module: "module/test_parse_additive_expression",
                                     start: 0,
                                     end: 14,
                                 },
+                                annotations: [],
+                                export: false,
                                 modifier: Let(
                                     Span {
                                         file: "test_parse_additive_expression",

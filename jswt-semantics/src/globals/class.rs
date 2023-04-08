@@ -1,9 +1,6 @@
 use super::GlobalSemanticResolver;
 use crate::SemanticError;
-use jswt_ast::{
-    visit::{self, Visitor},
-    ClassConstructorElement, ClassDeclarationElement, ClassFieldElement,
-};
+use jswt_ast::*;
 use jswt_common::{Spannable, Type};
 use jswt_symbols::{
     BindingsTable, ClassBinding, Constructor, Field, Method, Parameter, SemanticEnvironment,
@@ -34,11 +31,11 @@ impl<'a> ClassDeclarationGlobalContext<'a> {
 }
 
 impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
-    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
+    fn visit_class_declaration_element(&mut self, node: &ClassDeclarationElement) {
         let class_name = node.ident.value.clone();
         // Walk the rest of the class tree
         // Resolve fields, and methods
-        visit::walk_class_declaration(self, &node);
+        walk_class_declaration_element(self, &node);
 
         // Add the class binding to the bindings table
         self.environment
@@ -48,7 +45,7 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
         self.environment.insert_symbol(&class_name, Symbol::Class);
     }
 
-    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+    fn visit_class_constructor_element(&mut self, node: &ClassConstructorElement) {
         // TODO - Check if the constructor already exists
         // Get the parameters
         let mut params = vec![];
@@ -72,10 +69,10 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
         }
         // Add the constructor to the class binding
         self.class_binding.constructors.push(Constructor { params });
-        visit::walk_class_constructor_declaration(self, node);
+        walk_class_constructor_element(self, node);
     }
 
-    fn visit_class_field_declaration(&mut self, node: &ClassFieldElement) {
+    fn visit_class_field_element(&mut self, node: &ClassFieldElement) {
         let field_name = node.ident.value.clone();
 
         // Check if the field already exists
@@ -102,10 +99,10 @@ impl<'a> Visitor for ClassDeclarationGlobalContext<'a> {
             size: 4, // TODO compute type size
             ty: field_type,
         });
-        visit::walk_class_field_declaration(self, node);
+        walk_class_field_element(self, node);
     }
 
-    fn visit_class_method_declaration(&mut self, node: &jswt_ast::ClassMethodElement) {
+    fn visit_class_method_element(&mut self, node: &ClassMethodElement) {
         let method_name = node.ident.value.clone();
 
         // Check if the method already exists

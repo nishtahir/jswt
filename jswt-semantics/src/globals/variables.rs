@@ -1,5 +1,5 @@
 use crate::SemanticError;
-use jswt_ast::{visit::Visitor, VariableDeclarationElement, VariableModifier};
+use jswt_ast::*;
 use jswt_common::{Spannable, Type};
 use jswt_symbols::{SemanticEnvironment, Symbol, SymbolTable, Variable};
 
@@ -20,7 +20,7 @@ impl<'a> VariableDeclarationGlobalContext<'a> {
 }
 
 impl<'a> Visitor for VariableDeclarationGlobalContext<'a> {
-    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) {
+    fn visit_variable_declaration_element(&mut self, node: &VariableDeclarationElement) {
         let name = &node.name.value;
         // If a variable with the same name already exists
         // in the current scope then we have a duplicate variable error

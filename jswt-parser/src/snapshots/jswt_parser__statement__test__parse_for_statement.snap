@@ -70,14 +70,14 @@ Ast {
                                                             end: 61,
                                                         },
                                                         initializer: Assignment(
-                                                            BinaryExpression {
+                                                            AssignmentExpression {
                                                                 span: Span {
                                                                     file: "test_parse_for_statement",
                                                                     module: "module/test_parse_for_statement",
                                                                     start: 22,
                                                                     end: 27,
                                                                 },
-                                                                left: Identifier(
+                                                                target: Identifier(
                                                                     IdentifierExpression {
                                                                         span: Span {
                                                                             file: "test_parse_for_statement",
@@ -96,15 +96,7 @@ Ast {
                                                                         },
                                                                     },
                                                                 ),
-                                                                op: Assign(
-                                                                    Span {
-                                                                        file: "test_parse_for_statement",
-                                                                        module: "module/test_parse_for_statement",
-                                                                        start: 24,
-                                                                        end: 25,
-                                                                    },
-                                                                ),
-                                                                right: Literal(
+                                                                expression: Literal(
                                                                     Integer(
                                                                         IntegerLiteral {
                                                                             span: Span {
@@ -170,14 +162,14 @@ Ast {
                                                             },
                                                         ),
                                                         update: Assignment(
-                                                            BinaryExpression {
+                                                            AssignmentExpression {
                                                                 span: Span {
                                                                     file: "test_parse_for_statement",
                                                                     module: "module/test_parse_for_statement",
                                                                     start: 37,
                                                                     end: 46,
                                                                 },
-                                                                left: Identifier(
+                                                                target: Identifier(
                                                                     IdentifierExpression {
                                                                         span: Span {
                                                                             file: "test_parse_for_statement",
@@ -196,15 +188,7 @@ Ast {
                                                                         },
                                                                     },
                                                                 ),
-                                                                op: Assign(
-                                                                    Span {
-                                                                        file: "test_parse_for_statement",
-                                                                        module: "module/test_parse_for_statement",
-                                                                        start: 39,
-                                                                        end: 40,
-                                                                    },
-                                                                ),
-                                                                right: Additive(
+                                                                expression: Additive(
                                                                     BinaryExpression {
                                                                         span: Span {
                                                                             file: "test_parse_for_statement",

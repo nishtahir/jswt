@@ -28,8 +28,8 @@ Ast {
                                     start: 13,
                                     end: 126,
                                 },
-                                annotations: [],
                                 export: false,
+                                annotations: [],
                                 ident: Identifier {
                                     span: Span {
                                         file: "test_class_method_declaration_with_this_binding",
@@ -111,14 +111,14 @@ Ast {
                                                                         end: 94,
                                                                     },
                                                                     expression: Assignment(
-                                                                        BinaryExpression {
+                                                                        AssignmentExpression {
                                                                             span: Span {
                                                                                 file: "test_class_method_declaration_with_this_binding",
                                                                                 module: "module/test_class_method_declaration_with_this_binding",
                                                                                 start: 83,
                                                                                 end: 93,
                                                                             },
-                                                                            left: MemberDot(
+                                                                            target: MemberDot(
                                                                                 MemberDotExpression {
                                                                                     span: Span {
                                                                                         file: "test_class_method_declaration_with_this_binding",
@@ -157,15 +157,7 @@ Ast {
                                                                                     ),
                                                                                 },
                                                                             ),
-                                                                            op: Assign(
-                                                                                Span {
-                                                                                    file: "test_class_method_declaration_with_this_binding",
-                                                                                    module: "module/test_class_method_declaration_with_this_binding",
-                                                                                    start: 90,
-                                                                                    end: 91,
-                                                                                },
-                                                                            ),
-                                                                            right: Identifier(
+                                                                            expression: Identifier(
                                                                                 IdentifierExpression {
                                                                                     span: Span {
                                                                                         file: "test_class_method_declaration_with_this_binding",

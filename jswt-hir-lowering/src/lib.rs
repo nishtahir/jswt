@@ -4,7 +4,7 @@ mod operators;
 use index::HirMemberIndexContext;
 use jswt_ast::{
     transform::TransformVisitor, Ast, BinaryExpression, ClassDeclarationElement,
-    MemberIndexExpression, SingleExpression, SourceElement, SourceElements,
+    MemberIndexExpression, SingleExpression, SourceElement, SourceElements, AssignmentExpression,
 };
 use jswt_common::Spannable;
 use jswt_symbols::SemanticEnvironment;
@@ -49,7 +49,7 @@ impl<'a> TransformVisitor for HirLoweringContext<'a> {
         ctx.visit_member_index(node)
     }
 
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> SingleExpression {
+    fn visit_assignment_expression(&mut self, node: &AssignmentExpression) -> SingleExpression {
         // TODO - Move this into an assignment context visitor
         let mut ctx = HirMemberIndexContext::new();
         ctx.visit_assignment_expression(node)

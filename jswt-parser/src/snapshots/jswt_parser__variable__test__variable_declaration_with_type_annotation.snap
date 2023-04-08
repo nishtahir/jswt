@@ -22,6 +22,12 @@ Ast {
                     source_elements: [
                         VariableDeclaration(
                             VariableDeclarationElement {
+                                span: Span {
+                                    file: "test_variable_declaration_with_type_annotation",
+                                    module: "module/test_variable_declaration_with_type_annotation",
+                                    start: 6,
+                                    end: 23,
+                                },
                                 annotations: [
                                     Annotation {
                                         span: Span {
@@ -43,12 +49,6 @@ Ast {
                                     },
                                 ],
                                 export: false,
-                                span: Span {
-                                    file: "test_variable_declaration_with_type_annotation",
-                                    module: "module/test_variable_declaration_with_type_annotation",
-                                    start: 6,
-                                    end: 23,
-                                },
                                 modifier: Const(
                                     Span {
                                         file: "test_variable_declaration_with_type_annotation",

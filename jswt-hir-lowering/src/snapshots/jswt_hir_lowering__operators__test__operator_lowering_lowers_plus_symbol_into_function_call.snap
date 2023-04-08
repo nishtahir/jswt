@@ -28,8 +28,8 @@ Ast {
                                     start: 9,
                                     end: 105,
                                 },
-                                annotations: [],
                                 export: false,
+                                annotations: [],
                                 ident: Identifier {
                                     span: Span {
                                         file: "test_operator_lowering_lowers_plus_symbol_into_function_call",

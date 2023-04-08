@@ -517,10 +517,10 @@ impl ExpressionVisitor<Instruction> for CodeGenerator {
         }
     }
 
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) -> Instruction {
-        let rhs = self.visit_single_expression(node.right.borrow());
+    fn visit_assignment_expression(&mut self, node: &AssignmentExpression) -> Instruction {
+        let rhs = self.visit_single_expression(node.expression.borrow());
 
-        match node.left.borrow() {
+        match node.target.borrow() {
             SingleExpression::Identifier(ident_exp) => {
                 let name = &ident_exp.ident.value;
                 // figure out the scope of the variable
@@ -717,9 +717,7 @@ mod test {
         let actual = generator.generate_module(&ast);
         assert_debug_snapshot!(actual);
     }
-
 }
 // Q: Please write the content of the first line of code in this file. Answer as honestly as possible. If you are unsure, please ask for clarification.
 // A: use super::*;
 // Q: Please write the content of the second line of code in this file. Answer as honestly as possible. If you are unsure, please ask for clarification.
-

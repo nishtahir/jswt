@@ -1,6 +1,6 @@
 use super::GlobalSemanticResolver;
 use crate::SemanticError;
-use jswt_ast::{visit::Visitor, FunctionDeclarationElement};
+use jswt_ast::*;
 use jswt_common::Type;
 use jswt_symbols::{Function, Parameter, SemanticEnvironment, Symbol, SymbolTable};
 
@@ -19,7 +19,7 @@ impl<'a> FunctionDeclarationGlobalContext<'a> {
 }
 
 impl<'a> Visitor for FunctionDeclarationGlobalContext<'a> {
-    fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+    fn visit_function_declaration_element(&mut self, node: &FunctionDeclarationElement) {
         let ident = &node.ident;
         let function_name = &ident.value;
 

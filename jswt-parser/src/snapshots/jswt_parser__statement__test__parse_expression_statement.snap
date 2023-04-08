@@ -69,14 +69,14 @@ Ast {
                                                         end: 24,
                                                     },
                                                     expression: Assignment(
-                                                        BinaryExpression {
+                                                        AssignmentExpression {
                                                             span: Span {
                                                                 file: "test_parse_expression_statement",
                                                                 module: "module/test_parse_expression_statement",
                                                                 start: 18,
                                                                 end: 23,
                                                             },
-                                                            left: Identifier(
+                                                            target: Identifier(
                                                                 IdentifierExpression {
                                                                     span: Span {
                                                                         file: "test_parse_expression_statement",
@@ -95,15 +95,7 @@ Ast {
                                                                     },
                                                                 },
                                                             ),
-                                                            op: Assign(
-                                                                Span {
-                                                                    file: "test_parse_expression_statement",
-                                                                    module: "module/test_parse_expression_statement",
-                                                                    start: 20,
-                                                                    end: 21,
-                                                                },
-                                                            ),
-                                                            right: Literal(
+                                                            expression: Literal(
                                                                 Integer(
                                                                     IntegerLiteral {
                                                                         span: Span {

@@ -1,7 +1,4 @@
-use jswt_ast::{
-    visit::{self, Visitor},
-    *,
-};
+use jswt_ast::*;
 use jswt_common::{Span, Spannable};
 use jswt_symbols::{SemanticEnvironment, TypesTable};
 
@@ -48,10 +45,10 @@ impl<'a> Visitor for AstSerializer<'a> {
         self.content += "// ";
         self.content += &node.span.file;
         self.content += "\n\n";
-        visit::walk_file(self, node);
+        ast::walk_file(self, node);
     }
 
-    fn visit_function_declaration(&mut self, node: &FunctionDeclarationElement) {
+    fn visit_function_declaration_element(&mut self, node: &FunctionDeclarationElement) {
         for annotation in node.decorators.annotations.iter() {
             self.content += "@";
             self.content += &annotation.name.value;
@@ -78,13 +75,13 @@ impl<'a> Visitor for AstSerializer<'a> {
 
     fn visit_statement_element(&mut self, node: &StatementElement) {
         self.indent();
-        visit::walk_statement_element(self, node);
+        ast::walk_statement_element(self, node);
     }
 
     fn visit_block_statement(&mut self, node: &BlockStatement) {
         self.content += "{ \n";
         self.indent += 1;
-        visit::walk_block_statement(self, node);
+        ast::walk_block_statement(self, node);
         self.indent -= 1;
         self.indent();
         self.content += "}\n";
@@ -92,12 +89,12 @@ impl<'a> Visitor for AstSerializer<'a> {
 
     fn visit_return_statement(&mut self, node: &ReturnStatement) {
         self.content += "return ";
-        visit::walk_return_statement(self, node);
+        ast::walk_return_statement(self, node);
         self.content += ";\n";
     }
 
     fn visit_expression_statement(&mut self, node: &ExpressionStatement) {
-        visit::walk_expression_statement(self, node);
+        ast::walk_expression_statement(self, node);
         self.content += ";\n";
     }
 
@@ -126,13 +123,13 @@ impl<'a> Visitor for AstSerializer<'a> {
         };
     }
 
-    fn visit_member_dot(&mut self, node: &MemberDotExpression) {
+    fn visit_member_dot_expression(&mut self, node: &MemberDotExpression) {
         self.visit_single_expression(&node.target);
         self.content += ".";
         self.visit_single_expression(&node.expression);
     }
 
-    fn visit_variable_declaration(&mut self, node: &VariableDeclarationElement) {
+    fn visit_variable_declaration_element(&mut self, node: &VariableDeclarationElement) {
         let modifier = match node.modifier {
             VariableModifier::Let(_) => "let",
             VariableModifier::Const(_) => "const",
@@ -172,7 +169,7 @@ impl<'a> Visitor for AstSerializer<'a> {
         }
     }
 
-    fn visit_argument_expression(&mut self, node: &ArgumentsExpression) {
+    fn visit_arguments_expression(&mut self, node: &ArgumentsExpression) {
         self.content += "(";
         self.visit_single_expression(&*node.ident);
         self.content += "(";
@@ -186,10 +183,6 @@ impl<'a> Visitor for AstSerializer<'a> {
 
         self.append_type(node.span());
         self.content += ")";
-    }
-
-    fn visit_assignment_expression(&mut self, node: &BinaryExpression) {
-        self.visit_binary_expression(node);
     }
 
     fn visit_binary_expression(&mut self, node: &BinaryExpression) {
@@ -248,11 +241,11 @@ impl<'a> Visitor for AstSerializer<'a> {
         self.content += " */"
     }
 
-    fn visit_class_declaration(&mut self, node: &ClassDeclarationElement) {
+    fn visit_class_declaration_element(&mut self, node: &ClassDeclarationElement) {
         self.content += "class ";
         self.content += &node.ident.value;
         self.content += " ";
-        visit::walk_class_declaration(self, node);
+        ast::walk_class_declaration_element(self, node);
         self.content += "\n";
     }
 
@@ -260,22 +253,22 @@ impl<'a> Visitor for AstSerializer<'a> {
         self.content += "{";
         self.indent += 1;
         self.content += "\n";
-        visit::walk_class_body(self, node);
+        ast::walk_class_body(self, node);
         self.indent -= 1;
         self.content += "}\n";
     }
 
-    fn visit_class_constructor_declaration(&mut self, node: &ClassConstructorElement) {
+    fn visit_class_constructor_element(&mut self, node: &ClassConstructorElement) {
         self.indent();
         self.content += "constructor";
-        visit::walk_class_constructor_declaration(self, node);
+        ast::walk_class_constructor_element(self, node);
     }
 
-    fn visit_class_method_declaration(&mut self, node: &ClassMethodElement) {
+    fn visit_class_method_element(&mut self, node: &ClassMethodElement) {
         self.indent();
         self.content += &node.ident.value;
         self.content += " ";
-        visit::walk_class_method_declaration(self, node);
+        ast::walk_class_method_element(self, node);
     }
 
     fn visit_formal_parameter_list(&mut self, node: &FormalParameterList) {

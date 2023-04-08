@@ -77,22 +77,21 @@ impl<'a> Parser<'a> {
 
     ////
     //// AssignmentExpression
-    ////   : ArgumentsExpression '=' SingleExpression
+    ////   : SingleExpression '=' SingleExpression
     ////   ;
     ////
     pub(crate) fn assignment_expression(&mut self) -> ParseResult<SingleExpression> {
-        let left = self.bitwise_or_expression()?;
+        let target = self.bitwise_or_expression()?;
         if self.lookahead_is(TokenType::Equal) {
-            let op_span = consume_unchecked!(self);
-            let right = self.single_expression()?;
-            return Ok(SingleExpression::Assignment(BinaryExpression {
-                span: left.span() + right.span(),
-                left: Box::new(left),
-                op: BinaryOperator::Assign(op_span),
-                right: Box::new(right),
+            consume_unchecked!(self);
+            let expression = self.single_expression()?;
+            return Ok(SingleExpression::Assignment(AssignmentExpression {
+                span: target.span() + expression.span(),
+                target: Box::new(target),
+                expression: Box::new(expression),
             }));
         }
-        Ok(left)
+        Ok(target)
     }
 
     ////
