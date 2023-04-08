@@ -15,7 +15,6 @@ jswt-parser = {path = "../jswt-parser"}
 jswt-semantics = {path = "../jswt-semantics"}
 jswt-symbols = {path = "../jswt-symbols"}
 jswt-tokenizer = {path = "../jswt-tokenizer"}
-jswt-types = {path = "../jswt-types"}
 
 [dev-dependencies]
 jswt-assert = {path = "../jswt-assert"}

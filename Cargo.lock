@@ -681,7 +681,6 @@ version = "0.1.0"
 dependencies = [
  "jswt-common",
  "jswt-derive",
- "jswt-types",
 ]
 
 [[package]]
@@ -696,7 +695,6 @@ dependencies = [
  "jswt-semantics",
  "jswt-symbols",
  "jswt-tokenizer",
- "jswt-types",
 ]
 
 [[package]]
@@ -755,7 +753,6 @@ dependencies = [
  "jswt-symbols",
  "jswt-synthetic",
  "jswt-tokenizer",
- "jswt-types",
 ]
 
 [[package]]
@@ -771,7 +768,6 @@ dependencies = [
  "jswt-symbols",
  "jswt-synthetic",
  "jswt-tokenizer",
- "jswt-types",
 ]
 
 [[package]]
@@ -782,7 +778,6 @@ dependencies = [
  "jswt-ast",
  "jswt-common",
  "jswt-tokenizer",
- "jswt-types",
 ]
 
 [[package]]
@@ -796,7 +791,6 @@ dependencies = [
  "jswt-parser",
  "jswt-symbols",
  "jswt-tokenizer",
- "jswt-types",
 ]
 
 [[package]]
@@ -809,7 +803,6 @@ dependencies = [
  "jswt-derive",
  "jswt-parser",
  "jswt-tokenizer",
- "jswt-types",
 ]
 
 [[package]]
@@ -824,7 +817,6 @@ dependencies = [
  "jswt-semantics",
  "jswt-symbols",
  "jswt-tokenizer",
- "jswt-types",
 ]
 
 [[package]]
@@ -836,14 +828,6 @@ dependencies = [
  "lazy_static",
  "pathdiff",
  "regex",
-]
-
-[[package]]
-name = "jswt-types"
-version = "0.1.0"
-dependencies = [
- "jswt-assert",
- "jswt-common",
 ]
 
 [[package]]

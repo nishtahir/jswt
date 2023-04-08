@@ -10,4 +10,3 @@ doctest = false
 [dependencies]
 jswt-common = {path = "../jswt-common"}
 jswt-derive = {path = "../jswt-derive"}
-jswt-types = {path = "../jswt-types"}
